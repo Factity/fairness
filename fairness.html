@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Well, Well, Well: It Turns Out Machines Are Also Bigots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #1a1a18;
+      --ink-muted: #5a5a56;
+      --ink-faint: #9a9a94;
+      --paper: #faf8f3;
+      --paper-tint: #f2efe8;
+      --rule: #d8d4c8;
+      --accent: #2a2a26;
+    }
+
+    html { font-size: 18px; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-weight: 300;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ── masthead ── */
+    .masthead {
+      border-bottom: 2px solid var(--ink);
+      padding: 1.5rem 0 1rem;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    .pub-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.4rem;
+    }
+    .pub-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .pub-tagline {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 0.4rem;
+    }
+    .masthead-rule {
+      border: none;
+      border-top: 0.5px solid var(--rule);
+      margin-top: 1rem;
+    }
+
+    /* ── nav strip ── */
+    .nav-strip {
+      border-bottom: 1px solid var(--rule);
+      padding: 0.5rem 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-strip span { cursor: default; }
+    .nav-strip .active { color: var(--ink); font-weight: 400; border-bottom: 1px solid var(--ink); padding-bottom: 1px; }
+
+    /* ── layout ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+    }
+
+    /* ── article header ── */
+    .kicker {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.8rem;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+      max-width: 640px;
+    }
+    .subhead {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--ink-muted);
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+      max-width: 560px;
+    }
+    .byline-bar {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 0.5rem 0;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-bottom: 2.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+
+    /* ── body copy ── */
+    .body-text {
+      max-width: 620px;
+    }
+    p {
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    em { font-style: italic; }
+    strong { font-weight: 400; letter-spacing: 0.01em; }
+
+    /* drop cap */
+    .dropcap::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.2rem;
+      font-weight: 700;
+      float: left;
+      line-height: 0.78;
+      margin: 0.15rem 0.4rem 0 0;
+      color: var(--ink);
+    }
+
+    /* section break */
+    .section-break {
+      text-align: center;
+      color: var(--ink-faint);
+      margin: 2rem 0;
+      letter-spacing: 0.35em;
+      font-size: 0.75rem;
+    }
+
+    /* pull quote */
+    .pullquote {
+      border-left: 2.5px solid var(--ink);
+      padding: 0.5rem 0 0.5rem 1.4rem;
+      margin: 2rem 0;
+    }
+    .pullquote p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    /* sidebar box */
+    .sidebar {
+      background: var(--paper-tint);
+      border: 0.5px solid var(--rule);
+      border-radius: 3px;
+      padding: 1.2rem 1.4rem;
+      margin: 2rem 0;
+    }
+    .sidebar-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 0.5px solid var(--rule);
+    }
+    .harm-list {
+      list-style: none;
+      padding: 0;
+    }
+    .harm-list li {
+      font-size: 0.9rem;
+      padding: 0.35rem 0;
+      border-bottom: 0.5px solid var(--rule);
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    .harm-list li:last-child { border-bottom: none; }
+    .harm-list li::before { content: "— "; color: var(--ink-faint); }
+
+    /* footer */
+    .article-footer {
+      border-top: 1px solid var(--rule);
+      margin-top: 3rem;
+      padding-top: 1rem;
+    }
+    .footer-note {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* page footer */
+    .site-footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 2px solid var(--ink);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      html { font-size: 16px; }
+      .page { padding: 2rem 1.2rem 4rem; }
+      h1 { font-size: 2rem; }
+      .pub-title { font-size: 1.8rem; }
+      .pullquote p { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="pub-name">The Algorithmic Review</div>
+    <div class="pub-title">The Unfair Observer</div>
+    <div class="pub-tagline">Technology &amp; Society &mdash; Est. whenever someone decided to train a model on human data</div>
+    <hr class="masthead-rule">
+  </header>
+
+  <nav class="nav-strip">
+    <span class="active">Opinion</span>
+    <span>Technology</span>
+    <span>Society</span>
+    <span>Statistics &amp; Lies</span>
+    <span>Corrections</span>
+  </nav>
+
+  <main class="page">
+    <article>
+      <div class="kicker">Technology &amp; Society — Opinion</div>
+
+      <h1>Well, Well, Well: It Turns Out Machines Are Also Bigots</h1>
+
+      <p class="subhead">Microsoft's Fairlearn enters the ring, armed with charts, good intentions, and a frank acknowledgment that it cannot fix everything — much like this column.</p>
+
+      <div class="byline-bar">
+        <span>By Our Correspondent, Who Also Has Biases</span>
+        <span>April 2026</span>
+        <span>Est. reading time: however long it takes you to feel vaguely implicated</span>
+      </div>
+
+      <div class="body-text">
+
+        <p class="dropcap">The world is an unfair place. This is not news. The corny hyper-masculine protagonist faces a series of mysterious misfortunes, shrugs, and walks on unfazed, chanting the timeless mantra: <em>"err, suck it up."</em> As it is with all things in the human world, it is similarly true in the world of artificial intelligence — those human-trained, human-biased, thoroughly human machines.</p>
+
+        <p>Yes, the same snap judgements we pass in the cereal aisle, the quiet assumptions we carry like emotional hand luggage — they have, with admirable efficiency, been laundered into the very datasets that now make consequential decisions about people's lives. Remarkable, really.</p>
+
+        <div class="pullquote">
+          <p>"Bias, it turns out, does not politely wait at the door when the engineers go home."</p>
+        </div>
+
+        <p>Enter Microsoft, speaking loudly and clearly about fairness, armed with something called <strong>Fairlearn</strong> — a toolkit with two principal components: understand the mess, and then attempt to clean it up. The company is refreshingly candid that this is not merely a technological challenge. It is, they insist, a <em>socio-technological</em> challenge — which is academic shorthand for "deeply complicated and also everyone's fault."</p>
+
+        <div class="section-break">&middot; &middot; &middot;</div>
+
+        <p>The potential harms of a biased AI system are, as the authors catalogue, admirably varied. There is unfair allocation of opportunities, resources, and information — or, as it is known in human experience, simply: how things work when they are not working in your favour. There is differential quality of service across demographic groups, which will be familiar to anyone who has ever paid for a software subscription and discovered what the word "tier" really means.</p>
+
+        <div class="sidebar">
+          <div class="sidebar-title">A non-exhaustive taxonomy of AI misbehaviour</div>
+          <ul class="harm-list">
+            <li>Unfair allocation of opportunities, resources &amp; information</li>
+            <li>Different quality of service for different people (see: your subscription plan)</li>
+            <li>Reinforcing stereotypes with algorithmic confidence</li>
+            <li>Generating content that is, to put it delicately, unpleasant</li>
+            <li>Under-representation — the digital equivalent of being ghosted</li>
+          </ul>
+        </div>
+
+        <p>Then there is the reinforcement of existing stereotypes, delivered now at machine speed. And beyond that, if you were hoping the list would stop at vaguely insulting, it does not: there is the generation of outright offensive content — what the documentation calls "denigration harms" and what the rest of us might call the cursing epidemic, or, in more generous moments, <em>"the so-called words of wisdom."</em> Finally, there is under-representation — treating certain groups as though they simply do not exist. Not unlike, the reader may note, a person one met on a dating application and subsequently never heard from again.</p>
+
+        <div class="section-break">&middot; &middot; &middot;</div>
+
+        <p>Fairlearn does, to its credit, come with a visualization dashboard — a tool to assess which groups will be negatively impacted by a given model, and to compare multiple models for both fairness and performance simultaneously. It covers regression and classification tasks. Its demographic metrics include demographic parity, equalized odds, worst-case accuracy rate, mean squared error, and worst-case log loss. Whether these terms mean anything to you is, the documentation implies, largely your problem.</p>
+
+        <div class="pullquote">
+          <p>"There are liars, there are statisticians, and then there are people who find a chart to prove their point — categories which, experience suggests, overlap considerably."</p>
+        </div>
+
+        <p>And crucially — refreshingly — the toolkit does not merely diagnose. It prescribes. Via post-processing algorithms and reduction algorithms, it takes a trained model's predictions, adjusts for demographic parity, reassesses the weights, and retrains. Again. And again. Ten, twenty iterations, nudging the numbers until the metrics behave. A neat little numbers game, one might observe — at which point one recalls the old distinction: there are liars, there are statisticians, and then there are people who simply find a chart that proves their point and pump it accordingly.</p>
+
+        <div class="section-break">&middot; &middot; &middot;</div>
+
+        <p>Where does Fairlearn fall short? Candidly and commendably, the authors tell you themselves. It cannot address stereotyping harms, denigration harms, over- or under-representation harms at a deep level. It does not particularly concern itself with the broader societal dimensions of fairness — justice, due process, that sort of civilisational nicety. The current capability, one notes, extends to groups: a reasonable cross-section of humanity defined primarily by measurable attributes. Individual fairness and counterfactual fairness, we are assured, are coming in a future release. One waits with the appropriate amount of patience.</p>
+
+        <p>Which brings us, inevitably, to you. Yes, you — the reader of this pile of considered analysis. What can you do? The answer, as with most genuinely hard problems, is: participate. Fairlearn is a community effort. The consequences of automated decision-making — of delegating judgement to machines, the question of who bears responsibility when the machine decides — do not resolve themselves. Someone has to care enough to look at the dashboard, interpret the metrics, and ask uncomfortable questions about whose experience was not accounted for in the training data.</p>
+
+        <p>The world is unfair. The models learned from the world. The models are, consequently, unfair. This is not a technical problem with a technical solution. It is a human problem with a technical assist — and the assist only works if the humans show up.</p>
+
+        <div class="article-footer">
+          <p class="footer-note">Fairlearn is an open-source toolkit developed by Microsoft for assessing and improving fairness in machine learning systems. The authors of the toolkit disclaim responsibility for this column.</p>
+        </div>
+
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 The Unfair Observer &mdash; All biases reserved
+  </footer>
+
+</body>
+</html>
