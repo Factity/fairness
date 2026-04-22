@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Story of Broken Structures</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@400;600;700&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --violet: #bf5fff;
+      --violet-dim: #9b3dd4;
+      --violet-dark: #1a0530;
+      --violet-deep: #0d0118;
+      --violet-mid: #2e0a4f;
+      --violet-accent: #e0aaff;
+      --violet-pale: #f3d9ff;
+      --glow-sm: 0 0 6px #bf5fffaa, 0 0 14px #bf5fff66;
+      --glow-md: 0 0 8px #bf5fffcc, 0 0 20px #bf5fff88, 0 0 40px #bf5fff33;
+      --glow-text: 0 0 8px #bf5fff, 0 0 20px #bf5fff99;
+      --glow-lg: 0 0 12px #bf5fff, 0 0 30px #bf5fffaa, 0 0 60px #bf5fff55;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--violet-deep);
+      color: var(--violet-pale);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.85;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, #2e0a4f55 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, #1a053088 0%, transparent 55%),
+        radial-gradient(ellipse at 60% 10%, #bf5fff11 0%, transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+      animation: bgPulse 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0%   { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    /* Noise texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 6rem 1rem 3rem;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      display: block;
+      width: 180px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--violet), transparent);
+      margin: 2.5rem auto 0;
+      box-shadow: var(--glow-sm);
+    }
+
+    .tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet-dim);
+      text-shadow: var(--glow-sm);
+      margin-bottom: 1.2rem;
+      display: block;
+      animation: fadeSlideDown 0.8s ease both;
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 700;
+      color: var(--violet-accent);
+      text-shadow: var(--glow-lg);
+      line-height: 1.15;
+      animation: fadeSlideDown 1s ease 0.1s both;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--violet-dim);
+      margin-top: 1rem;
+      animation: fadeSlideDown 1s ease 0.2s both;
+    }
+
+    .meta {
+      margin-top: 1.6rem;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: #7a4d99;
+      animation: fadeSlideDown 1s ease 0.3s both;
+    }
+
+    /* ── DECORATIVE RULE ── */
+    .ornament {
+      text-align: center;
+      font-size: 1.5rem;
+      color: var(--violet-dim);
+      text-shadow: var(--glow-sm);
+      margin: 2.5rem 0;
+      letter-spacing: 0.5rem;
+    }
+
+    /* ── ARTICLE BODY ── */
+    article {
+      animation: fadeIn 1.2s ease 0.4s both;
+    }
+
+    p {
+      margin-bottom: 1.7rem;
+      color: #ddc8f5;
+      font-size: 1.05rem;
+    }
+
+    /* ── DROP CAP ── */
+    p.dropcap::first-letter {
+      font-family: 'Dancing Script', cursive;
+      float: left;
+      font-size: 4.8rem;
+      line-height: 0.78;
+      margin: 0.08em 0.12em 0 0;
+      color: var(--violet);
+      text-shadow: var(--glow-lg);
+      font-weight: 700;
+    }
+
+    /* ── PULL QUOTE ── */
+    blockquote {
+      border-left: 3px solid var(--violet);
+      margin: 2.8rem 0;
+      padding: 1.4rem 2rem;
+      background: linear-gradient(135deg, var(--violet-mid)55, transparent);
+      border-radius: 0 0.5rem 0.5rem 0;
+      box-shadow: var(--glow-sm), inset 0 0 30px #bf5fff0a;
+      position: relative;
+    }
+
+    blockquote::before {
+      content: '\201C';
+      font-family: 'Dancing Script', cursive;
+      font-size: 5rem;
+      color: var(--violet);
+      text-shadow: var(--glow-md);
+      position: absolute;
+      top: -1rem;
+      left: 1rem;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    blockquote p {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--violet-accent);
+      text-shadow: var(--glow-sm);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── SECTION HEADINGS ── */
+    h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--violet);
+      text-shadow: var(--glow-md);
+      margin: 3.5rem 0 1.2rem;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+
+    h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 70%;
+      background: var(--violet);
+      box-shadow: var(--glow-md);
+      border-radius: 2px;
+    }
+
+    /* ── CODE / INLINE MONOSPACE ── */
+    code {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.88em;
+      background: var(--violet-mid);
+      color: var(--violet-accent);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      border: 1px solid #4a1a70;
+      box-shadow: var(--glow-sm);
+    }
+
+    /* ── HIGHLIGHTED CALLOUT ── */
+    .callout {
+      background: linear-gradient(135deg, #2e0a4f, #1a0530);
+      border: 1px solid var(--violet-dim);
+      border-radius: 0.75rem;
+      padding: 1.8rem 2rem;
+      margin: 2.8rem 0;
+      box-shadow: var(--glow-md), 0 4px 30px #00000055;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .callout::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--violet), transparent);
+      box-shadow: var(--glow-sm);
+    }
+
+    .callout p {
+      margin: 0;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--violet-pale);
+    }
+
+    .callout-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      text-shadow: var(--glow-sm);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    /* ── FOOTER ── */
+    footer.custom-footer {
+      background-color: #0a0a0a;
+      color: var(--violet);
+      width: 100%;
+      border-top: 2px solid var(--violet);
+      box-shadow: 0 -2px 18px #bf5fff55;
+      box-sizing: border-box;
+      padding: 3rem 2rem 1.5rem;
+      margin-top: 5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-content {
+      max-width: 2000px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 0 20px;
+    }
+
+    .footer-section h4 {
+      color: var(--violet);
+      text-shadow: var(--glow-text);
+      margin-bottom: 1rem;
+      font-size: 1.1em;
+      letter-spacing: 0.04em;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      color: var(--violet);
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+      margin-right: 0.25rem;
+      margin-left: 0.5rem;
+      background-color: var(--violet-dark);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--violet-dim);
+      box-shadow: var(--glow-sm);
+      transition: box-shadow 0.3s ease, background-color 0.3s ease;
+      color: #ffff;
+    }
+
+    .footer-section ul li:hover {
+      background-color: #2e0a4f;
+      box-shadow: var(--glow-md);
+    }
+
+    .footer-section a {
+      text-decoration: none;
+      text-shadow: var(--glow-text);
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #e0aaff;
+      text-decoration: underline;
+      text-shadow: 0 0 12px #bf5fff, 0 0 30px #bf5fff;
+      transition: text-decoration 0.3s ease;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #3d1260;
+      color: var(--violet-dim);
+      text-shadow: var(--glow-sm);
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-section ul li a {
+      color: var(--violet) !important;
+      text-shadow: var(--glow-text) !important;
+    }
+
+    footer:not(.custom-footer) {
+      display: none !important;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--violet-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--violet-mid); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--violet-dim); box-shadow: var(--glow-sm); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── DIVIDER ── */
+    hr.section-break {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--violet-dim), transparent);
+      margin: 3rem 0;
+      box-shadow: var(--glow-sm);
+    }
+
+    /* ── AUTHOR CARD ── */
+    .author-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 4rem 0 1rem;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, var(--violet-mid)44, #0d011844);
+      border: 1px solid #4a1a70;
+      border-radius: 0.75rem;
+      box-shadow: var(--glow-sm);
+    }
+
+    .author-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--violet-dark));
+      border: 2px solid var(--violet);
+      box-shadow: var(--glow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: var(--violet-pale);
+      flex-shrink: 0;
+    }
+
+    .author-info {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.78rem;
+      color: var(--violet-dim);
+    }
+
+    .author-info strong {
+      display: block;
+      color: var(--violet-accent);
+      font-size: 0.88rem;
+      margin-bottom: 0.2rem;
+      text-shadow: var(--glow-sm);
+    }
+
+    /* selection highlight */
+    ::selection {
+      background: #bf5fff44;
+      color: var(--violet-pale);
+    }
+        :root {
+      --v:   #bf5fff;
+      --vd:  #9b3dd4;
+      --vdk: #1a0530;
+      --vdp: #0d0118;
+      --vm:  #2e0a4f;
+      --va:  #e0aaff;
+      --vp:  #f3d9ff;
+      --bad: #ff4d6d;
+      --bad-dk: #4a0015;
+      --good: #4dffb4;
+      --good-dk: #003d22;
+      --neutral: #ffcb47;
+      --neutral-dk: #3d2a00;
+      --gs: 0 0 6px #bf5fffaa, 0 0 14px #bf5fff55;
+      --gm: 0 0 8px #bf5fffcc, 0 0 22px #bf5fff88, 0 0 42px #bf5fff33;
+      --gt: 0 0 8px #bf5fff, 0 0 20px #bf5fff88;
+      --rs: 0 0 6px #ff4d6daa, 0 0 14px #ff4d6d55;
+      --gs2: 0 0 6px #4dffb4aa, 0 0 14px #4dffb455;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--vdp);
+      color: var(--vp);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* bg atmosphere */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 25%, #2e0a4f44 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 75%, #1a053066 0%, transparent 50%),
+        radial-gradient(ellipse at 55% 5%,  #bf5fff0d 0%, transparent 40%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1; opacity: 0.3;
+    }
+
+    .page { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 1rem 3.5rem;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--vd);
+      text-shadow: var(--gs);
+      display: block;
+      margin-bottom: 1rem;
+      animation: fsd 0.7s ease both;
+    }
+    .hero h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 700;
+      color: var(--va);
+      text-shadow: var(--gm);
+      line-height: 1.2;
+      animation: fsd 0.8s ease 0.1s both;
+    }
+    .hero-sub {
+      font-style: italic;
+      color: var(--vd);
+      margin-top: 0.9rem;
+      font-size: 1.05rem;
+      animation: fsd 0.8s ease 0.2s both;
+    }
+    .hero::after {
+      content: '';
+      display: block;
+      width: 140px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--v), transparent);
+      box-shadow: var(--gs);
+      margin: 2.5rem auto 0;
+    }
+
+    /* ── NAV PILLS ── */
+    .nav-pills {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 0.6rem; margin: 2rem 0 3.5rem;
+      animation: fadeIn 1s ease 0.4s both;
+    }
+    .pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--vm);
+      border-radius: 2rem;
+      color: var(--vd);
+      background: var(--vdk);
+      cursor: pointer;
+      transition: all 0.25s;
+      text-decoration: none;
+    }
+    .pill:hover {
+      border-color: var(--v);
+      color: var(--va);
+      box-shadow: var(--gs);
+      background: var(--vm);
+    }
+
+    /* ── EXAMPLE CARD ── */
+    .example {
+      margin-bottom: 5rem;
+      animation: fadeIn 0.8s ease both;
+    }
+    .example-header {
+      display: flex; align-items: flex-start; gap: 1.2rem;
+      margin-bottom: 1.8rem;
+    }
+    .example-number {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--v);
+      text-shadow: var(--gm);
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: -0.3rem;
+    }
+    .example-title-block h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--va);
+      text-shadow: var(--gs);
+      line-height: 1.2;
+    }
+    .example-title-block p {
+      font-style: italic;
+      color: #9b6dc0;
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    /* ── SPLIT PANE ── */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    @media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+
+    .pane {
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid;
+      position: relative;
+    }
+    .pane.bad  { border-color: #ff4d6d55; box-shadow: var(--rs); }
+    .pane.good { border-color: #4dffb455; box-shadow: var(--gs2); }
+    .pane.neutral { border-color: #ffcb4755; box-shadow: 0 0 6px #ffcb47aa, 0 0 14px #ffcb4755; }
+
+    .pane-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.55rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .pane.bad  .pane-label { background: var(--bad-dk); color: var(--bad); }
+    .pane.good .pane-label { background: var(--good-dk); color: var(--good); }
+    .pane.neutral .pane-label { background: var(--neutral-dk); color: var(--neutral); }
+
+    .pane-label .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .pane.bad  .dot { background: var(--bad);  box-shadow: 0 0 6px var(--bad); }
+    .pane.good .dot { background: var(--good); box-shadow: 0 0 6px var(--good); }
+    .pane.neutral .dot { background: var(--neutral); box-shadow: 0 0 6px var(--neutral); }
+
+    .pane-body {
+      padding: 1.2rem 1.4rem;
+      background: #0a010f;
+      min-height: 160px;
+    }
+    .pane.bad  .pane-body { background: #120008; }
+    .pane.good .pane-body { background: #001209; }
+    .pane.neutral .pane-body { background: #100900; }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c8b4e0;
+      margin: 0;
+    }
+
+    /* syntax colouring helpers */
+    .kw  { color: #c792ea; }           /* keyword */
+    .fn  { color: #82aaff; }           /* function name */
+    .st  { color: #c3e88d; }           /* string */
+    .cm  { color: #546e7a; font-style: italic; } /* comment */
+    .nm  { color: #f78c6c; }           /* number / constant */
+    .tp  { color: #ffcb6b; }           /* type */
+    .dc  { color: #4dffb4; }           /* decorator / good highlight */
+    .rd  { color: #ff5370; }           /* red / bad highlight */
+    .yw  { color: #ffcb47; }           /* yellow / warning */
+
+    /* ── ANNOTATION ── */
+    .annotation {
+      margin-top: 1.2rem;
+      padding: 1rem 1.4rem;
+      background: linear-gradient(135deg, var(--vm)33, transparent);
+      border-left: 3px solid var(--v);
+      border-radius: 0 0.5rem 0.5rem 0;
+      box-shadow: var(--gs);
+      font-style: italic;
+      color: #c0a0e0;
+      font-size: 0.95rem;
+    }
+
+    /* ── WIDE PANE (single full-width) ── */
+    .wide-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    .stacked { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    /* ── SECTION DIVIDER ── */
+    hr.divider {
+      border: none; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--vm), transparent);
+      box-shadow: var(--gs);
+      margin: 4rem 0;
+    }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 1.2rem;
+      margin-bottom: 2.5rem;
+      padding: 1rem 1.5rem;
+      border: 1px solid var(--vm);
+      border-radius: 0.6rem;
+      background: #0d0118;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+    }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fsd {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--vdp); }
+    ::-webkit-scrollbar-thumb { background: var(--vm); border-radius: 3px; }
+    ::selection { background: #bf5fff33; color: var(--vp); }
+
+    /* tooltip badge */
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2rem;
+      vertical-align: middle;
+      margin-left: 0.4rem;
+    }
+    .badge.b { background: var(--bad-dk); color: var(--bad); border: 1px solid #ff4d6d44; }
+    .badge.g { background: var(--good-dk); color: var(--good); border: 1px solid #4dffb444; }
+
+    /* copy button */
+    .copy-btn {
+      position: absolute; top: 0.5rem; right: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--vm);
+      border: 1px solid var(--vd);
+      color: var(--va);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 5;
+    }
+    .copy-btn:hover { background: var(--v); color: #fff; box-shadow: var(--gs); }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <header>
+    <span class="tag">Essays on Software &amp; Craft</span>
+    <h1>The Story of Broken Structures</h1>
+    <p class="subtitle">On the quiet collapse of codebases, the illusion of order, and why a cheat sheet might just save us all.</p>
+    <p class="meta">April 2026 &nbsp;·&nbsp; ~9 min read &nbsp;·&nbsp; A meditation for the weary debugger</p>
+  </header>
+
+  <article>
+
+    <p class="dropcap">
+      There is a particular brand of misfortune that only a certain kind of person truly knows — the kind who stumbles upon an archived repository promising to hold the implementation of some rare, elegant algorithm, only to discover, many hours and a great deal of quiet despair later, that the promises were hollow. I have lived that misfortune firsthand. And having once walked the halls of pure science before wandering into programming, I arrived with no inherited instinct for the labyrinthine beauty of a large, poorly-documented codebase. What I found instead was a masterclass in how complexity compounds itself in silence.
+    </p>
+
+    <p>
+      The first few imports seem innocent enough. Then the rabbit hole opens. One module calls another, which calls three more, each of which quietly assumes the existence of some version of some package that may or may not still exist, may or may not have changed its API somewhere between then and now. You follow the trail. You use the AI tools — and they are genuinely good tools, to be fair — but even they eventually shrug, because the fault is not in any single line; it is woven into the very fabric of how the thing was assembled. Long hours pass. The kind that blur into one another. When things finally click, there is, I will admit, an almost unreasonable joy to it. But more often than not, the clicking never comes.
+    </p>
+
+    <blockquote>
+      <p>When all else fails, you download a local copy of the module, hunt for definitions, trace variable names, follow classes — only to discover a function that was never quite finished.</p>
+    </blockquote>
+
+    <p>
+      And here is where I must confess something: I am part of the problem. I have done what the industry encouraged me to do. I broke code into functions. I abstracted away complexity. I drew neat little boundaries around messy logic and called it good architecture. I followed the gospel of modularity with something close to genuine belief. The structure looked right. The folder hierarchy was pleasing. The function names were descriptive. And yet, somewhere in that cathedral of good intentions, the actual thought — the raw, living algorithm — was buried so deep beneath layers of abstraction that not even its author could have excavated it cleanly on short notice.
+    </p>
+
+    <h2>The Good Scientist, the Bad Programmer</h2>
+
+    <p>
+      I have met brilliant researchers who would hear all of this and offer a calm, entirely reasonable defence: <em>"Ends justify the means. I do not wish to spend weeks optimising code that merely needs to run once."</em> And honestly? There is something honest in that. Science moves fast and its practitioners have neither the mandate nor, often, the time to be craftsmen of code. That might make you a great scientist. It does, however, make for a rather dangerous programmer — not because the code is wrong, but because it becomes, in time, genuinely unknowable.
+    </p>
+
+    <div class="callout">
+      <span class="callout-label">The Core Question</span>
+      <p>Does maintaining structure and standards truly lead to greater productivity for the community over the long run? More often than not, yes — but we cannot measure the damage done by the codebases that slowly erode trust, waste time, and silently exclude the very people they were meant to serve.</p>
+    </div>
+
+    <p>
+      Consider the newcomer. They approach a repository with good faith and genuine need. They read what passes for documentation. They import, they implement, they run — and then something breaks. Not dramatically. Not with a clear error message pointing to a culprit. It breaks in that quiet, ambiguous way that makes you wonder if the problem is the code, or your understanding of it, or the version of Python you are running, or some combination of all three and something else entirely. They descend. They open files. They click through to function definitions. They begin to build, in their head, a chart of all the variable names and method calls and class relationships that must somehow cohere into a working whole.
+    </p>
+
+    <p>
+      That chart becomes too large. The human brain, magnificent as it is, has a working memory. And when the map of dependencies exceeds it, something gives way — not the code, but the person trying to understand it.
+    </p>
+
+    <h2>The Page Worth of Algorithm</h2>
+
+    <p>
+      Here is a thing I have noticed: if you sit a thoughtful programmer down and ask them to simply describe what all these scattered blocks of code actually <em>do</em> — to strip away the architecture and name the logic — the answer almost always fits on a page. A single page. Sometimes less. The algorithm itself is rarely the problem. It is the scaffolding built around it that becomes the fog.
+    </p>
+
+    <blockquote>
+      <p>When the map of dependencies exceeds what a mind can hold at once, it is not the code that breaks — it is the person trying to understand it.</p>
+    </blockquote>
+
+    <p>
+      When <code>pydantic</code> arrived, I was genuinely delighted. The type safety, the clarity of structure, the way it imposed a kind of discipline on the chaos of Python's dynamic nature — it felt like a civilising influence. And it still is, in the right hands. But <em>the right hands</em> is the operative phrase. In an era of AI-generated code proliferating through repositories faster than anyone can audit it, <code>pydantic</code> schemas become yet another layer between you and the truth of what a system does. Unless you built it yourself, unless you watched it grow from nothing, understanding the full shape of the thing becomes an act of archaeology rather than engineering.
+    </p>
+
+    <h2>The Right Tool in the Wrong Hands</h2>
+
+    <p>
+      This is not an argument against structure. Structure matters enormously. The problem is that structure, unmoored from understanding, becomes a different kind of trap — not the chaos of unorganised code, but the false reassurance of organised opacity. Things look right. The folders are labelled. The types are checked. And yet the actual behaviour of the system remains, to anyone outside its original authors, essentially unknowable without significant investment of time that most real-world situations simply do not afford.
+    </p>
+
+    <p>
+      Time. That is the resource that cuts everything. In the rush to implement, to ship, to close the ticket, to meet the deadline, we do not ask <em>why</em> something works. We ask only whether it does. And that is a rational response to an irrational amount of pressure. But it creates a kind of technical debt that is not measured in lines of code or test coverage — it is measured in the accumulated confusion of every person who ever had to inherit something they did not write.
+    </p>
+
+    <div class="callout">
+      <span class="callout-label">A Quiet Observation</span>
+      <p>Bad practices spread like a slow pandemic. They do not announce themselves. They are adopted because they look like good practices, because they were used by someone respected, because they appear in popular repositories, because the AI suggestion looked clean. And then, quietly, they are everywhere.</p>
+    </div>
+
+    <h2>The Cheat Sheet Manifesto</h2>
+
+    <p>
+      So here is what I wish for, not as policy or mandate, but as a quiet, earnest hope: that every repository, every little piece of work released into the world, might come with its bones visible. Not necessarily the full architecture document, not the exhaustive wiki — though those are lovely when they exist — but simply a bare-bones explanation. A page. A plain-language description of what the algorithm does, what assumptions it makes, what inputs it expects and what outputs it produces. Written as though you were handing your working notes to a curious friend.
+    </p>
+
+    <p>
+      A cheat sheet. That is all. Something that says: here is the shape of the idea before we dressed it in classes and wrapped it in interfaces. Here is what I was actually trying to do. That document — humble, informal, perhaps a little rough around the edges — might do more to preserve the usefulness of a codebase than any amount of linting or type annotation.
+    </p>
+
+    <blockquote>
+      <p>Releasing your bare-bones logic to the world is simply handing your practice notes across — a simple cheat sheet that might finally super-glue the gloriously flawed house of cards we call programming.</p>
+    </blockquote>
+
+    <p>
+      Programming is, at its core, a community endeavour. The code you write today will be read by someone else — possibly someone with less context, less time, less familiarity with the particular idioms you favour. The care you put into making it legible, not just syntactically correct but genuinely <em>comprehensible</em>, is a gift to that person. It is also, in a more pragmatic sense, insurance against the moment when that person is you, returning to your own work six months later and finding it as foreign as someone else's.
+    </p>
+
+    <p>
+      Even with tighter deadlines, increasing pressure, and every incentive pushing towards speed over clarity, the work of evangelising good documentation, releasing standardised notes alongside code, offering that one-page description of the logic — it is worth it. Not in some distant, theoretical future. Now. Every time.
+    </p>
+
+    <hr class="section-break"/>
+
+    <p>
+      I do not expect perfection. I am not asking for it. I am asking only for honesty — the intellectual honesty to admit that the structure we build around an idea is not the same as the idea itself, and that both deserve to be preserved. The algorithm and the architecture. The thought and the scaffolding. Let both be visible, and we might just build something that lasts.
+    </p>
+
+    <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Six Patterns That Break Codebases</h1>
+  </div>
+
+  <!-- NAV PILLS -->
+  <nav class="nav-pills">
+    <a class="pill" href="#ex1">01 · Import Rabbit Holes</a>
+    <a class="pill" href="#ex2">02 · Partial Implementations</a>
+    <a class="pill" href="#ex3">03 · Over-Abstraction</a>
+    <a class="pill" href="#ex4">04 · Documentation</a>
+    <a class="pill" href="#ex5">05 · AI Slop vs Clarity</a>
+    <a class="pill" href="#ex6">06 · The One-Page Algorithm</a>
+  </nav>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#ff4d6d;box-shadow:0 0 5px #ff4d6d"></div> <span style="color:#ff4d6d">The Problem</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4dffb4;box-shadow:0 0 5px #4dffb4"></div> <span style="color:#4dffb4">The Fix</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffcb47;box-shadow:0 0 5px #ffcb47"></div> <span style="color:#ffcb47">Observation / Note</span></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 1 — IMPORT RABBIT HOLES
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex1">
+    <div class="example-header">
+      <div class="example-number">01</div>
+      <div class="example-title-block">
+        <h2>The Import Rabbit Hole</h2>
+        <p>You import one thing. It imports five. Those import twelve. No one knows where the logic actually lives.</p>
+      </div>
+    </div>
+    <div class="split">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> What you find in the wild</div>
+        <div class="pane-body" style="position:relative">
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+          <pre>
+<span class="cm"># main.py</span>
+<span class="kw">from</span> core.engine <span class="kw">import</span> Processor
+<span class="cm"># core/engine.py imports from core/base.py</span>
+<span class="cm"># core/base.py imports from utils/transforms.py</span>
+<span class="cm"># utils/transforms.py imports from utils/validators.py</span>
+<span class="cm"># utils/validators.py imports from config/schema.py</span>
+<span class="cm"># config/schema.py imports from config/defaults.py</span>
+<span class="cm"># ... 6 files deep before any actual logic</span>
+
+p = Processor()
+result = p.run(data)
+<span class="cm"># Which version of numpy does this need?</span>
+<span class="cm"># Why does it fail silently on Python 3.11?</span>
+<span class="cm"># Nobody knows. The author archived this in 2021.</span>
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> Flattened with intent</div>
+        <div class="pane-body" style="position:relative">
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+          <pre>
+<span class="cm"># processor.py — everything in one readable file</span>
+<span class="cm"># Dependencies: numpy>=1.23, python>=3.9</span>
+<span class="cm"># Algorithm: sliding-window cosine similarity</span>
+
+<span class="kw">import</span> numpy <span class="kw">as</span> np  <span class="cm"># only real dependency</span>
+
+<span class="kw">def</span> <span class="fn">run</span>(data: list[float], window: int = <span class="nm">5</span>) -> list[float]:
+    <span class="st">"""
+    Compute rolling cosine similarity.
+    data   : 1-D list of floats
+    window : frame size (default 5)
+    returns: similarity scores, length = len(data)-window
+    """</span>
+    arr = np.array(data)
+    <span class="kw">return</span> [
+        np.dot(arr[i:i+window], arr[i+<span class="nm">1</span>:i+window+<span class="nm">1</span>]) /
+        (np.linalg.norm(arr[i:i+window]) * np.linalg.norm(arr[i+<span class="nm">1</span>:i+window+<span class="nm">1</span>]) + <span class="nm">1e-9</span>)
+        <span class="kw">for</span> i <span class="kw">in</span> range(len(arr) - window)
+    ]
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      The fixed version lists its only real dependency at the top, names the algorithm in plain English, and contains every line of logic in one file. A newcomer can read it start to finish in under two minutes.
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 2 — PARTIAL IMPLEMENTATIONS
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex2">
+    <div class="example-header">
+      <div class="example-number">02</div>
+      <div class="example-title-block">
+        <h2>The Partially Implemented Function</h2>
+        <p>The method exists. It has a docstring. It raises NotImplementedError at runtime — buried six calls deep.</p>
+      </div>
+    </div>
+    <div class="split">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> The silent landmine</div>
+        <div class="pane-body">
+          <pre>
+<span class="kw">class</span> <span class="tp">SignalProcessor</span>:
+
+    <span class="kw">def</span> <span class="fn">normalise</span>(self, signal):
+        <span class="st">"""Normalise input signal to [-1, 1]."""</span>
+        <span class="cm"># TODO: handle edge case where signal is flat</span>
+        mn, mx = min(signal), max(signal)
+        <span class="kw">return</span> [(x - mn) / (mx - mn) <span class="kw">for</span> x <span class="kw">in</span> signal]
+
+    <span class="kw">def</span> <span class="fn">denoise</span>(self, signal, method=<span class="st">'wavelet'</span>):
+        <span class="st">"""Remove noise using specified method."""</span>
+        <span class="kw">if</span> method == <span class="st">'wavelet'</span>:
+            <span class="rd">raise NotImplementedError(</span>
+                <span class="st">"wavelet denoising not yet implemented"</span>
+            <span class="rd">)</span>
+        <span class="kw">elif</span> method == <span class="st">'moving_avg'</span>:
+            <span class="rd">raise NotImplementedError(</span>
+                <span class="st">"moving average not yet implemented"</span>
+            <span class="rd">)</span>
+        <span class="cm"># only 'none' actually works</span>
+        <span class="kw">return</span> signal
+
+    <span class="kw">def</span> <span class="fn">run_pipeline</span>(self, data):
+        <span class="cm"># calls normalise → denoise → ... crashes at denoise</span>
+        <span class="kw">return</span> self.denoise(self.normalise(data))
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> Honest about what works</div>
+        <div class="pane-body">
+          <pre>
+<span class="kw">def</span> <span class="fn">normalise</span>(signal: list[float]) -> list[float]:
+    <span class="st">"""Scale signal to [0, 1]. Returns unchanged if flat."""</span>
+    mn, mx = min(signal), max(signal)
+    <span class="kw">if</span> mx == mn:
+        <span class="kw">return</span> [<span class="nm">0.0</span>] * len(signal)  <span class="cm"># edge case handled</span>
+    <span class="kw">return</span> [(x - mn) / (mx - mn) <span class="kw">for</span> x <span class="kw">in</span> signal]
+
+<span class="kw">def</span> <span class="fn">moving_avg_denoise</span>(signal: list[float], k: int = <span class="nm">3</span>) -> list[float]:
+    <span class="st">"""
+    Simple moving-average denoiser (only method available).
+    k : window half-width. Larger k = more smoothing.
+    Note: wavelet denoising is not implemented.
+    """</span>
+    result = []
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(signal)):
+        lo, hi = max(<span class="nm">0</span>, i-k), min(len(signal), i+k+<span class="nm">1</span>)
+        result.append(sum(signal[lo:hi]) / (hi - lo))
+    <span class="kw">return</span> result
+
+<span class="cm"># ── PIPELINE ──────────────────────────────────</span>
+<span class="cm"># normalise → moving_avg_denoise → downstream</span>
+<span class="cm"># Both steps are complete and tested.</span>
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      The honest version names exactly what is implemented, handles the documented edge case, and drops the class wrapper entirely — because a class was never needed. Two plain functions, a comment about what is missing, and the pipeline is clear.
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 3 — OVER-ABSTRACTION
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex3">
+    <div class="example-header">
+      <div class="example-number">03</div>
+      <div class="example-title-block">
+        <h2>Over-Abstraction</h2>
+        <p>A simple algorithm wrapped in so many layers of "good architecture" that the actual logic is invisible.</p>
+      </div>
+    </div>
+    <div class="split">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> Enterprise clothing on a 10-line idea</div>
+        <div class="pane-body">
+          <pre>
+<span class="kw">class</span> <span class="tp">AbstractBaseTransformer</span>(ABC):
+    <span class="dc">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(self, payload: <span class="tp">TransformPayload</span>) -> <span class="tp">TransformResult</span>: ...
+
+<span class="kw">class</span> <span class="tp">TransformPayload</span>(BaseModel):
+    data: list[float]
+    config: <span class="tp">TransformConfig</span>
+
+<span class="kw">class</span> <span class="tp">TransformConfig</span>(BaseModel):
+    window_size: int = <span class="nm">5</span>
+    strategy: <span class="tp">StrategyEnum</span> = <span class="tp">StrategyEnum</span>.DEFAULT
+
+<span class="kw">class</span> <span class="tp">DefaultTransformer</span>(<span class="tp">AbstractBaseTransformer</span>):
+    <span class="kw">def</span> <span class="fn">transform</span>(self, payload: <span class="tp">TransformPayload</span>) -> <span class="tp">TransformResult</span>:
+        handler = <span class="tp">TransformHandlerFactory</span>.get(payload.config.strategy)
+        <span class="kw">return</span> handler.execute(payload)
+
+<span class="cm"># ... 8 more files to find where addition actually happens</span>
+<span class="cm"># The algorithm: a[i] = a[i] + a[i-1]   (prefix sum)</span>
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> The algorithm, undressed</div>
+        <div class="pane-body">
+          <pre>
+<span class="cm"># Algorithm: prefix sum</span>
+<span class="cm"># Given [1, 2, 3, 4] → returns [1, 3, 6, 10]</span>
+<span class="cm"># Each output[i] = sum of all inputs up to index i</span>
+
+<span class="kw">def</span> <span class="fn">prefix_sum</span>(data: list[float]) -> list[float]:
+    result, total = [], <span class="nm">0.0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> data:
+        total += x
+        result.append(total)
+    <span class="kw">return</span> result
+
+<span class="cm"># That's it. That's the whole thing.</span>
+<span class="cm"># Wrap it in a class only if you have 3+ related</span>
+<span class="cm"># functions that genuinely share state.</span>
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      Six classes, two enums, a factory, and an abstract base — all to describe a loop that keeps a running total. The right-hand version is the entire algorithm. The comment above it is the documentation. Together they fit on a napkin.
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 4 — DOCUMENTATION
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex4">
+    <div class="example-header">
+      <div class="example-number">04</div>
+      <div class="example-title-block">
+        <h2>Documentation — The Cheat Sheet</h2>
+        <p>What a README looks like when it's written to impress vs. written to actually help.</p>
+      </div>
+    </div>
+    <div class="stacked">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> Written to look complete</div>
+        <div class="pane-body">
+          <pre>
+<span class="cm">## SignalKit</span>
+
+<span class="st">A robust, extensible, production-grade signal processing toolkit
+built with modern Python best practices, full type safety via Pydantic
+v2, and a plugin-based architecture for maximum flexibility.</span>
+
+<span class="cm">### Features</span>
+<span class="st">- Modular transformer pipeline</span>
+<span class="st">- Abstract factory pattern</span>
+<span class="st">- Pydantic v2 schema validation</span>
+<span class="st">- Async-ready architecture</span>
+<span class="st">- 94% test coverage</span>
+
+<span class="cm">### Installation</span>
+<span class="kw">pip install signalkit</span>
+
+<span class="cm">### Usage</span>
+<span class="rd"># (see examples/ directory)   ← examples/ directory is empty</span>
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> Written to actually help</div>
+        <div class="pane-body">
+          <pre>
+<span class="cm">## SignalKit — What This Does</span>
+
+<span class="st">Two functions for 1-D signal cleaning:</span>
+<span class="dc">1. normalise(signal)         → scales values to [0, 1]</span>
+<span class="dc">2. moving_avg_denoise(signal, k=3)  → smooths noise</span>
+
+<span class="cm">## The Algorithm (plain English)</span>
+<span class="st">Normalise: shift the minimum to 0, stretch the range to 1.
+Denoise: replace each point with the average of its k neighbours.
+Pipeline: normalise first, then denoise. Order matters.</span>
+
+<span class="cm">## Requirements</span>
+<span class="yw">Python 3.9+   No external dependencies.</span>
+
+<span class="cm">## Quickstart</span>
+<span class="kw">from</span> signalkit <span class="kw">import</span> normalise, moving_avg_denoise
+clean = moving_avg_denoise(normalise([<span class="nm">3</span>,<span class="nm">1</span>,<span class="nm">4</span>,<span class="nm">1</span>,<span class="nm">5</span>,<span class="nm">9</span>]))
+
+<span class="cm">## Known Gaps</span>
+<span class="rd">- Wavelet denoising: NOT implemented (stub exists, raises error)</span>
+<span class="rd">- No GPU support</span>
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      The bad README has five marketing bullet points and no working example. The good one names the algorithm, gives a one-line quickstart, lists real dependencies, and — crucially — is honest about what is missing. That last part alone saves hours of debugging.
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 5 — AI SLOP vs CLARITY
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex5">
+    <div class="example-header">
+      <div class="example-number">05</div>
+      <div class="example-title-block">
+        <h2>AI-Generated Slop vs. Deliberate Clarity</h2>
+        <p>The same task — validate and parse a config file — expressed two very different ways.</p>
+      </div>
+    </div>
+    <div class="split">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> What the AI gave us (verbatim)</div>
+        <div class="pane-body">
+          <pre>
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, validator
+<span class="kw">from</span> typing <span class="kw">import</span> Optional, Union, Literal, Annotated
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+<span class="kw">class</span> <span class="tp">ModeEnum</span>(str, Enum):
+    fast = <span class="st">"fast"</span>; safe = <span class="st">"safe"</span>; balanced = <span class="st">"balanced"</span>
+
+<span class="kw">class</span> <span class="tp">RetryPolicy</span>(BaseModel):
+    max_retries: <span class="tp">Annotated</span>[int, Field(ge=<span class="nm">0</span>, le=<span class="nm">10</span>)] = <span class="nm">3</span>
+    backoff_factor: float = <span class="nm">1.5</span>
+    retry_on: list[int] = [<span class="nm">500</span>, <span class="nm">502</span>, <span class="nm">503</span>]
+
+<span class="kw">class</span> <span class="tp">ConnectionConfig</span>(BaseModel):
+    host: str
+    port: <span class="tp">Annotated</span>[int, Field(gt=<span class="nm">0</span>, lt=<span class="nm">65536</span>)]
+    timeout: Optional[float] = <span class="nm">30.0</span>
+    retry: RetryPolicy = Field(default_factory=RetryPolicy)
+
+<span class="kw">class</span> <span class="tp">AppConfig</span>(BaseModel):
+    mode: <span class="tp">ModeEnum</span> = <span class="tp">ModeEnum</span>.balanced
+    connection: ConnectionConfig
+    debug: bool = <span class="nm">False</span>
+    tags: Optional[list[str]] = None
+
+    <span class="dc">@validator</span>(<span class="st">'tags'</span>)
+    <span class="kw">def</span> <span class="fn">tags_must_be_lowercase</span>(cls, v):
+        <span class="kw">if</span> v: <span class="kw">return</span> [t.lower() <span class="kw">for</span> t <span class="kw">in</span> v]
+        <span class="kw">return</span> v
+<span class="cm"># ... 40 more lines of nested validators</span>
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> What we actually needed</div>
+        <div class="pane-body">
+          <pre>
+<span class="cm"># Config loader — reads a JSON/dict and returns</span>
+<span class="cm"># a plain object with sane defaults.</span>
+<span class="cm"># No external dependencies.</span>
+
+<span class="kw">def</span> <span class="fn">load_config</span>(raw: dict) -> dict:
+    <span class="st">"""
+    Expected keys (all optional):
+      host    str   default "localhost"
+      port    int   default 8080  (must be 1–65535)
+      timeout float default 30.0
+      mode    str   one of fast|safe|balanced, default balanced
+      debug   bool  default False
+    """</span>
+    port = int(raw.get(<span class="st">"port"</span>, <span class="nm">8080</span>))
+    <span class="kw">if</span> <span class="kw">not</span> (<span class="nm">1</span> <= port <= <span class="nm">65535</span>):
+        <span class="kw">raise</span> ValueError(<span class="st">f"port {port} out of range"</span>)
+
+    mode = raw.get(<span class="st">"mode"</span>, <span class="st">"balanced"</span>)
+    <span class="kw">if</span> mode <span class="kw">not in</span> {<span class="st">"fast"</span>, <span class="st">"safe"</span>, <span class="st">"balanced"</span>}:
+        <span class="kw">raise</span> ValueError(<span class="st">f"unknown mode: {mode}"</span>)
+
+    <span class="kw">return</span> {
+        <span class="st">"host"</span>: raw.get(<span class="st">"host"</span>, <span class="st">"localhost"</span>),
+        <span class="st">"port"</span>: port, <span class="st">"mode"</span>: mode,
+        <span class="st">"timeout"</span>: float(raw.get(<span class="st">"timeout"</span>, <span class="nm">30.0</span>)),
+        <span class="st">"debug"</span>: bool(raw.get(<span class="st">"debug"</span>, <span class="nm">False</span>)),
+    }
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      The Pydantic version is not wrong — it's just answering a question nobody asked. The project needed to read a config dict, validate two values, and return defaults. One function, one docstring, no external dependencies. If validation needs grow, refactor then — not pre-emptively.
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ════════════════════════════════════════════
+       EXAMPLE 6 — ONE PAGE ALGORITHM
+  ═══════════════════════════════════════════════ -->
+  <div class="example" id="ex6">
+    <div class="example-header">
+      <div class="example-number">06</div>
+      <div class="example-title-block">
+        <h2>The One-Page Algorithm</h2>
+        <p>A real algorithm — k-means clustering — as it lives in a production repo vs. as a bare-bones cheat sheet.</p>
+      </div>
+    </div>
+    <div class="split">
+      <div class="pane bad">
+        <div class="pane-label"><div class="dot"></div> What the repo looks like</div>
+        <div class="pane-body">
+          <pre>
+<span class="cm"># 11 files. Here is a partial map of what imports what:</span>
+<span class="cm">#</span>
+<span class="cm"># kmeans/</span>
+<span class="cm">#   __init__.py          → exports KMeansClusterer</span>
+<span class="cm">#   clusterer.py         → class KMeansClusterer</span>
+<span class="cm">#   initialiser.py       → class KPlusPlusInit, RandomInit</span>
+<span class="cm">#   distance.py          → class EuclideanMetric, CosineMetric</span>
+<span class="cm">#   centroid.py          → class CentroidUpdater</span>
+<span class="cm">#   convergence.py       → class ConvergenceChecker</span>
+<span class="cm">#   schemas.py           → ClusterResult, FitPayload</span>
+<span class="cm">#   exceptions.py        → KMeansConvergenceError</span>
+<span class="cm">#   utils/</span>
+<span class="cm">#     array_ops.py       → _normalise, _safe_divide</span>
+<span class="cm">#     logging.py         → structured_logger</span>
+<span class="cm">#     seed.py            → seeded_rng</span>
+<span class="cm">#</span>
+<span class="cm"># Total: ~650 lines to express a 20-line algorithm.</span>
+<span class="rd"># clusterer.py calls 6 other files before doing any math.</span>
+</pre>
+        </div>
+      </div>
+      <div class="pane good">
+        <div class="pane-label"><div class="dot"></div> The cheat sheet — the whole algorithm</div>
+        <div class="pane-body">
+          <pre>
+<span class="kw">import</span> random, math
+
+<span class="cm">"""
+K-MEANS CLUSTERING — bare bones
+================================
+1. Pick k random points as starting centroids.
+2. Assign every point to its nearest centroid.
+3. Move each centroid to the mean of its assigned points.
+4. Repeat 2-3 until assignments stop changing (or max_iter).
+"""</span>
+
+<span class="kw">def</span> <span class="fn">kmeans</span>(points, k, max_iter=<span class="nm">100</span>, seed=<span class="nm">42</span>):
+    random.seed(seed)
+    centroids = random.sample(points, k)   <span class="cm"># step 1</span>
+
+    <span class="kw">for</span> _ <span class="kw">in</span> range(max_iter):
+        <span class="cm"># step 2 — assign</span>
+        clusters = [[] <span class="kw">for</span> _ <span class="kw">in</span> range(k)]
+        <span class="kw">for</span> p <span class="kw">in</span> points:
+            nearest = min(range(k), key=<span class="kw">lambda</span> i: dist(p, centroids[i]))
+            clusters[nearest].append(p)
+
+        <span class="cm"># step 3 — update centroids</span>
+        new_c = [mean(c) <span class="kw">if</span> c <span class="kw">else</span> centroids[i]
+                 <span class="kw">for</span> i, c <span class="kw">in</span> enumerate(clusters)]
+        <span class="kw">if</span> new_c == centroids: <span class="kw">break</span>   <span class="cm"># step 4</span>
+        centroids = new_c
+
+    <span class="kw">return</span> clusters, centroids
+
+<span class="kw">def</span> <span class="fn">dist</span>(a, b): <span class="kw">return</span> math.sqrt(sum((x-y)**<span class="nm">2</span> <span class="kw">for</span> x,y <span class="kw">in</span> zip(a,b)))
+<span class="kw">def</span> <span class="fn">mean</span>(pts):  <span class="kw">return</span> [sum(x[i] <span class="kw">for</span> x <span class="kw">in</span> pts)/len(pts) <span class="kw">for</span> i <span class="kw">in</span> range(len(pts[<span class="nm">0</span>]))]
+</pre>
+        </div>
+      </div>
+    </div>
+    <div class="pane neutral" style="margin-top:1.2rem">
+      <div class="pane-label"><div class="dot"></div> What this means for the reader</div>
+      <div class="pane-body">
+        <pre>
+<span class="cm">The production repo is not wrong. For a library used at scale, those</span>
+<span class="cm">abstractions earn their weight: swappable distance metrics, structured</span>
+<span class="cm">logging, typed results. That is genuinely useful.</span>
+
+<span class="yw">BUT —</span>
+
+<span class="cm">The cheat sheet should ship alongside it. 30 lines. The plain-English</span>
+<span class="cm">steps above the code. Zero imports beyond the standard library.</span>
+<span class="cm">Any reader — regardless of Python fluency — can verify:</span>
+
+<span class="dc">  "Yes, this is k-means. I understand what it does."</span>
+
+<span class="cm">That confidence is what lets someone trust the larger repo, extend it,</span>
+<span class="cm">debug it, and adapt it to their needs without six hours of archaeology.</span>
+
+<span class="cm">The cheat sheet is not a replacement. It is an anchor.</span>
+</pre>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+    <div class="author-card">
+      <div class="author-avatar">✍</div>
+      <div class="author-info">
+        <strong>From the Desk of a Recovering Scientist-Programmer</strong>
+        A voice shaped by physics laboratories, broken imports, late-night debugging sessions, and the quiet conviction that clarity is a form of kindness.
+      </div>
+    </div>
+
+  </article>
+
+</div>
+
+<footer class="custom-footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>On the Theme</h4>
+      <ul>
+        <li>Software Complexity &amp; Modularity</li>
+        <li>The Hidden Costs of Abstraction</li>
+        <li>Documentation as Community Care</li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Further Reading</h4>
+      <ul>
+        <li><a href="#">On Technical Debt &amp; Code Legibility</a></li>
+        <li><a href="#">The Tragedy of the Archived Repo</a></li>
+        <li><a href="#">Why Scientists Write Terrible Code (And Why That's Fixable)</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Principles Explored</h4>
+      <ul>
+        <li>Bare-bones Documentation</li>
+        <li>Algorithm Transparency</li>
+        <li>Responsible Open Source</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 &nbsp;·&nbsp; Written in honesty, structured with care &nbsp;·&nbsp; The Story of Broken Structures
+  </div>
+</footer>
+<script>
+  function copyCode(btn) {
+    const pre = btn.nextElementSibling;
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      setTimeout(() => btn.textContent = 'copy', 1800);
+    });
+  }
+
+  // staggered reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.example').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(28px)';
+    el.style.transition = `opacity 0.7s ease ${i * 0.05}s, transform 0.7s ease ${i * 0.05}s`;
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
