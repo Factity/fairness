@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaling Carefully</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a0e0a;
+  --paper: #f7f3ee;
+  --rust: #b84a1c;
+  --plum: #5c1f3a;
+  --blush: #e8b4a0;
+  --fog: #c8bfb8;
+  --mist: #ede8e2;
+  --charcoal: #2e2320;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  font-family: 'Spectral', Georgia, serif;
+  color: var(--ink);
+  overflow-x: hidden;
+  font-size: 19px;
+  line-height: 1.85;
+}
+
+/* grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* scroll progress */
+#prog {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--rust), var(--plum));
+  z-index: 999; width: 0%;
+  transition: width 0.06s linear;
+}
+
+/* nav */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 48px;
+  background: rgba(247,243,238,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--fog);
+}
+.nav-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--plum);
+}
+.nav-topic {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--fog);
+  letter-spacing: 0.08em;
+}
+
+/* hero */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  position: relative; z-index: 1;
+  overflow: hidden;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--rust);
+  margin-bottom: 28px;
+  opacity: 0; transform: translateY(12px);
+  animation: fadeUp 0.7s ease 0.2s forwards;
+}
+
+.hero h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(42px, 8vw, 84px);
+  font-weight: 700; line-height: 1.08;
+  color: var(--plum);
+  margin-bottom: 32px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+}
+
+.hero-sub {
+  font-family: 'Spectral', serif;
+  font-size: clamp(16px, 2.2vw, 21px);
+  font-style: italic;
+  color: var(--charcoal);
+  max-width: 620px;
+  line-height: 1.9;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.9s ease 0.7s forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* central shield animation in hero */
+.shield-wrap {
+  margin: 56px auto 0;
+  width: 220px; height: 240px;
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1s ease 1s forwards;
+}
+
+/* page */
+.page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 80px 32px 140px;
+  position: relative; z-index: 1;
+}
+
+/* section entry */
+.chunk {
+  margin-bottom: 80px;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.chunk.vis { opacity: 1; transform: translateY(0); }
+
+/* section label */
+.section-marker {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--rust);
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-marker::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--fog), transparent);
+}
+
+h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(26px, 4.5vw, 40px);
+  font-weight: 700; color: var(--plum);
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--charcoal);
+  margin-bottom: 26px;
+  font-size: 19px;
+  line-height: 1.9;
+}
+
+em { color: var(--rust); font-style: italic; }
+strong { color: var(--plum); font-weight: 700; }
+
+/* pull quote */
+.pq {
+  margin: 48px -24px;
+  padding: 32px 36px 32px 40px;
+  border-left: 3px solid var(--rust);
+  background: var(--mist);
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: var(--plum);
+  line-height: 1.7;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.pq.vis { opacity: 1; transform: translateX(0); }
+
+/* inline animations — floaters */
+.floater-wrap {
+  display: flex; justify-content: center;
+  margin: 48px 0;
+  opacity: 0; transform: scale(0.92);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.floater-wrap.vis { opacity: 1; transform: scale(1); }
+
+/* divider wave */
+.wave {
+  width: 100%; overflow: hidden;
+  position: relative; z-index: 1;
+  margin: 0;
+}
+.wave svg { display: block; width: 100%; }
+
+/* ASL visual row */
+.asl-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin: 36px 0;
+}
+@media(max-width:600px){ .asl-row { grid-template-columns: 1fr 1fr; } }
+.asl-cell {
+  border-radius: 10px; padding: 20px 14px;
+  text-align: center; border: 1.5px solid var(--fog);
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+  cursor: default;
+}
+.asl-cell.vis { opacity: 1; transform: translateY(0); }
+.asl-cell:hover { box-shadow: 0 8px 24px rgba(92,31,58,0.14); transform: translateY(-6px); }
+.asl-n {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px; font-weight: 500;
+  display: block; margin-bottom: 8px;
+}
+.asl-d { font-family: 'Spectral', serif; font-size: 13px; font-style: italic; color: var(--charcoal); line-height: 1.5; }
+.asl-1 { background: rgba(60,140,60,0.07); border-color: #7ab87a; }
+.asl-1 .asl-n { color: #3a7a3a; }
+.asl-2 { background: rgba(180,160,20,0.07); border-color: #c8a820; }
+.asl-2 .asl-n { color: #9a7a10; }
+.asl-3 { background: rgba(184,74,28,0.09); border-color: var(--rust); }
+.asl-3 .asl-n { color: var(--rust); }
+.asl-4 { background: rgba(92,31,58,0.08); border-color: var(--plum); border-style: dashed; }
+.asl-4 .asl-n { color: var(--plum); }
+
+/* footer */
+footer {
+  text-align: center;
+  padding: 60px 24px 40px;
+  border-top: 1px solid var(--fog);
+  position: relative; z-index: 1;
+}
+footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--fog);
+  letter-spacing: 0.08em;
+}
+
+/* floating doodles — fixed corners */
+.corner-doodle {
+  position: fixed; pointer-events: none; z-index: 2; opacity: 0.1;
+}
+.cd-tl { top: 90px; left: 20px; animation: dFloat 10s ease-in-out infinite; }
+.cd-br { bottom: 60px; right: 20px; animation: dFloat 13s ease-in-out infinite reverse; }
+@keyframes dFloat {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+@media(max-width:640px){
+  .nav { padding: 14px 20px; }
+  .page { padding: 60px 20px 100px; }
+  .pq { margin: 36px 0; }
+  .asl-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Corner doodles -->
+<svg class="corner-doodle cd-tl" width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M32 6 L58 20 L58 44 Q58 56 32 60 Q6 56 6 44 L6 20 Z" stroke="#5c1f3a" stroke-width="2" stroke-dasharray="5 3"/>
+  <path d="M32 16 L48 24 L48 42 Q48 52 32 56 Q16 52 16 42 L16 24 Z" stroke="#b84a1c" stroke-width="1.5" stroke-dasharray="3 4"/>
+</svg>
+<svg class="corner-doodle cd-br" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="28" cy="28" r="22" stroke="#5c1f3a" stroke-width="2" stroke-dasharray="5 4"/>
+  <circle cx="28" cy="28" r="12" stroke="#b84a1c" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="28" cy="28" r="4" fill="#b84a1c" opacity="0.5"/>
+</svg>
+
+<div id="prog"></div>
+
+<nav class="nav">
+  <span class="nav-name">How to grow AI ?</span>
+  <span class="nav-topic">AI Governance · RSP</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">The cost of misscordination and risk of repetition</div>
+  <h1>How to grow<br><em style="color:var(--rust);font-style:italic;">AI ?</em></h1>
+  <p class="hero-sub">AI is not a developed technology — it is an emergent phenomenon. The algorithms are developed, but the measures are predicted. And when something this capable is released before we fully understand it, the responsibility falls entirely on us.</p>
+
+  <!-- HERO SHIELD -->
+  <div class="shield-wrap">
+    <svg id="shield-svg" width="220" height="240" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="sk">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="4" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <!-- outer shield -->
+      <g filter="url(#sk)" id="sg">
+        <path d="M110 14 L192 46 L192 114 Q192 176 110 210 Q28 176 28 114 L28 46 Z"
+          fill="rgba(92,31,58,0.06)" stroke="#5c1f3a" stroke-width="2.5"
+          stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M110 30 L176 58 L176 114 Q176 164 110 194 Q44 164 44 114 L44 58 Z"
+          fill="rgba(184,74,28,0.05)" stroke="#b84a1c" stroke-width="1.5"
+          stroke-linejoin="round" stroke-linecap="round"/>
+      </g>
+      <!-- center -->
+      <circle id="cn" cx="110" cy="112" r="20" fill="#5c1f3a" opacity="0.9"/>
+      <circle cx="110" cy="112" r="13" fill="#e8b4a0" opacity="0.85"/>
+      <text x="102" y="117" font-family="'DM Mono',monospace" font-size="11" font-weight="500" fill="#5c1f3a">AI</text>
+      <!-- orbit 1 -->
+      <g id="o1">
+        <circle cx="110" cy="72" r="9" fill="#5c1f3a" stroke="#e8b4a0" stroke-width="1.5"/>
+        <text x="107" y="76" font-family="'DM Mono',monospace" font-size="8" fill="#e8b4a0">S</text>
+        <circle cx="150" cy="112" r="9" fill="#b84a1c" stroke="#e8b4a0" stroke-width="1.5"/>
+        <text x="147" y="116" font-family="'DM Mono',monospace" font-size="8" fill="#f7f3ee">A</text>
+        <circle cx="110" cy="152" r="9" fill="#8a2a5a" stroke="#e8b4a0" stroke-width="1.5"/>
+        <text x="107" y="156" font-family="'DM Mono',monospace" font-size="8" fill="#e8b4a0">E</text>
+        <circle cx="70" cy="112" r="9" fill="#5c1f3a" stroke="#e8b4a0" stroke-width="1.5"/>
+        <text x="67" y="116" font-family="'DM Mono',monospace" font-size="8" fill="#e8b4a0">C</text>
+      </g>
+      <!-- orbit lines -->
+      <line x1="110" y1="132" x2="110" y2="143" stroke="rgba(184,74,28,0.5)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="110" y1="92" x2="110" y2="81" stroke="rgba(92,31,58,0.5)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="130" y1="112" x2="141" y2="112" stroke="rgba(184,74,28,0.5)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="90" y1="112" x2="79" y2="112" stroke="rgba(92,31,58,0.5)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <!-- outer dots -->
+      <g id="o2">
+        <circle cx="110" cy="44" r="5" fill="rgba(184,74,28,0.3)" stroke="#b84a1c" stroke-width="1.2"/>
+        <circle cx="170" cy="82" r="5" fill="rgba(92,31,58,0.3)" stroke="#5c1f3a" stroke-width="1.2"/>
+        <circle cx="170" cy="144" r="5" fill="rgba(184,74,28,0.3)" stroke="#b84a1c" stroke-width="1.2"/>
+        <circle cx="110" cy="180" r="5" fill="rgba(232,180,160,0.4)" stroke="#e8b4a0" stroke-width="1.2"/>
+        <circle cx="50" cy="144" r="5" fill="rgba(92,31,58,0.3)" stroke="#5c1f3a" stroke-width="1.2"/>
+        <circle cx="50" cy="82" r="5" fill="rgba(184,74,28,0.3)" stroke="#b84a1c" stroke-width="1.2"/>
+      </g>
+      <!-- pulse ring -->
+      <circle id="pr" cx="110" cy="112" r="24" fill="none" stroke="#b84a1c" stroke-width="1.5" opacity="0"/>
+      <!-- label -->
+      <text x="110" y="222" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#c8bfb8" letter-spacing="0.1em">RESPONSIBLE SCALING</text>
+      <!-- warning signals -->
+      <g id="w1" opacity="0"><path d="M42 36 L50 50 L34 50Z" fill="none" stroke="#b84a1c" stroke-width="1.5"/><text x="42" y="48" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#b84a1c">!</text></g>
+      <g id="w2" opacity="0"><path d="M176 40 L184 54 L168 54Z" fill="none" stroke="#5c1f3a" stroke-width="1.5"/><text x="176" y="52" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#5c1f3a">!</text></g>
+      <g id="w3" opacity="0"><path d="M176 162 L184 176 L168 176Z" fill="none" stroke="#b84a1c" stroke-width="1.5"/><text x="176" y="174" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#b84a1c">!</text></g>
+      <g id="w4" opacity="0"><path d="M40 162 L48 176 L32 176Z" fill="none" stroke="#5c1f3a" stroke-width="1.5"/><text x="40" y="174" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#5c1f3a">!</text></g>
+    </svg>
+  </div>
+</section>
+
+<div class="wave">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 24 Q360 0 720 24 Q1080 48 1440 24 L1440 48 L0 48Z" fill="rgba(92,31,58,0.05)"/>
+  </svg>
+</div>
+
+<!-- MAIN TEXT -->
+<div class="page">
+
+  <!-- 1 -->
+  <div class="chunk" id="c1">
+    <div class="section-marker">the scale of the problem</div>
+    <h2>Risks can be of any scale</h2>
+    <p>Especially with something as intertwined in all aspects of human life as AI. Whenever a product is marketed as a powerful, weaponized system, history has a way of resolving that ambiguity for us — it usually ends up categorized as a weapon, treated as a weapon, regulated as a weapon.</p>
+    <p>Nuclear started out as the process to build infinite energy from practically nothing. It grew to become something of a destructive force to be reckoned with — years of mandates, pushing back, long periods of negotiations. And even to this day, regulating the global nuclear supply for weapons is something beyond any one nation's scope. As efforts grew, so did tensions in the geopolitical environment — isolation, shifting dynamics between critical events, and genuine human ingenuity running headlong into policy frameworks that weren't designed for what they were trying to contain.</p>
+    <p>It is hard to bring together people to agree on just about anything. It always has been. But what we are dealing with now — this moment — is categorically different from anything that came before it.</p>
+
+    <div class="pq" id="pq1">AI is not a developed technology — it is an emergent phenomenon. The algorithms are developed, but the measures are predicted. What AI generates looks far more like the latter than the former.</div>
+
+    <p>When something as capable as AI is released before we fully understand its full scope, its potential, or even its internal workings — to say the least — it becomes our sole responsibility to mitigate harms, curb the misinformation generated from it, and understand what sort of bias it might hold. We should <strong>constitutionalize the development of it</strong>: with principles as the basis and human values as the fundamentals upon which the system grows.</p>
+  </div>
+
+  <!-- DNA helix animation -->
+  <div class="floater-wrap" id="fw1">
+    <svg width="320" height="90" viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+      <text x="160" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">THE COST OF FRAGMENTATION</text>
+      <g id="helix-g">
+        <!-- top sine wave -->
+        <path id="ht" d="M20 55 Q60 30 100 55 Q140 80 180 55 Q220 30 260 55 Q300 80 310 55" fill="none" stroke="#5c1f3a" stroke-width="2" stroke-linecap="round"/>
+        <!-- bottom sine wave -->
+        <path id="hb" d="M20 55 Q60 80 100 55 Q140 30 180 55 Q220 80 260 55 Q300 30 310 55" fill="none" stroke="#b84a1c" stroke-width="2" stroke-linecap="round"/>
+        <!-- rungs -->
+        <line x1="60" y1="42" x2="60" y2="68" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <line x1="100" y1="55" x2="100" y2="55" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <line x1="140" y1="42" x2="140" y2="68" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <line x1="180" y1="55" x2="180" y2="55" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <line x1="220" y1="42" x2="220" y2="68" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <line x1="260" y1="55" x2="260" y2="55" stroke="#e8b4a0" stroke-width="1.5" opacity="0.7"/>
+        <!-- dots on waves -->
+        <circle cx="60" cy="42" r="4" fill="#5c1f3a" opacity="0.85"/>
+        <circle cx="60" cy="68" r="4" fill="#b84a1c" opacity="0.85"/>
+        <circle cx="140" cy="42" r="4" fill="#5c1f3a" opacity="0.85"/>
+        <circle cx="140" cy="68" r="4" fill="#b84a1c" opacity="0.85"/>
+        <circle cx="220" cy="42" r="4" fill="#5c1f3a" opacity="0.85"/>
+        <circle cx="220" cy="68" r="4" fill="#b84a1c" opacity="0.85"/>
+        <circle cx="100" cy="55" r="5" fill="#e8b4a0" opacity="0.9"/>
+        <circle cx="180" cy="55" r="5" fill="#e8b4a0" opacity="0.9"/>
+        <circle cx="260" cy="55" r="5" fill="#e8b4a0" opacity="0.9"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 2 -->
+  <div class="chunk" id="c2">
+    <div class="section-marker">the cost of not working together</div>
+    <h2>Even the periodic table was discovered twice</h2>
+    <p>Mendeleev and Lothar Meyer — independently, with just a two-year gap between them. The progress could have been much faster. Years worth of work in experimental documentation could have been avoided, only if people had worked together with even a little bit of uniformity.</p>
+    <p>And then there is the NASA Mars Climate Orbiter — 1999, $125 million, crashed from a mismatch between the metric system and the imperial system. From the way units of measure are standardized to almost everything involving different people in different places working together — there is always that something that is bound to fail.</p>
+    <p>And so it is with AI safety. It has been a collection of broken fragments. I have seen multiple organizations and institutions trying to spend time and resources on similar — or almost the same — projects. While some of the mission-critical and important problems of AI safety don't get enough light. Most often the traction, the funding, the encouragement goes to the newest, most recent project — whichever one drives the initial stock price up, shows in quarterly projections, or is simply chasing the most recent buzzword.</p>
+    <p>With the ever more connected world we actually have, we have the potential to share universal standards, create an environment of clear documentation, build industry standards, and embrace open development practices. A truly <strong>responsible scaling policy</strong> — where redundancy is low and coordination is high.</p>
+  </div>
+
+  <!-- orbital animation -->
+  <div class="floater-wrap" id="fw2">
+    <svg width="280" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <text x="140" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">FRAGMENTED ORBITS</text>
+      <!-- disconnected orbital paths -->
+      <ellipse cx="70" cy="80" rx="48" ry="28" fill="none" stroke="rgba(92,31,58,0.25)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <ellipse cx="140" cy="80" rx="48" ry="28" fill="none" stroke="rgba(184,74,28,0.25)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <ellipse cx="210" cy="80" rx="48" ry="28" fill="none" stroke="rgba(92,31,58,0.25)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <!-- center nodes -->
+      <circle cx="70" cy="80" r="7" fill="#5c1f3a" opacity="0.7"/>
+      <circle cx="140" cy="80" r="7" fill="#b84a1c" opacity="0.7"/>
+      <circle cx="210" cy="80" r="7" fill="#5c1f3a" opacity="0.7"/>
+      <!-- orbiting bodies (animated via JS) -->
+      <circle id="ob1" cx="118" cy="80" r="5" fill="#e8b4a0"/>
+      <circle id="ob2" cx="188" cy="80" r="5" fill="#e8b4a0"/>
+      <circle id="ob3" cx="258" cy="80" r="5" fill="#e8b4a0"/>
+      <!-- label -->
+      <text x="70" y="84" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#f7f3ee">ORG A</text>
+      <text x="140" y="84" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#f7f3ee">ORG B</text>
+      <text x="210" y="84" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#f7f3ee">ORG C</text>
+    </svg>
+  </div>
+
+  <!-- 3 -->
+  <div class="chunk" id="c3">
+    <div class="section-marker">a pattern we keep repeating</div>
+    <h2>We build it faster than we understand it</h2>
+    <p>We deploy it faster than we govern it. And then we spend decades trying to retrofit safety onto systems designed without it. The history of dual-use technology is not encouraging reading.</p>
+    <p>Nuclear started as energy research and became the most dangerous weapons program in history. The governance scramble lasted decades and never fully resolved — we still manage nuclear risk through tension rather than resolution. Biosafety, on the other hand, gave us something better: the BSL 1–4 framework, calibrated containment, graduated response, documented risk tiers. This is precisely the kind of logic Anthropic's RSP attempts to apply to AI.</p>
+    <p>Then there was COVID and SARS — showing us what happens when a global-scale threat meets an under-coordinated global response. The economic devastation wasn't only the virus. It was the gap between what we knew and how fast we could align on it. AI safety lives in that same gap.</p>
+    <p>We are inside the window right now. The decisions being made at this moment — about deployment speed, about evaluation rigor, about international coordination — will determine whether this goes the way of nuclear governance or something better. The window is still open. Barely.</p>
+
+    <div class="pq" id="pq2">The real danger is not that the AI decides to harm us. It is that we hand someone else a perfect instrument for harm — and we call it progress.</div>
+  </div>
+
+  <!-- timeline animation -->
+  <div class="floater-wrap" id="fw3">
+    <svg width="320" height="110" viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">
+      <text x="160" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">HISTORICAL PATTERN</text>
+      <!-- timeline line -->
+      <line x1="30" y1="60" x2="290" y2="60" stroke="rgba(92,31,58,0.3)" stroke-width="1.5"/>
+      <line id="tl-prog" x1="30" y1="60" x2="30" y2="60" stroke="#b84a1c" stroke-width="2" stroke-linecap="round"/>
+      <!-- events -->
+      <circle cx="70" cy="60" r="8" fill="#5c1f3a" id="te1" opacity="0.3"/>
+      <circle cx="150" cy="60" r="8" fill="#8a2a5a" id="te2" opacity="0.3"/>
+      <circle cx="230" cy="60" r="8" fill="#b84a1c" id="te3" opacity="0.3"/>
+      <circle cx="290" cy="60" r="8" fill="#5c1f3a" id="te4" opacity="0.3" stroke="#b84a1c" stroke-width="2" stroke-dasharray="3 2"/>
+      <!-- labels below -->
+      <text x="70" y="82" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#c8bfb8">Nuclear</text>
+      <text x="150" y="82" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#c8bfb8">Biosafety</text>
+      <text x="230" y="82" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#c8bfb8">Pandemic</text>
+      <text x="290" y="82" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#b84a1c">AI</text>
+      <!-- years above -->
+      <text x="70" y="46" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#c8bfb8">1940s</text>
+      <text x="150" y="46" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#c8bfb8">1970s</text>
+      <text x="230" y="46" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#c8bfb8">2019</text>
+      <text x="290" y="46" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#b84a1c">Now</text>
+      <text x="160" y="100" text-anchor="middle" font-family="'Spectral',serif" font-size="10" font-style="italic" fill="rgba(92,31,58,0.5)">each moment, an opportunity not fully taken</text>
+    </svg>
+  </div>
+
+  <!-- 4 -->
+  <div class="chunk" id="c4">
+    <div class="section-marker">two ways this could go wrong</div>
+    <h2>The misuse scenario and the autonomy scenario</h2>
+    <p>Risks can be either due to these systems being deployed and used — their generated responses — or might be due to their very existence. What if the AI tries to break free from its constraints and manipulates its way toward achieving what it needs? This is not a hypothetical for science fiction. It is the central concern of serious alignment researchers right now.</p>
+    <p>The more obvious way this could pan out is the misuse scenario. It is more on the side of threat actors who nudge or use AI for their advantage — creating scenarios involving cyber attacks or other forms of bio and nuclear-based threats. The capability isn't just theoretical. The scaffolding exists.</p>
+    <p>The other way this could pan out is through autonomy and replication. When these systems scale, they might behave in ways that are contrary to their design — or enable deliberate misuse at a scope no individual actor could previously reach. An ASL 3 model might not have intent, but it can be an extraordinarily effective tool for those who do.</p>
+    <p>An ASL 3 model might pose a significant risk when it comes to helping develop catastrophic weapons. It neither possesses the intent nor the resources to break free or develop malicious intent in and of itself — but it can be a significantly well-developed weapon in harmful hands. That distinction matters. It means our safety frameworks need to account for the tool <em>and</em> the hands that hold it.</p>
+  </div>
+
+  <!-- two-path animation -->
+  <div class="floater-wrap" id="fw4">
+    <svg width="320" height="120" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+      <text x="160" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">TWO FAILURE PATHS</text>
+      <!-- source node -->
+      <circle cx="50" cy="66" r="12" fill="#5c1f3a"/>
+      <text x="50" y="70" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#e8b4a0">AI</text>
+      <!-- path 1 line -->
+      <path d="M62 58 Q130 30 200 40" fill="none" stroke="#b84a1c" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr2)"/>
+      <!-- path 2 line -->
+      <path d="M62 74 Q130 96 200 90" fill="none" stroke="#5c1f3a" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr2)"/>
+      <!-- end nodes -->
+      <rect x="200" y="26" width="96" height="28" rx="5" fill="rgba(184,74,28,0.12)" stroke="#b84a1c" stroke-width="1.2"/>
+      <text x="248" y="44" text-anchor="middle" font-family="'Spectral',serif" font-size="10" font-style="italic" fill="#b84a1c">Misuse by actors</text>
+      <rect x="200" y="76" width="96" height="28" rx="5" fill="rgba(92,31,58,0.1)" stroke="#5c1f3a" stroke-width="1.2"/>
+      <text x="248" y="94" text-anchor="middle" font-family="'Spectral',serif" font-size="10" font-style="italic" fill="#5c1f3a">Autonomous drift</text>
+      <!-- dot traveling path 1 -->
+      <circle id="dp1" cx="62" cy="58" r="4" fill="#b84a1c" opacity="0.85"/>
+      <circle id="dp2" cx="62" cy="74" r="4" fill="#5c1f3a" opacity="0.85"/>
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 2L8 5L2 8" fill="none" stroke="#b84a1c" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- 5 -->
+  <div class="chunk" id="c5">
+    <div class="section-marker">the standards anthropic set</div>
+    <h2>What sort of framework would most likely capture the current needs?</h2>
+    <p>Looking at our own previous exposure to threats — pandemics, with the recent memories of COVID and SARS — anything of a similar sort can be devastating for the global economy. Biosafety level standards can be an appropriate measure. Anthropic's RSP version one draws directly on this logic.</p>
+    <p>Here is the structure that was set in relation to the scale — and they are also looking at updating and potentially rolling out different standards of documentation as they scale further:</p>
+
+    <div class="asl-row">
+      <div class="asl-cell asl-1">
+        <span class="asl-n">ASL 1</span>
+        <div class="asl-d">Smaller models. The baseline from which everything else is measured.</div>
+      </div>
+      <div class="asl-cell asl-2">
+        <span class="asl-n">ASL 2</span>
+        <div class="asl-d">State of models when first published. Baseline safety in full effect.</div>
+      </div>
+      <div class="asl-cell asl-3">
+        <span class="asl-n">ASL 3</span>
+        <div class="asl-d">We need to look at what we are doing. Consultation with biological and nuclear experts.</div>
+      </div>
+      <div class="asl-cell asl-4">
+        <span class="asl-n">ASL 4</span>
+        <div class="asl-d">The frontier, still being named. The threshold we're working backward from.</div>
+      </div>
+    </div>
+
+    <p>The security posture at ASL 3 includes protection of model weights, compartmentalization, testing for ASL 4 warning signs during development, automated detection for catastrophic misuse, tight protocols on internal usage controls, and tiered access combined with vulnerability and incident detection systems. The framework must be updated constantly — not a snapshot, but a living practice.</p>
+  </div>
+
+  <!-- shield 2 — smaller floating -->
+  <div class="floater-wrap" id="fw5">
+    <svg width="260" height="96" viewBox="0 0 260 96" xmlns="http://www.w3.org/2000/svg">
+      <text x="130" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">DEPLOYMENT MEASURES</text>
+      <!-- scrolling badges simulation -->
+      <g id="dm-g">
+        <rect x="8" y="28" width="72" height="22" rx="11" fill="rgba(92,31,58,0.12)" stroke="#5c1f3a" stroke-width="1"/>
+        <text x="44" y="43" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#5c1f3a">Model Cards</text>
+        <rect x="88" y="28" width="80" height="22" rx="11" fill="rgba(184,74,28,0.1)" stroke="#b84a1c" stroke-width="1"/>
+        <text x="128" y="43" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#b84a1c">Red Teaming</text>
+        <rect x="176" y="28" width="76" height="22" rx="11" fill="rgba(92,31,58,0.12)" stroke="#5c1f3a" stroke-width="1"/>
+        <text x="214" y="43" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#5c1f3a">Tiered Access</text>
+        <rect x="30" y="58" width="90" height="22" rx="11" fill="rgba(184,74,28,0.1)" stroke="#b84a1c" stroke-width="1"/>
+        <text x="75" y="73" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#b84a1c">Weight Security</text>
+        <rect x="128" y="58" width="100" height="22" rx="11" fill="rgba(92,31,58,0.12)" stroke="#5c1f3a" stroke-width="1"/>
+        <text x="178" y="73" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#5c1f3a">Incident Detection</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 6 -->
+  <div class="chunk" id="c6">
+    <div class="section-marker">how do you actually evaluate these things</div>
+    <h2>This is the question that doesn't get enough attention</h2>
+    <p>The measurement problem is at the center of AI safety and yet it remains one of the most underdeveloped areas. Evaluations should be judged based on the best capabilities elicitation techniques — but not limited to fine-tuning, scaffolding, tool use, prompting and so on. They should be assessed based on competence and ability to use tools. The model should demonstrate initiative — the capacity to venture out and figure things out by itself.</p>
+    <p>Tasks should be appropriately scoped to what the model would actually encounter in deployment, not what makes the benchmark numbers look clean. Catastrophic capability probes are not optional — what can it help build that we'd rather it couldn't? How does it behave when deployed in the wild, not the lab? Is it consistent across contexts, not just the cherry-picked demonstration tasks?</p>
+    <p>The critical insight here is that models should be evaluated at their capability ceiling — not their average behavior. The worst-case elicitation, not the median-case output, is what determines safety relevant to catastrophic risk. A model that refuses harmful requests 95% of the time but fails 5% of the time is not safe — it is a 5% catastrophe waiting for the right moment.</p>
+
+    <div class="pq" id="pq3">We should not be asking what the model usually does. We should be asking what it can do when pushed. That is the safety-relevant question.</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="chunk" id="c7">
+    <div class="section-marker">what real coordination would look like</div>
+    <h2>The technology to coordinate globally on AI safety exists</h2>
+    <p>What is missing is not capability — it is will, and a framework compelling enough to build that will around. Every place on earth is just a day away from reaching. Communication barriers that justified fragmented science in the 18th century simply do not exist anymore.</p>
+    <p>Universal safety standards need to be shared across labs and nations — not hoarded as competitive advantage. Funding needs to be directed at mission-critical problems, not just whatever generates press coverage this quarter. Red teaming needs to be rigorous, public, and iterative — not performative. Pause mechanisms need to actually be used when thresholds are crossed — not just written into documents. Human values need to be embedded in the architecture, not bolted on after the fact as a PR layer.</p>
+    <p>The fragmentation we have now isn't just inefficient — it's dangerous. When multiple organizations are working on similar projects without coordination, we get duplicated risk surface, duplicated blind spots, and no shared early warning system. The same kind of coordination failure that caused two scientists to independently discover the periodic table, that caused a spacecraft to crash over a unit conversion — that pattern, at the scale of AI, has consequences we don't get to learn from.</p>
+  </div>
+
+  <!-- network animation -->
+  <div class="floater-wrap" id="fw6">
+    <svg width="300" height="120" viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+      <text x="150" y="16" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" letter-spacing="0.15em" fill="#c8bfb8">WHAT COORDINATION LOOKS LIKE</text>
+      <!-- connected network -->
+      <line x1="50" y1="65" x2="100" y2="45" stroke="#5c1f3a" stroke-width="1.2" opacity="0.4"/>
+      <line x1="50" y1="65" x2="100" y2="85" stroke="#5c1f3a" stroke-width="1.2" opacity="0.4"/>
+      <line x1="100" y1="45" x2="150" y2="65" stroke="#b84a1c" stroke-width="1.2" opacity="0.4"/>
+      <line x1="100" y1="85" x2="150" y2="65" stroke="#b84a1c" stroke-width="1.2" opacity="0.4"/>
+      <line x1="150" y1="65" x2="200" y2="45" stroke="#5c1f3a" stroke-width="1.2" opacity="0.4"/>
+      <line x1="150" y1="65" x2="200" y2="85" stroke="#5c1f3a" stroke-width="1.2" opacity="0.4"/>
+      <line x1="200" y1="45" x2="250" y2="65" stroke="#b84a1c" stroke-width="1.2" opacity="0.4"/>
+      <line x1="200" y1="85" x2="250" y2="65" stroke="#b84a1c" stroke-width="1.2" opacity="0.4"/>
+      <!-- cross connections -->
+      <line x1="100" y1="45" x2="200" y2="85" stroke="rgba(232,180,160,0.35)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="100" y1="85" x2="200" y2="45" stroke="rgba(232,180,160,0.35)" stroke-width="1" stroke-dasharray="3 3"/>
+      <!-- nodes -->
+      <circle cx="50" cy="65" r="9" fill="#5c1f3a"/>
+      <circle cx="100" cy="45" r="7" fill="#8a2a5a"/>
+      <circle cx="100" cy="85" r="7" fill="#8a2a5a"/>
+      <circle cx="150" cy="65" r="11" fill="#b84a1c"/>
+      <circle cx="200" cy="45" r="7" fill="#8a2a5a"/>
+      <circle cx="200" cy="85" r="7" fill="#8a2a5a"/>
+      <circle cx="250" cy="65" r="9" fill="#5c1f3a"/>
+      <!-- traveling pulses (animated) -->
+      <circle id="np1" cx="50" cy="65" r="3.5" fill="#e8b4a0" opacity="0.9"/>
+      <circle id="np2" cx="250" cy="65" r="3.5" fill="#e8b4a0" opacity="0.9"/>
+    </svg>
+  </div>
+
+  <!-- 8 -->
+  <div class="chunk" id="c8">
+    <div class="section-marker">the window is still open</div>
+    <h2>We are inside the governance window right now</h2>
+    <p>AI is an emergent phenomenon. We didn't fully design it so much as we coaxed it into being. The output it generates looks more like something that emerged than something that was built — and that has profound implications for how we govern it, how we evaluate it, and how seriously we take the possibility that we do not fully understand what we have made.</p>
+    <p>The decisions being made at this moment — about deployment speed, about evaluation rigor, about international coordination, about who gets to set the standards and how those standards get enforced — these decisions will shape the next fifty years. That is not a figure of speech.</p>
+    <p>The biosafety framework took decades to build and refine. Nuclear governance is still incomplete. But AI moves faster than either of those technologies did, and we don't have decades to figure it out. We have now. We have organizations doing real work — the RSP is a real document with real commitments — but it cannot be one organization's problem. It has to be a shared problem, approached with the seriousness it deserves.</p>
+    <p>Not fragments. A whole. Clear documentation. Industry standards. Open development practices. A responsible scaling policy where redundancy is low and coordination is high. That is what this demands. And we are the people alive in the moment when the choice still exists.</p>
+
+    <div class="pq" id="pq4">We have the tools to coordinate. We have the communication infrastructure that Mendeleev and Lothar Meyer could never have imagined. The only question now is whether we use it — or whether we look back in twenty years and wonder why we didn't.</div>
+  </div>
+
+</div><!-- end page -->
+
+
+<footer>
+  <p style="color: #b84a1c;">written with urgency, caffeine, and scribbled margins</p>
+  <p style="margin-top:8px;">Reference: Anthropic's Responsible Scaling Policy (RSP v1)</p>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', function() {
+  var st = window.scrollY;
+  var dh = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('prog').style.width = (dh > 0 ? (st / dh) * 100 : 0) + '%';
+});
+
+// Intersection observer
+var allReveal = document.querySelectorAll('.chunk, .pq, .floater-wrap, .asl-cell');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) e.target.classList.add('vis');
+  });
+}, { threshold: 0.08 });
+allReveal.forEach(function(el) { obs.observe(el); });
+
+// Stagger ASL cells
+document.querySelectorAll('.asl-cell').forEach(function(el, i) {
+  el.style.transitionDelay = (i * 0.12) + 's';
+});
+
+// ── HERO SHIELD ANIMATION ──
+var t = 0;
+var warnIds = ['w1','w2','w3','w4'];
+var wi = 0;
+
+function animShield() {
+  t += 0.016;
+
+  // pulse ring
+  var pr = document.getElementById('pr');
+  if (pr) {
+    var r = 24 + Math.sin(t * 2.2) * 10;
+    var o = 0.4 + 0.45 * Math.sin(t * 2.2);
+    pr.setAttribute('r', r);
+    pr.setAttribute('opacity', o * 0.55);
+  }
+
+  // orbit 1 rotate
+  var o1 = document.getElementById('o1');
+  if (o1) o1.setAttribute('transform', 'rotate(' + (t * 22) + ',110,112)');
+
+  // orbit 2 counter
+  var o2 = document.getElementById('o2');
+  if (o2) o2.setAttribute('transform', 'rotate(' + (-t * 14) + ',110,112)');
+
+  // shield wobble
+  var sg = document.getElementById('sg');
+  if (sg) sg.setAttribute('transform', 'translate(' + Math.sin(t * 0.6) * 1.5 + ',' + Math.cos(t * 0.4) * 1 + ')');
+
+  // center pulse
+  var cn = document.getElementById('cn');
+  if (cn) {
+    var s = 1 + 0.05 * Math.sin(t * 1.8);
+    cn.setAttribute('transform', 'translate(110,112) scale(' + s + ') translate(-110,-112)');
+  }
+
+  // warning blink
+  if (Math.floor(t * 0.45) !== Math.floor((t - 0.016) * 0.45)) {
+    warnIds.forEach(function(id) { var el = document.getElementById(id); if(el) el.setAttribute('opacity','0'); });
+    wi = (wi + 1) % warnIds.length;
+    var we = document.getElementById(warnIds[wi]);
+    if (we) {
+      we.setAttribute('opacity', '0.9');
+      setTimeout(function() { if(we) we.setAttribute('opacity','0'); }, 700);
+    }
+  }
+
+  requestAnimationFrame(animShield);
+}
+animShield();
+
+// ── ORBITING BODIES (fragmented orbits) ──
+function animOrbits() {
+  var t2 = Date.now() / 1000;
+  var bodies = [
+    { id: 'ob1', cx: 70, cy: 80, rx: 48, ry: 28, phase: 0 },
+    { id: 'ob2', cx: 140, cy: 80, rx: 48, ry: 28, phase: 1 },
+    { id: 'ob3', cx: 210, cy: 80, rx: 48, ry: 28, phase: 2 }
+  ];
+  bodies.forEach(function(b) {
+    var el = document.getElementById(b.id);
+    if (el) {
+      var angle = t2 * 1.2 + b.phase * 2;
+      var x = b.cx + b.rx * Math.cos(angle);
+      var y = b.cy + b.ry * Math.sin(angle);
+      el.setAttribute('cx', x);
+      el.setAttribute('cy', y);
+    }
+  });
+  requestAnimationFrame(animOrbits);
+}
+animOrbits();
+
+// ── TIMELINE PROGRESS ──
+function animTimeline() {
+  var t3 = (Date.now() % 4000) / 4000;
+  var tl = document.getElementById('tl-prog');
+  if (tl) {
+    var x2 = 30 + t3 * 260;
+    tl.setAttribute('x2', x2);
+    var nodes = [{id:'te1',at:0.15},{id:'te2',at:0.4},{id:'te3',at:0.65},{id:'te4',at:0.9}];
+    nodes.forEach(function(n) {
+      var el = document.getElementById(n.id);
+      if (el) el.setAttribute('opacity', t3 >= n.at ? '1' : '0.3');
+    });
+  }
+  requestAnimationFrame(animTimeline);
+}
+animTimeline();
+
+// ── PATH DOTS (two-path) ──
+function animPaths() {
+  var t4 = (Date.now() % 2800) / 2800;
+  var p1 = document.getElementById('dp1');
+  var p2 = document.getElementById('dp2');
+  // path 1: Q 62,58 -> 130,30 -> 200,40
+  // path 2: Q 62,74 -> 130,96 -> 200,90
+  function quadBez(t, x0,y0, x1,y1, x2,y2) {
+    var mt = 1-t;
+    return { x: mt*mt*x0 + 2*mt*t*x1 + t*t*x2, y: mt*mt*y0 + 2*mt*t*y1 + t*t*y2 };
+  }
+  if (p1) {
+    var pt1 = quadBez(t4, 62,58, 130,30, 200,40);
+    p1.setAttribute('cx', pt1.x); p1.setAttribute('cy', pt1.y);
+  }
+  if (p2) {
+    var pt2 = quadBez(t4, 62,74, 130,96, 200,90);
+    p2.setAttribute('cx', pt2.x); p2.setAttribute('cy', pt2.y);
+  }
+  requestAnimationFrame(animPaths);
+}
+animPaths();
+
+// ── NETWORK PULSES ──
+function animNetwork() {
+  var tn = (Date.now() % 3200) / 3200;
+  var np1 = document.getElementById('np1');
+  var np2 = document.getElementById('np2');
+  // np1: 50,65 -> 150,65
+  // np2: 250,65 -> 150,65
+  if (np1) { np1.setAttribute('cx', 50 + tn * 200); np1.setAttribute('cy', 65); }
+  if (np2) { np2.setAttribute('cx', 250 - tn * 200); np2.setAttribute('cy', 65); }
+  requestAnimationFrame(animNetwork);
+}
+animNetwork();
+
+// ── HELIX WAVE ANIMATION ──
+function animHelix() {
+  var th = Date.now() / 1000;
+  var ht = document.getElementById('ht');
+  var hb = document.getElementById('hb');
+  var offset = Math.sin(th * 1.5) * 8;
+  if (ht) ht.setAttribute('d', 'M20 ' + (55 + offset) + ' Q60 ' + (30 - offset) + ' 100 ' + (55 + offset) + ' Q140 ' + (80 - offset) + ' 180 ' + (55 + offset) + ' Q220 ' + (30 - offset) + ' 260 ' + (55 + offset) + ' Q300 ' + (80 - offset) + ' 310 ' + (55 + offset));
+  if (hb) hb.setAttribute('d', 'M20 ' + (55 + offset) + ' Q60 ' + (80 - offset) + ' 100 ' + (55 + offset) + ' Q140 ' + (30 + offset) + ' 180 ' + (55 + offset) + ' Q220 ' + (80 - offset) + ' 260 ' + (55 + offset) + ' Q300 ' + (30 + offset) + ' 310 ' + (55 + offset));
+  requestAnimationFrame(animHelix);
+}
+animHelix();
+
+// ── BADGE BREATHE ──
+function animBadges() {
+  var tb = Date.now() / 1000;
+  var dmg = document.getElementById('dm-g');
+  if (dmg) {
+    var s = 1 + 0.015 * Math.sin(tb * 1.2);
+    dmg.setAttribute('transform', 'translate(130,55) scale(' + s + ') translate(-130,-55)');
+  }
+  requestAnimationFrame(animBadges);
+}
+animBadges();
+</script>
+</body>
+</html>
