@@ -1,0 +1,569 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normalization, Standardization & Geometric Aspects in Deep Learning</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.7; max-width: 1000px; margin: 40px auto; padding: 20px; color: #333; }
+        h1, h2, h3 { color: #1a1a1a; }
+        .section { margin-bottom: 60px; }
+        .math { background: #f8f9fa; padding: 15px; border-left: 4px solid #0066cc; margin: 15px 0; overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f2f2f2; }
+        ul { padding-left: 25px; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Normalization, Standardization, and Geometric Perspectives in Neural Network Training</h1>
+    <p>This document explores the challenges of exploding and vanishing gradients, normalization techniques, their mathematical foundations, applications across different neural architectures, and advanced geometric concepts in the parameter space.</p>
+</header>
+
+<section class="section">
+    <h2>Exploding and Vanishing Gradients: Causes, Consequences, and Mitigation</h2>
+    
+    <h3>Causes</h3>
+    <p>In deep neural networks, gradients are computed via the chain rule during backpropagation. For a feedforward network, the gradient with respect to weights in early layers involves products of derivatives from subsequent layers.</p>
+    
+    <div class="math">
+        If \( \frac{\partial L}{\partial a^{(l)}} \) denotes the gradient flowing into layer \( l \), then:
+        \[ \frac{\partial L}{\partial W^{(l)}} \propto \frac{\partial L}{\partial a^{(l+1)}} \cdot \sigma'(z^{(l)}) \cdot x^{(l)} \]
+        where repeated multiplication of terms \( |\sigma'(z)| < 1 \) (e.g., sigmoid) or \( >1 \) leads to vanishing or exploding gradients.
+    </div>
+    
+    <h3>Consequences</h3>
+    <ul>
+        <li><strong>Vanishing Gradients</strong>: Early layers receive near-zero updates → the network fails to learn meaningful features. Training stalls.</li>
+        <li><strong>Exploding Gradients</strong>: Weights grow uncontrollably, leading to NaN values, unstable training, or divergence.</li>
+        <li>Particularly severe in Recurrent Neural Networks (RNNs) due to unrolling over many time steps.</li>
+    </ul>
+    
+    <h3>Mitigation Strategies</h3>
+    <ul>
+        <li>Proper weight initialization (e.g., Xavier/He)</li>
+        <li>ReLU and variants as activation functions</li>
+        <li>Gradient clipping</li>
+        <li><strong>Normalization techniques</strong> (BatchNorm, LayerNorm)</li>
+        <li>Residual connections (skip connections)</li>
+    </ul>
+    
+    <p>The "radius" or "epsilon region" in optimization refers to the local curvature and trust region around current parameters. Tuning learning rates and normalization helps control the effective step size in this parametric space, significantly impacting learning speed.</p>
+</section>
+
+<section class="section">
+    <h2>Normalization and Standardization Techniques</h2>
+    
+    <p>Normalization scales inputs, activations, or weights to stable ranges, reducing internal covariate shift and enabling higher learning rates.</p>
+    
+    <h3>Common Feature Scaling Methods</h3>
+    <table>
+        <tr><th>Method</th><th>Formula</th><th>Use Case</th></tr>
+        <tr><td>Min-Max Normalization</td><td>\( x' = \frac{x - \min}{\max - \min} \)</td><td>Bounded features [0,1]</td></tr>
+        <tr><td>Z-score (Standardization)</td><td>\( x' = \frac{x - \mu}{\sigma} \)</td><td>Gaussian-like data</td></tr>
+        <tr><td>Max-Abs Scaling</td><td>\( x' = \frac{x}{\max(|x|)} \)</td><td>Sparse data</td></tr>
+        <tr><td>Robust Scaling</td><td>\( x' = \frac{x - \text{median}}{IQR} \)</td><td>Outlier-prone data</td></tr>
+        <tr><td>Log Normalization</td><td>\( x' = \log(x + c) \)</td><td>Skewed positive data</td></tr>
+        <tr><td>Quantile Transformation</td><td>Rank-based mapping to uniform/normal</td><td>Non-parametric</td></tr>
+        <tr><td>Box-Cox Transformation</td><td>\( x^{(\lambda)} = \frac{x^\lambda - 1}{\lambda} \) (for \(\lambda \neq 0\))</td><td>Stabilizing variance</td></tr>
+    </table>
+    
+    <p>These methods can yield very different results depending on the mini-batch statistics, especially in small batches or non-stationary data like in RNNs.</p>
+    
+    <h3>Clipping and Other Techniques</h3>
+    <p>Gradient clipping limits the norm of gradients: \( g \leftarrow g \cdot \frac{c}{\|g\|} \) if \( \|g\| > c \). Weight clipping or max-abs scaling on weights is also used.</p>
+</section>
+
+<section class="section">
+    <h2>Mathematical Formulation of Neural Networks</h2>
+    
+    <h3>Feedforward Neural Network (FFNN / MLP)</h3>
+    <div class="math">
+        For layer \( l \):
+        \[ z^{(l)} = W^{(l)} a^{(l-1)} + b^{(l)} \]
+        \[ a^{(l)} = \sigma(z^{(l)}) \]
+        where \( a^{(0)} = x \) (input), \( \sigma \) is the activation function.
+        
+        Loss: \( L = \frac{1}{N} \sum \ell(y, \hat{y}) \)
+    </div>
+    
+    <h3>Recurrent Neural Network (RNN)</h3>
+    <div class="math">
+        At time step \( t \):
+        \[ h_t = \sigma(W_{hh} h_{t-1} + W_{xh} x_t + b_h) \]
+        \[ y_t = W_{hy} h_t + b_y \]
+        Gradients flow through time via repeated matrix multiplications, amplifying vanishing/exploding issues.
+    </div>
+    
+    <h3>Other Architectures</h3>
+    <ul>
+        <li><strong>CNNs</strong>: Use convolutions instead of dense layers; normalization often per-channel.</li>
+        <li><strong>Transformers</strong>: Self-attention + feedforward; LayerNorm is standard before/after sub-layers.</li>
+        <li><strong>LSTMs/GRUs</strong>: Gated variants of RNNs to mitigate vanishing gradients.</li>
+    </ul>
+</section>
+
+<section class="section">
+    <h2>Batch Normalization (BatchNorm)</h2>
+    
+    <p>BatchNorm normalizes activations across the mini-batch for each feature.</p>
+    
+    <div class="math">
+        For a mini-batch \( \mathcal{B} = \{x_1, \dots, x_m\} \):
+        \[ \mu_\mathcal{B} = \frac{1}{m} \sum_{i=1}^m x_i \]
+        \[ \sigma_\mathcal{B}^2 = \frac{1}{m} \sum_{i=1}^m (x_i - \mu_\mathcal{B})^2 \]
+        \[ \hat{x}_i = \frac{x_i - \mu_\mathcal{B}}{\sqrt{\sigma_\mathcal{B}^2 + \epsilon}} \]
+        \[ y_i = \gamma \hat{x}_i + \beta \]
+        where \( \gamma, \beta \) are learnable scale and shift parameters. \( \epsilon \) (e.g., \( 10^{-5} \)) ensures numerical stability.
+    </div>
+    
+    <h3>Application</h3>
+    <ul>
+        <li><strong>Feedforward & CNNs</strong>: Applied per feature/channel across batch and spatial dimensions (for CNNs).</li>
+        <li><strong>RNNs</strong>: Possible but less ideal due to varying sequence lengths and small effective batch sizes; statistics become noisy.</li>
+    </ul>
+    
+    <h3>Pros and Cons of BatchNorm</h3>
+    <table>
+        <tr><th>Pros</th><th>Cons</th></tr>
+        <tr><td>Reduces internal covariate shift<br>Allows higher learning rates<br>Acts as regularizer<br>Faster convergence</td><td>Depends on batch size (noisy for small batches)<br>Different behavior at train vs inference (uses running averages)<br>Not suitable for RNNs/Transformers with variable lengths or batch size=1</td></tr>
+    </table>
+</section>
+
+<section class="section">
+    <h2>Layer Normalization (LayerNorm)</h2>
+    
+    <p>LayerNorm normalizes across features for each individual example, independent of batch.</p>
+    
+    <div class="math">
+        For input vector \( x = [x_1, \dots, x_H] \) (H features):
+        \[ \mu = \frac{1}{H} \sum_{i=1}^H x_i \]
+        \[ \sigma^2 = \frac{1}{H} \sum_{i=1}^H (x_i - \mu)^2 \]
+        \[ \hat{x}_i = \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} \]
+        \[ y_i = \gamma \hat{x}_i + \beta \]
+    </div>
+    
+    <h3>Application</h3>
+    <ul>
+        <li><strong>Feedforward Networks</strong>: Works well but BatchNorm often preferred for large batches.</li>
+        <li><strong>RNNs</strong>: Excellent choice — normalizes hidden states at each time step independently of sequence length or batch size.</li>
+        <li><strong>Transformers</strong>: Standard practice (pre-norm or post-norm).</li>
+    </ul>
+    
+    <h3>Pros and Cons of LayerNorm</h3>
+    <table>
+        <tr><th>Pros</th><th>Cons</th></tr>
+        <tr><td>Independent of batch size<br>Consistent at train/inference<br>Works well with RNNs and variable-length sequences<br>Stabilizes training in sequence models</td><td>May be computationally slightly more expensive in some cases<br>Does not benefit from batch statistics (less regularization effect in large-batch CNNs)</td></tr>
+    </table>
+</section>
+
+<section class="section">
+    <h2>Weight Normalization and Other Techniques</h2>
+    
+    <p>Most people associate normalization with activations, but weight normalization is also common.</p>
+    
+    <div class="math">
+        Weight Normalization (Salimans et al.):
+        \[ w = \frac{g}{\|v\|} v \]
+        where \( v \) is the direction vector and \( g \) is a scalar magnitude. This decouples length from direction.
+    </div>
+    
+    <p>Other methods include RMSNorm (used in some modern transformers) and GroupNorm.</p>
+    
+    <h3>Benefits of Normalization</h3>
+    <ul>
+        <li>Stabilizes gradient flow</li>
+        <li>Reduces sensitivity to initialization</li>
+        <li>Enables faster training with larger learning rates</li>
+        <li>Improves generalization in many cases</li>
+    </ul>
+</section>
+
+<section class="section">
+    <h2>Invariance Under Weights and Data Transformations</h2>
+    
+    <p>Normalization introduces certain invariances. BatchNorm is invariant to scaling/shifting of inputs within statistical limits. LayerNorm provides per-example invariance.</p>
+    
+    <p><strong>Weight Rescaling and Re-parameterization</strong>: Techniques like WeightNorm make the optimization landscape better conditioned by separating magnitude and direction. Re-entering (re-parameterizing) weights can preserve functional equivalence while changing the geometry of the optimization problem.</p>
+</section>
+
+<section class="section">
+    <h2>Geometry of the Parameter Space During Learning</h2>
+    
+    <p>The parameter space \( \Theta \) of a neural network is high-dimensional. Standard gradient descent assumes a Euclidean metric. However, the loss landscape is highly non-convex and curved.</p>
+    
+    <h3>Riemannian Metric</h3>
+    <p>A Riemannian manifold equips the space with a metric tensor \( G(\theta) \), a positive definite matrix that defines local distances and inner products.</p>
+    
+    <div class="math">
+        The natural gradient uses the Fisher Information Matrix \( F \) as the Riemannian metric:
+        \[ \tilde{\nabla} L = F^{-1} \nabla L \]
+        This provides the steepest descent direction with respect to the information geometry rather than Euclidean distance.
+        
+        In neural networks, the parameter space has a natural Riemannian structure induced by the output distribution or the loss.
+    </div>
+    
+    <p>Reparameterization (e.g., via normalization) changes coordinates but the intrinsic geometry (invariance properties) can be preserved under affine transformations when using appropriate metrics.</p>
+    
+    <p>Understanding this geometry helps design better optimizers (e.g., natural gradient methods, K-FAC) that respect the curvature of the loss surface.</p>
+</section>
+
+<section class="section">
+    <h2>Normalized Generalized Linear Models (GLMs)</h2>
+    
+    <p>Generalized Linear Models extend linear regression to non-Gaussian distributions via a link function:</p>
+    
+    <div class="math">
+        \[ g(\mu) = \eta = X\beta \]
+        where \( \mu = \mathbb{E}[Y] \), \( g \) is the link function, and \( Y \) follows an exponential family distribution.
+    </div>
+    
+    <p><strong>Normalized GLMs</strong> incorporate normalization of predictors or responses before fitting. This improves numerical stability, especially when features have vastly different scales. In the context of neural networks, normalized GLMs can be seen as a shallow case where the output layer is a GLM with normalized inputs.</p>
+    
+    <p>Benefits include better conditioning of the design matrix and faster convergence of iterative solvers (e.g., IRLS - Iteratively Reweighted Least Squares).</p>
+</section>
+
+<footer>
+    <p>This document provides a comprehensive overview with consistent mathematical notation. Key variables: \( \mu \) for mean, \( \sigma^2 \) for variance, \( \epsilon \) for stability, \( \gamma, \beta \) for affine parameters in normalization layers.</p>
+    <p>Understanding these concepts is crucial for designing stable and efficient deep learning training algorithms.</p>
+</footer>
+
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning Theory • Normalization & Geometry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Blue & Red Design Palette */
+            --blue-deep: #0a2540;
+            --blue-rich: #1e3a8a;
+            --blue-medium: #3b82f6;
+            --blue-light: #dbeafe;
+            
+            --red-deep: #7f1d1d;
+            --red-rich: #b91c1c;
+            --red-medium: #ef4444;
+            --red-light: #fee2e2;
+            
+            --neutral-950: #0f172a;
+            --neutral-900: #1e2937;
+            --neutral-100: #f8fafc;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            
+            --accent-blue: #2563eb;
+            --accent-red: #dc2626;
+            
+            --page: #fdfdfd;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            
+            --font-serif: 'EB Garamond', Georgia, serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 18px; scroll-behavior: smooth; }
+        
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.75;
+            color: var(--neutral-950);
+            background: var(--page);
+            font-feature-settings: "kern" 1, "liga" 1;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .site-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 0;
+        }
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.85rem;
+            font-weight: 600;
+            color: var(--blue-rich);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .logo span {
+            color: var(--red-medium);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 600;
+            line-height: 1.25;
+            color: var(--blue-deep);
+        }
+        h1 { font-size: 2.8rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.1rem; margin: 3rem 0 1.25rem; }
+        h3 { font-size: 1.55rem; margin: 2.5rem 0 1rem; color: var(--red-rich); }
+
+        .lead {
+            font-size: 1.22rem;
+            color: #475569;
+            line-height: 1.85;
+            margin-bottom: 2rem;
+        }
+
+        /* Math Blocks */
+        .math-block {
+            background: #f8fafc;
+            border-left: 5px solid var(--accent-blue);
+            padding: 1.75rem 2rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            overflow-x: auto;
+            font-size: 1.1rem;
+            line-height: 1.65;
+        }
+
+        .math-inline {
+            font-family: var(--font-mono);
+            background: #f1f5f9;
+            padding: 0.15em 0.45em;
+            border-radius: 4px;
+            border: 1px solid var(--neutral-300);
+            color: var(--blue-rich);
+        }
+
+        /* Theorem Environments */
+        .thm-env {
+            padding: 1.75rem 2rem;
+            margin: 2.5rem 0;
+            border-radius: 12px;
+            border-left: 6px solid;
+            background: var(--card);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .thm { border-color: var(--accent-blue); }
+        .defn { border-color: var(--red-medium); }
+        .note { border-color: var(--red-rich); background: var(--red-light); }
+
+        .thm-env__label {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            color: var(--blue-rich);
+        }
+
+        /* Tables */
+        .math-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2.5rem 0;
+            font-size: 0.95rem;
+        }
+        .math-table th {
+            background: var(--blue-deep);
+            color: white;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .math-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .math-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Pros & Cons */
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .pros {
+            background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            padding: 1.75rem;
+            border-radius: 12px;
+        }
+        .cons {
+            background: linear-gradient(145deg, #fef2f2, #fee2e2);
+            border: 1px solid #fecaca;
+            padding: 1.75rem;
+            border-radius: 12px;
+        }
+
+        .highlight-blue { color: var(--accent-blue); }
+        .highlight-red { color: var(--accent-red); }
+
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="#" class="logo">Neural<span>Theory</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Normalization, Standardization &amp; Geometric Aspects<br>of Deep Learning</h1>
+        <p class="lead">An in-depth exploration of exploding and vanishing gradients, normalization techniques, and the Riemannian geometry underlying neural network optimization.</p>
+
+        <section>
+            <h2>1. Exploding and Vanishing Gradients</h2>
+            
+            <p>In deep networks, gradients are computed via backpropagation using the chain rule. This leads to repeated multiplication of Jacobian terms across layers.</p>
+            
+            <div class="math-block">
+                For a feedforward network, the gradient w.r.t. weights in layer \( l \) is:<br><br>
+                \[ \frac{\partial L}{\partial W^{(l)}} = \frac{\partial L}{\partial a^{(l)}} \cdot \sigma'(z^{(l)}) \cdot a^{(l-1)\top} \]
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <strong>Consequences of Vanishing Gradients:</strong>
+                    <ul style="margin-top:0.75rem;">
+                        <li>Early layers stop learning</li>
+                        <li>Training plateaus</li>
+                        <li>Poor feature representation</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <strong>Consequences of Exploding Gradients:</strong>
+                    <ul style="margin-top:0.75rem;">
+                        <li>Instability and divergence</li>
+                        <li>NaN values during training</li>
+                        <li>Catastrophic weight updates</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. Normalization Techniques</h2>
+            
+            <h3>Batch Normalization</h3>
+            <div class="math-block">
+                For a mini-batch \( \mathcal{B} \):
+                \[ \mu_{\mathcal{B}} = \frac{1}{m}\sum_{i=1}^{m} x_i, \quad 
+                \sigma_{\mathcal{B}}^2 = \frac{1}{m}\sum_{i=1}^{m} (x_i - \mu_{\mathcal{B}})^2 \]
+                \[ \hat{x}_i = \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^2 + \epsilon}} \]
+                \[ y_i = \gamma \hat{x}_i + \beta \]
+            </div>
+
+            <h3>Layer Normalization</h3>
+            <div class="math-block">
+                For a single sample with features \( x = (x_1, \dots, x_H) \):
+                \[ \mu = \frac{1}{H}\sum_{i=1}^{H} x_i, \quad 
+                \sigma^2 = \frac{1}{H}\sum_{i=1}^{H} (x_i - \mu)^2 \]
+                \[ \hat{x}_i = \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} \]
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Application to Different Architectures</h2>
+            
+            <table class="math-table">
+                <thead>
+                    <tr>
+                        <th>Architecture</th>
+                        <th>Recommended Normalization</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Feedforward Networks (MLP)</td>
+                        <td>BatchNorm</td>
+                        <td>Large batch sizes available</td>
+                    </tr>
+                    <tr>
+                        <td>Convolutional Networks (CNN)</td>
+                        <td>BatchNorm</td>
+                        <td>Works well with spatial dimensions</td>
+                    </tr>
+                    <tr>
+                        <td>Recurrent Networks (RNN/LSTM)</td>
+                        <td>LayerNorm</td>
+                        <td>Independent of batch size and sequence length</td>
+                    </tr>
+                    <tr>
+                        <td>Transformers</td>
+                        <td>LayerNorm (Pre-norm)</td>
+                        <td>Standard in modern architectures</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>4. Geometry of the Parameter Space</h2>
+            
+            <p>The loss landscape of neural networks is a high-dimensional Riemannian manifold. The choice of metric significantly affects optimization dynamics.</p>
+            
+            <div class="math-block">
+                Natural Gradient Descent uses the Fisher Information Matrix \( F \) as the Riemannian metric:
+                \[ \tilde{\nabla} L(\theta) = F(\theta)^{-1} \nabla L(\theta) \]
+            </div>
+
+            <p>Normalization techniques (especially Weight Normalization and LayerNorm) improve the <strong>conditioning</strong> of the optimization problem by making the parameter space more isotropic.</p>
+        </section>
+
+        <section>
+            <h2>5. Invariance Properties</h2>
+            <div class="thm-env thm">
+                <div class="thm-env__label">Key Insight</div>
+                <p>Layer Normalization introduces <strong>scale invariance</strong> per example, while Batch Normalization provides statistical stabilization across the mini-batch.</p>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container" style="text-align:center;">
+                <p><strong>Neural Theory</strong> — Understanding the Mathematics Behind Deep Learning</p>
+                <p style="margin-top:0.5rem; font-size:0.85rem;">Blue &amp; Red Edition • April 2026</p>
+            </div>
+        </footer>
+    </main>
+</body>
+</html>
