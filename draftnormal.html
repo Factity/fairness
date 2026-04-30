@@ -1610,14 +1610,462 @@ blockquote cite::before { content: '— '; }
       <div class="thm-env__label">Example 3.1</div>
       <div class="thm-env__body">The real line ℝ with the standard absolute value metric is a complete metric space. The open interval (0, 1) is not.</div>
     </div>
-    <div class="thm-env rmk">
-      <div class="thm-env__label">Remark</div>
-      <div class="thm-env__body">The condition of completeness is crucial; many classical theorems (Baire Category, Banach Fixed Point) require it as a hypothesis.</div>
-    </div>
-    <div class="thm-env note">
-      <div class="thm-env__label">⚠ Important Note</div>
-      <div class="thm-env__body">Do not confuse completeness with compactness. A complete space need not be compact, and a compact space need not be complete in general.</div>
-    </div>
+  <div class="thm-env thm">
+  <div class="thm-env__label">Paradigm 1.2 <span class="thm-env__title">(Empirical Risk Minimization — Classical)</span></div>
+  <div class="thm-env__body">
+    \[
+    \theta^* \in \arg\min_{\theta} \; \mathbb{E}_{z \sim \mathcal{D}}[L_\theta(z)]
+    \]
+    where \( \mathcal{D} \) is a finite dataset of size \( n \), and \( L_\theta(z) \) is a loss parametrized by \( \theta \). The goal is to find any global minimizer of the empirical risk.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Paradigm 1.3 <span class="thm-env__title">(Implicit Regularization of Stochastic Optimization)</span></div>
+  <div class="thm-env__body">
+    \[
+    \theta_T \sim \mathcal{A}\bigl( \theta \mapsto \nabla_\theta \mathbb{E}_{z \sim \mathcal{D}}[L_\theta(z)] \bigr)
+    \]
+    Here \( \mathcal{A} \) is a stochastic algorithm (e.g., SGD with mini‑batches) that runs for finite time \( T \) and returns \( \theta_T \). The optimizer’s trajectory, early stopping, and numerical precision induce an implicit bias, selecting a specific global minimum among infinitely many.
+  </div>
+</div>
+
+<div class="thm-env rmk">
+  <div class="thm-env__label">Remark</div>
+  <div class="thm-env__body">
+    For overparameterized neural networks, the empirical risk landscape has many global minima that all achieve zero training loss. The optimizer (not just the loss) determines which minimum is found — and thus whether the model generalizes.
+  </div>
+</div>
+
+<div class="thm-env note">
+  <div class="thm-env__label">⚠ Important Note</div>
+  <div class="thm-env__body">
+    The implicit bias depends crucially on algorithmic details: momentum, adaptive learning rates (Adam), gradient clipping, and even floating‑point precision (float16 vs float32) act as regularizers.
+  </div>
+</div>
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 2 (Lipschitz Constant)</div>
+  <div class="thm-env__body">
+    The function \(f: \mathbb{R}^m \to \mathbb{R}^n\) is said to be \(L\)-Lipschitz for the \(\ell_2\) norm if for every \(x, y \in \mathbb{R}^m\) we have:
+    
+    \[
+    \| f(x) - f(y) \|_2 \leq L \| x - y \|_2. \tag{1.3}
+    \]
+    
+    <br>
+    Per Rademacher's theorem (Simon et al., 1983), its gradient is bounded: \(\|\nabla f\| \leq L\). Reciprocally, continuous functions with gradient bounded by \(L\) are \(L\)-Lipschitz.
+    
+    <br><br>
+    Another tool that will come handy is related to the convexity of a function.
+  </div>
+</div>
+
+<!-- Visualization: Lipschitz condition (fixed layout) -->
+<div style="margin-top: 2rem; text-align: center;">
+  <svg width="740" height="460" viewBox="0 0 740 460" style="max-width:100%; overflow:visible; background: #ffffff; border: 1px solid #ccc; border-radius: 12px; font-family: 'Times New Roman', Georgia, serif;">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+      </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="370" y="35" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e293b">Visualizing the Lipschitz Condition</text>
+
+    <!-- ===== LEFT PANEL: Function plot ===== -->
+    <g transform="translate(0, 0)">
+      <!-- Axes -->
+      <line x1="85" y1="360" x2="340" y2="360" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+      <line x1="85" y1="360" x2="85" y2="50" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+      
+      <text x="350" y="385" text-anchor="middle" font-size="13" fill="#333">Input space \(x\)</text>
+      <text x="55" y="45" text-anchor="middle" font-size="13" fill="#333">\(f(x)\)</text>
+
+      <!-- A smooth Lipschitz function -->
+      <path d="M85,320 Q120,290 160,260 Q200,230 235,190 Q270,140 305,100 Q325,75 340,65" 
+            fill="none" stroke="#2563eb" stroke-width="2.8"/>
+      
+      <text x="340" y="50" text-anchor="start" font-size="12" fill="#2563eb" font-weight="bold">\(f\) (L-Lipschitz)</text>
+
+      <!-- Two points -->
+      <circle cx="130" cy="305" r="5" fill="#dc2626"/>
+      <text x="130" y="385" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="bold">\(x\)</text>
+      
+      <circle cx="255" cy="165" r="5" fill="#dc2626"/>
+      <text x="255" y="395" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="bold">\(y\)</text>
+
+      <!-- Projection lines -->
+      <line x1="130" y1="305" x2="130" y2="360" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="255" y1="165" x2="255" y2="360" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="85" y1="305" x2="130" y2="305" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="85" y1="165" x2="255" y2="165" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- f(x) and f(y) labels -->
+      <text x="65" y="310" text-anchor="end" font-size="12" fill="#dc2626">\(f(x)\)</text>
+      <text x="65" y="170" text-anchor="end" font-size="12" fill="#dc2626">\(f(y)\)</text>
+
+      <!-- Horizontal brace for ||x-y|| -->
+      <line x1="130" y1="405" x2="255" y2="405" stroke="#eab308" stroke-width="2"/>
+      <line x1="130" y1="398" x2="130" y2="412" stroke="#eab308" stroke-width="2"/>
+      <line x1="255" y1="398" x2="255" y2="412" stroke="#eab308" stroke-width="2"/>
+      <text x="192" y="428" text-anchor="middle" font-size="12" fill="#ca8a04" font-weight="bold">\(\|x - y\|\)</text>
+
+      <!-- Vertical brace for ||f(x)-f(y)|| -->
+      <line x1="60" y1="305" x2="60" y2="165" stroke="#eab308" stroke-width="2"/>
+      <line x1="53" y1="305" x2="67" y2="305" stroke="#eab308" stroke-width="2"/>
+      <line x1="53" y1="165" x2="67" y2="165" stroke="#eab308" stroke-width="2"/>
+      <text x="45" y="240" text-anchor="end" font-size="12" fill="#ca8a04" font-weight="bold">\(\|f(x)-f(y)\|\)</text>
+
+      <!-- Inequality annotation -->
+      <text x="210" y="440" text-anchor="middle" font-size="11" fill="#475569">Lipschitz inequality: output change ≤ L × input change</text>
+    </g>
+
+    <!-- ===== RIGHT PANEL: Cone condition ===== -->
+    <g transform="translate(380, 75)">
+      <text x="160" y="-15" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">The Slope Bound</text>
+      
+      <!-- Axes -->
+      <line x1="20" y1="270" x2="300" y2="270" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+      <line x1="20" y1="270" x2="20" y2="20" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+      
+      <text x="290" y="295" text-anchor="middle" font-size="13" fill="#333">\(x\)</text>
+      <text x="8" y="18" text-anchor="middle" font-size="13" fill="#333">\(f(x)\)</text>
+
+      <!-- Cone boundaries (slopes +L and -L) -->
+      <line x1="20" y1="270" x2="100" y2="90" stroke="#888" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <line x1="20" y1="270" x2="100" y2="270" stroke="#888" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <line x1="20" y1="270" x2="260" y2="40" stroke="#888" stroke-width="1.5" stroke-dasharray="6,4"/>
+      
+      <!-- Cone highlight -->
+      <polygon points="20,270 100,90 260,40" fill="#3b82f6" opacity="0.08"/>
+      
+      <!-- A Lipschitz function staying inside cone -->
+      <path d="M20,270 Q60,245 100,225 Q140,200 180,165 Q220,130 260,100" 
+            fill="none" stroke="#10b981" stroke-width="2.5"/>
+      
+      <text x="265" y="90" text-anchor="start" font-size="12" fill="#10b981" font-weight="bold">Lipschitz \(f\)</text>
+
+      <!-- Slope labels -->
+      <text x="45" y="160" text-anchor="start" font-size="10" fill="#888" transform="rotate(-65, 45, 160)">slope = \(+L\)</text>
+      <text x="55" y="295" text-anchor="start" font-size="10" fill="#888" transform="rotate(0, 55, 295)">slope = \(-L\)</text>
+
+      <!-- Explanation -->
+      <text x="160" y="340" text-anchor="middle" font-size="12" fill="#475569">Function must stay inside the cone</text>
+      <text x="160" y="360" text-anchor="middle" font-size="12" fill="#475569">with slope \(\pm L\) at every point</text>
+      
+      
+    </g>
+  </svg>
+</div>
+
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 3 (Convex Function)</div>
+  <div class="thm-env__body">
+    The function \(f: \mathbb{R}^m \to \mathbb{R}\) is said to be <strong>convex</strong> if and only if for all \(x, y \in \mathbb{R}^m\), for all \(\lambda \in [0, 1]\), the following inequality holds:
+    
+    \[
+    f(\lambda x + (1 - \lambda)y) \leq \lambda f(x) + (1 - \lambda)f(y). \tag{1.4}
+    \]
+    
+    <br>
+    Furthermore, if \(f\) is differentiable, then its gradient \(\nabla_x f\) is cyclically monotone (Peyré et al., 2017). Finally, if \(f\) is twice-differentiable its Hessian \(H_x f\) is a positive semidefinite matrix.
+    
+    <br><br>
+    In the following, the notation \(\|\cdot\|_2\) will denote the common Euclidean norm for vectors, i.e.:
+    
+    \[
+    \|x\|_2 = \sqrt{\sum_i x_i^2}, \tag{1.5}
+    \]
+    
+    whereas for linear operators \(x \mapsto W x\) it will denote the spectral norm:
+    
+    \[
+    \|W\|_2 = \max_{\|x\|_2 \leq 1} \|W x\|_2 = \sigma_{\max}, \tag{1.6}
+    \]
+    
+    where \(\sigma_{\max}\) is the largest singular value in the SVD of \(W\).
+  </div>
+</div>
+
+<!-- Visualization: Convex function -->
+<div style="margin-top: 2rem; text-align: center;">
+  <svg width="700" height="420" viewBox="0 0 700 420" style="max-width:100%; overflow:visible; background: #ffffff; border: 1px solid #ccc; border-radius: 12px; font-family: 'Times New Roman', Georgia, serif;">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+      </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="350" y="35" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e293b">Convex Function</text>
+    <text x="350" y="58" text-anchor="middle" font-size="13" fill="#475569">The line segment between any two points lies above the graph</text>
+
+    <!-- Axes -->
+    <line x1="80" y1="340" x2="620" y2="340" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+    <line x1="80" y1="340" x2="80" y2="50" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+    
+    <text x="630" y="365" text-anchor="middle" font-size="13" fill="#333">\(x\)</text>
+    <text x="55" y="45" text-anchor="middle" font-size="13" fill="#333">\(f(x)\)</text>
+
+    <!-- Convex function curve (bending upward) -->
+    <path d="M80,300 Q180,240 280,210 Q380,190 480,160 Q540,140 600,120" 
+          fill="none" stroke="#2563eb" stroke-width="3"/>
+    
+    <text x="600" y="110" text-anchor="start" font-size="13" fill="#2563eb" font-weight="bold">\(f(x)\) (convex)</text>
+
+    <!-- Two points on the curve -->
+    <circle cx="150" cy="275" r="5" fill="#dc2626"/>
+    <text x="150" y="365" text-anchor="middle" font-size="12" fill="#dc2626">\(x\)</text>
+    <text x="65" y="279" text-anchor="end" font-size="12" fill="#dc2626">\(f(x)\)</text>
+    
+    <circle cx="450" cy="165" r="5" fill="#dc2626"/>
+    <text x="450" y="375" text-anchor="middle" font-size="12" fill="#dc2626">\(y\)</text>
+    <text x="65" y="169" text-anchor="end" font-size="12" fill="#dc2626">\(f(y)\)</text>
+
+    <!-- Dashed projection lines -->
+    <line x1="150" y1="275" x2="150" y2="340" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="450" y1="165" x2="450" y2="340" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="80" y1="275" x2="150" y2="275" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="80" y1="165" x2="450" y2="165" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- Chord (line connecting f(x) and f(y)) -->
+    <line x1="150" y1="275" x2="450" y2="165" stroke="#eab308" stroke-width="2" stroke-dasharray="6,3"/>
+    
+    <!-- Midpoint illustration -->
+    <circle cx="300" cy="220" r="4" fill="#eab308"/>
+    <text x="300" y="210" text-anchor="middle" font-size="11" fill="#ca8a04">\(\lambda x + (1-\lambda)y\)</text>
+    
+    <!-- Point on the chord above the curve -->
+    <circle cx="300" cy="215" r="4" fill="#eab308"/>
+    
+    <!-- Vertical line showing chord value > function value -->
+    <line x1="300" y1="220" x2="300" y2="205" stroke="#eab308" stroke-width="1.5" stroke-dasharray="3,3"/>
+    
+    <!-- Inequality annotation -->
+    <text x="300" y="250" text-anchor="middle" font-size="11" fill="#475569">Chord lies above graph</text>
+    <text x="300" y="265" text-anchor="middle" font-size="11" fill="#475569">\(\Rightarrow f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda)f(y)\)</text>
+
+    <!-- Gradient/Hessian notes -->
+    <g transform="translate(80, 385)">
+      <rect x="0" y="0" width="540" height="28" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+      <text x="270" y="19" text-anchor="middle" font-size="11" fill="#1e293b">
+        If \(f\) is differentiable: \(\nabla f\) is cyclically monotone &nbsp;&nbsp;|&nbsp;&nbsp;
+        If \(f\) is twice-differentiable: Hessian \(H_f \succeq 0\) (positive semidefinite)
+      </text>
+    </g>
+  </svg>
+</div>
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 4 (Wasserstein‑p Distance)</div>
+  <div class="thm-env__body">
+    Let \(d: \mathbb{R}^m \times \mathbb{R}^m \to \mathbb{R}\) be a metric. For any two measures \(P\) and \(Q\) on \(\mathbb{R}^m\) the <strong>Wasserstein‑p distance</strong> is defined by the following optimization problem:
+    
+    \[
+    W_p^p(P, Q) := \inf_{\pi \in \Pi(P, Q)} \int_{\mathbb{R}^m \times \mathbb{R}^m} \bigl(d(x, y)\bigr)^p \, d\pi(x, y) \tag{1.7}
+    \]
+    
+    where \(\Pi(P, Q)\) denotes the set of measures on \(\mathbb{R}^m \times \mathbb{R}^m\) whose marginals are \(P\) and \(Q\) respectively. Equivalently we can write:
+    
+    \[
+    W_1(P, Q) := \inf_{\substack{\text{Law}(X)=P \\ \text{Law}(Y)=Q}} \mathbb{E}[d(X, Y)]. \tag{1.8}
+    \]
+    
+    <br>
+    The right‑hand side of (1.7) corresponds to a <strong>Kantorovich problem</strong>. It is often presented as a relaxation of the <strong>Monge problem</strong>:
+    
+    \[
+    \inf_{T \# P = Q} \int_{\mathbb{R}^m} d(x, T(x)) \, dp(x). \tag{1.9}
+    \]
+    
+    In this context, the (optimal) \(T: \mathbb{R}^m \to \mathbb{R}^m\) is called the (optimal) Monge map. For arbitrary measures, the two problems are different. The Kantorovich problem always admits a solution. This is not the case with the Monge problem. For example, for discrete measures with supports of size \(|P| < |Q|\), it is impossible to fulfill the pushforward condition \(T\#P = Q\) since \(|T\#P| \le |P| \le |Q|\). Nonetheless, when both \(P\) and \(Q\) admit a density (w.r.t. Lebesgue measure) then the two problems happen to be equivalent. In this case, the Monge problem corresponds to a deterministic coupling \(\pi(x, \cdot) = \delta_{T(x)}\).
+    
+    <br><br>
+    By Remark 6.3 of Villani (2008) the Wasserstein‑1 distance is the <strong>Kantorovich‑Rubinstein distance</strong>:
+    
+    \[
+    W_1(P, Q) = \sup_{f \in \text{Lip}_1(X, \mathbb{R})} \mathbb{E}_{x \sim P}[f(x)] - \mathbb{E}_{z \sim Q}[f(z)]. \tag{1.10}
+    \]
+    
+    <br>
+    In our case we are working with neural networks that are Lipschitz w.r.t. \(\ell_2\) distance, so we have \(d(x, y) := \|x - y\|_2\). This chapter is one of the first motivations for the design of Lipschitz networks, and a strong inspiration for most of the work throughout the thesis, notably chapters...
+  </div>
+</div>
+
+<!-- Visualization: Wasserstein distance between two distributions -->
+<div style="margin-top: 2rem; text-align: center;">
+  <svg width="800" height="420" viewBox="0 0 800 420" style="max-width:100%; overflow:visible; background: #ffffff; border: 1px solid #ccc; border-radius: 12px; font-family: 'Times New Roman', Georgia, serif;">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+      </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="400" y="35" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e293b">Wasserstein‑1 Distance: Optimal Transport</text>
+    <text x="400" y="58" text-anchor="middle" font-size="13" fill="#475569">Minimal cost to move probability mass from distribution P to Q</text>
+
+    <!-- Left distribution P (source) -->
+    <g transform="translate(60, 80)">
+      <text x="100" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563eb">Source \(P\)</text>
+      <!-- Histogram-like bars -->
+      <rect x="40" y="50" width="30" height="180" fill="#3b82f6" opacity="0.7" rx="4"/>
+      <rect x="90" y="100" width="30" height="130" fill="#3b82f6" opacity="0.7" rx="4"/>
+      <rect x="140" y="140" width="30" height="90" fill="#3b82f6" opacity="0.7" rx="4"/>
+      <rect x="190" y="70" width="30" height="160" fill="#3b82f6" opacity="0.7" rx="4"/>
+      <!-- Mass points -->
+      <circle cx="55" cy="50" r="6" fill="#1e40af"/>
+      <circle cx="105" cy="100" r="6" fill="#1e40af"/>
+      <circle cx="155" cy="140" r="6" fill="#1e40af"/>
+      <circle cx="205" cy="70" r="6" fill="#1e40af"/>
+    </g>
+
+    <!-- Arrow indicating transport -->
+    <line x1="310" y1="200" x2="490" y2="200" stroke="#eab308" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="400" y="190" text-anchor="middle" font-size="12" fill="#ca8a04" font-weight="bold">Transport mass</text>
+
+    <!-- Right distribution Q (target) -->
+    <g transform="translate(500, 80)">
+      <text x="100" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="#dc2626">Target \(Q\)</text>
+      <rect x="40" y="20" width="30" height="210" fill="#ef4444" opacity="0.7" rx="4"/>
+      <rect x="90" y="80" width="30" height="150" fill="#ef4444" opacity="0.7" rx="4"/>
+      <rect x="140" y="120" width="30" height="110" fill="#ef4444" opacity="0.7" rx="4"/>
+      <rect x="190" y="50" width="30" height="180" fill="#ef4444" opacity="0.7" rx="4"/>
+      <circle cx="55" cy="20" r="6" fill="#991b1b"/>
+      <circle cx="105" cy="80" r="6" fill="#991b1b"/>
+      <circle cx="155" cy="120" r="6" fill="#991b1b"/>
+      <circle cx="205" cy="50" r="6" fill="#991b1b"/>
+    </g>
+
+    <!-- Bottom: Kantorovich vs Monge -->
+    <g transform="translate(60, 330)">
+      <rect x="0" y="0" width="680" height="75" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="340" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Kantorovich problem (relaxed)</text>
+      <text x="340" y="42" text-anchor="middle" font-size="12" fill="#475569">\(\inf_{\pi \in \Pi(P,Q)} \int d(x,y) \, d\pi(x,y)\) &nbsp; → always has a solution</text>
+      <line x1="170" y1="52" x2="510" y2="52" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="340" y="67" text-anchor="middle" font-size="11" fill="#64748b">When \(P,Q\) have densities → equivalent to Monge problem: deterministic transport map \(T\)</text>
+    </g>
+
+    <!-- Kantorovich-Rubinstein dual -->
+    <g transform="translate(60, 420)">
+      <text x="340" y="0" text-anchor="middle" font-size="11" fill="#475569">Kantorovich‑Rubinstein: \(W_1(P,Q) = \sup_{\|f\|_{\text{Lip}}\le 1} \mathbb{E}_{P}[f] - \mathbb{E}_{Q}[f]\)</text>
+    </g>
+  </svg>
+  <div style="height: 20px;"></div>
+</div>
+
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 5 (Dual Formulations of Optimal Transport)</div>
+  <div class="thm-env__body">
+    We can also mention a useful duality result related to Wasserstein‑2 distance (see Peyré et al. (2017) or Korotin et al. (2021) for example):
+    
+    \[
+    W_2^2(P, Q) = \sup_{f \in \text{Convex}(X, \mathbb{R})} \mathbb{E}_{x \sim P}[f(x)] + \mathbb{E}_{z \sim Q}[f^c(z)], \tag{1.11}
+    \]
+    
+    where \(f^c\) is the \(c\)-transform defined as:
+    
+    \[
+    f^c(x) := \min_{y} \; c(x, y) - f(y) \tag{1.12}
+    \]
+    
+    for \(c(x, y) = \|x - y\|\). This result will not be used as‑is, but it shows the connections between optimization over convex functions on one side and optimal transport on the other side. This is explored further in chapter 7.
+  </div>
+</div>
+
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 6 (Binary Cross‑Entropy and Hinge Losses)</div>
+  <div class="thm-env__body">
+    We detail below the losses (and activations) that will be used in this work.
+    
+    <br><br>
+    The <strong>Binary Cross‑Entropy (BCE) loss</strong> (also called log loss) is among the most popular choices of loss within the deep learning community. Let \(f: \mathbb{R}^n \to \mathbb{R}\) be a neural network. For an example \(x \in \mathbb{R}^n\) with label \(y \in \mathcal{Y}\), and \(\sigma(x) = \frac{1}{1 + \exp(-x)}\) the logistic function mapping logits to probabilities, the BCE is written:
+    
+    \[
+    L_{\tau}^{\text{bce}}(f(x), y) = -\log \sigma\bigl(y \tau f(x)\bigr),
+    \]
+    
+    with (inverse) temperature / scaling parameter \(\tau > 0\). This hyper‑parameter of the loss defaults to \(\tau = 1\) in most frameworks such as TensorFlow or PyTorch. Note that \(L_{\tau}^{\text{bce}}(f(x), y) = L_{1}^{\text{bce}}(\tau f(x), y)\), so we can equivalently tune \(\tau\) or the Lipschitz constant \(L\). We show in Chapter 4 that for LipNet the temperature \(\tau\) allows to control the generalization gap.
+    
+    <br><br>
+    The <strong>Hinge loss</strong> 
+    \[
+    L_{m}^{\text{H}}(f(x), y) = \max\bigl(0,\; m - y f(x)\bigr)
+    \]
+    with margin \(m > 0\) is also of particular interest.
+  </div>
+</div>
+<p style="margin-top: 1.5rem; font-family: Georgia, serif; line-height: 1.5; font-size: 1rem;">
+  The core conceptual shift moves from <strong>Empirical Risk Minimization (ERM)</strong> — where the goal is to find any global minimum of the empirical risk \(\theta^* \in \arg\min \mathbb{E}[L_\theta(z)]\) — to understanding <strong>implicit regularization induced by the optimizer</strong>. Rather than searching over all minimizers, the algorithm \(\mathcal{A}\) returns a specific parameter \(\theta_T\) after finite time \(T\), following a stochastic gradient dynamics. This optimizer bias (due to early stopping, mini-batch noise, momentum, adaptive learning rates, and even numerical precision like float16) selects a particular global minimum among infinitely many. Therefore, the generalization behavior of neural networks is not explained solely by the loss landscape or hypothesis class, but crucially by the interaction with the optimization procedure itself.
+</p>
+
+<div style="margin-top: 2rem; text-align: center;">
+  <svg width="900" height="380" viewBox="0 0 900 380" style="max-width:100%; overflow:visible; background: transparent;">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#444"/>
+      </marker>
+      <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#1e3a8a"/>
+      </marker>
+    </defs>
+
+    <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e293b">From ERM to Implicit Regularization — A Conceptual Shift</text>
+    <text x="450" y="52" text-anchor="middle" font-size="13" fill="#475569">The optimizer’s bias replaces the search for arbitrary minima</text>
+
+    <!-- LEFT BLOCK: ERM -->
+    <g transform="translate(40, 80)">
+      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Classical ERM</text>
+      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#475569">θ* ∈ arg min 𝔼[L]</text>
+      
+      <circle cx="70" cy="120" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="140" cy="100" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="210" cy="130" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="280" cy="95" r="10" fill="#dc2626" opacity="0.4"/>
+      
+      <text x="180" y="170" text-anchor="middle" font-size="11" fill="#334155">Infinitely many global minima</text>
+      <text x="180" y="190" text-anchor="middle" font-size="11" fill="#334155">(all fit training data perfectly)</text>
+      <text x="180" y="210" text-anchor="middle" font-size="10" fill="#64748b">Generalization ? unknown</text>
+    </g>
+
+    <line x1="410" y1="190" x2="480" y2="190" stroke="#1e3a8a" stroke-width="3" marker-end="url(#arrow-blue)"/>
+    <text x="445" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">role of</text>
+    <text x="445" y="210" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">optimizer ↓</text>
+
+    <!-- RIGHT BLOCK: Implicit Regularization -->
+    <g transform="translate(500, 80)">
+      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e3a8a">Implicit Regularization</text>
+      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#1e40af">θ_T ∼ A( θ → ∇𝔼[L] )</text>
+      
+      <circle cx="180" cy="110" r="16" fill="#3b82f6" opacity="0.8"/>
+      <circle cx="180" cy="110" r="22" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="180" y="115" text-anchor="middle" font-size="10" fill="white" font-weight="bold">θ_T</text>
+      
+      <circle cx="100" cy="130" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="250" cy="90" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="140" cy="160" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="220" cy="150" r="8" fill="#94a3b8" opacity="0.3"/>
+      
+      <text x="180" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a">Optimizer bias picks a “good”</text>
+      <text x="180" y="193" text-anchor="middle" font-size="11" fill="#1e3a8a">minimum → generalization</text>
+      <text x="180" y="213" text-anchor="middle" font-size="10" fill="#64748b">early stopping, SGD noise, precision</text>
+    </g>
+
+    <g transform="translate(40, 320)">
+      <text x="0" y="0" font-size="12" fill="#334155" font-family="monospace">
+        ERM:   θ* ∈ arg min R(θ)          vs          Implicit:   θ_T = Algorithm(∇R, T)
+      </text>
+      <text x="0" y="22" font-size="11" fill="#64748b">
+        The optimizer’s dynamics (finite steps, stochastic gradients, low precision) implicitly regularize toward solutions with favorable properties.
+      </text>
+    </g>
+  </svg>
+</div>
     <div class="proof">
       <span class="proof__label">Proof.</span>
       <span class="proof__qed">□</span>
