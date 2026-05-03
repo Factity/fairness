@@ -26,8 +26,7 @@
 
 <style>
 
-    
-:root {
+ :root {
   /* Core identity colors */
   --ink: #1a1f36;
   --ink-muted: #3d4466;
@@ -82,30 +81,26 @@
    DARK THEME (Chalkboard)
    ============================================================ */
 .theme-dark {
-  --ink: #e0e2eb;
-  --ink-muted: #a6adbb;
-  --ink-faint: #707a8c;
-  --page: #161b22;
-  --page-raised: #1c2128;
-  --page-sunken: #0d1117;
-  --page-deep: #0a0e12;
-  --gold: #f0b85d;
-  --gold-light: #3e3521;
-  --gold-dark: #c98b2a;
-  --teal: #4fd1ed;
-  --teal-light: #1a2f33;
-  --teal-dark: #2c9ab0;
-  --sage: #6fbf4c;
-  --sage-light: #1e2a1f;
-  --rose: #e88a9e;
-  --rose-light: #2e1c22;
-  --border: #30363d;
-  --border-strong: #444c56;
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --ink: #f0f2f7;
+  --ink-muted: #c5c9d6;
+  --ink-faint: #8f96b0;
+  --page: #0b0d12;
+  --page-raised: #13161f;
+  --page-sunken: #08090e;
+  --page-deep: #05060a;
+  --gold: #f4c17f;
+  --gold-light: #2a261b;
+  --gold-dark: #d9a14f;
+  --teal: #4ed9e6;
+  --teal-light: #18272b;
+  --teal-dark: #2eb8c7;
+  --sage: #89e8a0;
+  --sage-light: #1d2a23;
+  --rose: #ff7d95;
+  --rose-light: #2c1f23;
+  --border: #1f222f;
+  --border-strong: #363d52;
 }
-
 /* ============================================================
    HIGH CONTRAST THEME (Classic Print)
    ============================================================ */
@@ -992,7 +987,28 @@ blockquote cite::before { content: '— '; }
   font-size: 0.8rem;
   color: var(--ink-faint);
 }
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
 
+.palette-card {
+  height: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+.palette-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Optional: Make it even tighter */
+.compact .palette-grid {
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
       .perceptron-svg { font-family: "Comic Sans MS", "Chalkboard SE", sans-serif; }
       .wire { stroke: #555; stroke-width: 4; stroke-linecap: round; fill: none; }
       .weight { font-size: 14px; fill: #444; font-weight: bold; }
@@ -1115,48 +1131,49 @@ blockquote cite::before { content: '— '; }
 </header>
 <main class="container" style="padding-block: 2.5rem">
  <!-- SECTION: COLOR PALETTE (Dynamic) -->
+
 <section class="stack--lg" style="margin-bottom: 3rem">
   <h2 class="section-heading">Color Palette</h2>
-  <div class="col-3" style="margin-top: 1rem" id="color-palette-container">
+  
+  <div class="palette-grid" id="color-palette-container">
+    
     <!-- Ink Navy -->
-    <div style="background:var(--ink); color:#f5f0e8; padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:#c8c3b8; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Ink Navy</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500" data-var="--ink">#1a1f36</span><br>
-      <span style="opacity:.6">Primary text &amp; dark panels</span>
+    <div class="palette-card" style="background:var(--ink); color:var(--page); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="opacity:.75; font-size:0.68rem">Primary text</span>
     </div>
+
     <!-- Warm Page -->
-    <div style="background:var(--page); border:1px solid var(--border); padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:var(--ink-faint); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Warm Page</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500; color:var(--ink)" data-var="--page">#faf8f3</span><br>
-      <span style="color:var(--ink-faint)">Body background</span>
+    <div class="palette-card" style="background:var(--page); border:1px solid var(--border); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="color:var(--ink-faint); font-size:0.68rem">Background</span>
     </div>
+
     <!-- Amber Gold -->
-    <div style="background:var(--gold-light); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:var(--gold-dark); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Amber Gold</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500; color:var(--gold-dark)" data-var="--gold">#c98b2a</span><br>
-      <span style="color:var(--gold-dark); opacity:.7">Accents &amp; highlights</span>
+    <div class="palette-card" style="background:var(--gold-light); border:1px solid color-mix(in srgb, var(--gold) 40%, transparent); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="color:var(--gold-dark); opacity:.75; font-size:0.68rem">Accents</span>
     </div>
+
     <!-- Proof Teal -->
-    <div style="background:var(--teal-light); border:1px solid color-mix(in srgb, var(--teal) 25%, transparent); padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:var(--teal-dark); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Proof Teal</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500; color:var(--teal-dark)" data-var="--teal">#1c6f7a</span><br>
-      <span style="color:var(--teal-dark); opacity:.7">Theorems &amp; proofs</span>
+    <div class="palette-card" style="background:var(--teal-light); border:1px solid color-mix(in srgb, var(--teal) 30%, transparent); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="color:var(--teal-dark); opacity:.75; font-size:0.68rem">Theorems</span>
     </div>
+
     <!-- Definition Sage -->
-    <div style="background:var(--sage-light); border:1px solid color-mix(in srgb, var(--sage) 25%, transparent); padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:var(--sage); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Definition Sage</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500; color:var(--sage)" data-var="--sage">#4a7c59</span><br>
-      <span style="color:var(--sage); opacity:.7">Definitions</span>
+    <div class="palette-card" style="background:var(--sage-light); border:1px solid color-mix(in srgb, var(--sage) 30%, transparent); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="color:var(--sage); opacity:.75; font-size:0.68rem">Definitions</span>
     </div>
+
     <!-- Attention Rose -->
-    <div style="background:var(--rose-light); border:1px solid color-mix(in srgb, var(--rose) 25%, transparent); padding:1rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:.75rem">
-      <strong style="color:var(--rose); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase">Attention Rose</strong><br>
-      <span class="palette-hex" style="font-size:1.3rem; font-weight:500; color:var(--rose)" data-var="--rose">#8b3a4a</span><br>
-      <span style="color:var(--rose); opacity:.7">Notes &amp; warnings</span>
+    <div class="palette-card" style="background:var(--rose-light); border:1px solid color-mix(in srgb, var(--rose) 30%, transparent); padding:0.85rem; border-radius:var(--r-lg); font-family:var(--font-mono); font-size:0.73rem">
+
+      <span style="color:var(--rose); opacity:.75; font-size:0.68rem">Warnings</span>
     </div>
   </div>
 </section>
-
   <!-- SECTION: TYPOGRAPHY -->
   <section class="stack--lg" style="margin-bottom: 3rem">
     <h2 class="section-heading">Typography</h2>
@@ -1166,23 +1183,165 @@ blockquote cite::before { content: '— '; }
         <h1 class="post-title" style="margin-top:.5rem">A Healthy AI is more accurate</h1>
       </div>
       <hr style="border:none;border-top:1px solid var(--border)">
-      <p class="lead">An exploration of one of mathematics' greatest unsolved problems, connecting complex analysis, prime numbers, and the fabric of arithmetic.</p>
-      <p>The <strong>Riemann zeta function</strong> is defined for complex numbers <em>s</em> with real part greater than 1 by the series. Understanding its analytic continuation reveals deep truths about the distribution of prime numbers.</p>
-      <div class="numbered-heading">
-        <h3><span class="section-num">§1.2</span> Analytic Continuation</h3>
+      <p class="lead">It is always a great thing when things are in control and things take its due course if that was not the case in human body they form lumps and if they doesnt stop growing they eventually become cancer, if the eventual growth occurs with unwanted plants it is weed and the same occurs in model weights we get a missrepresentative model</p>
+<p><strong>Normalization</strong> is the process of scaling values into an acceptable range — for instance, to enable fair comparison or improve modeling — since extremely large or small values are often unhelpful.</p>
+      
+
+
+
+<section style="margin-bottom: 3rem">
+  <h2 class="section-heading">Foundational Callouts</h2>
+
+  <div class="callout callout--info">
+    <div class="callout__icon">ℹ</div>
+    <div class="callout__body">
+      <div class="callout__title">Prerequisite — Linear algebra</div>
+      Understanding how matrices act as linear maps, and the role of eigenvalues and singular values, is essential for analyzing how information propagates through a network.
+    </div>
+  </div>
+
+  <div class="callout callout--info">
+    <div class="callout__icon">ℹ</div>
+    <div class="callout__body">
+      <div class="callout__title">Prerequisite — Real analysis</div>
+      Concepts like continuity, differentiability, and the distinction between pointwise and uniform convergence appear throughout the theory of function approximation.
+    </div>
+  </div>
+
+  <div class="callout callout--info">
+    <div class="callout__icon">ℹ</div>
+    <div class="callout__body">
+      <div class="callout__title">Prerequisite — Probability basics</div>
+      Many empirical estimates involve expectations over data distributions; understanding variance and concentration helps interpret sample-based bounds.
+    </div>
+  </div>
+<div class="numbered-heading">
+        <h3><span class="section-num">§1</span> Introduction</h3>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:var(--gap-sm);align-items:center;margin-top:.5rem">
-        <span class="tag tag--default">algebra</span>
-        <span class="tag tag--gold">number theory</span>
-        <span class="tag tag--teal">analysis</span>
-        <span class="tag tag--sage">topology</span>
-        <span class="badge">12</span>
+        <span class="tag tag--default">ai safety</span>
+        <span class="tag tag--gold">Normalization</span>
+        <span class="tag tag--teal">fat ai</span>
+        <span class="tag tag--sage">skinny ai </span>
+        <span class="badge">4</span>
       </div>
     </div>
+  <p>
+    If you think about it, the training of neural networks is analogous to how the brain learns: hundreds of millions of natural neurons with complex, intertwined systems of electrical signals combine to form cognition. When the initial perceptron was introduced in the 1960s, the idea was to make a network strong enough or big enough that it would eventually replicate the human brain. Over the years, several efforts were carried out, from the first hardware implementation of the perceptron by Rosenblatt, to Minsky and Papert’s XOR problem, Hinton’s backpropagation, the Universal Approximation Theorem, the introduction of CNNs by LeCun, 2012’s AlexNet, GANs by Goodfellow, and modern-day Transformers. With every step of the way, there were improvements in architecture, optimization, and training techniques. As complexity increased with every new discovery, so did the methods to identify new and improved techniques to enhance the utility of these designs across different domains. 
+
+It is often the case with neural network training the improvement in the feed forward network can be either from improvement in the weights, way we calculate gradients, and activations etc with the recent advancements the ability to optimize at every step of the process became mandatory requirements every opportunity to optimize should be taken into consideration when it comes to training models. Before we jump ahead too much let us establish a couple of definitions first before we get into the main topic that is being addressed 
+
+  </p>
+</section>
+
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition 2 (The Perceptron)</div>
+  <div class="thm-env__body">
+    The Perceptron is a feedforward neural network with depth \(T = 1\) and a specific non-linear activation \(\sigma\). Following the recursion from Definition 1, let \(T = 1\). Then:
+    
+    <br><br>
+    <strong>Input Space:</strong> \(\mathcal{X} \subset \mathbb{R}^{n}\).
+    
+    <br><br>
+    <strong>Linear Transformation:</strong> Since \(T = 1\), we move immediately to the final output calculation. For each \(x \in \mathcal{X}\), set \(h_0(x) := x\). The logit is computed as:
+    
+    \[z_1(x) := f_1(W_1, h_0(x)) + b_1\]
+    
+    Here, \(f_1: \mathbb{R}^{n \times n} \times \mathbb{R}^{n} \to \mathbb{R}^{n}\) is a bilinear map (specifically the inner product), \(W_1 \in \mathbb{R}^{n \times n}\), and \(b_1 \in \mathbb{R}^{n}\).
+    
+    <br><br>
+    <strong>Activation Function:</strong> The Perceptron specifically uses the Heaviside step function as its non-linearity \(\sigma: \mathbb{R}^{n} \to \mathbb{R}^{n}\):
+    
+    \[\sigma(z) = \begin{cases} 1 & \text{if } z > 0 \\ 0 & \text{otherwise} \end{cases}\]
+    
+    <br><br>
+    <strong>Final Output:</strong> The network function \(f: \Theta \times \mathcal{X} \to \mathcal{Y}\) is defined as:
+    
+    \[f(\theta, x) := \sigma(z_1(x))\]
+  </div>
+</div>
+
+
+
+
+    <div style="margin-top:1.5em; text-align:center;">
+  <svg width="100%" height="280" viewBox="0 0 560 260" style="max-width:600px; overflow:visible;">
+    <defs>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
+      </filter>
+    </defs>
+
+
+    <!-- Wires -->
+    <path class="wire" d="M70,70 L230,130" />
+    <path class="wire" d="M70,130 L230,130" />
+    <path class="wire" d="M70,190 L230,130" />
+    <path class="wire" d="M330,130 L450,130" />
+
+    <!-- Weights -->
+    <text x="150" y="95" class="weight" text-anchor="middle">w₁</text>
+    <text x="150" y="125" class="weight" text-anchor="middle">w₂</text>
+    <text x="150" y="165" class="weight" text-anchor="middle">w₃</text>
+
+    <!-- Input nodes -->
+    <g filter="url(#shadow)">
+      <circle cx="70" cy="70" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
+      <text x="70" y="76" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₁</text>
+    </g>
+    <g filter="url(#shadow)">
+      <circle cx="70" cy="130" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
+      <text x="70" y="136" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₂</text>
+    </g>
+    <g filter="url(#shadow)">
+      <circle cx="70" cy="190" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
+      <text x="70" y="196" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₃</text>
+    </g>
+
+    <!-- Animated signals -->
+    <circle r="7" class="signal">
+      <animateMotion dur="2s" repeatCount="indefinite" path="M70,70 L230,130" />
+    </circle>
+    <circle r="7" class="signal">
+      <animateMotion dur="2s" begin="0.4s" repeatCount="indefinite" path="M70,130 L230,130" />
+    </circle>
+    <circle r="7" class="signal">
+      <animateMotion dur="2s" begin="0.8s" repeatCount="indefinite" path="M70,190 L230,130" />
+    </circle>
+
+    <!-- Neuron -->
+    <g class="neuron-group">
+      <circle cx="280" cy="130" r="50" fill="#4ECDC4" stroke="#333" stroke-width="4" filter="url(#shadow)"/>
+
+      <!-- label -->
+      <text x="280" y="149" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">Σ + b</text>
+    </g>
+
+    <!-- Output -->
+    <g class="out-box" filter="url(#shadow)">
+      <rect x="450" y="105" width="70" height="50" rx="12" fill="#FFE66D" stroke="#333" stroke-width="3"/>
+      <text x="485" y="128" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">step</text>
+      <text x="485" y="145" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">ŷ</text>
+    </g>
+  </svg>
+</div>
+
+
+
+
+<p>
+  Although perceptron was revolutionary during its times there were quite a few problems. The problem of linearly separable spaces, no hidden layers etc. Although it sparked huge discussions in the scientific community it lacked quite a bit when it comes to computing even simple functions such as xor etc. Which eventually led to the discovery of feed forward neural networks by adding multiple layers and with the introduction of non linearity solved the problem. And eventually led to the a fundamental result which is ground breaking to say the least the discovery of universal approximation theorem 
+</p>
+
+
+
+
+
   </section>
   <!-- SECTION: MATH ENVIRONMENTS -->
   <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Theorem Environments</h2>
+
 <div class="thm-env thm">
   <div class="thm-env__label">Theorem 1.2 <span class="thm-env__title">(Universal Approximation Theorem)</span></div>
   <div class="thm-env__body">
@@ -1362,107 +1521,15 @@ blockquote cite::before { content: '— '; }
 
 
 
-
-    <div class="thm-env lem">
-      <div class="thm-env__label">Lemma 2.3</div>
-      <div class="thm-env__body">Every bounded sequence in ℝⁿ has a convergent subsequence.</div>
-    </div>
-
-<div class="thm-env defn">
-  <div class="thm-env__label">Definition 2 (The Perceptron)</div>
-  <div class="thm-env__body">
-    The Perceptron is a feedforward neural network with depth \(T = 1\) and a specific non-linear activation \(\sigma\). Following the recursion from Definition 1, let \(T = 1\). Then:
-    
-    <br><br>
-    <strong>Input Space:</strong> \(\mathcal{X} \subset \mathbb{R}^{n}\).
-    
-    <br><br>
-    <strong>Linear Transformation:</strong> Since \(T = 1\), we move immediately to the final output calculation. For each \(x \in \mathcal{X}\), set \(h_0(x) := x\). The logit is computed as:
-    
-    \[z_1(x) := f_1(W_1, h_0(x)) + b_1\]
-    
-    Here, \(f_1: \mathbb{R}^{n \times n} \times \mathbb{R}^{n} \to \mathbb{R}^{n}\) is a bilinear map (specifically the inner product), \(W_1 \in \mathbb{R}^{n \times n}\), and \(b_1 \in \mathbb{R}^{n}\).
-    
-    <br><br>
-    <strong>Activation Function:</strong> The Perceptron specifically uses the Heaviside step function as its non-linearity \(\sigma: \mathbb{R}^{n} \to \mathbb{R}^{n}\):
-    
-    \[\sigma(z) = \begin{cases} 1 & \text{if } z > 0 \\ 0 & \text{otherwise} \end{cases}\]
-    
-    <br><br>
-    <strong>Final Output:</strong> The network function \(f: \Theta \times \mathcal{X} \to \mathcal{Y}\) is defined as:
-    
-    \[f(\theta, x) := \sigma(z_1(x))\]
-  </div>
-</div>
+    <h2 class="section-heading">Feed forward Neural Networks</h2>
+<p>
 
 
+Shallow feedforward networks (one hidden layer) can approximate any continuous function on a compact (closed and bounded) subset of ℝⁿ to any desired accuracy, provided they have enough neurons in that hidden layer.
+Given enough neurons you can possibly model any smooth function. But in terms of practically applying it for complex cases it does not guarantee generalizability to new data, can be trained easily. Which simply shows the expressivity of the neural network now moving on to the optimization.
 
 
-    <div style="margin-top:1.5em; text-align:center;">
-  <svg width="100%" height="280" viewBox="0 0 560 260" style="max-width:600px; overflow:visible;">
-    <defs>
-      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
-      </filter>
-    </defs>
-
-
-    <!-- Wires -->
-    <path class="wire" d="M70,70 L230,130" />
-    <path class="wire" d="M70,130 L230,130" />
-    <path class="wire" d="M70,190 L230,130" />
-    <path class="wire" d="M330,130 L450,130" />
-
-    <!-- Weights -->
-    <text x="150" y="95" class="weight" text-anchor="middle">w₁</text>
-    <text x="150" y="125" class="weight" text-anchor="middle">w₂</text>
-    <text x="150" y="165" class="weight" text-anchor="middle">w₃</text>
-
-    <!-- Input nodes -->
-    <g filter="url(#shadow)">
-      <circle cx="70" cy="70" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
-      <text x="70" y="76" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₁</text>
-    </g>
-    <g filter="url(#shadow)">
-      <circle cx="70" cy="130" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
-      <text x="70" y="136" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₂</text>
-    </g>
-    <g filter="url(#shadow)">
-      <circle cx="70" cy="190" r="22" fill="#FF6B6B" stroke="#333" stroke-width="3"/>
-      <text x="70" y="196" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">x₃</text>
-    </g>
-
-    <!-- Animated signals -->
-    <circle r="7" class="signal">
-      <animateMotion dur="2s" repeatCount="indefinite" path="M70,70 L230,130" />
-    </circle>
-    <circle r="7" class="signal">
-      <animateMotion dur="2s" begin="0.4s" repeatCount="indefinite" path="M70,130 L230,130" />
-    </circle>
-    <circle r="7" class="signal">
-      <animateMotion dur="2s" begin="0.8s" repeatCount="indefinite" path="M70,190 L230,130" />
-    </circle>
-
-    <!-- Neuron -->
-    <g class="neuron-group">
-      <circle cx="280" cy="130" r="50" fill="#4ECDC4" stroke="#333" stroke-width="4" filter="url(#shadow)"/>
-
-      <!-- label -->
-      <text x="280" y="149" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">Σ + b</text>
-    </g>
-
-    <!-- Output -->
-    <g class="out-box" filter="url(#shadow)">
-      <rect x="450" y="105" width="70" height="50" rx="12" fill="#FFE66D" stroke="#333" stroke-width="3"/>
-      <text x="485" y="128" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">step</text>
-      <text x="485" y="145" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">ŷ</text>
-    </g>
-  </svg>
-</div>
-
-
-
-
+</p>
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 1 (Feedforward Neural Network)</div>
   <div class="thm-env__body">
@@ -1606,10 +1673,16 @@ blockquote cite::before { content: '— '; }
     </circle>
   </svg>
 </div>
-    <div class="thm-env eg">
-      <div class="thm-env__label">Example 3.1</div>
-      <div class="thm-env__body">The real line ℝ with the standard absolute value metric is a complete metric space. The open interval (0, 1) is not.</div>
-    </div>
+
+
+ 
+    <h2 class="section-heading">ERM</h2>
+
+    <p>ERM is the idea that picking the parameters for that the data that you have so that it works well when the data is unseen (not the real risk we minimize the empirical risk )
+
+The problem with erm is that it just tells us to fit to the data well but doesn't tell us what to do in cases when there can be infinite paths to achieve the minima or the trajectory we need to take (or simply put it works well for regression but not for neural nets )
+
+</p>
   <div class="thm-env thm">
   <div class="thm-env__label">Paradigm 1.2 <span class="thm-env__title">(Empirical Risk Minimization — Classical)</span></div>
   <div class="thm-env__body">
@@ -1619,7 +1692,20 @@ blockquote cite::before { content: '— '; }
     where \( \mathcal{D} \) is a finite dataset of size \( n \), and \( L_\theta(z) \) is a loss parametrized by \( \theta \). The goal is to find any global minimizer of the empirical risk.
   </div>
 </div>
+<p>
 
+  In the case of overparameterized models, there are infinitely many ways to reach the global minima, but classical ERM does not provide any principle for which global minimum to select when many exist. This is why we introduce the following paradigm: real optimizers like mini‑batch SGD run for a finite amount of time, use early stopping, and operate under finite precision. This introduces some amount of bias in selecting the minima.
+  
+  <div class="thm-env rmk">
+  <div class="thm-env__label">Remark</div>
+  <div class="thm-env__body">
+    For overparameterized neural networks, the empirical risk landscape has many global minima that all achieve zero training loss. The optimizer (not just the loss) determines which minimum is found — and thus whether the model generalizes.
+  </div>
+</div>
+  
+  
+  Empirically, this bias often favours flatter curvatures, thereby selecting a specific global minimum. Implicit regularization is not a replacement for ERM but a necessary refinement. Even with this, there are several problems we could encounter, such as lack of precise characterization – because of the heavy dependence on step size, batch size, initialization, etc. – as well as algorithmic and hyperparameter sensitivity, where a drastic change in the selected global minimum can occur when switching optimizers, altering learning rate or batch order, etc. Numerical precision issues can also arise, favoring some solutions over others, and in certain cases this can lead to poor generalization. Additionally, we cannot precisely study every effect of changing each setting, as finding minima is itself a computationally expensive process. Most of these issues arise either due to the intrinsic algorithm‑dependent bias, the tractability of the problem, or heavy dependence on myriad hyperparameter choices.
+</p>
 <div class="thm-env thm">
   <div class="thm-env__label">Paradigm 1.3 <span class="thm-env__title">(Implicit Regularization of Stochastic Optimization)</span></div>
   <div class="thm-env__body">
@@ -1630,12 +1716,7 @@ blockquote cite::before { content: '— '; }
   </div>
 </div>
 
-<div class="thm-env rmk">
-  <div class="thm-env__label">Remark</div>
-  <div class="thm-env__body">
-    For overparameterized neural networks, the empirical risk landscape has many global minima that all achieve zero training loss. The optimizer (not just the loss) determines which minimum is found — and thus whether the model generalizes.
-  </div>
-</div>
+
 
 <div class="thm-env note">
   <div class="thm-env__label">⚠ Important Note</div>
@@ -1643,6 +1724,82 @@ blockquote cite::before { content: '— '; }
     The implicit bias depends crucially on algorithmic details: momentum, adaptive learning rates (Adam), gradient clipping, and even floating‑point precision (float16 vs float32) act as regularizers.
   </div>
 </div>
+
+
+<div style="margin-top: 2rem; text-align: center;">
+  <svg width="900" height="380" viewBox="0 0 900 380" style="max-width:100%; overflow:visible; background: transparent;">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#444"/>
+      </marker>
+      <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#1e3a8a"/>
+      </marker>
+    </defs>
+
+    <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e293b">From ERM to Implicit Regularization — A Conceptual Shift</text>
+    <text x="450" y="52" text-anchor="middle" font-size="13" fill="#475569">The optimizer’s bias replaces the search for arbitrary minima</text>
+
+    <!-- LEFT BLOCK: ERM -->
+    <g transform="translate(40, 80)">
+      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Classical ERM</text>
+      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#475569">θ* ∈ arg min 𝔼[L]</text>
+      
+      <circle cx="70" cy="120" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="140" cy="100" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="210" cy="130" r="10" fill="#dc2626" opacity="0.4"/>
+      <circle cx="280" cy="95" r="10" fill="#dc2626" opacity="0.4"/>
+      
+      <text x="180" y="170" text-anchor="middle" font-size="11" fill="#334155">Infinitely many global minima</text>
+      <text x="180" y="190" text-anchor="middle" font-size="11" fill="#334155">(all fit training data perfectly)</text>
+      <text x="180" y="210" text-anchor="middle" font-size="10" fill="#64748b">Generalization ? unknown</text>
+    </g>
+
+    <line x1="410" y1="190" x2="480" y2="190" stroke="#1e3a8a" stroke-width="3" marker-end="url(#arrow-blue)"/>
+    <text x="445" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">role of</text>
+    <text x="445" y="210" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">optimizer ↓</text>
+
+    <!-- RIGHT BLOCK: Implicit Regularization -->
+    <g transform="translate(500, 80)">
+      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e3a8a">Implicit Regularization</text>
+      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#1e40af">θ_T ∼ A( θ → ∇𝔼[L] )</text>
+      
+      <circle cx="180" cy="110" r="16" fill="#3b82f6" opacity="0.8"/>
+      <circle cx="180" cy="110" r="22" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="180" y="115" text-anchor="middle" font-size="10" fill="white" font-weight="bold">θ_T</text>
+      
+      <circle cx="100" cy="130" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="250" cy="90" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="140" cy="160" r="8" fill="#94a3b8" opacity="0.3"/>
+      <circle cx="220" cy="150" r="8" fill="#94a3b8" opacity="0.3"/>
+      
+      <text x="180" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a">Optimizer bias picks a “good”</text>
+      <text x="180" y="193" text-anchor="middle" font-size="11" fill="#1e3a8a">minimum → generalization</text>
+      <text x="180" y="213" text-anchor="middle" font-size="10" fill="#64748b">early stopping, SGD noise, precision</text>
+    </g>
+
+    <g transform="translate(40, 320)">
+      <text x="0" y="0" font-size="12" fill="#334155" font-family="monospace">
+        ERM:   θ* ∈ arg min R(θ)          vs          Implicit:   θ_T = Algorithm(∇R, T)
+      </text>
+      <text x="0" y="22" font-size="11" fill="#64748b">
+        The optimizer’s dynamics (finite steps, stochastic gradients, low precision) implicitly regularize toward solutions with favorable properties.
+      </text>
+    </g>
+  </svg>
+</div>
+<p>
+  One of the key problems we have witnessed in all optimizers—both in terms of weights and outputs—is how they change when a slight perturbation occurs. In the following section, we introduce some concepts and definitions that will be useful for studying this further.
+</p>
+<h2 class="section-heading">Lipschitz Continuity</h2>
+
+<p>Lipsschitz constant allows us to study the sensitivity of the input to the output. If any our model trained has smaller values it essentially means even slight changes in the input space will lead to drastic changes in the output space this result is particularly profound in the cases of alignment 
+A small change in the input miss specification could essentially lead to unfair reward advantage. It also prevents reward hacking or specification gaming, it also ensure that the the model becomes increasingly generalizable 
+
+</p>
+
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 2 (Lipschitz Constant)</div>
   <div class="thm-env__body">
@@ -1757,8 +1914,14 @@ blockquote cite::before { content: '— '; }
     </g>
   </svg>
 </div>
+<h3 class="subsection-heading">Convex functions</h3>
+<p>
 
 
+  Next, we move on to an important class of functions called as convex functions. A convex function is essentially shaped like a valley. These types of functions come with several nice properties that are particularly useful for our case. First, the line test: any straight line through the graph stays above the graph at all times (or touches it). There are no hidden valleys — the only lowest point is the global minimum. The tangent line always lies under the curve. The function always has a "U" shape; any form of stretching or shifting still preserves convexity. Because of these unique properties, convex functions are smooth, making them particularly interesting and useful in neural networks.
+
+
+</p>
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 3 (Convex Function)</div>
   <div class="thm-env__body">
@@ -1856,6 +2019,11 @@ blockquote cite::before { content: '— '; }
     </g>
   </svg>
 </div>
+
+
+
+
+
 
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 4 (Wasserstein‑p Distance)</div>
@@ -1998,74 +2166,7 @@ blockquote cite::before { content: '— '; }
     with margin \(m > 0\) is also of particular interest.
   </div>
 </div>
-<p style="margin-top: 1.5rem; font-family: Georgia, serif; line-height: 1.5; font-size: 1rem;">
-  The core conceptual shift moves from <strong>Empirical Risk Minimization (ERM)</strong> — where the goal is to find any global minimum of the empirical risk \(\theta^* \in \arg\min \mathbb{E}[L_\theta(z)]\) — to understanding <strong>implicit regularization induced by the optimizer</strong>. Rather than searching over all minimizers, the algorithm \(\mathcal{A}\) returns a specific parameter \(\theta_T\) after finite time \(T\), following a stochastic gradient dynamics. This optimizer bias (due to early stopping, mini-batch noise, momentum, adaptive learning rates, and even numerical precision like float16) selects a particular global minimum among infinitely many. Therefore, the generalization behavior of neural networks is not explained solely by the loss landscape or hypothesis class, but crucially by the interaction with the optimization procedure itself.
-</p>
 
-<div style="margin-top: 2rem; text-align: center;">
-  <svg width="900" height="380" viewBox="0 0 900 380" style="max-width:100%; overflow:visible; background: transparent;">
-    <defs>
-      <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#444"/>
-      </marker>
-      <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#1e3a8a"/>
-      </marker>
-    </defs>
-
-    <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e293b">From ERM to Implicit Regularization — A Conceptual Shift</text>
-    <text x="450" y="52" text-anchor="middle" font-size="13" fill="#475569">The optimizer’s bias replaces the search for arbitrary minima</text>
-
-    <!-- LEFT BLOCK: ERM -->
-    <g transform="translate(40, 80)">
-      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Classical ERM</text>
-      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#475569">θ* ∈ arg min 𝔼[L]</text>
-      
-      <circle cx="70" cy="120" r="10" fill="#dc2626" opacity="0.4"/>
-      <circle cx="140" cy="100" r="10" fill="#dc2626" opacity="0.4"/>
-      <circle cx="210" cy="130" r="10" fill="#dc2626" opacity="0.4"/>
-      <circle cx="280" cy="95" r="10" fill="#dc2626" opacity="0.4"/>
-      
-      <text x="180" y="170" text-anchor="middle" font-size="11" fill="#334155">Infinitely many global minima</text>
-      <text x="180" y="190" text-anchor="middle" font-size="11" fill="#334155">(all fit training data perfectly)</text>
-      <text x="180" y="210" text-anchor="middle" font-size="10" fill="#64748b">Generalization ? unknown</text>
-    </g>
-
-    <line x1="410" y1="190" x2="480" y2="190" stroke="#1e3a8a" stroke-width="3" marker-end="url(#arrow-blue)"/>
-    <text x="445" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">role of</text>
-    <text x="445" y="210" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="bold">optimizer ↓</text>
-
-    <!-- RIGHT BLOCK: Implicit Regularization -->
-    <g transform="translate(500, 80)">
-      <rect x="0" y="0" width="360" height="220" rx="12" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2"/>
-      <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e3a8a">Implicit Regularization</text>
-      <text x="180" y="50" text-anchor="middle" font-size="12" fill="#1e40af">θ_T ∼ A( θ → ∇𝔼[L] )</text>
-      
-      <circle cx="180" cy="110" r="16" fill="#3b82f6" opacity="0.8"/>
-      <circle cx="180" cy="110" r="22" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3"/>
-      <text x="180" y="115" text-anchor="middle" font-size="10" fill="white" font-weight="bold">θ_T</text>
-      
-      <circle cx="100" cy="130" r="8" fill="#94a3b8" opacity="0.3"/>
-      <circle cx="250" cy="90" r="8" fill="#94a3b8" opacity="0.3"/>
-      <circle cx="140" cy="160" r="8" fill="#94a3b8" opacity="0.3"/>
-      <circle cx="220" cy="150" r="8" fill="#94a3b8" opacity="0.3"/>
-      
-      <text x="180" y="175" text-anchor="middle" font-size="11" fill="#1e3a8a">Optimizer bias picks a “good”</text>
-      <text x="180" y="193" text-anchor="middle" font-size="11" fill="#1e3a8a">minimum → generalization</text>
-      <text x="180" y="213" text-anchor="middle" font-size="10" fill="#64748b">early stopping, SGD noise, precision</text>
-    </g>
-
-    <g transform="translate(40, 320)">
-      <text x="0" y="0" font-size="12" fill="#334155" font-family="monospace">
-        ERM:   θ* ∈ arg min R(θ)          vs          Implicit:   θ_T = Algorithm(∇R, T)
-      </text>
-      <text x="0" y="22" font-size="11" fill="#64748b">
-        The optimizer’s dynamics (finite steps, stochastic gradients, low precision) implicitly regularize toward solutions with favorable properties.
-      </text>
-    </g>
-  </svg>
-</div>
     <div class="proof">
       <span class="proof__label">Proof.</span>
       <span class="proof__qed">□</span>
@@ -2085,25 +2186,7 @@ blockquote cite::before { content: '— '; }
     <p>The inline variant <span class="math-inline">f(x) = x²</span> works within a sentence without breaking flow.</p>
   </section>
   <!-- SECTION: CALLOUTS -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Callouts</h2>
-    <div class="callout callout--info">
-      <div class="callout__icon">ℹ</div>
-      <div class="callout__body"><div class="callout__title">Prerequisites</div>Familiarity with real analysis and basic topology is assumed throughout this post.</div>
-    </div>
-    <div class="callout callout--warn">
-      <div class="callout__icon">⚡</div>
-      <div class="callout__body"><div class="callout__title">Common pitfall</div>Many students conflate pointwise and uniform convergence. The distinction matters critically here.</div>
-    </div>
-    <div class="callout callout--success">
-      <div class="callout__icon">✓</div>
-      <div class="callout__body"><div class="callout__title">Key takeaway</div>The spectral interpretation offers a natural framework for understanding the critical strip.</div>
-    </div>
-    <div class="callout callout--danger">
-      <div class="callout__icon">✗</div>
-      <div class="callout__body"><div class="callout__title">Known error in literature</div>Several early papers use a sign convention inconsistent with modern usage — always verify the convention in use.</div>
-    </div>
-  </section>
+
   <!-- SECTION: CODE -->
   <section style="margin-bottom: 3rem">
     <h2 class="section-heading">Code Blocks</h2>
@@ -2142,6 +2225,210 @@ for z in zeros:
       </div>
     </div>
   </section>
+
+
+<div class="thm-env defn">
+  <div class="thm-env__label">Definition (Lipschitz Constant and Classifier)</div>
+  <div class="thm-env__body">
+    Let \(\mathcal{X} \subseteq \mathbb{R}^d\) be the input space. For a function \(f: \mathcal{X} \to \mathbb{R}\) (binary case) or \(f: \mathcal{X} \to \mathbb{R}^K\) (multiclass case), define the Lipschitz constant
+    \[
+    L = \sup_{x \neq y} \frac{\|f(x) - f(y)\|_2}{\|x - y\|_2}
+    \]
+    (for the binary case) or the matrix Lipschitz constant for the multiclass case (same definition with \(\|\cdot\|_2\) on outputs).
+
+    <br><br>
+    A classifier is defined as:
+    <ul>
+      <li><strong>Binary</strong>: \(h(x) = \operatorname{sign}(f(x))\)</li>
+      <li><strong>Multiclass</strong>: \(\hat{k}(x) = \arg\max_{k \in \{1,\dots,K\}} f_k(x)\)</li>
+    </ul>
+
+    The robustness radius at an input \(x\) (ignoring ground truth) is
+    \[
+    r(x) = \inf_{\delta: \hat{k}(x+\delta) \neq \hat{k}(x)} \|\delta\|_2.
+    \]
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Property 1 (Binary Local Robustness Certificate)</div>
+  <div class="thm-env__body">
+    If \(f \in \operatorname{Lip}_L(\mathcal{X}, \mathbb{R})\), then for any \(x \in \mathcal{X}\),
+    \[
+    r(x) \;\ge\; \frac{|f(x)|}{L}.
+    \]
+    That is, any perturbation \(\delta\) with \(\|\delta\|_2 < \frac{|f(x)|}{L}\) cannot change the sign of \(f\).
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Property 2 (Multiclass Local Robustness Certificate)</div>
+  <div class="thm-env__body">
+    If \(f \in \operatorname{Lip}_L(\mathcal{X}, \mathbb{R}^K)\) with respect to the Euclidean norm on both input and output spaces, then for any \(x \in \mathcal{X}\) with predicted class \(\hat{k} = \arg\max_k f_k(x)\),
+    \[
+    r(x) \;\ge\; \frac{f_{\hat{k}}(x) \;-\; \max_{i \neq \hat{k}} f_i(x)}{\sqrt{2}\, L}.
+    \]
+    Define the multiclass margin at \(x\):
+    \[
+    m(x) = f_{\hat{k}}(x) - \max_{i \neq \hat{k}} f_i(x) \qquad (>0 \text{ for correctly classified points}).
+    \]
+    Then
+    \[
+    r(x) \ge \frac{m(x)}{\sqrt{2}\, L}.
+    \]
+    If \(x\) is misclassified (\(m(x) < 0\)), the certificate gives a negative lower bound; in practice the robustness radius is taken as \(0\) for misclassified examples.
+  </div>
+</div>
+
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 6 (Lipschitz constrained feed-forward neural network)</div>
+  <div class="thm-env__body">
+    Let \(\mathcal{X} \subset \mathbb{R}^n\) be the input space, \(\mathcal{Y} \subset \mathbb{R}^K\) the output space, and \(\Theta \subset \mathbb{R}^p\) the parameter space. A feed-forward neural network of depth \(D \in \mathbb{N}\) is a parameterized function \(f: \Theta \times \mathcal{X} \to \mathcal{Y}\) defined by the sequential composition of layers \(f_1, \dots, f_D\):
+    \[
+    f(\theta, x) = \bigl( f_D(\theta_D) \circ f_{D-1}(\theta_{D-1}) \circ \cdots \circ f_1(\theta_1) \bigr)(x),
+    \]
+    where \(\theta = (\theta_1, \dots, \theta_D) \in \Theta\) are the layer parameters. For an affine layer, \(\theta_d = (W_d, b_d)\) consists of a weight matrix and bias vector; for an activation function, \(\theta_d = \emptyset\) (no parameters).
+
+    <br><br>
+    A <strong>Lipschitz-constrained neural network</strong> is a feed-forward network such that for each layer \(d \in \{1,\dots,D\}\), the mapping \(x_d \mapsto f_d(\theta_d, x_d)\) is \(L_d\)-Lipschitz for all \(\theta_d\), i.e.,
+    \[
+    \forall x_d, y_d \in \mathbb{R}^{n_d}, \quad \| f_d(\theta_d, x_d) - f_d(\theta_d, y_d) \|_2 \le L_d \| x_d - y_d \|_2.
+    \]
+    Then the overall function \(x \mapsto f(\theta, x)\) is \(L\)-Lipschitz with
+    \[
+    L \le \prod_{d=1}^D L_d \qquad \forall \theta \in \Theta.
+    \]
+    Let \(\text{LipNet}_1\) denote the class of Lipschitz-constrained networks for which the global Lipschitz constant satisfies \(L = 1\). For simplicity, all networks in this manuscript are considered \(L\)-Lipschitz with respect to the Euclidean \(\ell_2\)-norm.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 7 (Empirical lower bound for Lipschitz constant)</div>
+  <div class="thm-env__body">
+    Let \(f: \mathbb{R}^m \to \mathbb{R}^n\) be a neural network and let \(S \subset \mathbb{R}^m\) be a finite set of sample points. The true (global) Lipschitz constant is
+    \[
+    L = \sup_{x \neq y \in \mathbb{R}^m} \frac{\|f(x)-f(y)\|_2}{\|x-y\|_2}.
+    \]
+    Any estimate computed exclusively from \(S\) yields a lower bound \(\widehat{L}_{\text{emp}} \le L\). Three common empirical proxies are:
+
+    <ul>
+      <li><strong>Maximum gradient norm</strong> (for differentiable \(f\)):
+        \[
+        \widehat{L}_{\nabla} = \max_{x \in S} \|\nabla_x f(x)\|_2.
+        \]
+      </li>
+      <li><strong>Maximum pairwise finite difference</strong>:
+        \[
+        \widehat{L}_{\text{pair}} = \max_{\substack{x,y \in S \\ x \neq y}} \frac{\|f(x)-f(y)\|_2}{\|x-y\|_2}.
+        \]
+      </li>
+      <li><strong>Maximum over adversarial perturbations</strong>:
+        \[
+        \widehat{L}_{\text{adv}} = \max_{x \in S} \frac{\|f(x)-f(x+\delta_x)\|_2}{\|\delta_x\|_2},
+        \]
+        where \(\delta_x\) is an adversarial attack (e.g., projected gradient descent) maximizing \(\|f(x+\delta)-f(x)\|_2\) subject to \(\|\delta\|_2 \le \varepsilon\).
+      </li>
+    </ul>
+    Because the supremum is taken over the whole domain, any such estimate from a finite subset is a lower bound:
+    \[
+    \widehat{L}_{\text{emp}} \le L.
+    \]
+    These estimates are not suitable for certified robustness but can provide insights into training dynamics and generalization.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 8 (Layer-wise composition bound – AutoLip)</div>
+  <div class="thm-env__body">
+    Let the neural network be a composition of layers: \(f = f_D \circ \cdots \circ f_1\). If each layer \(f_d\) is \(L_d\)-Lipschitz with respect to the \(\ell_2\)-norm, then the overall network satisfies
+    \[
+    \forall x,y \in \mathbb{R}^m, \quad \|f(x)-f(y)\|_2 \le \left( \prod_{d=1}^D L_d \right) \|x-y\|_2.
+    \]
+    Hence an upper bound on the global Lipschitz constant is
+    \[
+    \widehat{L}_{\text{product}} = \prod_{d=1}^D L_d.
+    \]
+    For an affine layer \(f_d(z) = W_d z + b_d\), the minimal Lipschitz constant is the spectral norm:
+    \[
+    L_d = \|W_d\|_2 = \sqrt{\lambda_{\max}(W_d^{\mathsf{T}}W_d)}.
+    \]
+    For standard activation functions (ReLU, sigmoid, tanh), \(L_d = 1\) when they are 1-Lipschitz. The AutoLip algorithm computes these per‑layer bounds via automatic differentiation and backpropagates them to obtain a global upper bound.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 9 (Linear relaxation methods for local Lipschitz bounds)</div>
+  <div class="thm-env__body">
+    Linear relaxation methods (e.g., Decomon, auto‑LiRPA) compute a local Lipschitz constant over a compact input region \(\mathcal{C} \subset \mathbb{R}^m\) (typically an \(\ell_\infty\)-ball). For a neuron with pre‑activation \(z\) and activation \(\sigma\), the method replaces \(\sigma(z)\) by linear lower and upper bounding functions:
+    \[
+    \alpha z + \beta \le \sigma(z) \le \gamma z + \delta \quad \forall z \in [z_{\min}, z_{\max}],
+    \]
+    where the coefficients \(\alpha,\beta,\gamma,\delta\) depend on the input bounds. Propagating such linear relaxations through the network yields convex bounds on the output difference:
+    \[
+    \|f(x)-f(y)\|_2 \le \widehat{L}_{\text{lin}} \|x-y\|_2 \quad \forall x,y \in \mathcal{C}.
+    \]
+    The computed \(\widehat{L}_{\text{lin}}\) is an upper bound on the local Lipschitz constant over \(\mathcal{C}\). These methods are often faster than global SDP approaches and can be scaled to larger networks.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 10 (LipSDP – Convex relaxation via semidefinite programming)</div>
+  <div class="thm-env__body">
+    The LipSDP framework (Fazlyab et al., 2019) formulates the problem of estimating the global Lipschitz constant as a semidefinite program (SDP). For a network \(f(x) = W_D \,\sigma(\,\cdots W_1 x + b_1 \cdots) + b_D\) with layer‑wise weight matrices \(W_i\) and activation \(\sigma\) satisfying a quadratic constraint
+    \[
+    \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix}^{\mathsf{T}} \! M \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix} \ge 0 \quad \forall z,y \in \mathbb{R},
+    \]
+    the Lipschitz constant \(L\) is the smallest number such that
+    \[
+    \|f(x)-f(y)\|_2^2 \le L^2 \|x-y\|_2^2 \quad \forall x,y.
+    \]
+    This inequality is equivalent to a matrix inequality
+    \[
+    \Delta^{\mathsf{T}} \begin{bmatrix} W_D^{\mathsf{T}}W_D & 0 \\ 0 & -L^2 I \end{bmatrix} \Delta \le 0 \quad \forall \Delta \in \mathbb{R}^{n_1+\cdots+n_D},
+    \]
+    which can be relaxed to an SDP. The optimal value of the SDP yields an upper bound:
+    \[
+    \widehat{L}_{\text{SDP}} \ge L.
+    \]
+    LipSDP is expressive enough to handle many activations (ReLU, tanh, GroupSort) by choosing appropriate symmetric matrices \(M\).
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 11 (Polyhedron propagation for ReLU networks)</div>
+  <div class="thm-env__body">
+    For networks with ReLU activations, an exact Lipschitz bound over a convex input polytope \(\mathcal{P}_{\text{in}}\) can be obtained by forward propagation of polyhedrons. Each ReLU neuron splits the input space into two regions (active or inactive). The set of all possible activation patterns defines a partition. For a fixed pattern, the network becomes an affine map:
+    \[
+    f(x) = A_{\text{pattern}} x + b_{\text{pattern}}.
+    \]
+    The Lipschitz constant over that pattern is \(\|A_{\text{pattern}}\|_2\). The global Lipschitz constant over \(\mathcal{P}_{\text{in}}\) is the supremum over all patterns reachable from \(\mathcal{P}_{\text{in}}\):
+    \[
+    \widehat{L}_{\text{poly}} = \max_{\text{patterns reachable}} \|A_{\text{pattern}}\|_2.
+    \]
+    Computing this exactly is combinatorial, but efficient algorithms (e.g., Weng et al., 2018a) propagate convex polyhedra layer‑by‑layer, maintaining outer approximations that yield valid upper bounds.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 12 (LiPopt – Lipschitz constant via optimization)</div>
+  <div class="thm-env__body">
+    LiPopt (Latorre et al., 2019) formulates the Lipschitz constant estimation as a difference‑of‑convex programming problem. For a network with ReLU activations, the function can be expressed as a difference of two convex functions:
+    \[
+    f(x) = \varphi(x) - \psi(x),
+    \]
+    where \(\varphi\) and \(\psi\) are convex. The Lipschitz constant is then bounded by the maximum norm of the subgradients:
+    \[
+    L \le \sup_x \max\bigl\{ \|\partial \varphi(x)\|_2,\; \|\partial \psi(x)\|_2 \bigr\}.
+    \]
+    This leads to a sequence of convex optimization problems whose optimal values converge to an upper bound. LiPopt typically provides tighter bounds than simple product rules but is more computationally expensive.
+  </div>
+</div>
+
+
+
+
+
   <!-- SECTION: TABLE -->
   <section style="margin-bottom:3rem">
     <h2 class="section-heading">Math Tables</h2>
@@ -2281,6 +2568,86 @@ for z in zeros:
   }
 })();
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- SITE FOOTER -->
 <footer class="site-footer">
   <div class="container">
