@@ -545,6 +545,33 @@ code:not(pre code) {
   border-radius: var(--r-sm);
   border: 1px solid var(--border);
 }
+
+
+
+
+
+
+
+.theme-dark pre,
+.theme-dark .code-block {
+  background: #1a1c23 !important;
+  color: #e8e4d9 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ─── CARDS ──────────────────────────────────────────────────── */
 /* .card — general purpose card */
 .card {
@@ -841,6 +868,44 @@ blockquote cite::before { content: '— '; }
 .callout--danger .callout__title { color: var(--rose); }
 .callout--success { background: var(--sage-light); border-color: var(--sage); }
 .callout--success .callout__title { color: var(--sage); }
+.theme-dark .callout--info,
+.theme-dark .callout--warn,
+.theme-dark .callout--danger,
+.theme-dark .callout--success {
+  color: #1a1a1a;   /* dark text for body content */
+}
+
+.theme-dark .callout--info {
+  background: #edeff1cb;
+  border-color: #a8cfe5;
+}
+.theme-dark .callout--info .callout__title {
+  color: #1a5f7a;
+}
+
+.theme-dark .callout--warn {
+  background: color-mix(in srgb, var(--gold-light) 40%, white);
+  border-color: var(--gold);
+}
+.theme-dark .callout--warn .callout__title {
+  color: var(--gold-dark);
+}
+
+.theme-dark .callout--danger {
+  background: var(--rose-light);
+  border-color: var(--rose);
+}
+.theme-dark .callout--danger .callout__title {
+  color: var(--rose);
+}
+
+.theme-dark .callout--success {
+  background: var(--sage-light);
+  border-color: var(--sage);
+}
+.theme-dark .callout--success .callout__title {
+  color: var(--sage);
+}
 /* ─── LISTS ──────────────────────────────────────────────────── */
 .post-body ul,
 .post-body ol {
@@ -1914,6 +1979,9 @@ A small change in the input miss specification could essentially lead to unfair 
     </g>
   </svg>
 </div>
+
+
+
 <h3 class="subsection-heading">Convex functions</h3>
 <p>
 
@@ -2021,7 +2089,21 @@ A small change in the input miss specification could essentially lead to unfair 
 </div>
 
 
+<h2 class="subsection heading"> Problem of optimal trasnport </h2>
+<p> 
 
+The theory of optimal transport, pioneered by Gaspard Monge in 1781 and revolutionized by Leonid Kantorovich in the 1940s, reveals that the problem of finding the most economical way to transport mass from one distribution to another is intimately and inexorably linked to the geometry of distance metrics and the analytic structure of convex functions.
+
+
+The optimal transport problem begins with a simple and intuitive premise: given two probability distributions P and Q over a space Rm. what is the minimal expected cost required to reshape 
+P into Q
+
+The optimal transport problem thus provides a mathematically rigorous way to compare probability distributions by respecting the underlying geometry of the space, with profound applications
+
+
+
+  
+</p>
 
 
 
@@ -2143,6 +2225,35 @@ A small change in the input miss specification could essentially lead to unfair 
   </div>
 </div>
 
+<h3 class="subsection heading"> Binary cross entropy loss</h3>
+
+<p>
+
+ Binary Cross‑Entropy (BCE) Loss – The Confidence‑Based Scorer
+Imagine you are teaching a child to tell cats from dogs. You show a picture and ask: “How sure are you that this is a cat?” The child answers with a number between “definitely a dog” and “definitely a cat.” The BCE loss measures how surprised you should be by that answer.
+
+In machine learning, a binary classifier usually produces a raw score (called a logit) and then squeezes it through a soft, S‑shaped curve (the logistic function) to turn it into a probability between 0 and 1. The BCE loss then looks at the true label (say, 1 for cat, 0 for dog) and the predicted probability. If the predicted probability matches the true label very well (e.g., 0.99 for “cat” when the picture really is a cat), the loss is tiny. If the prediction is wrong (e.g., 0.01 for “cat” when it is actually a cat), the loss becomes enormous – the loss grows faster and faster as the mistake gets worse.
+
+There is an extra knob called temperature (often written as τ). Turning up the temperature makes the network more confident: even a small positive score gets pushed close to 0 or 1. Turning it down makes the predictions softer, more hesitant. Why does that matter? If the network is already constrained to be gently changing (Lipschitz networks), the temperature becomes a powerful tool to control how “sharp” or “smooth” the final decisions are. A lower temperature often improves generalization – the network does not scream “I am 100% sure” on every training example, so it stays more flexible on new data.
+
+BCE is loved because it gives smooth, well‑behaved gradients (the directions in which to adjust the network) and naturally produces probabilities that can be interpreted as confidence. It is the standard choice for binary classification in almost all modern deep learning frameworks.
+
+
+</p>
+<h3 class="subsection heading"> Hinge loss</h3>
+
+<p>
+
+Now think of a different teacher. Instead of asking “how sure are you?”, they ask: “Is your decision separated by a clear border?” The Hinge loss is the brain behind Support Vector Machines, but it works equally well in neural networks.
+
+The Hinge loss cares about a margin – a buffer zone around the decision boundary. For a given training example, the network produces a raw score (positive for one class, negative for the other). The loss checks whether that score is far enough away from zero in the correct direction. If the score is, say, +5 for a cat picture and the margin is set to 1, then the loss is zero – the example is safe and well on the correct side. If the score is +0.5, still correctly positive but inside the margin, the loss is a positive number proportional to how much we still need to push it outward. If the sign is wrong (negative for a cat), the loss gets even bigger.
+
+The size of the margin (commonly written as m) is a hyper‑parameter. A larger margin demands that examples be farther from the decision boundary. That is great for robustness: if a small perturbation to the input cannot move the score across zero because you have a thick margin, the classifier is inherently more stable. Lipschitz networks pair beautifully with Hinge loss because the Lipschitz constant tells you exactly how far a small input change can move the output. The margin divided by the Lipschitz constant gives a guaranteed radius of safety – no misclassification within that radius.
+
+Unlike BCE, Hinge loss is piecewise linear. It is completely flat for examples that already satisfy the margin – such examples stop influencing training. That creates a sparse set of “support vectors” (only the violators matter), which can be efficient but sometimes leads to slower learning because gradient signals become sparse.
+
+
+</p>
 
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 6 (Binary Cross‑Entropy and Hinge Losses)</div>
@@ -2167,65 +2278,7 @@ A small change in the input miss specification could essentially lead to unfair 
   </div>
 </div>
 
-    <div class="proof">
-      <span class="proof__label">Proof.</span>
-      <span class="proof__qed">□</span>
-      Let ε &gt; 0. Since f is continuous at x, there exists δ &gt; 0 such that |f(t) − f(x)| &lt; ε whenever |t − x| &lt; δ. For 0 &lt; |h| &lt; δ, we estimate the difference quotient...
-    </div>
-  </section>
-  <!-- SECTION: MATH BLOCKS -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Math Blocks</h2>
-    <div class="math-block">
-      ζ(s) = Σ<sub>n=1</sub><sup>∞</sup> n<sup>−s</sup> = ∏<sub>p prime</sub> (1 − p<sup>−s</sup>)<sup>−1</sup>
-    </div>
-    <div class="math-block math-block--numbered">
-      <div style="flex:1;text-align:center">∫<sub>−∞</sub><sup>+∞</sup> e<sup>−x²</sup> dx = √π</div>
-      <span class="eq-number">(1.7)</span>
-    </div>
-    <p>The inline variant <span class="math-inline">f(x) = x²</span> works within a sentence without breaking flow.</p>
-  </section>
-  <!-- SECTION: CALLOUTS -->
-
-  <!-- SECTION: CODE -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Code Blocks</h2>
-    <div class="code-block__header">
-      <span>riemann_zeta.py</span>
-      <span>Python 3.11</span>
-    </div>
-<pre><code>from mpmath import mp, zetazero
-# Set precision to 50 decimal places
-mp.dps = 50
-# Compute the first 10 nontrivial zeros
-zeros = [zetazero(n) for n in range(1, 11)]
-for z in zeros:
-    print(f"ρ = {z}")</code></pre>
-  </section>
-  <!-- SECTION: POST CARDS -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Post Cards</h2>
-    <div class="col-2" style="margin-top:1rem">
-      <div class="card card--post">
-        <span class="tag tag--teal">Analysis</span>
-        <a href="#" class="card__title">Why the Spectral Interpretation Matters</a>
-        <p class="card__excerpt">Connecting eigenvalues of self-adjoint operators to the zeros of ζ(s) — a bridge between quantum mechanics and number theory.</p>
-        <div class="post-meta"><span>May 12, 2025</span><span class="separator">·</span><span>14 min read</span></div>
-      </div>
-      <div class="card card--post">
-        <span class="tag tag--gold">Number Theory</span>
-        <a href="#" class="card__title">Prime Gaps and Their Distribution</a>
-        <p class="card__excerpt">An elementary tour through Bertrand's postulate, Cramér's conjecture, and what recent breakthrough results tell us.</p>
-        <div class="post-meta"><span>Mar 3, 2025</span><span class="separator">·</span><span>9 min read</span></div>
-      </div>
-      <div class="card card--featured">
-        <span class="tag tag--default" style="background:rgba(255,255,255,.12);color:#d4cfc4;border-color:rgba(255,255,255,.2)">Featured</span>
-        <h3 style="margin-top:.75rem;font-size:1.3rem;color:#f5f0e8">The Langlands Program: A Grand Unified Theory of Mathematics</h3>
-        <p style="color:#b0aa9e;font-size:.88rem;margin-top:.5rem">Bridging number theory, representation theory, and geometry into a single breathtaking vision.</p>
-      </div>
-    </div>
-  </section>
-
+<h3 class="subsection heading">Applying lipschitz constant to classification settings</h3>
 
 <div class="thm-env defn">
   <div class="thm-env__label">Definition (Lipschitz Constant and Classifier)</div>
@@ -2249,6 +2302,22 @@ for z in zeros:
     \]
   </div>
 </div>
+<p>
+Binary case: The network produces a single number. If that number is positive, the classifier says “class A”; if negative, it says “class B”. The magnitude of the number (how far away from zero it is) is like a confidence or margin.
+
+Multiclass case: The network produces a list of numbers, one for each class (e.g., cat, dog, bird). The classifier picks the class with the highest number. The gap between the highest number and the second highest is the margin – a measure of how clearly the network prefers one class over the others.
+</p>
+
+      <div class="proof">
+      <span class="proof__label"> note</span>
+      <span class="proof__qed">□</span>
+ The robustness radius for that input is the smallest distance (measured in the usual Euclidean sense) you need to change the input so that the classifier’s answer flips to something else 
+
+If the radius is large, the classifier is robust: you have to change the image a lot before the answer changes.
+
+If the radius is very small, the classifier is fragile: a tiny imperceptible perturbation can fool it.
+    </div>
+
 
 <div class="thm-env thm">
   <div class="thm-env__label">Property 1 (Binary Local Robustness Certificate)</div>
@@ -2280,7 +2349,13 @@ for z in zeros:
   </div>
 </div>
 
+<h2 class = "subsection header"> Lipschitz constrained neural network</h2>
+<p> 
+In a lipschitz constrained neural network Each individual layer (whether it’s an affine layer or an activation) has its own local Lipschitz constant – a number that tells you the maximum amplification of distances that this layer can produce. For example, if you move the input to that layer by one unit, the output can move at most by that layer’s Lipschitz constant. For activation functions like ReLU or sigmoid, this constant is at most 1 (they do not stretch distances). For an affine layer (multiplying by a weight matrix and adding a bias), the Lipschitz constant equals the largest singular value of the weight matrix – essentially the maximum factor by which the layer can stretch any direction.
 
+
+  
+</p>
 <div class="thm-env thm">
   <div class="thm-env__label">Definition 6 (Lipschitz constrained feed-forward neural network)</div>
   <div class="thm-env__body">
@@ -2426,6 +2501,61 @@ for z in zeros:
 </div>
 
 
+
+    <div class="proof">
+      <span class="proof__label">Proof.</span>
+      <span class="proof__qed">□</span>
+      Let ε &gt; 0. Since f is continuous at x, there exists δ &gt; 0 such that |f(t) − f(x)| &lt; ε whenever |t − x| &lt; δ. For 0 &lt; |h| &lt; δ, we estimate the difference quotient...
+    </div>
+  </section>
+  <!-- SECTION: MATH BLOCKS -->
+  <section style="margin-bottom: 3rem">
+    <h2 class="section-heading">Math Blocks</h2>
+    <div class="math-block">
+      ζ(s) = Σ<sub>n=1</sub><sup>∞</sup> n<sup>−s</sup> = ∏<sub>p prime</sub> (1 − p<sup>−s</sup>)<sup>−1</sup>
+    </div>
+    <div class="math-block math-block--numbered">
+      <div style="flex:1;text-align:center">∫<sub>−∞</sub><sup>+∞</sup> e<sup>−x²</sup> dx = √π</div>
+      <span class="eq-number">(1.7)</span>
+    </div>
+    <p>The inline variant <span class="math-inline">f(x) = x²</span> works within a sentence without breaking flow.</p>
+  </section>
+  <!-- SECTION: CALLOUTS -->
+
+  <!-- SECTION: CODE -->
+  <section style="margin-bottom: 3rem">
+    <h2 class="section-heading">Code Blocks</h2>
+    <div class="code-block__header">
+      <span>riemann_zeta.py</span>
+      <span>Python 3.11</span>
+    </div>
+<pre><code>from mpmath import mp, zetazero
+# Set precision to 50 decimal places
+mp.dps = 50
+# Compute the first 10 nontrivial zeros
+zeros = [zetazero(n) for n in range(1, 11)]
+for z in zeros:
+    print(f"ρ = {z}")</code></pre>
+  </section>
+  <!-- SECTION: POST CARDS -->
+  <section style="margin-bottom: 3rem">
+    <h2 class="section-heading">Post Cards</h2>
+    <div class="col-2" style="margin-top:1rem">
+      <div class="card card--post">
+        <span class="tag tag--teal">Analysis</span>
+        <a href="#" class="card__title">Why the Spectral Interpretation Matters</a>
+        <p class="card__excerpt">Connecting eigenvalues of self-adjoint operators to the zeros of ζ(s) — a bridge between quantum mechanics and number theory.</p>
+        <div class="post-meta"><span>May 12, 2025</span><span class="separator">·</span><span>14 min read</span></div>
+      </div>
+      <div class="card card--post">
+        <span class="tag tag--gold">Number Theory</span>
+        <a href="#" class="card__title">Prime Gaps and Their Distribution</a>
+        <p class="card__excerpt">An elementary tour through Bertrand's postulate, Cramér's conjecture, and what recent breakthrough results tell us.</p>
+        <div class="post-meta"><span>Mar 3, 2025</span><span class="separator">·</span><span>9 min read</span></div>
+      </div>
+     
+    </div>
+  </section>
 
 
 

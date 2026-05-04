@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>3D Lipschitz Certification Cards</title>
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+  <style>
+    /* ---------- Global reset & grid ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0d12;   /* dark background to make cards pop */
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      padding: 3rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ---------- 3D Card Styles (from Uiverse.io by imtausef) ---------- */
+    .parent {
+      width: 100%;
+      padding: 20px;
+      perspective: 1000px;
+    }
+
+    .card {
+      padding-top: 50px;
+      border: 3px solid #141414;
+      transform-style: preserve-3d;
+      background: linear-gradient(135deg, #0000 18.75%, #f3f3f3 0 31.25%, #0000 0),
+                  repeating-linear-gradient(45deg, #f3f3f3 -6.25% 6.25%, #141414 0 18.75%);
+      background-size: 60px 60px;
+      background-position: 0 0, 0 0;
+      background-color: #141414;
+      width: 100%;
+      box-shadow: rgba(142, 142, 142, 0.3) 0px 30px 30px -10px;
+      transition: all 0.5s ease-in-out;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background-position: -100px 100px, -100px 100px;
+      transform: rotate3d(0.5, 1, 0, 30deg);
+    }
+
+    .content-box {
+      background: #8ed500;   /* vibrant green accent */
+      transition: all 0.5s ease-in-out;
+      padding: 60px 25px 25px 25px;
+      transform-style: preserve-3d;
+    }
+
+    .content-box .card-title {
+      display: inline-block;
+      color: #141414;
+      font-size: 1.8rem;
+      font-weight: 900;
+      transition: all 0.5s ease-in-out;
+      transform: translate3d(0px, 0px, 50px);
+    }
+
+    .content-box .card-title:hover {
+      transform: translate3d(0px, 0px, 60px);
+    }
+
+    .content-box .card-content {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #141414;
+      transition: all 0.5s ease-in-out;
+      transform: translate3d(0px, 0px, 30px);
+      line-height: 1.4;
+    }
+
+    .content-box .card-content:hover {
+      transform: translate3d(0px, 0px, 60px);
+    }
+
+    .content-box .see-more {
+      margin-top: 1.2rem;
+      display: inline-block;
+      font-weight: 900;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #8ed500;
+      background: #141414;
+      padding: 0.5rem 0.9rem;
+      transition: all 0.5s ease-in-out;
+      transform: translate3d(0px, 0px, 20px);
+      letter-spacing: 1px;
+      border: none;
+      pointer-events: none;  /* we use parent click, so inner text doesn't block */
+    }
+
+    .date-box {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      height: 60px;
+      width: 60px;
+      background: #141414;
+      border: 1px solid #8ed500;
+      padding: 10px;
+      transform: translate3d(0px, 0px, 80px);
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 17px 10px -10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .date-box span {
+      display: block;
+      text-align: center;
+    }
+
+    .date-box .month {
+      color: #8ed500;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .date-box .date {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #8ed500;
+      line-height: 1;
+    }
+
+    /* ---------- Modal Styles (light, clean) ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.85);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      max-width: 850px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+      position: relative;
+      border: 1px solid #e2e8f0;
+    }
+
+    .close-modal {
+      position: absolute;
+      right: 1.2rem;
+      top: 0.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #64748b;
+      transition: color 0.2s;
+    }
+    .close-modal:hover {
+      color: #1e293b;
+    }
+
+    /* Definition styling (reuses your thm-env look) */
+    .thm-env {
+      background: #fef9e3;
+      border-left: 5px solid #eab308;
+      padding: 1.2rem 1.5rem;
+      border-radius: 0.75rem;
+      margin: 1rem 0;
+    }
+    .thm-env__label {
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      color: #b45309;
+    }
+    .thm-env__body {
+      color: #1e293b;
+      line-height: 1.65;
+    }
+    .thm {
+      background: #f1f5f9;
+      border-left-color: #3b82f6;
+    }
+    .thm .thm-env__label {
+      color: #1e40af;
+    }
+    code, .math {
+      background: #eef2ff;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: monospace;
+    }
+    /* fix MathJax overflow */
+    .MathJax {
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+</head>
+<body>
+<div class="cards-grid">
+  
+  <!-- Card 1: AutoLip -->
+  <div class="parent" data-def="def-autolip">
+    <div class="card">
+      <div class="content-box">
+        <span class="card-title">AutoLip</span>
+        <p class="card-content">Layer‑wise composition bound – fast global Lipschitz estimate via spectral norms.</p>
+        <span class="see-more">Click to view definition →</span>
+      </div>
+      <div class="date-box">
+        <span class="month">LIP</span>
+        <span class="date">1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Linear Relaxation (Decomon/auto-LiRPA) -->
+  <div class="parent" data-def="def-linrelax">
+    <div class="card">
+      <div class="content-box">
+        <span class="card-title">Linear Relaxation</span>
+        <p class="card-content">Decomon / auto‑LiRPA – tight local bounds using linear over‑approximations of activations.</p>
+        <span class="see-more">Click to view definition →</span>
+      </div>
+      <div class="date-box">
+        <span class="month">LOC</span>
+        <span class="date">2</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: LipSDP -->
+  <div class="parent" data-def="def-lipsdp">
+    <div class="card">
+      <div class="content-box">
+        <span class="card-title">LipSDP</span>
+        <p class="card-content">Semidefinite programming relaxation – global Lipschitz bound for many activations.</p>
+        <span class="see-more">Click to view definition →</span>
+      </div>
+      <div class="date-box">
+        <span class="month">SDP</span>
+        <span class="date">3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Polyhedron Propagation (ReLU) -->
+  <div class="parent" data-def="def-poly">
+    <div class="card">
+      <div class="content-box">
+        <span class="card-title">Polyhedron Prop.</span>
+        <p class="card-content">ReLU networks – propagate convex polyhedra, max spectral norm over activation patterns.</p>
+        <span class="see-more">Click to view definition →</span>
+      </div>
+      <div class="date-box">
+        <span class="month">RELU</span>
+        <span class="date">4</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: LiPopt -->
+  <div class="parent" data-def="def-lipopt">
+    <div class="card">
+      <div class="content-box">
+        <span class="card-title">LiPopt</span>
+        <p class="card-content">Difference‑of‑convex programming – tight upper bounds via sequential convex optimization.</p>
+        <span class="see-more">Click to view definition →</span>
+      </div>
+      <div class="date-box">
+        <span class="month">OPT</span>
+        <span class="date">5</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="definitionModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Hidden Definitions (original LaTeX content) -->
+<div style="display: none;">
+  <!-- AutoLip definition (Definition 8) -->
+  <div id="def-autolip" class="thm-env thm">
+    <div class="thm-env__label">Definition 8 (Layer-wise composition bound – AutoLip)</div>
+    <div class="thm-env__body">
+      Let the neural network be a composition of layers: \(f = f_D \circ \cdots \circ f_1\). If each layer \(f_d\) is \(L_d\)-Lipschitz with respect to the \(\ell_2\)-norm, then the overall network satisfies
+      \[
+      \forall x,y \in \mathbb{R}^m, \quad \|f(x)-f(y)\|_2 \le \left( \prod_{d=1}^D L_d \right) \|x-y\|_2.
+      \]
+      Hence an upper bound on the global Lipschitz constant is
+      \[
+      \widehat{L}_{\text{product}} = \prod_{d=1}^D L_d.
+      \]
+      For an affine layer \(f_d(z) = W_d z + b_d\), the minimal Lipschitz constant is the spectral norm:
+      \[
+      L_d = \|W_d\|_2 = \sqrt{\lambda_{\max}(W_d^{\mathsf{T}}W_d)}.
+      \]
+      For standard activation functions (ReLU, sigmoid, tanh), \(L_d = 1\) when they are 1-Lipschitz. The AutoLip algorithm computes these per‑layer bounds via automatic differentiation and backpropagates them to obtain a global upper bound.
+    </div>
+  </div>
+
+  <!-- Linear relaxation definition (Definition 9) -->
+  <div id="def-linrelax" class="thm-env thm">
+    <div class="thm-env__label">Definition 9 (Linear relaxation methods for local Lipschitz bounds)</div>
+    <div class="thm-env__body">
+      Linear relaxation methods (e.g., Decomon, auto‑LiRPA) compute a local Lipschitz constant over a compact input region \(\mathcal{C} \subset \mathbb{R}^m\) (typically an \(\ell_\infty\)-ball). For a neuron with pre‑activation \(z\) and activation \(\sigma\), the method replaces \(\sigma(z)\) by linear lower and upper bounding functions:
+      \[
+      \alpha z + \beta \le \sigma(z) \le \gamma z + \delta \quad \forall z \in [z_{\min}, z_{\max}],
+      \]
+      where the coefficients \(\alpha,\beta,\gamma,\delta\) depend on the input bounds. Propagating such linear relaxations through the network yields convex bounds on the output difference:
+      \[
+      \|f(x)-f(y)\|_2 \le \widehat{L}_{\text{lin}} \|x-y\|_2 \quad \forall x,y \in \mathcal{C}.
+      \]
+      The computed \(\widehat{L}_{\text{lin}}\) is an upper bound on the local Lipschitz constant over \(\mathcal{C}\). These methods are often faster than global SDP approaches and can be scaled to larger networks.
+    </div>
+  </div>
+
+  <!-- LipSDP definition (Definition 10) -->
+  <div id="def-lipsdp" class="thm-env thm">
+    <div class="thm-env__label">Definition 10 (LipSDP – Convex relaxation via semidefinite programming)</div>
+    <div class="thm-env__body">
+      The LipSDP framework (Fazlyab et al., 2019) formulates the problem of estimating the global Lipschitz constant as a semidefinite program (SDP). For a network \(f(x) = W_D \,\sigma(\,\cdots W_1 x + b_1 \cdots) + b_D\) with layer‑wise weight matrices \(W_i\) and activation \(\sigma\) satisfying a quadratic constraint
+      \[
+      \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix}^{\mathsf{T}} \! M \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix} \ge 0 \quad \forall z,y \in \mathbb{R},
+      \]
+      the Lipschitz constant \(L\) is the smallest number such that
+      \[
+      \|f(x)-f(y)\|_2^2 \le L^2 \|x-y\|_2^2 \quad \forall x,y.
+      \]
+      This inequality is equivalent to a matrix inequality
+      \[
+      \Delta^{\mathsf{T}} \begin{bmatrix} W_D^{\mathsf{T}}W_D & 0 \\ 0 & -L^2 I \end{bmatrix} \Delta \le 0 \quad \forall \Delta \in \mathbb{R}^{n_1+\cdots+n_D},
+      \]
+      which can be relaxed to an SDP. The optimal value of the SDP yields an upper bound:
+      \[
+      \widehat{L}_{\text{SDP}} \ge L.
+      \]
+      LipSDP is expressive enough to handle many activations (ReLU, tanh, GroupSort) by choosing appropriate symmetric matrices \(M\).
+    </div>
+  </div>
+
+  <!-- Polyhedron propagation definition (Definition 11) -->
+  <div id="def-poly" class="thm-env thm">
+    <div class="thm-env__label">Definition 11 (Polyhedron propagation for ReLU networks)</div>
+    <div class="thm-env__body">
+      For networks with ReLU activations, an exact Lipschitz bound over a convex input polytope \(\mathcal{P}_{\text{in}}\) can be obtained by forward propagation of polyhedrons. Each ReLU neuron splits the input space into two regions (active or inactive). The set of all possible activation patterns defines a partition. For a fixed pattern, the network becomes an affine map:
+      \[
+      f(x) = A_{\text{pattern}} x + b_{\text{pattern}}.
+      \]
+      The Lipschitz constant over that pattern is \(\|A_{\text{pattern}}\|_2\). The global Lipschitz constant over \(\mathcal{P}_{\text{in}}\) is the supremum over all patterns reachable from \(\mathcal{P}_{\text{in}}\):
+      \[
+      \widehat{L}_{\text{poly}} = \max_{\text{patterns reachable}} \|A_{\text{pattern}}\|_2.
+      \]
+      Computing this exactly is combinatorial, but efficient algorithms (e.g., Weng et al., 2018a) propagate convex polyhedra layer‑by‑layer, maintaining outer approximations that yield valid upper bounds.
+    </div>
+  </div>
+
+  <!-- LiPopt definition (Definition 12) -->
+  <div id="def-lipopt" class="thm-env thm">
+    <div class="thm-env__label">Definition 12 (LiPopt – Lipschitz constant via optimization)</div>
+    <div class="thm-env__body">
+      LiPopt (Latorre et al., 2019) formulates the Lipschitz constant estimation as a difference‑of‑convex programming problem. For a network with ReLU activations, the function can be expressed as a difference of two convex functions:
+      \[
+      f(x) = \varphi(x) - \psi(x),
+      \]
+      where \(\varphi\) and \(\psi\) are convex. The Lipschitz constant is then bounded by the maximum norm of the subgradients:
+      \[
+      L \le \sup_x \max\bigl\{ \|\partial \varphi(x)\|_2,\; \|\partial \psi(x)\|_2 \bigr\}.
+      \]
+      This leads to a sequence of convex optimization problems whose optimal values converge to an upper bound. LiPopt typically provides tighter bounds than simple product rules but is more computationally expensive.
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal logic
+  const modal = document.getElementById('definitionModal');
+  const modalBody = document.getElementById('modal-body');
+  const closeSpan = document.querySelector('.close-modal');
+
+  function openModal(defId) {
+    const defElement = document.getElementById(defId);
+    if (!defElement) return;
+    // Clone to avoid moving original
+    const clone = defElement.cloneNode(true);
+    modalBody.innerHTML = '';
+    modalBody.appendChild(clone);
+    modal.style.display = 'flex';
+    // Re-render MathJax
+    if (window.MathJax) {
+      MathJax.typesetPromise([modalBody]).catch(err => console.warn(err));
+    }
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalBody.innerHTML = '';
+  }
+
+  closeSpan.onclick = closeModal;
+  window.onclick = function(event) {
+    if (event.target === modal) closeModal();
+  };
+
+  // Attach click listeners to each .parent (the card container)
+  const cards = document.querySelectorAll('.parent');
+  cards.forEach(card => {
+    const defId = card.getAttribute('data-def');
+    if (defId) {
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(defId);
+      });
+    }
+  });
+</script>
+</body>
+</html>
