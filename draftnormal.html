@@ -1813,10 +1813,9 @@ body {
       </div>
     </div>
   <p>
-    If you think about it, the training of neural networks is analogous to how the brain learns: hundreds of millions of natural neurons with complex, intertwined systems of electrical signals combine to form cognition. When the initial perceptron was introduced in the 1960s, the idea was to make a network strong enough or big enough that it would eventually replicate the human brain. Over the years, several efforts were carried out, from the first hardware implementation of the perceptron by Rosenblatt, to Minsky and Papert’s XOR problem, Hinton’s backpropagation, the Universal Approximation Theorem, the introduction of CNNs by LeCun, 2012’s AlexNet, GANs by Goodfellow, and modern-day Transformers. With every step of the way, there were improvements in architecture, optimization, and training techniques. As complexity increased with every new discovery, so did the methods to identify new and improved techniques to enhance the utility of these designs across different domains. 
+If you think about it, the training of neural networks is analogous to how the brain learns: hundreds of millions of natural neurons with complex, intertwined systems of electrical signals combine to form cognition. When the initial perceptron was introduced in the 1960s, the idea was to make a network strong enough or big enough that it would eventually replicate the human brain. Over the years, several efforts were carried out, from the first hardware implementation of the perceptron by Rosenblatt, to Minsky and Papert’s XOR problem, Hinton’s backpropagation, the Universal Approximation Theorem, the introduction of CNNs by LeCun, 2012’s AlexNet, GANs by Goodfellow, and modern-day Transformers. With every step of the way, there were improvements in architecture, optimization, and training techniques. As complexity increased with every new discovery, so did the methods to identify new and improved techniques to enhance the utility of these designs across different domains.
 
-It is often the case with neural network training the improvement in the feed forward network can be either from improvement in the weights, way we calculate gradients, and activations etc with the recent advancements the ability to optimize at every step of the process became mandatory requirements every opportunity to optimize should be taken into consideration when it comes to training models. Before we jump ahead too much let us establish a couple of definitions first before we get into the main topic that is being addressed 
-
+It is often the case with neural network training that the improvement in the feedforward network can come from improvement in the weights, the way we calculate gradients, activations, etc. With recent advancements, the ability to optimize at every step of the process became a mandatory requirement; every opportunity to optimize should be taken into consideration when it comes to training models. Before we jump ahead too much, let us establish a couple of definitions first before we get into the main topic that is being addressed.
   </p>
 </section>
 
@@ -1917,7 +1916,9 @@ It is often the case with neural network training the improvement in the feed fo
 
 
 <p>
-  Although perceptron was revolutionary during its times there were quite a few problems. The problem of linearly separable spaces, no hidden layers etc. Although it sparked huge discussions in the scientific community it lacked quite a bit when it comes to computing even simple functions such as xor etc. Which eventually led to the discovery of feed forward neural networks by adding multiple layers and with the introduction of non linearity solved the problem. And eventually led to the a fundamental result which is ground breaking to say the least the discovery of universal approximation theorem 
+Although the perceptron was revolutionary during its times, there were quite a few problems: the problem of linearly separable spaces, no hidden layers, etc. Although it sparked huge discussions in the scientific community, it lacked quite a bit when it comes to computing even simple functions such as xor, etc. This eventually led to the discovery of feed‑forward neural networks by adding multiple layers, and with the introduction of non‑linearity, the problem was solved. This eventually led to a fundamental result — which is groundbreaking, to say the least — the discovery of the universal approximation theorem.
+
+
 </p>
 
 
@@ -2111,10 +2112,7 @@ It is often the case with neural network training the improvement in the feed fo
 <p>
 
 
-Shallow feedforward networks (one hidden layer) can approximate any continuous function on a compact (closed and bounded) subset of ℝⁿ to any desired accuracy, provided they have enough neurons in that hidden layer.
-Given enough neurons you can possibly model any smooth function. But in terms of practically applying it for complex cases it does not guarantee generalizability to new data, can be trained easily. Which simply shows the expressivity of the neural network now moving on to the optimization.
-
-
+Shallow feedforward networks (one hidden layer) can approximate any continuous function on a compact (closed and bounded) subset of ℝⁿ to any desired accuracy, provided they have enough neurons in that hidden layer. Given enough neurons, you can possibly model any smooth function. But in terms of practically applying it for complex cases, it does not guarantee generalizability to new data, can be trained easily, which simply shows the expressivity of the neural network now moving on to the optimization.
 </p>
 <div class="thm-env defn">
   <div class="thm-env__label">Definition 1 (Feedforward Neural Network)</div>
@@ -2264,10 +2262,10 @@ Given enough neurons you can possibly model any smooth function. But in terms of
  
     <h2 class="section-heading">ERM</h2>
 
-    <p>ERM is the idea that picking the parameters for that the data that you have so that it works well when the data is unseen (not the real risk we minimize the empirical risk )
+    <p>
+      ERM is the idea of picking the parameters for the data that you have so that it works well when the data is unseen (not the real risk — we minimize the empirical risk).
 
-The problem with erm is that it just tells us to fit to the data well but doesn't tell us what to do in cases when there can be infinite paths to achieve the minima or the trajectory we need to take (or simply put it works well for regression but not for neural nets )
-
+The problem with ERM is that it just tells us to fit to the data well but doesn't tell us what to do in cases when there can be infinite paths to achieve the minima or the trajectory we need to take (or simply put, it works well for regression but not for neural nets).
 </p>
   <div class="thm-env thm">
   <div class="thm-env__label">Paradigm 1.2 <span class="thm-env__title">(Empirical Risk Minimization — Classical)</span></div>
@@ -2289,9 +2287,7 @@ The problem with erm is that it just tells us to fit to the data well but doesn'
   </div>
 </div>
   
-  
-  Empirically, this bias often favours flatter curvatures, thereby selecting a specific global minimum. Implicit regularization is not a replacement for ERM but a necessary refinement. Even with this, there are several problems we could encounter, such as lack of precise characterization – because of the heavy dependence on step size, batch size, initialization, etc. – as well as algorithmic and hyperparameter sensitivity, where a drastic change in the selected global minimum can occur when switching optimizers, altering learning rate or batch order, etc. Numerical precision issues can also arise, favoring some solutions over others, and in certain cases this can lead to poor generalization. Additionally, we cannot precisely study every effect of changing each setting, as finding minima is itself a computationally expensive process. Most of these issues arise either due to the intrinsic algorithm‑dependent bias, the tractability of the problem, or heavy dependence on myriad hyperparameter choices.
-</p>
+  Empirically, this bias often favours flatter curvatures, thereby selecting a specific global minimum. Implicit regularization is not a replacement for ERM but a necessary refinement. Even with this, there are several problems we could encounter, such as lack of precise characterization – because of the heavy dependence on step size, batch size, initialization, etc. – as well as algorithmic and hyperparameter sensitivity. A drastic change in the selected global minimum can occur when switching optimizers, altering learning rate or batch order, etc. Numerical precision issues can also arise, favoring some solutions over others, and in certain cases this can lead to poor generalization. Additionally, we cannot precisely study every effect of changing each setting, as finding minima is itself a computationally expensive process. Most of these issues arise either due to the intrinsic algorithm‑dependent bias, the tractability of the problem, or heavy dependence on myriad hyperparameter choices.</p>
 <div class="thm-env thm">
   <div class="thm-env__label">Paradigm 1.3 <span class="thm-env__title">(Implicit Regularization of Stochastic Optimization)</span></div>
   <div class="thm-env__body">
@@ -2381,9 +2377,10 @@ The problem with erm is that it just tells us to fit to the data well but doesn'
 </p>
 <h2 class="section-heading">Lipschitz Continuity</h2>
 
-<p>Lipsschitz constant allows us to study the sensitivity of the input to the output. If any our model trained has smaller values it essentially means even slight changes in the input space will lead to drastic changes in the output space this result is particularly profound in the cases of alignment 
-A small change in the input miss specification could essentially lead to unfair reward advantage. It also prevents reward hacking or specification gaming, it also ensure that the the model becomes increasingly generalizable 
+<p>
 
+
+  The Lipschitz constant allows us to study the sensitivity of the input to the output. If any of our model trained has smaller values, it essentially means even slight changes in the input space will lead to drastic changes in the output space. This result is particularly profound in the cases of alignment. A small change in the input misspecification could essentially lead to unfair reward advantage. It also prevents reward hacking or specification gaming; it also ensures that the model becomes increasingly generalizable.
 </p>
 
 <div class="thm-env defn">
