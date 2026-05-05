@@ -1648,6 +1648,45 @@ body {
   overflow-x: hidden;
   width: 100%;
 }
+/* Force line breaks anywhere inside math (including inside expressions) */
+.defn .katex,
+.defn .MathJax,
+.thm-env .katex,
+.thm-env .MathJax {
+  white-space: normal !important;
+  word-break: break-all !important;       /* Break anywhere, even inside \frac{}{} */
+  overflow-wrap: anywhere !important;
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Also break display math aggressively (for long equations) */
+.defn .katex-display,
+.thm-env .katex-display {
+  white-space: normal !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Ultimate fix for definitions: force math to wrap or scroll */
+.defn, .thm-env { max-width: 100%; overflow-x: auto; }
+.defn .math-block, .thm-env .math-block,
+.defn .katex-display, .thm-env .katex-display,
+.defn .MathJax_Display, .thm-env .MathJax_Display {
+  overflow-x: auto !important;
+  white-space: normal !important;
+  max-width: 100% !important;
+}
+.defn .katex, .thm-env .katex,
+.defn .MathJax, .thm-env .MathJax {
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+@media (max-width: 680px) {
+  .defn, .thm-env { font-size: 0.85rem; }
+  .defn .katex, .thm-env .katex { word-break: break-all !important; }
+}
+
 </style>
 
 
