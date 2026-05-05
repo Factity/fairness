@@ -1166,6 +1166,488 @@ blockquote cite::before { content: '— '; }
   }
   .toc { position: sticky; top: 6rem; }
 }
+
+/* ============================================================
+   MOBILE-FRIENDLY ADDITIONS & OVERRIDES
+   Improves touch targets, navigation, overflow, and spacing.
+   ============================================================ */
+
+/* ─── RESPONSIVE META (IMPLIED: use <meta name="viewport"> in HTML) ─── */
+/* Add to HTML <head>: <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> */
+
+/* Mobile navigation toggle system (pure CSS hamburger) */
+.nav-toggle-checkbox {
+  display: none;
+}
+
+.nav-toggle-label {
+  display: none;
+  cursor: pointer;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--ink);
+  user-select: none;
+  touch-action: manipulation;
+  padding: 0.25rem;
+}
+
+/* Small screens: hamburger + absolute nav panel */
+@media (max-width: 680px) {
+  .nav-toggle-label {
+    display: block;
+  }
+
+  .site-header__inner {
+    position: relative;
+    flex-wrap: wrap;
+  }
+
+  .site-logo {
+    order: 1;
+    flex: 1;
+  }
+
+  .nav-toggle-label {
+    order: 2;
+  }
+
+  .site-nav {
+    display: none;
+    order: 3;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--page-raised);
+    flex-direction: column;
+    padding: var(--gap-lg);
+    gap: var(--gap-md);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    width: 100%;
+  }
+
+  .site-nav li {
+    width: 100%;
+    text-align: center;
+  }
+
+  .site-nav a {
+    display: block;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .site-nav a.active {
+    border-bottom: none;
+    background: var(--page-sunken);
+    border-radius: var(--r-md);
+  }
+
+  /* Show nav when checkbox is checked */
+  .nav-toggle-checkbox:checked ~ .site-header .site-nav,
+  .nav-toggle-checkbox:checked ~ .site-header__inner .site-nav,
+  .site-header:has(.nav-toggle-checkbox:checked) .site-nav {
+    display: flex !important;
+  }
+
+  /* Alternative if checkbox is inside .site-header__inner */
+  .nav-toggle-checkbox:checked + .site-header__inner .site-nav {
+    display: flex;
+  }
+}
+
+/* Ensure navigation links have large tap targets on touch devices */
+.site-nav a,
+.tag,
+.card--post .card__title,
+.pagination__link,
+.toggle-option,
+button,
+[role="button"],
+input[type="submit"],
+.callout,
+.thm-env .thm-env__label,
+.search-bar input {
+  touch-action: manipulation;
+}
+
+/* ─── GENERAL MOBILE IMPROVEMENTS ──────────────────────────── */
+@media (max-width: 680px) {
+  html {
+    font-size: 16px;  /* slightly smaller base for narrow screens */
+  }
+
+  body {
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* Containers: reduce horizontal padding */
+  .container,
+  .container--wide {
+    padding-inline: 1rem;
+  }
+
+  /* Reduce vertical rhythm */
+  .site-header__inner {
+    padding-block: 0.6rem;
+  }
+
+  .post-header {
+    padding-block: var(--gap-lg) var(--gap-md);
+    margin-bottom: var(--gap-lg);
+  }
+
+  .post-title {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    margin-bottom: var(--gap-sm);
+  }
+
+  .post-meta {
+    font-size: 0.75rem;
+  }
+
+  .post-body {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* headings tighter */
+  .post-body h2 {
+    margin-top: var(--gap-lg);
+    margin-bottom: var(--gap-sm);
+    font-size: 1.5rem;
+  }
+
+  .post-body h3 {
+    font-size: 1.25rem;
+  }
+
+  /* math blocks: more breathing on small screens */
+  .math-block {
+    padding: var(--gap-md);
+    font-size: 0.95rem;
+    margin-block: var(--gap-md);
+    overflow-x: auto;
+  }
+
+  /* theorem environments: reduce inner padding */
+  .thm-env {
+    padding: var(--gap-md);
+    margin-block: var(--gap-lg);
+  }
+
+  .thm-env__label {
+    font-size: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  /* code blocks: ensure no overflow */
+  pre, .code-block {
+    font-size: 0.75rem;
+    padding: var(--gap-md);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Inline code */
+  code:not(pre code) {
+    font-size: 0.8em;
+    padding: 0.1em 0.35em;
+  }
+
+  /* Cards: more compact */
+  .card {
+    padding: var(--gap-md);
+  }
+
+  .card--post {
+    gap: var(--gap-xs);
+  }
+
+  .card--post .card__title {
+    font-size: 1.1rem;
+  }
+
+  /* Featured card */
+  .card--featured {
+    padding: var(--gap-lg);
+  }
+
+  /* tables: make scrollable horizontally */
+  .math-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+
+  .math-table td,
+  .math-table th {
+    padding: 0.5rem var(--gap-sm);
+  }
+
+  /* columns layout: fewer columns, tighter gap */
+  .col-2,
+  .col-3 {
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+  }
+
+  /* aside and sidenotes become block level */
+  .aside {
+    float: none;
+    width: 100%;
+    margin: var(--gap-md) 0;
+    clear: both;
+  }
+
+  /* pull quotes: less padding */
+  .pull-quote {
+    padding: var(--gap-md);
+    font-size: 1.1rem;
+    margin-block: var(--gap-lg);
+  }
+
+  /* blockquotes */
+  blockquote, .blockquote {
+    padding: var(--gap-md);
+    margin-block: var(--gap-lg);
+  }
+
+  /* figures: responsive images */
+  .fig__body {
+    min-height: auto;
+    padding: var(--gap-sm);
+  }
+
+  .fig__body svg,
+  .fig__body img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* author card: column layout */
+  .author-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--gap-lg);
+  }
+
+  .author-card__avatar {
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--gap-sm);
+  }
+
+  /* pagination: stack vertically */
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--gap-md);
+  }
+
+  .pagination__link {
+    align-items: center;
+    text-align: center;
+    padding: var(--gap-md);
+  }
+
+  .pagination__link--prev,
+  .pagination__link--next {
+    align-items: center;
+  }
+
+  /* footer: column direction */
+  .site-footer__inner {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--gap-sm);
+  }
+
+  /* toc sidebar (if used) */
+  .toc {
+    position: static;
+    margin-bottom: var(--gap-lg);
+  }
+
+  /* callouts: better touch */
+  .callout {
+    gap: var(--gap-sm);
+    padding: var(--gap-md);
+  }
+
+  /* tag badges: larger tap area */
+  .tag {
+    padding: 0.35em 0.9em;
+    font-size: 0.68rem;
+  }
+
+  /* theme toggle group: wrap-friendly */
+  .toggle-three {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .toggle-option {
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+  }
+
+  /* forms: full-width inputs */
+  input, textarea, select {
+    font-size: 16px; /* prevents zoom on iOS */
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  /* lists: better left margin */
+  .post-body ul,
+  .post-body ol {
+    padding-left: 1.25rem;
+  }
+
+  /* step-list: adjust counter */
+  .step-list li::before {
+    width: 1.8em;
+    height: 1.8em;
+    font-size: 0.7rem;
+  }
+
+  /* remove sticky header on mobile to avoid clutter */
+  .site-header {
+    position: relative;
+  }
+
+  /* Any floating elements cleared */
+  .clearfix::after {
+    clear: both;
+  }
+
+  /* prevent horizontal overflow caused by wide elements */
+  .site-wrap,
+  .container,
+  .container--wide,
+  .post-body {
+    overflow-x: hidden;
+  }
+
+  /* Ensure all images scale */
+  img, video, iframe, svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ─── TABLETS (medium screens, 680px – 1000px) ─────────────── */
+@media (min-width: 681px) and (max-width: 1000px) {
+  .col-2 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .col-3 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .container,
+  .container--wide {
+    padding-inline: 1.5rem;
+  }
+
+  html {
+    font-size: 17px;
+  }
+}
+
+/* ─── TOUCH-FRIENDLY ADDITIONS (all devices) ───────────────── */
+button,
+.toggle-option,
+.pagination__link,
+.tag,
+.card,
+.site-nav a,
+.nav-toggle-label,
+.search-bar input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+button:active,
+.toggle-option:active,
+.pagination__link:active,
+.tag:active,
+.site-nav a:active {
+  opacity: 0.7;
+  transform: scale(0.97);
+}
+
+/* Remove hover effects on touch-only devices */
+@media (hover: none) and (pointer: coarse) {
+  .card:hover,
+  .tag--default:hover,
+  .pagination__link:hover,
+  .site-nav a:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .card--featured:hover {
+    transform: none;
+  }
+}
+
+/* fix for long words / break strings */
+.prose,
+.post-body,
+.card__excerpt,
+.thm-env__body {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* accessible focus outlines */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* improved tap highlight on iOS */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+}
+
+/* optional: better table overflow wrapper (suggest using .table-responsive in html) */
+.table-responsive {
+  overflow-x: auto;
+  margin-block: var(--gap-lg);
+}
+
+/* make sure all SVGs scale inside figures */
+.fig svg,
+.fig__body svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* special for perceptron SVG example */
+.perceptron-svg svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* final safety: no horizontal scroll */
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
 </style>
 
 
@@ -2594,8 +3076,8 @@ for z in zeros:
     <div class="author-card" style="margin-top:1rem">
       <div class="author-card__avatar" style="display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:1.1rem;font-weight:600;color:var(--ink-muted)">EM</div>
       <div>
-        <div class="author-card__name">Emmy Müller</div>
-        <p class="author-card__bio">Researcher in analytic number theory at the University of Göttingen. Writes about the beauty lurking inside formal proofs.</p>
+        <div class="author-card__name">Mukul namagiri</div>
+        <p class="author-card__bio">AI guy</p>
       </div>
     </div>
     <div class="pagination" style="margin-top:2rem">
