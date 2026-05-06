@@ -3539,65 +3539,34 @@ for z in zeros:
 
 
 </main>
+
 <script>
 (function() {
-  // Wait for DOM to be fully loaded
+  // ------------------------------------------------------------------
+  // 1. Theme toggle (unchanged, works with your .toggle-three)
+  // ------------------------------------------------------------------
   function initThemeToggle() {
     const container = document.querySelector('.toggle-three');
-    if (!container) {
-      console.warn('Toggle container .toggle-three not found');
-      return;
-    }
-
+    if (!container) return;
     const buttons = container.querySelectorAll('.toggle-option');
-    if (buttons.length === 0) {
-      console.warn('No toggle buttons found inside .toggle-three');
-      return;
-    }
-
-    // Map data-theme values to CSS classes
+    if (buttons.length === 0) return;
     const themeMap = {
-      'default': '',        // no extra class → use :root defaults
+      'default': '',
       'dark': 'theme-dark',
       'slate': 'theme-slate'
-      // If you have high-contrast, add: 'high-contrast': 'theme-high-contrast'
     };
-
-    // Get the element where theme classes should be applied (usually <html> or <body>)
-    const root = document.documentElement; // change to document.body if needed
-
-    // Function to apply a theme
+    const root = document.documentElement;
     function setTheme(themeValue) {
-      // Remove all known theme classes
-      const allThemeClasses = Object.values(themeMap).filter(c => c !== '');
-      allThemeClasses.forEach(cls => {
-        root.classList.remove(cls);
-      });
-
-      // Add the new theme class if not default
+      Object.values(themeMap).filter(c => c !== '').forEach(cls => root.classList.remove(cls));
       const themeClass = themeMap[themeValue];
-      if (themeClass) {
-        root.classList.add(themeClass);
-      }
-
-      // Update active class on buttons
+      if (themeClass) root.classList.add(themeClass);
       buttons.forEach(btn => {
         const btnTheme = btn.getAttribute('data-theme');
-        if (btnTheme === themeValue) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
+        if (btnTheme === themeValue) btn.classList.add('active');
+        else btn.classList.remove('active');
       });
-
-      // Save preference
       localStorage.setItem('preferredTheme', themeValue);
-      
-      // Optional: dispatch custom event
-      window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeValue } }));
     }
-
-    // Attach click listeners to each button
     buttons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -3605,150 +3574,96 @@ for z in zeros:
         if (theme) setTheme(theme);
       });
     });
-
-    // Load saved theme (if any)
     const savedTheme = localStorage.getItem('preferredTheme');
     if (savedTheme && themeMap.hasOwnProperty(savedTheme)) {
       setTheme(savedTheme);
     } else {
-      // Ensure default active state (if no saved theme)
       const defaultBtn = Array.from(buttons).find(btn => btn.getAttribute('data-theme') === 'default');
-      if (defaultBtn && !defaultBtn.classList.contains('active')) {
-        setTheme('default');
-      }
+      if (defaultBtn && !defaultBtn.classList.contains('active')) setTheme('default');
     }
   }
-
-  // Run after DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initThemeToggle);
   } else {
     initThemeToggle();
   }
-})();
 
+  // ------------------------------------------------------------------
+  // 2. Modal logic – unified for both cards and table links
+  //    (uses your existing modal with id="methodModal")
+  // ------------------------------------------------------------------
+  const modal = document.getElementById('methodModal');
+  const modalBody = document.getElementById('modal-body');
+  const closeSpan = document.querySelector('.close-modal');
 
+  if (!modal || !modalBody) {
+    console.warn('Modal elements not found. Ensure <div id="methodModal"> and <div id="modal-body"> exist.');
+  }
 
-(function() {
-    const modal = document.getElementById('modal');
-    const modalBody = document.getElementById('modal-body');
-    const closeSpan = document.querySelector('.close-modal');
-
-    function openModal(contentId) {
-      const contentElem = document.getElementById(contentId);
-      if (!contentElem) return;
-      // clone to avoid moving the hidden original
-      const clone = contentElem.cloneNode(true);
-      modalBody.innerHTML = '';
-      modalBody.appendChild(clone);
-      modal.style.display = 'flex';
-      // re-typeset MathJax promises
-      if (window.MathJax) {
-        MathJax.typesetPromise([modalBody]).catch(console.warn);
-      }
+  function openModal(contentId) {
+    if (!modal || !modalBody) return;
+    const contentElem = document.getElementById(contentId);
+    if (!contentElem) {
+      console.warn('Content not found:', contentId);
+      return;
     }
-
-    function closeModal() {
-      modal.style.display = 'none';
-      modalBody.innerHTML = '';
+    // Clone to avoid moving the hidden original
+    const clone = contentElem.cloneNode(true);
+    modalBody.innerHTML = '';
+    modalBody.appendChild(clone);
+    modal.style.display = 'flex';
+    if (window.MathJax) {
+      MathJax.typesetPromise([modalBody]).catch(console.warn);
     }
+  }
 
-    closeSpan.onclick = closeModal;
+  function closeModal() {
+    if (modal) modal.style.display = 'none';
+    if (modalBody) modalBody.innerHTML = '';
+  }
+
+  if (closeSpan) closeSpan.onclick = closeModal;
+  if (modal) {
     window.onclick = function(e) {
       if (e.target === modal) closeModal();
     };
+  }
 
-    // Attach click listeners to all cards that have data-modal attribute
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
+  // --- 2.1 Handle method cards (with data-modal attribute) ---
+  document.querySelectorAll('.card[data-modal]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
       const modalId = card.getAttribute('data-modal');
-      if (modalId) {
-        card.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openModal(modalId);
-        });
-      }
+      if (modalId) openModal(modalId);
     });
-  })();
+  });
 
-(function() {
-    const modal = document.getElementById('methodModal');
-    const modalBody = document.getElementById('modal-body');
-    const closeSpan = document.querySelector('.close-modal');
+  // --- 2.2 Handle method links inside table rows (data-method) ---
+  const contentMap = {
+    'orthogonal': 'orthogonal-content',
+    'spectral': 'spectral-content',
+    'reparam': 'reparam-content',
+    'pgd': 'pgd-content',
+    'clip': 'clip-content',
+    'frobenius': 'frobenius-content',
+    'dynamical': 'dynamical-content',
+    'sandwich': 'sandwich-content',
+    'gradpen': 'gradpen-content',
+    'specreg': 'specreg-content'
+  };
 
-    function openModal(contentId) {
-      const contentElem = document.getElementById(contentId);
-      if (!contentElem) return;
-      const clone = contentElem.cloneNode(true);
-      modalBody.innerHTML = '';
-      modalBody.appendChild(clone);
-      modal.style.display = 'flex';
-      if (window.MathJax) MathJax.typesetPromise([modalBody]).catch(console.warn);
-    }
-
-    function closeModal() {
-      modal.style.display = 'none';
-      modalBody.innerHTML = '';
-    }
-
-    closeSpan.onclick = closeModal;
-    window.onclick = function(e) { if (e.target === modal) closeModal(); };
-
-    // Mapping from data-method to content id
-    const contentMap = {
-      'orthogonal': 'orthogonal-content',
-      'spectral': 'spectral-content',
-      'reparam': 'reparam-content',
-      'pgd': 'pgd-content',
-      'clip': 'clip-content',
-      'frobenius': 'frobenius-content',
-      'dynamical': 'dynamical-content',
-      'sandwich': 'sandwich-content',
-      'gradpen': 'gradpen-content',
-      'specreg': 'specreg-content'
-    };
-
-    document.querySelectorAll('.method-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const row = this.closest('.method-row');
-        const method = row.getAttribute('data-method');
-        const contentId = contentMap[method];
-        if (contentId) openModal(contentId);
-      });
+  document.querySelectorAll('.method-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const row = this.closest('.method-row');
+      if (!row) return;
+      const method = row.getAttribute('data-method');
+      const contentId = contentMap[method];
+      if (contentId) openModal(contentId);
     });
-  })();
+  });
+})();
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
