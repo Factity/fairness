@@ -1174,7 +1174,42 @@ blockquote cite::before { content: '— '; }
 
 /* ─── RESPONSIVE META (IMPLIED: use <meta name="viewport"> in HTML) ─── */
 /* Add to HTML <head>: <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> */
-
+/* modal (lightbox) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--page-raised);
+      max-width: 800px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 1rem;
+      padding: 1.8rem;
+      position: relative;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+    }
+    .close-modal {
+      position: absolute;
+      right: 1rem;
+      top: 0.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--ink-faint);
+    }
+    .close-modal:hover { color: var(--ink); }
+    /* theorem environment (popup content) */
+    
 /* Mobile navigation toggle system (pure CSS hamburger) */
 .nav-toggle-checkbox {
   display: none;
@@ -2876,6 +2911,7 @@ In a lipschitz constrained neural network Each individual layer (whether it’s 
 
   
 </p>
+
 <div class="thm-env thm">
   <div class="thm-env__label">Definition 6 (Lipschitz constrained feed-forward neural network)</div>
   <div class="thm-env__body">
@@ -2898,6 +2934,8 @@ In a lipschitz constrained neural network Each individual layer (whether it’s 
   </div>
 </div>
 
+  <!-- Section: Lipschitz Methods (using post card design) -->
+  <h2 class="section-heading">Lower bounds</h2>
 <div class="thm-env thm">
   <div class="thm-env__label">Definition 7 (Empirical lower bound for Lipschitz constant)</div>
   <div class="thm-env__body">
@@ -2933,92 +2971,374 @@ In a lipschitz constrained neural network Each individual layer (whether it’s 
   </div>
 </div>
 
-<div class="thm-env thm">
-  <div class="thm-env__label">Definition 8 (Layer-wise composition bound – AutoLip)</div>
-  <div class="thm-env__body">
-    Let the neural network be a composition of layers: \(f = f_D \circ \cdots \circ f_1\). If each layer \(f_d\) is \(L_d\)-Lipschitz with respect to the \(\ell_2\)-norm, then the overall network satisfies
-    \[
-    \forall x,y \in \mathbb{R}^m, \quad \|f(x)-f(y)\|_2 \le \left( \prod_{d=1}^D L_d \right) \|x-y\|_2.
-    \]
-    Hence an upper bound on the global Lipschitz constant is
-    \[
-    \widehat{L}_{\text{product}} = \prod_{d=1}^D L_d.
-    \]
-    For an affine layer \(f_d(z) = W_d z + b_d\), the minimal Lipschitz constant is the spectral norm:
-    \[
-    L_d = \|W_d\|_2 = \sqrt{\lambda_{\max}(W_d^{\mathsf{T}}W_d)}.
-    \]
-    For standard activation functions (ReLU, sigmoid, tanh), \(L_d = 1\) when they are 1-Lipschitz. The AutoLip algorithm computes these per‑layer bounds via automatic differentiation and backpropagates them to obtain a global upper bound.
+
+
+
+
+ 
+  <!-- Section: Lipschitz Methods (using post card design) -->
+  <h2 class="section-heading">Formal methods for Upper bounds</h2>
+
+
+
+    <div class="proof">
+      <span class="proof__label">Usage</span>
+      <span class="proof__qed">*</span>
+    Click on the below cards to view the defnition 
+    </div>
+  <div class="col-2">
+    <!-- AutoLip card -->
+    <div class="card card--post" data-modal="def-autolip">
+      <span class="tag tag--teal">upper bound · global</span>
+      <h3 class="card__title">AutoLip</h3>
+      <p class="card__excerpt">Layer‑wise composition bound: spectral norm product → fast global Lipschitz estimate.</p>
+      <div class="post-meta"><span>product rule</span><span>·</span><span>autodiff</span></div>
+    </div>
+    <!-- Linear Relaxation card -->
+    <div class="card card--post" data-modal="def-linrelax">
+      <span class="tag tag--teal">local bound · linear</span>
+      <h3 class="card__title">Linear Relaxation</h3>
+      <p class="card__excerpt">Decomon / auto‑LiRPA: local Lipschitz via convex over‑approximations of activations.</p>
+      <div class="post-meta"><span>ℓ∞-ball</span><span>·</span><span>scalable</span></div>
+    </div>
+    <!-- LipSDP card -->
+    <div class="card card--post" data-modal="def-lipsdp">
+      <span class="tag tag--teal">SDP · global</span>
+      <h3 class="card__title">LipSDP</h3>
+      <p class="card__excerpt">Semidefinite programming relaxation – tight global Lipschitz for many activations.</p>
+      <div class="post-meta"><span>SEMI definite</span><span>·</span><span>convex</span></div>
+    </div>
+    <!-- Polyhedron Propagation card -->
+    <div class="card card--post" data-modal="def-poly">
+      <span class="tag tag--teal">ReLU · exact</span>
+      <h3 class="card__title">Polyhedron Propagation</h3>
+      <p class="card__excerpt">Forward propagation of convex polyhedra → max spectral norm over activation patterns.</p>
+      <div class="post-meta"><span>poly hedron</span><span>·</span><span>combinatorial</span></div>
+    </div>
+    <!-- LiPopt card -->
+    <div class="card card--post" data-modal="def-lipopt">
+      <span class="tag tag--teal">DC programming</span>
+      <h3 class="card__title">LiPopt</h3>
+      <p class="card__excerpt">Difference‑of‑convex programming: sequential convex optimization for tight upper bounds.</p>
+      <div class="post-meta"><span>convex</span><span>·</span><span>tight</span></div>
+    </div>
+  </div>
+<br>
+<br>
+<p> Next we move on to discussing how to enforce Lipschitz bounds in practice.</p>
+
+<H2 class="section-heading">Enforcing Lipschitz Bounds</h2>
+
+<br>
+
+
+  <p>
+Let \(f: \mathbb{R}^m \to \mathbb{R}^n\) be a neural network. To enforce a global Lipschitz bound in practice, we use activations with Lipschitz constant \(l_d\) and apply a constraint \(\Pi : \mathbb{R}^p \to \Theta\) on the weights of affine layers. For an affine layer \(f_d(z) = W_d z + b_d\), the minimal Lipschitz constant is the spectral norm
+\[
+l_d = \|W_d\|_2 := \max_{\|x\|_2 \le 1} \|W_d x\|_2,
+\]
+where \(\|x\|_2\) and \(\|W_d x\|_2\) are Euclidean (vector) norms. The constraint set is
+\[
+\Theta = \{\, W_d \mid \|W_d\|_2 \le l_q \,\}.
+\]
+</p>
+
+<p>
+The seminal work of Anil et al. (2019) proved that universal approximation in the set of \(L\)-Lipschitz functions is achievable with certain weight constraints and the <strong>GroupSort</strong> activation function. GroupSort operates on pairs of consecutive neurons, not elementwise. For all coordinates \(i\) (with zero‑based indexing), it is defined as:
+\[
+\operatorname{GroupSort}_2(x)_{2i,\,2i+1} = \bigl[ \min(x_{2i}, x_{2i+1}),\; \max(x_{2i}, x_{2i+1}) \bigr].
+\]
+</p>
+
+<p>
+The theorem of Anil et al. (2019) bounds the “two‑to‑infinity” norm \(\|\cdot\|_{2\to\infty}\) of the first layer and the \(\|\cdot\|_\infty\) norms of further layers to obtain universal approximation in \(\operatorname{Lip}_1(\mathcal{X}, \mathbb{R})\). These networks are \(1\)-Lipschitz by construction. Because \(\operatorname{Lip}_L(\mathcal{X}, \mathbb{R}^K) = \{ L f \mid f \in \operatorname{Lip}_1(\mathcal{X}, \mathbb{R}^K) \}\), the same architecture can approximate any \(L\)-Lipschitz function after scaling the output by \(L\).
+</p>
+  <!-- Section: Blog Posts (post cards) -->
+  
+
+
+<div class="proof">
+  <span class="proof__label">Example (Approximating \(|x|\) on \([-1,1]\)).</span>
+  <span class="proof__qed">□</span>
+  Consider the target \(f^*(x)=|x|\). Construct a two‑layer network:
+  <ul>
+    <li>First affine layer: \(W_1 = [0.5,\,-0.5,\,0.5,\,-0.5]^{\mathsf{T}}\), \(b_1=0\). Then \(\|W_1\|_2 = 1\) and \(\|W_1\|_{2\to\infty}\) is bounded.</li>
+    <li>GroupSort on two pairs yields \(h = [-0.5|x|,\,0.5|x|,\,-0.5|x|,\,0.5|x|]^{\mathsf{T}}\).</li>
+    <li>Second layer: \(W_2 = [0,1,0,0]\), \(b_2=0\). Its infinity norm is \(\|W_2\|_\infty = 1\).</li>
+  </ul>
+  The network output is \(f(x)=0.5|x|\), which is 1‑Lipschitz and approximates \(f^*\) with factor \(0.5\). By using more neurons and deeper layers (e.g., residual refinement or parallel blocks with a final linear combination respecting \(\|W\|_\infty\le 1\)), the factor can be made arbitrarily close to 1, demonstrating universal approximation.
+</div>
+
+<div class="math-block math-block--numbered">
+  <div style="flex:1;text-align:center">
+    Output after \(k\) refinement steps: \(f_k(x) = \bigl(1 - 2^{-k}\bigr)|x|\) achieving \(\sup|f_k - f^*| = 2^{-k}\).
+  </div>
+  <span class="eq-number">(approx)</span>
+</div>
+
+
+<!-- CONTAINER: Table of methods -->
+<div class="container">
+  <h2 class="section-heading">Lipschitz Constraint Methods</h2>
+
+  <div class="proof">
+    <span class="proof__label">Usage</span>
+    <span class="proof__qed">*</span>
+    Click on the method links below to view definitions and further details.
+  </div>
+
+  <div class="table-responsive">
+    <table class="math-table">
+      <thead>
+        <tr><th>Method</th><th>Type</th><th>Guarantee</th><th>Key Property</th></tr>
+      </thead>
+      <tbody>
+        <tr class="method-row" data-method="orthogonal">
+          <td><a href="#" class="method-link">Orthogonal weights (GNP)</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 = 1\)</td>
+          <td>Gradient norm preserving</td>
+        </tr>
+        <tr class="method-row" data-method="spectral">
+          <td><a href="#" class="method-link">Spectral normalization</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 = 1\)</td>
+          <td>Power iteration (lower bound)</td>
+        </tr>
+        <tr class="method-row" data-method="reparam">
+          <td><a href="#" class="method-link">Differentiable reparametrization</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 \le L_d\)</td>
+          <td>Unconstrained optimization</td>
+        </tr>
+        <tr class="method-row" data-method="pgd">
+          <td><a href="#" class="method-link">Projected gradient descent</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 \le L_d\)</td>
+          <td>Projection onto \(\Theta\)</td>
+        </tr>
+        <tr class="method-row" data-method="clip">
+          <td><a href="#" class="method-link">Weight clipping</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 \le c\sqrt{\min(n,m)}\)</td>
+          <td>Coefficient‑wise projection onto \([-c,c]\)</td>
+        </tr>
+        <tr class="method-row" data-method="frobenius">
+          <td><a href="#" class="method-link">Frobenius normalization</a></td>
+          <td>Hard constraint</td>
+          <td>\(\|W\|_2 \le 1\)</td>
+          <td>Projection \(W \leftarrow W / \|W\|_F\)</td>
+        </tr>
+        <tr class="method-row" data-method="dynamical">
+          <td><a href="#" class="method-link">Direct parametrization (dynamical)</a></td>
+          <td>Hard constraint</td>
+          <td>Whole block 1‑Lipschitz</td>
+          <td>\(z = x - \frac{2}{\|W\|_2^2} W^{\mathsf{T}}\sigma(Wx+b)\)</td>
+        </tr>
+        <tr class="method-row" data-method="sandwich">
+          <td><a href="#" class="method-link">Sandwich layer (QP formulation)</a></td>
+          <td>Hard constraint</td>
+          <td>\(\| \text{block} \|_2 \le 1\)</td>
+          <td>\(x \mapsto W_2^{\mathsf{T}} \sigma(W_1 x + b)\)</td>
+        </tr>
+        <tr class="method-row" data-method="gradpen">
+          <td><a href="#" class="method-link">Gradient penalty</a></td>
+          <td>Soft penalty</td>
+          <td>None (crude upper bound)</td>
+          <td>Nested differentiation</td>
+        </tr>
+        <tr class="method-row" data-method="specreg">
+          <td><a href="#" class="method-link">Spectral regularization</a></td>
+          <td>Soft penalty</td>
+          <td>None</td>
+          <td>Penalty on \(\|W_i\|_2^2\)</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
-<div class="thm-env thm">
-  <div class="thm-env__label">Definition 9 (Linear relaxation methods for local Lipschitz bounds)</div>
-  <div class="thm-env__body">
-    Linear relaxation methods (e.g., Decomon, auto‑LiRPA) compute a local Lipschitz constant over a compact input region \(\mathcal{C} \subset \mathbb{R}^m\) (typically an \(\ell_\infty\)-ball). For a neuron with pre‑activation \(z\) and activation \(\sigma\), the method replaces \(\sigma(z)\) by linear lower and upper bounding functions:
-    \[
-    \alpha z + \beta \le \sigma(z) \le \gamma z + \delta \quad \forall z \in [z_{\min}, z_{\max}],
-    \]
-    where the coefficients \(\alpha,\beta,\gamma,\delta\) depend on the input bounds. Propagating such linear relaxations through the network yields convex bounds on the output difference:
-    \[
-    \|f(x)-f(y)\|_2 \le \widehat{L}_{\text{lin}} \|x-y\|_2 \quad \forall x,y \in \mathcal{C}.
-    \]
-    The computed \(\widehat{L}_{\text{lin}}\) is an upper bound on the local Lipschitz constant over \(\mathcal{C}\). These methods are often faster than global SDP approaches and can be scaled to larger networks.
+<!-- MODAL (uses existing CSS classes .modal, .modal-content, .close-modal) -->
+<div id="methodModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modal-body"></div>
   </div>
 </div>
 
-<div class="thm-env thm">
-  <div class="thm-env__label">Definition 10 (LipSDP – Convex relaxation via semidefinite programming)</div>
-  <div class="thm-env__body">
-    The LipSDP framework (Fazlyab et al., 2019) formulates the problem of estimating the global Lipschitz constant as a semidefinite program (SDP). For a network \(f(x) = W_D \,\sigma(\,\cdots W_1 x + b_1 \cdots) + b_D\) with layer‑wise weight matrices \(W_i\) and activation \(\sigma\) satisfying a quadratic constraint
-    \[
-    \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix}^{\mathsf{T}} \! M \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix} \ge 0 \quad \forall z,y \in \mathbb{R},
-    \]
-    the Lipschitz constant \(L\) is the smallest number such that
-    \[
-    \|f(x)-f(y)\|_2^2 \le L^2 \|x-y\|_2^2 \quad \forall x,y.
-    \]
-    This inequality is equivalent to a matrix inequality
-    \[
-    \Delta^{\mathsf{T}} \begin{bmatrix} W_D^{\mathsf{T}}W_D & 0 \\ 0 & -L^2 I \end{bmatrix} \Delta \le 0 \quad \forall \Delta \in \mathbb{R}^{n_1+\cdots+n_D},
-    \]
-    which can be relaxed to an SDP. The optimal value of the SDP yields an upper bound:
-    \[
-    \widehat{L}_{\text{SDP}} \ge L.
-    \]
-    LipSDP is expressive enough to handle many activations (ReLU, tanh, GroupSort) by choosing appropriate symmetric matrices \(M\).
+<!-- HIDDEN DEFINITIONS (modal content) -->
+<div style="display: none;">
+  <!-- Orthogonal / GNP -->
+  <div id="orthogonal-content" class="thm-env thm">
+    <div class="thm-env__label">Orthogonal weights & Gradient Norm Preserving (GNP) networks</div>
+    <div class="thm-env__body">
+      <p>A weight matrix \(W \in \mathbb{R}^{n \times m}\) is <strong>orthogonal</strong> if \(W^{\mathsf{T}}W = I\) (when \(n \ge m\)) or \(WW^{\mathsf{T}} = I\) (when \(m \ge n\)). Then \(\|W\|_2 = 1\) and \(\|Wx\|_2 = \|x\|_2\) for all \(x\).</p>
+      <p>When <strong>all layers</strong> (including 1‑Lipschitz activations like GroupSort) have orthogonal Jacobians almost everywhere, the whole network satisfies</p>
+      \[
+      \|\nabla_x f(x)\|_2 = 1 \quad \text{for almost every } x.
+      \]
+      <p>Such networks are called <strong>Gradient Norm Preserving (GNP)</strong> or <strong>Eikonal networks</strong>. They avoid vanishing/exploding gradients because the gradient norm is exactly 1. Examples: orthogonal weight matrices, Householder activations, GroupSort, orthogonal convolutions.</p>
+      <div class="proof">
+        <span class="proof__label">Open problem.</span>
+        Universal approximation with purely orthogonal networks (all weights orthogonal) is not yet proven.
+      </div>
+    </div>
+  </div>
+
+  <!-- Spectral normalization -->
+  <div id="spectral-content" class="thm-env thm">
+    <div class="thm-env__label">Spectral normalization (Miyato et al., 2018)</div>
+    <div class="thm-env__body">
+      <p>Project each weight matrix onto the set \(\Theta = \{ W \mid \|W\|_2 = 1 \}\) via</p>
+      \[
+      \Pi_{\text{spec}}(W) = \frac{W}{\|W\|_2}.
+      \]
+      <p>The spectral norm \(\|W\|_2\) is the largest singular value. It is estimated using <strong>power iteration</strong>:</p>
+      \[
+      v^{(k)} = \frac{W^{\mathsf{T}} u^{(k-1)}}{\|W^{\mathsf{T}} u^{(k-1)}\|_2}, \quad
+      u^{(k)} = \frac{W v^{(k)}}{\|W v^{(k)}\|_2}, \quad
+      \sigma_{\max} \approx (u^{(K)})^{\mathsf{T}} W v^{(K)}.
+      \]
+      <p>Power iteration converges from <strong>below</strong>, giving a lower estimate – problematic for certified upper bounds. Recent work (Delattre et al., 2023b) provides <strong>upper bounds</strong> using only matrix‑vector products.</p>
+    </div>
+  </div>
+
+  <!-- Differentiable reparametrization -->
+  <div id="reparam-content" class="thm-env thm">
+    <div class="thm-env__label">Differentiable reparametrization (trivialization)</div>
+    <div class="thm-env__body">
+      <p>Let \(\theta \in \mathbb{R}^p\) be unconstrained parameters. Define \(\widetilde{W} = \Pi(\theta) \in \Theta\) where \(\Pi\) is a differentiable map onto the feasible set (e.g., spectral normalisation). The forward pass uses \(\widetilde{W}\). Gradients are backpropagated through \(\Pi\) to \(\theta\):</p>
+      \[
+      \nabla_\theta \mathcal{L} = \left( \frac{\partial \mathcal{L}}{\partial \widetilde{W}} \right)^{\mathsf{T}} \cdot \frac{\partial \widetilde{W}}{\partial \theta}.
+      \]
+      <p>This turns training into an <strong>unconstrained optimisation problem</strong> on \(\mathcal{L} \circ f \circ \Pi\). Examples: Miyato et al. (2018), Anil et al. (2019).</p>
+    </div>
+  </div>
+
+  <!-- Projected gradient descent -->
+  <div id="pgd-content" class="thm-env thm">
+    <div class="thm-env__label">Projected gradient descent (PGD)</div>
+    <div class="thm-env__body">
+      <p>Take a gradient step then project onto the feasible set \(\Theta = \{ W \mid \|W\|_2 \le L_d \}\):</p>
+      \[
+      W_{t+1/2} = W_t - \eta \nabla_W \mathcal{L}(f_{W_t}), \qquad
+      W_{t+1} = \Pi_\Theta(W_{t+1/2}).
+      \]
+      <p>The projection \(\Pi_\Theta\) for spectral norm constraints is done by clipping singular values to \(L_d\). This is simple but may require many iterations. Early example: weight clipping (Arjovsky et al., 2017) which clips each coefficient to \([-c,c]\).</p>
+      <div class="callout callout--warn">
+        <div class="callout__icon">⚠️</div>
+        <div class="callout__body">Weight clipping yields a very loose bound (\(\|W\|_2 \le c\sqrt{\min(n,m)}\)) and may cause vanishing gradients.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weight clipping -->
+  <div id="clip-content" class="thm-env thm">
+    <div class="thm-env__label">Weight clipping (Arjovsky et al., 2017)</div>
+    <div class="thm-env__body">
+      <p>Project each weight coefficient onto the interval \([-c, c]\):</p>
+      \[
+      \Pi_{\text{clip}}(W)_{ij} = \max(-c, \min(c, W_{ij})).
+      \]
+      <p>Because all norms are equivalent in finite dimension, this guarantees</p>
+      \[
+      \|W\|_2 \le c \sqrt{\min(n,m)}.
+      \]
+      <div class="callout callout--warn">
+        <div class="callout__icon">⚠️</div>
+        <div class="callout__body">The bound is very loose; other singular values may collapse to zero, causing vanishing gradients when stacking layers.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frobenius normalization -->
+  <div id="frobenius-content" class="thm-env thm">
+    <div class="thm-env__label">Frobenius normalization (Salimans & Kingma, 2016)</div>
+    <div class="thm-env__body">
+      <p>Project onto the Frobenius sphere:</p>
+      \[
+      \Pi_{\text{F}}(W) = \frac{W}{\|W\|_F}, \quad \|W\|_F = \sqrt{\sum_{i,j} W_{ij}^2}.
+      \]
+      <p>Since \(\|W\|_2 \le \|W\|_F\), we obtain \(\|\Pi_{\text{F}}(W)\|_2 \le 1\). This is tighter than weight clipping but still not optimal – a matrix with \(\|W\|_F = 1\) can have \(\|W\|_2 \ll 1\).</p>
+    </div>
+  </div>
+
+  <!-- Direct parametrization (dynamical) -->
+  <div id="dynamical-content" class="thm-env thm">
+    <div class="thm-env__label">Direct parametrization – dynamical systems (Meunier et al., 2022b; Araujo et al., 2022)</div>
+    <div class="thm-env__body">
+      <p>Interpret the forward pass as a discretisation of a continuous dynamical system:</p>
+      \[
+      \frac{\partial x_t}{\partial t} = -\nabla f_t(x_t) + A_t x_t,
+      \]
+      with \(f_t\) convex and \(A_t\) skew‑symmetric. This guarantees \(\|x_t - z_t\|_2\) is non‑increasing. Using the <strong>mid‑point Euler</strong> discretisation and a suitable parametrisation of \(f_t\), the update becomes</p>
+      \[
+      z = x - \frac{2}{\|W\|_2^2} \, W^{\mathsf{T}} \sigma(W x + b),
+      \]
+      where \(\sigma\) is 1‑Lipschitz. The whole block is <strong>1‑Lipschitz by construction</strong>. Special cases include Cayley convolutions and Householder activations.
+      <div class="proof">
+        <span class="proof__label">Open problem.</span>
+        Universal approximation results for these architectures are still lacking.
+      </div>
+    </div>
+  </div>
+
+  <!-- Sandwich layer (QP) -->
+  <div id="sandwich-content" class="thm-env thm">
+    <div class="thm-env__label">Sandwich layer – quadratic program formulation (Wang & Manchester, 2023)</div>
+    <div class="thm-env__body">
+      <p>The Lipschitz constant of a linear operator satisfies</p>
+      \[
+      \|W\|_2^2 = \max_{\|x\|_2=1} x^{\mathsf{T}} W^{\mathsf{T}} W x.
+      \]
+      <p>By controlling the coefficients and structure of this quadratic program, one can enforce an explicit upper bound on the Lipschitz constant. For a clever choice of structure, the implementation takes the form of a <strong>“sandwich” layer</strong>:</p>
+      \[
+      x \mapsto W_2^{\mathsf{T}} \, \sigma(W_1 x + b),
+      \]
+      with constraints on \(W_1, W_2\) (e.g., spectral norm bounds) that guarantee the whole composition is 1‑Lipschitz. This often yields tighter bounds than products of individual spectral norms.</p>
+    </div>
+  </div>
+
+  <!-- Gradient penalty -->
+  <div id="gradpen-content" class="thm-env thm">
+    <div class="thm-env__label">Gradient penalty (Gulrajani et al., 2017)</div>
+    <div class="thm-env__body">
+      <p>A <strong>soft regularization term</strong> that encourages a 1‑Lipschitz constraint:</p>
+      \[
+      R_{\text{GP}} = \bigl( \|\nabla_x f(x)\|_2 - 1 \bigr)^2.
+      \]
+      <p><strong>Disadvantages:</strong></p>
+      <ul>
+        <li>No formal guarantee – the Lipschitz constant may still blow up.</li>
+        <li>Requires <strong>nested differentiation</strong> (gradient of gradient), computationally expensive.</li>
+      </ul>
+      <p>Used in WGAN-GP and Lipschitz GANs (Zhou et al., 2019).</p>
+    </div>
+  </div>
+
+  <!-- Spectral regularization -->
+  <div id="specreg-content" class="thm-env thm">
+    <div class="thm-env__label">Spectral regularization (Yoshida & Miyato, 2017)</div>
+    <div class="thm-env__body">
+      <p>Adds a penalty on the squared spectral norm of each weight matrix:</p>
+      \[
+      R_{\text{spec}} = \lambda \sum_{i=1}^D \|W_i\|_2^2.
+      \]
+      <p>Unlike gradient penalty, it operates <strong>directly on the weights</strong>. However, it only <em>encourages</em> small Lipschitz constants without a hard guarantee – the optimizer may trade off between the loss and the penalty, potentially allowing a large local Lipschitz constant.</p>
+      <div class="proof">
+        <span class="proof__label">Note.</span>
+        Regularization approaches in general do not give formal guarantees, only a crude upper bound. For certified robustness, use <strong>hard constraints</strong> (spectral normalisation, orthogonality, direct parametrizations).
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="thm-env thm">
-  <div class="thm-env__label">Definition 11 (Polyhedron propagation for ReLU networks)</div>
-  <div class="thm-env__body">
-    For networks with ReLU activations, an exact Lipschitz bound over a convex input polytope \(\mathcal{P}_{\text{in}}\) can be obtained by forward propagation of polyhedrons. Each ReLU neuron splits the input space into two regions (active or inactive). The set of all possible activation patterns defines a partition. For a fixed pattern, the network becomes an affine map:
-    \[
-    f(x) = A_{\text{pattern}} x + b_{\text{pattern}}.
-    \]
-    The Lipschitz constant over that pattern is \(\|A_{\text{pattern}}\|_2\). The global Lipschitz constant over \(\mathcal{P}_{\text{in}}\) is the supremum over all patterns reachable from \(\mathcal{P}_{\text{in}}\):
-    \[
-    \widehat{L}_{\text{poly}} = \max_{\text{patterns reachable}} \|A_{\text{pattern}}\|_2.
-    \]
-    Computing this exactly is combinatorial, but efficient algorithms (e.g., Weng et al., 2018a) propagate convex polyhedra layer‑by‑layer, maintaining outer approximations that yield valid upper bounds.
-  </div>
-</div>
 
-<div class="thm-env thm">
-  <div class="thm-env__label">Definition 12 (LiPopt – Lipschitz constant via optimization)</div>
-  <div class="thm-env__body">
-    LiPopt (Latorre et al., 2019) formulates the Lipschitz constant estimation as a difference‑of‑convex programming problem. For a network with ReLU activations, the function can be expressed as a difference of two convex functions:
-    \[
-    f(x) = \varphi(x) - \psi(x),
-    \]
-    where \(\varphi\) and \(\psi\) are convex. The Lipschitz constant is then bounded by the maximum norm of the subgradients:
-    \[
-    L \le \sup_x \max\bigl\{ \|\partial \varphi(x)\|_2,\; \|\partial \psi(x)\|_2 \bigr\}.
-    \]
-    This leads to a sequence of convex optimization problems whose optimal values converge to an upper bound. LiPopt typically provides tighter bounds than simple product rules but is more computationally expensive.
-  </div>
-</div>
+
+
+
+
+
 
 
 
@@ -3042,6 +3362,13 @@ In a lipschitz constrained neural network Each individual layer (whether it’s 
   </section>
   <!-- SECTION: CALLOUTS -->
 
+
+
+
+
+
+
+
   <!-- SECTION: CODE -->
   <section style="margin-bottom: 3rem">
     <h2 class="section-heading">Code Blocks</h2>
@@ -3057,46 +3384,9 @@ zeros = [zetazero(n) for n in range(1, 11)]
 for z in zeros:
     print(f"ρ = {z}")</code></pre>
   </section>
-  <!-- SECTION: POST CARDS -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Post Cards</h2>
-    <div class="col-2" style="margin-top:1rem">
-      <div class="card card--post">
-        <span class="tag tag--teal">Analysis</span>
-        <a href="#" class="card__title">Why the Spectral Interpretation Matters</a>
-        <p class="card__excerpt">Connecting eigenvalues of self-adjoint operators to the zeros of ζ(s) — a bridge between quantum mechanics and number theory.</p>
-        <div class="post-meta"><span>May 12, 2025</span><span class="separator">·</span><span>14 min read</span></div>
-      </div>
-      <div class="card card--post">
-        <span class="tag tag--gold">Number Theory</span>
-        <a href="#" class="card__title">Prime Gaps and Their Distribution</a>
-        <p class="card__excerpt">An elementary tour through Bertrand's postulate, Cramér's conjecture, and what recent breakthrough results tell us.</p>
-        <div class="post-meta"><span>Mar 3, 2025</span><span class="separator">·</span><span>9 min read</span></div>
-      </div>
-     
-    </div>
-  </section>
 
 
 
-  <!-- SECTION: TABLE -->
-  <section style="margin-bottom:3rem">
-    <h2 class="section-heading">Math Tables</h2>
-    <table class="math-table">
-      <caption>Table 1. First six nontrivial zeros of ζ(s) on the critical line.</caption>
-      <thead>
-        <tr><th>n</th><th class="num">Im(ρₙ)</th><th>Verified on critical line</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td class="num">14.134725</td><td>Yes</td></tr>
-        <tr><td>2</td><td class="num">21.022040</td><td>Yes</td></tr>
-        <tr><td>3</td><td class="num">25.010858</td><td>Yes</td></tr>
-        <tr><td>4</td><td class="num">30.424876</td><td>Yes</td></tr>
-        <tr><td>5</td><td class="num">32.935062</td><td>Yes</td></tr>
-        <tr><td>6</td><td class="num">37.586178</td><td>Yes</td></tr>
-      </tbody>
-    </table>
-  </section>
   <!-- SECTION: BLOCKQUOTES & PULL QUOTE -->
   <section style="margin-bottom:3rem">
     <h2 class="section-heading">Quotes</h2>
@@ -3129,6 +3419,125 @@ for z in zeros:
       </a>
     </div>
   </section>
+
+
+
+
+<!-- Modal overlay -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- HIDDEN DEFINITIONS (original LaTeX content) -->
+<div style="display: none;">
+  <!-- AutoLip definition (Definition 8) -->
+  <div id="def-autolip" class="thm-env">
+    <div class="thm-env__label">Definition 8 – Layer-wise composition bound (AutoLip)</div>
+    <div class="thm-env__body">
+  
+    Let the neural network be a composition of layers: \(f = f_D \circ \cdots \circ f_1\). If each layer \(f_d\) is \(L_d\)-Lipschitz with respect to the \(\ell_2\)-norm, then the overall network satisfies
+    \[
+    \forall x,y \in \mathbb{R}^m, \quad \|f(x)-f(y)\|_2 \le \left( \prod_{d=1}^D L_d \right) \|x-y\|_2.
+    \]
+    Hence an upper bound on the global Lipschitz constant is
+    \[
+    \widehat{L}_{\text{product}} = \prod_{d=1}^D L_d.
+    \]
+    For an affine layer \(f_d(z) = W_d z + b_d\), the minimal Lipschitz constant is the spectral norm:
+    \[
+    L_d = \|W_d\|_2 = \sqrt{\lambda_{\max}(W_d^{\mathsf{T}}W_d)}.
+    \]
+    For standard activation functions (ReLU, sigmoid, tanh), \(L_d = 1\) when they are 1-Lipschitz. The AutoLip algorithm computes these per‑layer bounds via automatic differentiation and backpropagates them to obtain a global upper bound.
+     
+    
+    </div>
+  </div>
+
+  <!-- Linear relaxation -->
+  <div id="def-linrelax" class="thm-env">
+    <div class="thm-env__label">Definition 9 – Linear relaxation (Decomon / auto‑LiRPA)</div>
+    <div class="thm-env__body">
+    Linear relaxation methods (e.g., Decomon, auto‑LiRPA) compute a local Lipschitz constant over a compact input region \(\mathcal{C} \subset \mathbb{R}^m\) (typically an \(\ell_\infty\)-ball). For a neuron with pre‑activation \(z\) and activation \(\sigma\), the method replaces \(\sigma(z)\) by linear lower and upper bounding functions:
+    \[
+    \alpha z + \beta \le \sigma(z) \le \gamma z + \delta \quad \forall z \in [z_{\min}, z_{\max}],
+    \]
+    where the coefficients \(\alpha,\beta,\gamma,\delta\) depend on the input bounds. Propagating such linear relaxations through the network yields convex bounds on the output difference:
+    \[
+    \|f(x)-f(y)\|_2 \le \widehat{L}_{\text{lin}} \|x-y\|_2 \quad \forall x,y \in \mathcal{C}.
+    \]
+    The computed \(\widehat{L}_{\text{lin}}\) is an upper bound on the local Lipschitz constant over \(\mathcal{C}\). These methods are often faster than global SDP approaches and can be scaled to larger networks.
+  
+    </div>
+  </div>
+
+  <!-- LipSDP -->
+  <div id="def-lipsdp" class="thm-env">
+    <div class="thm-env__label">Definition 10 – LipSDP (semidefinite programming)</div>
+    <div class="thm-env__body">
+  The LipSDP framework (Fazlyab et al., 2019) formulates the problem of estimating the global Lipschitz constant as a semidefinite program (SDP). For a network \(f(x) = W_D \,\sigma(\,\cdots W_1 x + b_1 \cdots) + b_D\) with layer‑wise weight matrices \(W_i\) and activation \(\sigma\) satisfying a quadratic constraint
+    \[
+    \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix}^{\mathsf{T}} \! M \begin{bmatrix} \sigma(z) - \sigma(y) \\ z - y \end{bmatrix} \ge 0 \quad \forall z,y \in \mathbb{R},
+    \]
+    the Lipschitz constant \(L\) is the smallest number such that
+    \[
+    \|f(x)-f(y)\|_2^2 \le L^2 \|x-y\|_2^2 \quad \forall x,y.
+    \]
+    This inequality is equivalent to a matrix inequality
+    \[
+    \Delta^{\mathsf{T}} \begin{bmatrix} W_D^{\mathsf{T}}W_D & 0 \\ 0 & -L^2 I \end{bmatrix} \Delta \le 0 \quad \forall \Delta \in \mathbb{R}^{n_1+\cdots+n_D},
+    \]
+    which can be relaxed to an SDP. The optimal value of the SDP yields an upper bound:
+    \[
+    \widehat{L}_{\text{SDP}} \ge L.
+    \]
+    LipSDP is expressive enough to handle many activations (ReLU, tanh, GroupSort) by choosing appropriate symmetric matrices \(M\).
+     
+    
+    </div>
+  </div>
+
+  <!-- Polyhedron propagation -->
+  <div id="def-poly" class="thm-env">
+    <div class="thm-env__label">Definition 11 – Polyhedron propagation (ReLU networks)</div>
+    <div class="thm-env__body">
+    For networks with ReLU activations, an exact Lipschitz bound over a convex input polytope \(\mathcal{P}_{\text{in}}\) can be obtained by forward propagation of polyhedrons. Each ReLU neuron splits the input space into two regions (active or inactive). The set of all possible activation patterns defines a partition. For a fixed pattern, the network becomes an affine map:
+    \[
+    f(x) = A_{\text{pattern}} x + b_{\text{pattern}}.
+    \]
+    The Lipschitz constant over that pattern is \(\|A_{\text{pattern}}\|_2\). The global Lipschitz constant over \(\mathcal{P}_{\text{in}}\) is the supremum over all patterns reachable from \(\mathcal{P}_{\text{in}}\):
+    \[
+    \widehat{L}_{\text{poly}} = \max_{\text{patterns reachable}} \|A_{\text{pattern}}\|_2.
+    \]
+    Computing this exactly is combinatorial, but efficient algorithms (e.g., Weng et al., 2018a) propagate convex polyhedra layer‑by‑layer, maintaining outer approximations that yield valid upper bounds.
+    
+    
+    
+    
+    </div>
+  </div>
+
+  <!-- LiPopt -->
+  <div id="def-lipopt" class="thm-env">
+    <div class="thm-env__label">Definition 12 – LiPopt (difference‑of‑convex)</div>
+    <div class="thm-env__body">
+  LiPopt (Latorre et al., 2019) formulates the Lipschitz constant estimation as a difference‑of‑convex programming problem. For a network with ReLU activations, the function can be expressed as a difference of two convex functions:
+    \[
+    f(x) = \varphi(x) - \psi(x),
+    \]
+    where \(\varphi\) and \(\psi\) are convex. The Lipschitz constant is then bounded by the maximum norm of the subgradients:
+    \[
+    L \le \sup_x \max\bigl\{ \|\partial \varphi(x)\|_2,\; \|\partial \psi(x)\|_2 \bigr\}.
+    \]
+    This leads to a sequence of convex optimization problems whose optimal values converge to an upper bound. LiPopt typically provides tighter bounds than simple product rules but is more computationally expensive.
+     
+    
+    </div>
+  </div>
+
+
 </main>
 <script>
 (function() {
@@ -3217,6 +3626,98 @@ for z in zeros:
     initThemeToggle();
   }
 })();
+
+
+
+(function() {
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    const closeSpan = document.querySelector('.close-modal');
+
+    function openModal(contentId) {
+      const contentElem = document.getElementById(contentId);
+      if (!contentElem) return;
+      // clone to avoid moving the hidden original
+      const clone = contentElem.cloneNode(true);
+      modalBody.innerHTML = '';
+      modalBody.appendChild(clone);
+      modal.style.display = 'flex';
+      // re-typeset MathJax promises
+      if (window.MathJax) {
+        MathJax.typesetPromise([modalBody]).catch(console.warn);
+      }
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      modalBody.innerHTML = '';
+    }
+
+    closeSpan.onclick = closeModal;
+    window.onclick = function(e) {
+      if (e.target === modal) closeModal();
+    };
+
+    // Attach click listeners to all cards that have data-modal attribute
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      const modalId = card.getAttribute('data-modal');
+      if (modalId) {
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openModal(modalId);
+        });
+      }
+    });
+  })();
+
+(function() {
+    const modal = document.getElementById('methodModal');
+    const modalBody = document.getElementById('modal-body');
+    const closeSpan = document.querySelector('.close-modal');
+
+    function openModal(contentId) {
+      const contentElem = document.getElementById(contentId);
+      if (!contentElem) return;
+      const clone = contentElem.cloneNode(true);
+      modalBody.innerHTML = '';
+      modalBody.appendChild(clone);
+      modal.style.display = 'flex';
+      if (window.MathJax) MathJax.typesetPromise([modalBody]).catch(console.warn);
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      modalBody.innerHTML = '';
+    }
+
+    closeSpan.onclick = closeModal;
+    window.onclick = function(e) { if (e.target === modal) closeModal(); };
+
+    // Mapping from data-method to content id
+    const contentMap = {
+      'orthogonal': 'orthogonal-content',
+      'spectral': 'spectral-content',
+      'reparam': 'reparam-content',
+      'pgd': 'pgd-content',
+      'clip': 'clip-content',
+      'frobenius': 'frobenius-content',
+      'dynamical': 'dynamical-content',
+      'sandwich': 'sandwich-content',
+      'gradpen': 'gradpen-content',
+      'specreg': 'specreg-content'
+    };
+
+    document.querySelectorAll('.method-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const row = this.closest('.method-row');
+        const method = row.getAttribute('data-method');
+        const contentId = contentMap[method];
+        if (contentId) openModal(contentId);
+      });
+    });
+  })();
 </script>
 
 
