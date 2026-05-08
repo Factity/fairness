@@ -1009,6 +1009,8 @@ blockquote cite::before { content: '— '; }
   font-size: 0.88rem;
   color: var(--ink-muted);
   line-height: 1.65;
+
+  
 }
 /* ─── SEARCH ─────────────────────────────────────────────────── */
 /* .search-bar — inline search input */
@@ -1068,6 +1070,41 @@ blockquote cite::before { content: '— '; }
 .palette-card:hover {
   transform: translateY(-2px);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Optional: Make it even tighter */
 .compact .palette-grid {
@@ -3337,6 +3374,354 @@ The theorem of Anil et al. (2019) bounds the “two‑to‑infinity” norm \(\|
 
 
 
+<p>
+One effective way to enforce structural constraints—such as orthogonality, low rank, or unit norm—on weight vectors is to map them onto a manifold. By definition, a manifold is a space that locally resembles Euclidean space but may have a more complex global geometry; constraining weights to lie on a specific manifold guarantees that they satisfy the desired properties at every step of training. To implement this idea in practice, we must first give a precise mathematical definition of a manifold and then choose an appropriate distance metric that measures how far two points are on that manifold, as well as an optimization method that respects the manifold’s geometry. Different manifolds  call for different metrics and optimizers; we now formalize these concepts and highlight the most relevant combinations for typical machine learning tasks.
+</p>
+
+
+
+<!-- Section: Mathematical Definition of a Manifold -->
+<h2 class="section-heading">Mathematical definition of a manifold</h2>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 1 (Topological Manifold)</div>
+  <div class="thm-env__body">
+    Let \(M\) be a topological space. \(M\) is called a <strong>topological manifold of dimension \(n\)</strong> (denoted \(n\)-manifold) if it satisfies the following three axioms:
+
+    <ol>
+      <li>
+        <strong>Locally Euclidean of dimension \(n\)</strong>: For every point \(p \in M\), there exists an open neighbourhood \(U \subseteq M\) of \(p\), an open set \(\widetilde{U} \subseteq \mathbb{R}^n\), and a homeomorphism \(\varphi: U \to \widetilde{U}\).  
+        The pair \((U, \varphi)\) is called a <strong>chart</strong> (or coordinate chart) around \(p\). The homeomorphism \(\varphi\) is often written as \(\varphi(q) = (x^1(q), \dots, x^n(q))\), where \(x^i(q)\) are the <strong>local coordinates</strong> of \(q\).
+      </li>
+      <li>
+        <strong>Hausdorff property</strong>: For any two distinct points \(p, q \in M\), there exist disjoint open sets \(U_p, U_q \subseteq M\) such that \(p \in U_p\) and \(q \in U_q\).
+      </li>
+      <li>
+        <strong>Second-countability</strong>: The topology of \(M\) has a countable base. That is, there exists a countable collection \(\{B_i\}_{i \in \mathbb{N}}\) of open sets such that every open set in \(M\) can be expressed as a union of some of the \(B_i\).
+      </li>
+    </ol>
+
+    The integer \(n\) is the <strong>dimension</strong> of the manifold. If the dimension is not required to be constant, one speaks of a manifold of possibly variable dimension, but typically each connected component has a fixed dimension.
+  </div>
+</div>
+
+<div class="thm-env thm">
+  <div class="thm-env__label">Definition 2 (Atlas and Compatibility of Charts)</div>
+  <div class="thm-env__body">
+    Let \(M\) be a topological \(n\)-manifold.
+
+    <ul>
+      <li>
+        An <strong>atlas</strong> on \(M\) is a collection of charts \(\mathcal{A} = \{(U_\alpha, \varphi_\alpha)\}_{\alpha \in I}\) such that the domains cover \(M\): \(\bigcup_{\alpha \in I} U_\alpha = M\).
+      </li>
+      <li>
+        Two charts \((U_1, \varphi_1)\) and \((U_2, \varphi_2)\) are called <strong>\(C^\infty\)-compatible</strong> (or smoothly compatible) if either \(U_1 \cap U_2 = \emptyset\) or the <strong>transition map</strong>
+        \[
+        \varphi_2 \circ \varphi_1^{-1}: \varphi_1(U_1 \cap U_2) \longrightarrow \varphi_2(U_1 \cap U_2)
+        \]
+        is a smooth diffeomorphism (i.e., infinitely differentiable with a smooth inverse) between open subsets of \(\mathbb{R}^n\).
+      </li>
+      <li>
+        A \(C^\infty\)-atlas is an atlas in which every two charts are \(C^\infty\)-compatible.
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+<!-- CONTAINER: Table of matrix manifolds for constrained optimization -->
+<div class="container">
+  <h2 class="section-heading">Matrix Manifolds for Weight Constraints</h2>
+
+  <div class="proof">
+    <span class="proof__label">Usage</span>
+    <span class="proof__qed">*</span>
+    Click on the manifold names below to view mathematical definitions, tangent spaces, distance metrics, and associated optimizers.
+  </div>
+
+  <div class="table-responsive">
+    <table class="math-table">
+      <thead>
+        <tr><th>Manifold</th><th>Type</th><th>Dimension</th><th>Key Property</th><th>Typical Optimizer</th></tr>
+      </thead>
+      <tbody>
+        <tr class="method-row" data-method="stiefel">
+          <td><a href="#" class="method-link">Stiefel \(\operatorname{St}(n,m)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(mn - n(n+1)/2\)</td>
+          <td>\(X^\top X = I_n\) (orthonormal columns)</td>
+          <td>Riemannian SGD, QR retraction</td>
+        </tr>
+        <tr class="method-row" data-method="grassmann">
+          <td><a href="#" class="method-link">Grassmann \(\operatorname{Gr}(k,n)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(k(n-k)\)</td>
+          <td>Subspaces: \(X \sim XQ,\; Q\in O(k)\)</td>
+          <td>Riemannian CG, chordal distance</td>
+        </tr>
+        <tr class="method-row" data-method="oblique">
+          <td><a href="#" class="method-link">Oblique \(\operatorname{OB}(m,n)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(m(n-1)\)</td>
+          <td>Each row has unit norm</td>
+          <td>Row‑wise normalisation</td>
+        </tr>
+        <tr class="method-row" data-method="orthogonal">
+          <td><a href="#" class="method-link">Orthogonal \(O(n)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(n(n-1)/2\)</td>
+          <td>\(Q^\top Q = I_n\)</td>
+          <td>Cayley transform, exponential map</td>
+        </tr>
+        <tr class="method-row" data-method="fixedrank">
+          <td><a href="#" class="method-link">Fixed‑rank \(\mathcal{M}(m,n,r)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(r(m+n-r)\)</td>
+          <td>\(\operatorname{rank}(X)=r\)</td>
+          <td>Riemannian GD, SVD retraction</td>
+        </tr>
+        <tr class="method-row" data-method="flag">
+          <td><a href="#" class="method-link">Flag \(\operatorname{Fl}(d_1,\dots,d_k,n)\)</a></td>
+          <td>Hard constraint</td>
+          <td>\(\frac12(n^2-\sum_i (d_i-d_{i-1})^2)\)</td>
+          <td>Nested subspaces \(V_1\subset\cdots\subset V_k\)</td>
+          <td>Hierarchical Riemannian CG</td>
+        </tr>
+        <tr class="method-row" data-method="psd">
+          <td><a href="#" class="method-link">PSD cone \(\mathcal{S}_+^n\)</a></td>
+          <td>Hard constraint (interior)</td>
+          <td>\(n(n+1)/2\)</td>
+          <td>\(X \succeq 0\) (positive semidefinite)</td>
+          <td>Log‑Euclidean, Bures‑Wasserstein</td>
+        </tr>
+        <tr class="method-row" data-method="fixedpsd">
+          <td><a href="#" class="method-link">Fixed‑rank PSD</a></td>
+          <td>Hard constraint</td>
+          <td>\(r(2n-r+1)/2\)</td>
+          <td>\(X\succeq 0,\; \operatorname{rank}(X)=r\)</td>
+          <td>Bures‑Wasserstein gradient</td>
+        </tr>
+        <tr class="method-row" data-method="finsler">
+          <td><a href="#" class="method-link">Finsler (spectral norm)</a></td>
+          <td>Hard constraint (norm)</td>
+          <td>\(mn\) (ambient)</td>
+          <td>\(\|W\|_2 = 1\) (non‑Riemannian)</td>
+          <td>Muon, Manifold Muon</td>
+        </tr>
+      </tbody>
+     </table>
+  </div>
+</div>
+
+<!-- MODAL (uses existing CSS classes .modal, .modal-content, .close-modal) -->
+<div id="methodModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- HIDDEN DEFINITIONS (modal content) -->
+<div style="display: none;">
+  <!-- Stiefel manifold -->
+  <div id="stiefel-content" class="thm-env thm">
+    <div class="thm-env__label">Stiefel manifold \(\operatorname{St}(n,m)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \operatorname{St}(n,m) = \{ X \in \mathbb{R}^{m \times n} : X^\top X = I_n \},\quad m \ge n.
+      \]</p>
+      <p><strong>Tangent space:</strong> \(T_X \operatorname{St} = \{ \Delta \in \mathbb{R}^{m\times n} : X^\top \Delta + \Delta^\top X = 0 \}\), i.e. \(X^\top\Delta\) is skew‑symmetric.</p>
+      <p><strong>Riemannian metric:</strong> Induced Euclidean metric \(\langle \Delta_1,\Delta_2\rangle = \operatorname{tr}(\Delta_1^\top\Delta_2)\).</p>
+      <p><strong>Retraction (QR):</strong> \(\operatorname{Retr}_X(\Delta) = \operatorname{qf}(X+\Delta)\), where \(\operatorname{qf}\) returns the orthogonal factor of the QR decomposition.</p>
+      <p><strong>Geodesic distance:</strong> \(d_g(X,Y) = \sqrt{\sum_{i=1}^n \theta_i^2}\), with \(\theta_i\) the principal angles between the subspaces spanned by \(X\) and \(Y\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Orthogonal layers in neural networks (GNP), PCA, independent component analysis.
+      </div>
+    </div>
+  </div>
+
+  <!-- Grassmann manifold -->
+  <div id="grassmann-content" class="thm-env thm">
+    <div class="thm-env__label">Grassmann manifold \(\operatorname{Gr}(k,n)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \operatorname{Gr}(k,n) = \operatorname{St}(k,n) / O(k) = \{ [X] : X \in \mathbb{R}^{n\times k},\ X^\top X = I_k \},
+      \] where \([X] = \{ XQ : Q \in O(k) \}\) is the equivalence class of orthonormal bases spanning the same \(k\)-dimensional subspace.</p>
+      <p><strong>Tangent space (horizontal lift):</strong> \(\mathcal{H}_X = \{ \Delta \in \mathbb{R}^{n\times k} : X^\top \Delta = 0 \}\).</p>
+      <p><strong>Chordal distance:</strong> \(d_{\text{ch}}([X],[Y]) = \frac{1}{\sqrt{2}}\|XX^\top - YY^\top\|_F = \sqrt{\sum_{i=1}^k \sin^2\theta_i}\).</p>
+      <p><strong>Riemannian gradient:</strong> For a function \(f([X])\) lifted to \(\tilde f(X)\) on Stiefel, \(\operatorname{grad} f([X]) = (I - XX^\top)\nabla\tilde f(X)\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Subspace clustering, robust PCA, dimensionality reduction, Grassmannian deep networks.
+      </div>
+    </div>
+  </div>
+
+  <!-- Oblique manifold -->
+  <div id="oblique-content" class="thm-env thm">
+    <div class="thm-env__label">Oblique manifold \(\operatorname{OB}(m,n)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \operatorname{OB}(m,n) = \{ X \in \mathbb{R}^{m\times n} : \|X_{i,:}\|_2 = 1,\ i=1,\dots,m \},
+      \] i.e. each row has unit Euclidean norm. No orthogonality between rows.</p>
+      <p><strong>Geometry:</strong> Product of \(m\) unit spheres \((S^{n-1})^m\). Tangent space at \(X\): \(T_X\operatorname{OB} = \{ \Delta : X_{i,:}^\top \Delta_{i,:} = 0,\ \forall i \}\).</p>
+      <p><strong>Retraction:</strong> Row‑wise normalisation: \(\operatorname{Retr}_X(\Delta)_{i,:} = (X_{i,:}+\Delta_{i,:}) / \|X_{i,:}+\Delta_{i,:}\|_2\).</p>
+      <p><strong>Geodesic distance:</strong> \(d_{\text{OB}}(X,Y) = \sqrt{\sum_{i=1}^m \arccos^2(\langle X_{i,:}, Y_{i,:}\rangle)}\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Weight normalization, simplex constraints (after softmax), independent component analysis.
+      </div>
+    </div>
+  </div>
+
+  <!-- Orthogonal group -->
+  <div id="orthogonal-content" class="thm-env thm">
+    <div class="thm-env__label">Orthogonal group \(O(n)\) and \(SO(n)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      O(n) = \{ Q \in \mathbb{R}^{n\times n} : Q^\top Q = I_n \},\quad SO(n) = \{ Q \in O(n) : \det Q = +1 \}.
+      \]</p>
+      <p><strong>Tangent space at \(Q\):</strong> \(T_Q O(n) = \{ Q \Omega : \Omega^\top = -\Omega \}\) (skew‑symmetric matrices).</p>
+      <p><strong>Exponential map:</strong> \(\exp_Q(\Delta) = Q \exp(Q^\top \Delta)\), where \(\exp\) is the matrix exponential.</p>
+      <p><strong>Cayley retraction:</strong> \(\operatorname{Cayley}_Q(\Delta) = Q (I - A)^{-1}(I + A)\) with \(A = Q^\top\Delta\) skew‑symmetric (cheaper than exponential).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Orthogonal weight matrices in RNNs, whitening layers, equivariant networks.
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed‑rank manifold -->
+  <div id="fixedrank-content" class="thm-env thm">
+    <div class="thm-env__label">Fixed‑rank manifold \(\mathcal{M}(m,n,r)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \mathcal{M}(m,n,r) = \{ X \in \mathbb{R}^{m\times n} : \operatorname{rank}(X) = r \},\quad 0 < r \le \min(m,n).
+      \]</p>
+      <p><strong>Tangent space at \(X = U\Sigma V^\top\) (compact SVD):</strong>  
+      \[
+      T_X\mathcal{M} = \{ U M V^\top + U_\perp A V^\top + U B V_\perp^\top : M \in \mathbb{R}^{r\times r},\ A\in\mathbb{R}^{(m-r)\times r},\ B\in\mathbb{R}^{r\times (n-r)} \}.
+      \]</p>
+      <p><strong>Retraction (SVD truncation):</strong> Let \(X_+ = X + \Delta\), compute its compact SVD \(U_+\Sigma_+V_+^\top\) and keep only the largest \(r\) singular values (set the rest to zero).</p>
+      <p><strong>Bures‑Wasserstein distance (for PSD case):</strong> \(d_{\text{BW}}^2(X,Y) = \operatorname{tr}(X)+\operatorname{tr}(Y)-2\operatorname{tr}\bigl((X^{1/2}YX^{1/2})^{1/2}\bigr)\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Low‑rank matrix completion, LoRA (Low‑Rank Adaptation) in LLMs, reduced‑order modeling.
+      </div>
+    </div>
+  </div>
+
+  <!-- Flag manifold -->
+  <div id="flag-content" class="thm-env thm">
+    <div class="thm-env__label">Flag manifold \(\operatorname{Fl}(d_1,\dots,d_k,n)\)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \operatorname{Fl}(d_1,\dots,d_k,n) = \{ (V_1,\dots,V_k) : V_1 \subset V_2 \subset \cdots \subset V_k = \mathbb{R}^n,\ \dim V_i = d_i \}.
+      \]</p>
+      <p><strong>Representation:</strong> Choose an orthonormal matrix \(X \in O(n)\) such that the first \(d_1\) columns span \(V_1\), the next \(d_2-d_1\) columns extend to \(V_2\), etc. Then \(\operatorname{Fl} \cong O(n) / (O(d_1)\times O(d_2-d_1)\times\cdots\times O(n-d_k))\).</p>
+      <p><strong>Tangent space:</strong> Matrices with block structure determined by the flag (certain blocks are skew‑symmetric, others arbitrary).</p>
+      <p><strong>Distance (chordal average):</strong> \(d_{\text{Fl}}^2 = \sum_{i=1}^k \|P_{V_i} - P_{W_i}\|_F^2\), where \(P_{V_i}\) is the orthogonal projector onto \(V_i\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Hierarchical subspace learning, robust PCA with nested structure, multi‑scale data analysis.
+      </div>
+    </div>
+  </div>
+
+  <!-- PSD cone (interior) -->
+  <div id="psd-content" class="thm-env thm">
+    <div class="thm-env__label">Positive semidefinite cone \(\mathcal{S}_+^n\) (interior)</div>
+    <div class="thm-env__body">
+      <p>\[
+      \mathcal{S}_+^n = \{ X \in \mathbb{R}^{n\times n} : X = X^\top,\ X \succeq 0 \}.
+      \] The interior \(\mathcal{S}_{++}^n\) is an open convex cone, a smooth manifold of dimension \(n(n+1)/2\).</p>
+      <p><strong>Log‑Euclidean metric:</strong> \(g_X(\Delta_1,\Delta_2) = \langle \log'(X)[\Delta_1], \log'(X)[\Delta_2] \rangle\) leading to distance  
+      \(d_{\text{LE}}(X,Y) = \|\log(X) - \log(Y)\|_F\).</p>
+      <p><strong>Affine‑invariant metric:</strong> \(g_X(\Delta_1,\Delta_2) = \operatorname{tr}(X^{-1}\Delta_1 X^{-1}\Delta_2)\). Geodesic: \(X^{1/2} (X^{-1/2} Y X^{-1/2})^t X^{1/2}\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Covariance estimation, metric learning, SPD neural networks.
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed‑rank PSD -->
+  <div id="fixedpsd-content" class="thm-env thm">
+    <div class="thm-env__label">Fixed‑rank PSD manifold</div>
+    <div class="thm-env__body">
+      <p>\[
+      \mathcal{P}(n,r) = \{ X \in \mathbb{R}^{n\times n} : X = X^\top,\ X \succeq 0,\ \operatorname{rank}(X) = r \}.
+      \] This is a smooth submanifold of \(\mathcal{S}_+^n\) (the boundary of the cone).</p>
+      <p><strong>Factor representation:</strong> \(X = LL^\top\) with \(L \in \mathbb{R}^{n\times r}\). This representation has a gauge freedom: \(L \sim LQ\) for any \(Q \in O(r)\).</p>
+      <p><strong>Bures‑Wasserstein gradient:</strong> For a function \(f(X)\), the Riemannian gradient in factor coordinates is \(\nabla_{L} f = 2 \nabla f(X) L\).</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Low‑rank covariance estimation, matrix completion with PSD constraints, variational inference.
+      </div>
+    </div>
+  </div>
+
+  <!-- Finsler (spectral norm) -->
+  <div id="finsler-content" class="thm-env thm">
+    <div class="thm-env__label">Finsler manifold induced by the spectral norm</div>
+    <div class="thm-env__body">
+      <p>Let \(M = \mathbb{R}^{m\times n}\) (or a submanifold). Define the Finsler metric \(F(W, \Delta) = \|\Delta\|_2\) (the spectral norm), which is independent of the base point. This is a <strong>symmetric, non‑Riemannian</strong> norm because its unit ball (matrices with \(\|\Delta\|_2 \le 1\)) is not an ellipsoid (except for \(1\times 1\) matrices).</p>
+      <p><strong>Steepest descent direction:</strong> For a gradient \(G = \nabla f(W)\), the direction that minimises \(\langle G, D \rangle\) subject to \(\|D\|_2 = 1\) is \(D = -U V^\top\), where \(U,V\) are the top left and right singular vectors of \(G\).</p>
+      <p><strong>Muon optimizer:</strong> Update \(W \leftarrow W - \eta \, U V^\top\).</p>
+      <p><strong>Manifold Muon:</strong> When restricting to a submanifold (e.g., Stiefel), project the Euclidean gradient onto the tangent space, compute its top singular vectors, project that direction back to the tangent space, then retract.</p>
+      <div class="proof">
+        <span class="proof__label">Application.</span>
+        Training neural networks with spectral‑norm constraints, GNP layers, Muon and Manifold Muon.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simple modal script (same as in Lipschitz table) -->
+
+
+
+<p>On a manifold, the choice of distance metric determines the geometry of the optimization landscape. The most fundamental is the <strong>Riemannian geodesic distance</strong>, defined as the infimum of lengths of all smooth curves connecting two points. For matrix manifolds, simpler alternatives are often used: the <strong>chordal distance</strong> on Grassmannians (based on projection matrices), the <strong>Procrustes distance</strong> on Stiefel (aligning bases via orthogonal transformations), and the <strong>Bures–Wasserstein distance</strong> for fixed‑rank positive semidefinite matrices. Optimizers on manifolds replace the Euclidean gradient with its <strong>Riemannian gradient</strong> (projection onto the tangent space) and use a <strong>retraction</strong> to map updates back to the manifold. Common optimizers include <strong>Riemannian SGD</strong>, <strong>Riemannian Adam</strong>, <strong>Cayley SGD</strong> (for orthogonal groups), <strong>Muon</strong> (steepest descent under the spectral norm, a Finsler geometry), <strong>Manifold Muon</strong> (extended to Stiefel), and the <strong>landing algorithm</strong> (soft constraint penalty). The table below lists these distances and optimizers alongside their associated manifolds.</p>
+
+<ul>
+  <li><strong>Geodesic distance</strong> – general Riemannian manifolds; computed via principal angles for Stiefel/Grassmann.</li>
+  <li><strong>Chordal distance</strong> – Grassmann manifold: \(d_{\text{ch}}([X],[Y]) = \frac{1}{\sqrt{2}}\|XX^\top - YY^\top\|_F\).</li>
+  <li><strong>Procrustes distance</strong> – Stiefel manifold: \(d_{\text{Proc}}(X,Y) = \min_{Q\in O(k)} \|X - YQ\|_F\).</li>
+  <li><strong>Bures–Wasserstein distance</strong> – fixed‑rank PSD matrices: \(d_{\text{BW}}^2(X,Y) = \operatorname{tr}(X)+\operatorname{tr}(Y)-2\operatorname{tr}\bigl((X^{1/2}YX^{1/2})^{1/2}\bigr)\).</li>
+  <li><strong>Log‑Euclidean distance</strong> – full‑rank SPD cone: \(d_{\text{LE}}(X,Y) = \|\log(X) - \log(Y)\|_F\).</li>
+</ul>
+
+<ul>
+  <li><strong>Riemannian SGD</strong> – generic; uses retraction (e.g., QR for Stiefel).</li>
+  <li><strong>Riemannian Adam</strong> – adaptive moment estimation on tangent spaces with vector transport.</li>
+  <li><strong>Cayley SGD</strong> – orthogonal group; replaces exponential map with cheaper Cayley transform.</li>
+  <li><strong>Muon</strong> – unconstrained matrix space under spectral norm; update = \(-UV^\top\) from top singular vectors of gradient.</li>
+  <li><strong>Manifold Muon</strong> – Stiefel manifold: project gradient, compute top singular vectors, project back, retract.</li>
+  <li><strong>Landing algorithm</strong> – enforces constraint via increasing penalty; no explicit retraction.</li>
+  <li><strong>Riemannian trust‑region</strong> – second‑order method for matrix manifolds (e.g., Grassmann).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+ <!-- 1. Hypersphere S² -->
+         <h2 class="subsection header">Spherical Manifold </h2>
+         <div class="canvas-wrapper" id="sphere-container" style="min-height: 460px;"></div>
+       
+         <h2 class="subsection header">Oblique Manifold </h2>
+        <div class="canvas-wrapper" id="oblique-container" style="min-height: 460px;"></div>
+      
+         <h2 class="subsection header">Stiefel Manifold </h2>
+       <div class="canvas-wrapper" id="stiefel-container" style="min-height: 460px;"></div>
+
 
 
 
@@ -3538,131 +3923,396 @@ for z in zeros:
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
 </main>
 
-<script>
-(function() {
-  // ------------------------------------------------------------------
-  // 1. Theme toggle (unchanged, works with your .toggle-three)
-  // ------------------------------------------------------------------
-  function initThemeToggle() {
-    const container = document.querySelector('.toggle-three');
-    if (!container) return;
-    const buttons = container.querySelectorAll('.toggle-option');
-    if (buttons.length === 0) return;
-    const themeMap = {
-      'default': '',
-      'dark': 'theme-dark',
-      'slate': 'theme-slate'
-    };
-    const root = document.documentElement;
-    function setTheme(themeValue) {
-      Object.values(themeMap).filter(c => c !== '').forEach(cls => root.classList.remove(cls));
-      const themeClass = themeMap[themeValue];
-      if (themeClass) root.classList.add(themeClass);
-      buttons.forEach(btn => {
-        const btnTheme = btn.getAttribute('data-theme');
-        if (btnTheme === themeValue) btn.classList.add('active');
-        else btn.classList.remove('active');
-      });
-      localStorage.setItem('preferredTheme', themeValue);
+
+
+
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+        }
     }
-    buttons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const theme = btn.getAttribute('data-theme');
-        if (theme) setTheme(theme);
-      });
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ---------- Helper: add lights to a scene ----------
+    function addDefaultLights(scene) {
+        const ambient = new THREE.AmbientLight(0x404066);
+        scene.add(ambient);
+        const main = new THREE.DirectionalLight(0xffeedd, 1.2);
+        main.position.set(2, 3, 1.5);
+        scene.add(main);
+        const fill = new THREE.PointLight(0x88aaff, 0.5);
+        fill.position.set(-1, 0.8, 1.2);
+        scene.add(fill);
+        const back = new THREE.PointLight(0xffaa88, 0.4);
+        back.position.set(0.5, 1, -1.5);
+        scene.add(back);
+    }
+
+    // ========== 1. HYPERSPHERE (S^2) ==========
+    const sphereContainer = document.getElementById('sphere-container');
+    const sphereScene = new THREE.Scene();
+    sphereScene.background = null;
+    const sphereCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    sphereCamera.position.set(2.2, 1.8, 2.8);
+    sphereCamera.lookAt(0,0,0);
+    const sphereRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true});
+    sphereRenderer.setSize(sphereContainer.clientWidth, 280);
+    sphereContainer.appendChild(sphereRenderer.domElement);
+    addDefaultLights(sphereScene);
+    
+    // sphere manifold
+    const sphereGeo = new THREE.SphereGeometry(1, 80, 80);
+    const sphereMat = new THREE.MeshPhongMaterial({ color: 0xffaa66, emissive: 0x331a00, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
+    const sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
+    sphereScene.add(sphereMesh);
+    const wireMat = new THREE.MeshBasicMaterial({ color: 0xffaa66, wireframe: true, transparent: true, opacity: 0.25 });
+    const wireSphere = new THREE.Mesh(sphereGeo, wireMat);
+    sphereScene.add(wireSphere);
+    
+    // base point p
+    const p = new THREE.Vector3(0.75, 0.5, 0.45).normalize();
+    const basePoint = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0xff8844, emissive: 0x442200 }));
+    basePoint.position.copy(p);
+    sphereScene.add(basePoint);
+    
+    // tangent plane (disk)
+    const normal = p.clone().normalize();
+    const upRef = new THREE.Vector3(0,1,0);
+    let tangentX = new THREE.Vector3().crossVectors(normal, upRef).normalize();
+    if (Math.abs(normal.dot(upRef)) > 0.9999) {
+        // if normal is parallel to up, use another reference
+        const alt = new THREE.Vector3(1,0,0);
+        tangentX = new THREE.Vector3().crossVectors(normal, alt).normalize();
+    }
+    const tangentY = new THREE.Vector3().crossVectors(tangentX, normal).normalize();
+    const planeGeoDisk = new THREE.CircleGeometry(0.75, 24);
+    const planeMatDisk = new THREE.MeshPhongMaterial({ color: 0x88aaff, side: THREE.DoubleSide, transparent: true, opacity: 0.35, emissive: 0x112244 });
+    const tangentPlane = new THREE.Mesh(planeGeoDisk, planeMatDisk);
+    tangentPlane.position.copy(p);
+    const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), normal);
+    tangentPlane.quaternion.copy(quaternion);
+    sphereScene.add(tangentPlane);
+    
+    // tangent vector v
+    const angleDir = 0.85;
+    const vDir = tangentX.clone().multiplyScalar(Math.cos(angleDir)).add(tangentY.clone().multiplyScalar(Math.sin(angleDir))).normalize();
+    const vLen = 0.58;
+    const vVec = vDir.clone().multiplyScalar(vLen);
+    const tangentArrow = new THREE.ArrowHelper(vDir, p, vLen, 0xff8866, 0.25, 0.12);
+    sphereScene.add(tangentArrow);
+    // dashed line from p to p+v in tangent plane
+    const tipTangent = p.clone().add(vVec);
+    const dashPoints = [p, tipTangent];
+    const dashGeo = new THREE.BufferGeometry().setFromPoints(dashPoints);
+    const dashMat = new THREE.LineBasicMaterial({ color: 0xffaa88, transparent: true, opacity: 0.7 });
+    const dashLine = new THREE.Line(dashGeo, dashMat);
+    sphereScene.add(dashLine);
+    
+    // retraction: exponential map
+    const normV = vLen;
+    const qDir = vDir.clone().normalize();
+    const q = p.clone().multiplyScalar(Math.cos(normV)).add(qDir.clone().multiplyScalar(Math.sin(normV))).normalize();
+    const retractedPoint = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffcc44, emissive: 0x553300 }));
+    retractedPoint.position.copy(q);
+    sphereScene.add(retractedPoint);
+    
+    // geodesic arc
+    const arcPoints = [];
+    const steps = 50;
+    for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const psi = t * normV;
+        const pt = p.clone().multiplyScalar(Math.cos(psi)).add(qDir.clone().multiplyScalar(Math.sin(psi))).normalize();
+        arcPoints.push(pt);
+    }
+    const arcGeoLine = new THREE.BufferGeometry().setFromPoints(arcPoints);
+    const arcMatLine = new THREE.LineBasicMaterial({ color: 0xffaa88, linewidth: 2 }); // linewidth not supported everywhere, but color works
+    const geodesicLine = new THREE.Line(arcGeoLine, arcMatLine);
+    sphereScene.add(geodesicLine);
+    
+    // decorative particles
+    const starCount = 500;
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = [];
+    for (let i = 0; i < starCount; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const x = Math.sin(phi) * Math.cos(theta);
+        const y = Math.sin(phi) * Math.sin(theta);
+        const z = Math.cos(phi);
+        starPos.push(x, y, z);
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPos), 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffaa77, size: 0.015, transparent: true, opacity: 0.5 }));
+    sphereScene.add(stars);
+    
+    const sphereControls = new OrbitControls(sphereCamera, sphereRenderer.domElement);
+    sphereControls.enableDamping = true;
+    sphereControls.dampingFactor = 0.05;
+    sphereControls.rotateSpeed = 1.2;
+    sphereControls.zoomSpeed = 1.2;
+    sphereControls.enableZoom = false;   // add this line
+    sphereControls.zoomSpeed = 0; 
+    
+    function animateSphere() {
+        requestAnimationFrame(animateSphere);
+        sphereControls.update();
+        sphereRenderer.render(sphereScene, sphereCamera);
+    }
+    animateSphere();
+    
+    // ========== 2. OBLIQUE MANIFOLD (product of spheres) ==========
+    const obliqueContainer = document.getElementById('oblique-container');
+    const oblScene = new THREE.Scene();
+    oblScene.background = null;
+    const oblCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    oblCamera.position.set(2.4, 2.0, 2.8);
+    oblCamera.lookAt(0,0,0);
+    const oblRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    oblRenderer.setSize(obliqueContainer.clientWidth, 280);
+    obliqueContainer.appendChild(oblRenderer.domElement);
+    addDefaultLights(oblScene);
+    
+    // transparent reference sphere
+    const refSphereGeo = new THREE.SphereGeometry(1, 64, 64);
+    const refMat = new THREE.MeshPhongMaterial({ color: 0x88ff88, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
+    const refSphereObj = new THREE.Mesh(refSphereGeo, refMat);
+    oblScene.add(refSphereObj);
+    
+    // base point p (one row)
+    const pObl = new THREE.Vector3(0.8, 0.45, 0.4).normalize();
+    const baseObl = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0x88ff88, emissive: 0x226622 }));
+    baseObl.position.copy(pObl);
+    oblScene.add(baseObl);
+    
+    // tangent plane at pObl
+    const normObl = pObl.clone().normalize();
+    const upObl = new THREE.Vector3(0,1,0);
+    let tX = new THREE.Vector3().crossVectors(normObl, upObl).normalize();
+    if (Math.abs(normObl.dot(upObl)) > 0.9999) {
+        tX = new THREE.Vector3().crossVectors(normObl, new THREE.Vector3(1,0,0)).normalize();
+    }
+    const tY = new THREE.Vector3().crossVectors(tX, normObl).normalize();
+    const planeOblGeo = new THREE.CircleGeometry(0.75, 24);
+    const planeOblMat = new THREE.MeshPhongMaterial({ color: 0xaaffaa, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+    const oblPlane = new THREE.Mesh(planeOblGeo, planeOblMat);
+    oblPlane.position.copy(pObl);
+    const quatObl = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), normObl);
+    oblPlane.quaternion.copy(quatObl);
+    oblScene.add(oblPlane);
+    
+    // tangent vector
+    const angleObl = 0.9;
+    const vDirObl = tX.clone().multiplyScalar(Math.cos(angleObl)).add(tY.clone().multiplyScalar(Math.sin(angleObl))).normalize();
+    const vLenObl = 0.62;
+    const arrowObl = new THREE.ArrowHelper(vDirObl, pObl, vLenObl, 0x88ff88, 0.24, 0.12);
+    oblScene.add(arrowObl);
+    // dashed line
+    const tipObl = pObl.clone().add(vDirObl.clone().multiplyScalar(vLenObl));
+    const dashOblGeo = new THREE.BufferGeometry().setFromPoints([pObl, tipObl]);
+    const dashOblMat = new THREE.LineBasicMaterial({ color: 0xaaffaa, transparent: true });
+    const dashOblLine = new THREE.Line(dashOblGeo, dashOblMat);
+    oblScene.add(dashOblLine);
+    
+    // retraction: (p+v) normalized
+    const newRow = pObl.clone().add(vDirObl.clone().multiplyScalar(vLenObl)).normalize();
+    const retractedObl = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0xccff88, emissive: 0x448822 }));
+    retractedObl.position.copy(newRow);
+    oblScene.add(retractedObl);
+    // line from p to newRow (retraction path)
+    const retPath = new THREE.BufferGeometry().setFromPoints([pObl, newRow]);
+    const retLineMat = new THREE.LineBasicMaterial({ color: 0xccff88 });
+    const retLine = new THREE.Line(retPath, retLineMat);
+    oblScene.add(retLine);
+    
+    // additional rows (dots)
+    const extraRows = [
+        new THREE.Vector3(-0.55, 0.75, 0.37).normalize(),
+        new THREE.Vector3(0.3, -0.85, 0.43).normalize(),
+        new THREE.Vector3(-0.4, -0.5, 0.77).normalize()
+    ];
+    extraRows.forEach(r => {
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), new THREE.MeshStandardMaterial({ color: 0xaaffaa, emissive: 0x226622 }));
+        dot.position.copy(r);
+        oblScene.add(dot);
     });
-    const savedTheme = localStorage.getItem('preferredTheme');
-    if (savedTheme && themeMap.hasOwnProperty(savedTheme)) {
-      setTheme(savedTheme);
-    } else {
-      const defaultBtn = Array.from(buttons).find(btn => btn.getAttribute('data-theme') === 'default');
-      if (defaultBtn && !defaultBtn.classList.contains('active')) setTheme('default');
+    
+    // particles
+    const partCount = 400;
+    const partGeoObl = new THREE.BufferGeometry();
+    const partPos = [];
+    for (let i=0; i<partCount; i++) {
+        const v = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize();
+        v.multiplyScalar(1.02);
+        partPos.push(v.x, v.y, v.z);
     }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initThemeToggle);
-  } else {
-    initThemeToggle();
-  }
-
-  // ------------------------------------------------------------------
-  // 2. Modal logic – unified for both cards and table links
-  //    (uses your existing modal with id="methodModal")
-  // ------------------------------------------------------------------
-  const modal = document.getElementById('methodModal');
-  const modalBody = document.getElementById('modal-body');
-  const closeSpan = document.querySelector('.close-modal');
-
-  if (!modal || !modalBody) {
-    console.warn('Modal elements not found. Ensure <div id="methodModal"> and <div id="modal-body"> exist.');
-  }
-
-  function openModal(contentId) {
-    if (!modal || !modalBody) return;
-    const contentElem = document.getElementById(contentId);
-    if (!contentElem) {
-      console.warn('Content not found:', contentId);
-      return;
+    partGeoObl.setAttribute('position', new THREE.BufferAttribute(new Float32Array(partPos), 3));
+    const partPoints = new THREE.Points(partGeoObl, new THREE.PointsMaterial({ color: 0xaaffaa, size: 0.012, transparent: true, opacity: 0.4 }));
+    oblScene.add(partPoints);
+    
+    const oblControls = new OrbitControls(oblCamera, oblRenderer.domElement);
+    oblControls.enableDamping = true;
+    oblControls.dampingFactor = 0.05;
+    oblControls.rotateSpeed = 1.0;
+    oblControls.enableZoom = false; 
+    
+    function animateObl() {
+        requestAnimationFrame(animateObl);
+        oblControls.update();
+        oblRenderer.render(oblScene, oblCamera);
     }
-    // Clone to avoid moving the hidden original
-    const clone = contentElem.cloneNode(true);
-    modalBody.innerHTML = '';
-    modalBody.appendChild(clone);
-    modal.style.display = 'flex';
-    if (window.MathJax) {
-      MathJax.typesetPromise([modalBody]).catch(console.warn);
+    animateObl();
+    
+    // ========== 3. STIEFEL MANIFOLD (orthonormal frame) ==========
+    const stiefelContainer = document.getElementById('stiefel-container');
+    const stScene = new THREE.Scene();
+    stScene.background = null;
+    const stCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    stCamera.position.set(2.5, 2.1, 2.9);
+    stCamera.lookAt(0,0,0);
+    const stRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    stRenderer.setSize(stiefelContainer.clientWidth, 280);
+    stiefelContainer.appendChild(stRenderer.domElement);
+    addDefaultLights(stScene);
+    
+    // orthonormal frame (columns c1, c2, c3)
+    let c1 = new THREE.Vector3(0.85, 0.2, 0.48).normalize();
+    let c2 = new THREE.Vector3(-0.2, 0.95, -0.25).normalize();
+    c2.sub(c1.clone().multiplyScalar(c1.dot(c2))).normalize();
+    let c3 = new THREE.Vector3().crossVectors(c1, c2).normalize();
+    
+    // draw original frame as solid arrows
+    const arrow1 = new THREE.ArrowHelper(c1, new THREE.Vector3(0,0,0), 0.9, 0xff6666, 0.28, 0.14);
+    const arrow2 = new THREE.ArrowHelper(c2, new THREE.Vector3(0,0,0), 0.9, 0x66ff66, 0.28, 0.14);
+    const arrow3 = new THREE.ArrowHelper(c3, new THREE.Vector3(0,0,0), 0.9, 0x6666ff, 0.28, 0.14);
+    stScene.add(arrow1, arrow2, arrow3);
+    
+    // define a rotation (exponential map / retraction): rotate frame by angle theta around axis
+    const axis = new THREE.Vector3(0.45, 0.6, 0.65).normalize();
+    const theta = 0.55;
+    const quatRot = new THREE.Quaternion().setFromAxisAngle(axis, theta);
+    const c1_rot = c1.clone().applyQuaternion(quatRot);
+    const c2_rot = c2.clone().applyQuaternion(quatRot);
+    const c3_rot = c3.clone().applyQuaternion(quatRot);
+    
+    // retracted frame: semi-transparent / lighter colors using dashed? but we use arrows with opacity via new material? use Mesh?
+    // Use ArrowHelper with brighter colors but we can also add line paths.
+    const retArrow1 = new THREE.ArrowHelper(c1_rot, new THREE.Vector3(0,0,0), 0.9, 0xff8888, 0.28, 0.14);
+    const retArrow2 = new THREE.ArrowHelper(c2_rot, new THREE.Vector3(0,0,0), 0.9, 0x88ff88, 0.28, 0.14);
+    const retArrow3 = new THREE.ArrowHelper(c3_rot, new THREE.Vector3(0,0,0), 0.9, 0x8888ff, 0.28, 0.14);
+    stScene.add(retArrow1, retArrow2, retArrow3);
+    
+    // optional: add glowing effect to retracted frame: add small spheres at tips
+    const tipMat = new THREE.MeshStandardMaterial({ color: 0xffaa88, emissive: 0x442200 });
+    const tip1 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), tipMat);
+    tip1.position.copy(c1_rot.clone().multiplyScalar(0.9));
+    const tip2 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), tipMat);
+    tip2.position.copy(c2_rot.clone().multiplyScalar(0.9));
+    const tip3 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), tipMat);
+    tip3.position.copy(c3_rot.clone().multiplyScalar(0.9));
+    stScene.add(tip1, tip2, tip3);
+    
+    // curved path for the first column's retraction (shows the effect of exponential map)
+    const curvePointsSt = [];
+    const arcSteps = 40;
+    for (let i = 0; i <= arcSteps; i++) {
+        const t = i / arcSteps;
+        const angleT = t * theta;
+        const qT = new THREE.Quaternion().setFromAxisAngle(axis, angleT);
+        const dirT = c1.clone().applyQuaternion(qT);
+        curvePointsSt.push(dirT.clone().multiplyScalar(0.9));
     }
-  }
-
-  function closeModal() {
-    if (modal) modal.style.display = 'none';
-    if (modalBody) modalBody.innerHTML = '';
-  }
-
-  if (closeSpan) closeSpan.onclick = closeModal;
-  if (modal) {
-    window.onclick = function(e) {
-      if (e.target === modal) closeModal();
-    };
-  }
-
-  // --- 2.1 Handle method cards (with data-modal attribute) ---
-  document.querySelectorAll('.card[data-modal]').forEach(card => {
-    card.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const modalId = card.getAttribute('data-modal');
-      if (modalId) openModal(modalId);
+    const curveGeoSt = new THREE.BufferGeometry().setFromPoints(curvePointsSt);
+    const curveMatSt = new THREE.LineBasicMaterial({ color: 0x88aaff, linewidth: 2 });
+    const rotationCurve = new THREE.Line(curveGeoSt, curveMatSt);
+    stScene.add(rotationCurve);
+    
+    // show tangent "skew" representation: a small circular arc in the plane orthogonal to axis
+    const smallArcPoints = [];
+    const arcRad = 0.5;
+    for (let ang = 0; ang <= theta; ang += 0.05) {
+        const pt = new THREE.Vector3(arcRad * Math.cos(ang), arcRad * Math.sin(ang), 0);
+        smallArcPoints.push(pt);
+    }
+    const smallArcGeo = new THREE.BufferGeometry().setFromPoints(smallArcPoints);
+    const smallArcMat = new THREE.LineBasicMaterial({ color: 0x77aaff, transparent: true });
+    const tangentArcObj = new THREE.Line(smallArcGeo, smallArcMat);
+    tangentArcObj.position.copy(c1.clone().multiplyScalar(0.45));
+    stScene.add(tangentArcObj);
+    
+    // decorative transparent sphere
+    const helperSphere = new THREE.Mesh(new THREE.SphereGeometry(1.3, 32, 32), new THREE.MeshPhongMaterial({ color: 0x88aaff, transparent: true, opacity: 0.05 }));
+    stScene.add(helperSphere);
+    
+    // floating particles
+    const stParticleCount = 600;
+    const stParticleGeo = new THREE.BufferGeometry();
+    const stPositions = [];
+    for (let i=0; i<stParticleCount; i++) {
+        stPositions.push((Math.random()-0.5)*2.4);
+        stPositions.push((Math.random()-0.5)*2.4);
+        stPositions.push((Math.random()-0.5)*2.4);
+    }
+    stParticleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(stPositions), 3));
+    const stParticles = new THREE.Points(stParticleGeo, new THREE.PointsMaterial({ color: 0x88aaff, size: 0.012, transparent: true, opacity: 0.3 }));
+    stScene.add(stParticles);
+    
+    const stControls = new OrbitControls(stCamera, stRenderer.domElement);
+    stControls.enableDamping = true;
+    stControls.dampingFactor = 0.05;
+    stControls.rotateSpeed = 1.0;
+    stControls.enableZoom = false; 
+    
+    function animateSt() {
+        requestAnimationFrame(animateSt);
+        stControls.update();
+        stRenderer.render(stScene, stCamera);
+    }
+    animateSt();
+    
+    // resize handler for all canvases
+    window.addEventListener('resize', () => {
+        const width = sphereContainer.clientWidth;
+        const height = 460;
+        sphereRenderer.setSize(width, height);
+        sphereCamera.aspect = width / height;
+        sphereCamera.updateProjectionMatrix();
+        
+        const oblWidth = obliqueContainer.clientWidth;
+        oblRenderer.setSize(oblWidth, height);
+        oblCamera.aspect = oblWidth / height;
+        oblCamera.updateProjectionMatrix();
+        
+        const stWidth = stiefelContainer.clientWidth;
+        stRenderer.setSize(stWidth, height);
+        stCamera.aspect = stWidth / height;
+        stCamera.updateProjectionMatrix();
     });
-  });
-
-  // --- 2.2 Handle method links inside table rows (data-method) ---
-  const contentMap = {
-    'orthogonal': 'orthogonal-content',
-    'spectral': 'spectral-content',
-    'reparam': 'reparam-content',
-    'pgd': 'pgd-content',
-    'clip': 'clip-content',
-    'frobenius': 'frobenius-content',
-    'dynamical': 'dynamical-content',
-    'sandwich': 'sandwich-content',
-    'gradpen': 'gradpen-content',
-    'specreg': 'specreg-content'
-  };
-
-  document.querySelectorAll('.method-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const row = this.closest('.method-row');
-      if (!row) return;
-      const method = row.getAttribute('data-method');
-      const contentId = contentMap[method];
-      if (contentId) openModal(contentId);
-    });
-  });
-})();
+    
+    // initial trigger
+    setTimeout(() => {
+        const ev = new Event('resize');
+        window.dispatchEvent(ev);
+    }, 100);
 </script>
 
 
@@ -3678,12 +4328,149 @@ for z in zeros:
 
 
 
+<script>
+// ------------------------------------------------------------------
+// 1. Theme toggle (unchanged)
+// ------------------------------------------------------------------
+function initThemeToggle() {
+  const container = document.querySelector('.toggle-three');
+  if (!container) return;
+  const buttons = container.querySelectorAll('.toggle-option');
+  if (buttons.length === 0) return;
+  const themeMap = { 'default': '', 'dark': 'theme-dark', 'slate': 'theme-slate' };
+  const root = document.documentElement;
+  function setTheme(themeValue) {
+    Object.values(themeMap).filter(c => c !== '').forEach(cls => root.classList.remove(cls));
+    const themeClass = themeMap[themeValue];
+    if (themeClass) root.classList.add(themeClass);
+    buttons.forEach(btn => {
+      const btnTheme = btn.getAttribute('data-theme');
+      if (btnTheme === themeValue) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+    localStorage.setItem('preferredTheme', themeValue);
+  }
+  buttons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const theme = btn.getAttribute('data-theme');
+      if (theme) setTheme(theme);
+    });
+  });
+  const savedTheme = localStorage.getItem('preferredTheme');
+  if (savedTheme && themeMap.hasOwnProperty(savedTheme)) setTheme(savedTheme);
+  else setTheme('default');
+}
 
+// ------------------------------------------------------------------
+// 2. Global modal functions and content map
+// ------------------------------------------------------------------
+const modal = document.getElementById('methodModal');
+const modalBody = document.getElementById('modal-body');
+const closeSpan = document.querySelector('.close-modal');
 
+window.openModal = function(contentId) {
+  if (!modal || !modalBody) return;
+  const contentElem = document.getElementById(contentId);
+  if (!contentElem) {
+    console.warn('Content not found:', contentId);
+    return;
+  }
+  const clone = contentElem.cloneNode(true);
+  modalBody.innerHTML = '';
+  modalBody.appendChild(clone);
+  modal.style.display = 'flex';
+  if (window.MathJax) {
+    MathJax.typesetPromise([modalBody]).catch(console.warn);
+  }
+};
 
+function closeModal() {
+  if (modal) modal.style.display = 'none';
+  if (modalBody) modalBody.innerHTML = '';
+}
 
+if (closeSpan) closeSpan.onclick = closeModal;
+if (modal) {
+  window.onclick = function(e) {
+    if (e.target === modal) closeModal();
+  };
+}
 
+// Global content map for both tables
+window.contentMap = {
+  // Lipschitz methods
+  'orthogonal': 'orthogonal-content',
+  'spectral': 'spectral-content',
+  'reparam': 'reparam-content',
+  'pgd': 'pgd-content',
+  'clip': 'clip-content',
+  'frobenius': 'frobenius-content',
+  'dynamical': 'dynamical-content',
+  'sandwich': 'sandwich-content',
+  'gradpen': 'gradpen-content',
+  'specreg': 'specreg-content',
+  // Manifolds (use unique keys; avoid 'orthogonal' conflict? Keep separate)
+  'stiefel': 'stiefel-content',
+  'grassmann': 'grassmann-content',
+  'oblique': 'oblique-content',
+  'orthogonal-group': 'orthogonal-content',   // if you have separate table row for O(n) use this key
+  'fixedrank': 'fixedrank-content',
+  'flag': 'flag-content',
+  'psd': 'psd-content',
+  'fixedpsd': 'fixedpsd-content',
+  'finsler': 'finsler-content'
+};
 
+// ------------------------------------------------------------------
+// 3. Attach event listeners to all .method-links (both tables)
+// ------------------------------------------------------------------
+function attachMethodLinks() {
+  document.querySelectorAll('.method-link').forEach(link => {
+    // Remove old listener if any
+    link.removeEventListener('click', link._handler);
+    const handler = function(e) {
+      e.preventDefault();
+      const row = this.closest('.method-row');
+      if (!row) return;
+      const method = row.getAttribute('data-method');
+      const contentId = window.contentMap[method];
+      if (contentId) {
+        window.openModal(contentId);
+      } else {
+        console.warn('No mapping for data-method:', method);
+      }
+    };
+    link.addEventListener('click', handler);
+    link._handler = handler;
+  });
+}
+
+// Cards with data-modal attribute
+function attachCardListeners() {
+  document.querySelectorAll('.card[data-modal]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const modalId = card.getAttribute('data-modal');
+      if (modalId) window.openModal(modalId);
+    });
+  });
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
+    attachMethodLinks();
+    attachCardListeners();
+  });
+} else {
+  initThemeToggle();
+  attachMethodLinks();
+  attachCardListeners();
+}
+
+</script>
 
 
 
