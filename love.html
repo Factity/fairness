@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Could You Be Loved — Bob Marley & The Wailers</title>
+<title>Mukul Namagiri — Writing, Research & Projects</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
   --gold: #c8962a;
   --gold-light: #f0c050;
@@ -21,9 +20,7 @@
   --text: #e8dcc0;
   --muted: #9a8e72;
 }
-
 html { scroll-behavior: smooth; }
-
 body {
   font-family: 'Crimson Text', Georgia, serif;
   background: var(--dark);
@@ -32,7 +29,6 @@ body {
   line-height: 1.75;
   cursor: none;
 }
-
 /* CUSTOM CURSOR */
 #cursor {
   position: fixed; width: 12px; height: 12px; border-radius: 50%;
@@ -45,26 +41,22 @@ body {
   border: 1px solid rgba(240,192,80,0.5); pointer-events: none; z-index: 9998;
   transform: translate(-50%, -50%);
 }
-
 /* PROGRESS BAR */
 #progress-bar {
   position: fixed; top: 0; left: 0; height: 3px; width: 0%;
   background: linear-gradient(90deg, var(--red), var(--gold), var(--green-light));
   z-index: 200; transition: width 0.1s linear;
 }
-
 /* THREE.JS CANVAS */
 #canvas-bg {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   z-index: 0; pointer-events: none;
 }
-
 /* LAYOUT */
 .site-wrap {
   position: relative; z-index: 1;
-  max-width: 860px; margin: 0 auto; padding: 0 1.5rem;
+  max-width: 900px; margin: 0 auto; padding: 0 1.5rem;
 }
-
 /* NAV */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -75,7 +67,6 @@ nav {
   transition: background 0.4s;
 }
 nav.scrolled { background: rgba(10,18,10,0.95); }
-
 .nav-logo {
   font-family: 'Playfair Display', serif; font-size: 18px;
   color: var(--gold-light); letter-spacing: 0.06em;
@@ -85,7 +76,6 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   0%,100% { color: var(--gold-light); }
   50% { color: var(--gold); }
 }
-
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a {
   color: var(--muted); text-decoration: none; font-size: 14px;
@@ -104,7 +94,6 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   min-height: 100vh; display: flex; flex-direction: column;
   justify-content: center; padding: 120px 0 80px; position: relative;
 }
-
 .hero-glow {
   position: absolute; border-radius: 50%;
   filter: blur(80px); pointer-events: none;
@@ -113,12 +102,10 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
 .hero-glow-1 { width:360px; height:360px; background:rgba(30,92,40,0.22); top:-80px; left:-120px; animation-delay:0s; }
 .hero-glow-2 { width:280px; height:280px; background:rgba(200,150,42,0.14); top:100px; right:-80px; animation-delay:-3s; }
 .hero-glow-3 { width:200px; height:200px; background:rgba(184,48,32,0.12); bottom:60px; left:30%; animation-delay:-5s; }
-
 @keyframes orbFloat {
   0%,100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-30px) scale(1.08); }
 }
-
 .hero-eyebrow {
   display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;
   opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
@@ -128,15 +115,13 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   background: var(--gold); animation: expandLine 0.9s 0.6s forwards;
 }
 @keyframes expandLine { to { width: 40px; } }
-
 .hero-eyebrow span {
   font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--gold); font-family: 'Crimson Text', serif; font-weight: 600;
 }
-
 .hero h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(48px, 9vw, 92px); font-weight: 700;
+  font-size: clamp(42px, 8vw, 82px); font-weight: 700;
   line-height: 1.05; color: var(--cream); margin-bottom: 0.5rem;
   opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
 }
@@ -148,12 +133,10 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   0%,100% { text-shadow: none; }
   50% { text-shadow: 0 0 40px rgba(240,192,80,0.4); }
 }
-
 .hero-sub {
-  font-size: 22px; color: var(--muted); margin: 1.5rem 0 2.5rem; max-width: 520px;
+  font-size: 21px; color: var(--muted); margin: 1.5rem 0 2.5rem; max-width: 540px;
   opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
 }
-
 .hero-meta {
   display: flex; gap: 2rem; flex-wrap: wrap;
   opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
@@ -163,11 +146,12 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   width: 8px; height: 8px; border-radius: 50%; background: var(--green-light);
   flex-shrink: 0; animation: pulse 2s ease-in-out infinite;
 }
+.meta-dot.red { background: var(--red); }
+.meta-dot.gold { background: var(--gold); }
 @keyframes pulse {
   0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46,140,62,0.5); }
   50% { transform: scale(1.3); box-shadow: 0 0 0 6px rgba(46,140,62,0); }
 }
-
 /* SCROLL HINT */
 .scroll-hint {
   position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
@@ -175,23 +159,18 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
   opacity: 0; animation: fadeUp 1s 1.4s forwards;
   color: var(--muted); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
 }
-.scroll-line {
-  width: 1px; height: 60px; background: rgba(200,150,42,0.3);
-  position: relative; overflow: hidden;
-}
+.scroll-line { width: 1px; height: 60px; background: rgba(200,150,42,0.3); position: relative; overflow: hidden; }
 .scroll-line::after {
   content: ''; position: absolute; top: -100%; left: 0;
   width: 100%; height: 100%; background: var(--gold);
   animation: scrollDrop 1.8s ease-in-out infinite 1.6s;
 }
-@keyframes scrollDrop {
-  0% { top:-100%; opacity:1; } 100% { top:100%; opacity:0; }
-}
+@keyframes scrollDrop { 0%{top:-100%;opacity:1;} 100%{top:100%;opacity:0;} }
 
 /* RASTA DIVIDER */
 .rasta-divider {
   display: flex; height: 4px; border-radius: 2px; overflow: hidden;
-  margin: 3rem 0; opacity: 0; animation: fadeUp 0.9s 1s forwards;
+  margin: 3rem 0;
 }
 .rasta-divider span { flex: 1; transform: scaleX(0); transform-origin: left; }
 .rasta-divider.visible span:nth-child(1) { animation: stripeIn 0.6s 0s   ease forwards; background: var(--red); }
@@ -199,8 +178,78 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
 .rasta-divider.visible span:nth-child(3) { animation: stripeIn 0.6s 0.3s  ease forwards; background: var(--green); }
 @keyframes stripeIn { to { transform: scaleX(1); } }
 
-/* MUSIC VISUALIZER */
-.visualizer { display: flex; align-items: flex-end; gap: 3px; height: 50px; }
+/* SECTION HEADINGS */
+.section-label {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); font-family: 'Crimson Text', serif; font-weight: 600; margin-bottom: 0.75rem;
+}
+h2 { font-family: 'Playfair Display', serif; font-size: clamp(26px,4.5vw,40px); font-weight: 700; color: var(--cream); line-height: 1.2; margin-bottom: 1.25rem; }
+h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; font-style: italic; color: var(--gold-light); margin-bottom: 0.75rem; }
+p { font-size: 17px; color: var(--text); margin-bottom: 1.25rem; opacity: 0.92; }
+
+/* SECTIONS */
+.section { padding: 5rem 0; border-top: 1px solid rgba(200,150,42,0.1); }
+
+/* BLOG GRID */
+.blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin: 2.5rem 0; }
+.blog-card {
+  background: rgba(22,32,22,0.6); border: 1px solid rgba(200,150,42,0.18);
+  border-radius: 14px; padding: 1.75rem 1.5rem;
+  transition: border-color 0.3s, transform 0.4s cubic-bezier(.22,1,.36,1), background 0.3s;
+  cursor: pointer; position: relative; overflow: hidden;
+  text-decoration: none; display: block; color: inherit;
+}
+.blog-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--green-light));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+}
+.blog-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: 14px;
+  background: radial-gradient(circle at 30% 20%, rgba(200,150,42,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.blog-card:hover { border-color: rgba(200,150,42,0.55); transform: translateY(-8px) scale(1.015); background: rgba(30,46,30,0.8); }
+.blog-card:hover::before { transform: scaleX(1); }
+
+.blog-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 1rem; font-weight: 600;
+}
+.blog-tag.ai     { background: rgba(30,92,40,0.35); color: #7ecf8e; border: 1px solid rgba(30,92,40,0.5); }
+.blog-tag.opinion { background: rgba(184,48,32,0.25); color: #e07060; border: 1px solid rgba(184,48,32,0.4); }
+.blog-tag.tech   { background: rgba(200,150,42,0.18); color: var(--gold-light); border: 1px solid rgba(200,150,42,0.35); }
+.blog-tag.policy { background: rgba(100,80,160,0.25); color: #c0a8f0; border: 1px solid rgba(100,80,160,0.4); }
+.blog-tag.econ   { background: rgba(40,100,140,0.25); color: #80c8f0; border: 1px solid rgba(40,100,140,0.4); }
+
+.blog-card h4 {
+  font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700;
+  color: var(--cream); margin-bottom: 0.5rem; line-height: 1.3;
+}
+.blog-card p {
+  font-size: 14px; color: var(--muted); margin: 0 0 1.25rem; line-height: 1.6;
+}
+.blog-card .read-more {
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold); display: flex; align-items: center; gap: 6px;
+  transition: gap 0.25s;
+}
+.blog-card:hover .read-more { gap: 12px; }
+.blog-card .read-arrow { transition: transform 0.25s; }
+.blog-card:hover .read-arrow { transform: translateX(4px); }
+
+/* FEATURED CARD (full width) */
+.blog-card.featured {
+  grid-column: 1 / -1; display: grid;
+  grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;
+}
+.blog-card.featured h4 { font-size: 26px; }
+.blog-card.featured p  { font-size: 16px; }
+@media (max-width: 600px) { .blog-card.featured { grid-template-columns: 1fr; } }
+
+/* VISUALIZER */
+.visualizer { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
 .viz-bar { flex: 1; border-radius: 2px 2px 0 0; animation: vizBounce 0.8s ease-in-out infinite alternate; opacity: 0.7; }
 .viz-bar:nth-child(odd)  { background: var(--green-light); }
 .viz-bar:nth-child(even) { background: var(--gold); }
@@ -215,24 +264,70 @@ nav.scrolled { background: rgba(10,18,10,0.95); }
 .viz-bar:nth-child(8)  { animation-duration:0.75s; animation-delay:0.18s; }
 .viz-bar:nth-child(9)  { animation-duration:0.50s; animation-delay:0.03s; }
 .viz-bar:nth-child(10) { animation-duration:0.95s; animation-delay:0.22s; }
-.viz-bar:nth-child(11) { animation-duration:0.68s; animation-delay:0.09s; }
-.viz-bar:nth-child(12) { animation-duration:0.78s; animation-delay:0.16s; }
-.viz-bar:nth-child(13) { animation-duration:0.58s; animation-delay:0.06s; }
-.viz-bar:nth-child(14) { animation-duration:0.88s; animation-delay:0.21s; }
-.viz-bar:nth-child(15) { animation-duration:0.62s; animation-delay:0.11s; }
 @keyframes vizBounce { 0%{height:8%;} 100%{height:100%;} }
 
-/* SECTION HEADINGS */
-.section-label {
-  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--gold); font-family: 'Crimson Text', serif; font-weight: 600; margin-bottom: 0.75rem;
+/* PROJECT CARDS */
+.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin: 2rem 0; }
+.project-card {
+  background: rgba(10,18,10,0.8); border: 1px solid rgba(200,150,42,0.15);
+  border-radius: 12px; padding: 1.5rem; text-decoration: none; display: block; color: inherit;
+  transition: border-color 0.3s, transform 0.35s cubic-bezier(.22,1,.36,1);
+  position: relative; overflow: hidden;
 }
-h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px,5vw,42px); font-weight: 700; color: var(--cream); line-height: 1.2; margin-bottom: 1.25rem; }
-h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; font-style: italic; color: var(--gold-light); margin-bottom: 0.75rem; }
-p  { font-size: 18px; color: var(--text); margin-bottom: 1.25rem; opacity: 0.92; }
+.project-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--green-light));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.35s;
+}
+.project-card:hover { border-color: rgba(200,150,42,0.5); transform: translateY(-6px); }
+.project-card:hover::after { transform: scaleX(1); }
+.project-card-icon { font-size: 28px; margin-bottom: 0.75rem; display: block; }
+.project-card h4 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--cream); margin-bottom: 0.4rem; }
+.project-card p { font-size: 14px; color: var(--muted); margin: 0; }
 
-/* SECTIONS */
-.section { padding: 5rem 0; border-top: 1px solid rgba(200,150,42,0.1); }
+/* PORTFOLIO BLOCK */
+.portfolio-block {
+  background: rgba(200,150,42,0.06); border: 1px solid rgba(200,150,42,0.25);
+  border-radius: 16px; padding: 2.5rem 2rem; margin: 2rem 0;
+  display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+}
+.portfolio-block .port-text { flex: 1; min-width: 200px; }
+.portfolio-block h4 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--cream); margin-bottom: 0.5rem; }
+.portfolio-block p { font-size: 15px; color: var(--muted); margin: 0 0 1.25rem; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px; border-radius: 30px; font-size: 14px;
+  letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none;
+  border: 1px solid var(--gold); color: var(--gold-light);
+  background: rgba(200,150,42,0.08);
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  font-family: 'Crimson Text', serif;
+}
+.btn-primary:hover { background: rgba(200,150,42,0.2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,150,42,0.2); }
+
+/* SUPPORT SECTION */
+.support-block {
+  background: rgba(22,32,22,0.7); border: 1px solid rgba(200,150,42,0.18);
+  border-radius: 16px; padding: 2.5rem 2rem; margin: 2rem 0; text-align: center;
+}
+.support-block h3 {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic;
+  color: var(--cream); margin-bottom: 0.5rem;
+}
+.support-block p { font-size: 15px; color: var(--muted); margin-bottom: 2rem; }
+.support-inner { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+.bmc-btn {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  background: #FFDD00; color: #000; padding: 0.85rem 1.75rem; border-radius: 40px;
+  text-decoration: none; font-weight: 700; font-size: 1rem;
+  box-shadow: 0 4px 16px rgba(255,221,0,0.25);
+  transition: transform 0.25s, box-shadow 0.25s;
+  font-family: 'Crimson Text', serif;
+}
+.bmc-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 24px rgba(255,221,0,0.35); }
+.qr-wrap { text-align: center; }
+.qr-wrap img { width: 120px; height: auto; border-radius: 12px; border: 2px solid rgba(200,150,42,0.3); display: block; }
+.qr-wrap p { font-size: 12px; color: var(--muted); margin-top: 8px; margin-bottom: 0; letter-spacing: 0.06em; }
 
 /* BLOCKQUOTE */
 blockquote {
@@ -241,91 +336,8 @@ blockquote {
   transition: background 0.4s, border-left-color 0.4s;
 }
 blockquote:hover { background: rgba(200,150,42,0.13); border-left-color: var(--gold-light); }
-blockquote p    { font-size: 22px; font-style: italic; color: var(--gold-light); margin-bottom: 0.5rem; }
+blockquote p    { font-size: 20px; font-style: italic; color: var(--gold-light); margin-bottom: 0.5rem; }
 blockquote cite { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-
-/* CARD GRID */
-.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin: 2rem 0; }
-
-.card {
-  background: rgba(30,92,40,0.12); border: 1px solid rgba(200,150,42,0.18);
-  border-radius: 12px; padding: 1.5rem;
-  transition: border-color 0.3s, transform 0.4s cubic-bezier(.22,1,.36,1), background 0.3s;
-  cursor: default; position: relative; overflow: hidden;
-}
-.card::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--red), var(--gold), var(--green-light));
-  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
-}
-.card:hover { border-color: rgba(200,150,42,0.6); transform: translateY(-8px) scale(1.02); background: rgba(30,92,40,0.22); }
-.card:hover::after { transform: scaleX(1); }
-
-.card-icon { font-size: 32px; margin-bottom: 0.75rem; display: block; animation: iconBob 3s ease-in-out infinite; }
-.card:nth-child(2) .card-icon { animation-delay: -1s; }
-.card:nth-child(3) .card-icon { animation-delay: -2s; }
-@keyframes iconBob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
-
-.card h4 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--cream); margin-bottom: 0.4rem; }
-.card p  { font-size: 15px; color: var(--muted); margin: 0; }
-
-/* LYRICS STRIP */
-.lyrics-strip {
-  background: rgba(22,32,22,0.7); border: 1px solid rgba(200,150,42,0.15);
-  border-radius: 12px; padding: 2.5rem 2rem; margin: 2.5rem 0;
-  position: relative; overflow: hidden;
-}
-.lyrics-strip::before {
-  content: '\201C'; position: absolute; top: -20px; left: 16px;
-  font-family: 'Playfair Display', serif; font-size: 160px;
-  color: rgba(200,150,42,0.07); line-height: 1; pointer-events: none;
-}
-.lyric-line {
-  font-family: 'Playfair Display', serif; font-size: clamp(20px,3.5vw,32px);
-  color: var(--cream); line-height: 1.5; margin-bottom: 0.2rem;
-  opacity: 0; transform: translateX(-24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.lyric-line.accent { color: var(--gold-light); }
-.lyrics-strip.visible .lyric-line:nth-child(1) { opacity:0.88; transform:none; transition-delay:0.1s; }
-.lyrics-strip.visible .lyric-line:nth-child(2) { opacity:0.88; transform:none; transition-delay:0.3s; }
-.lyrics-strip.visible .lyric-line:nth-child(3) { opacity:1;    transform:none; transition-delay:0.5s; }
-.lyrics-strip.visible .lyric-line:nth-child(4) { opacity:0.88; transform:none; transition-delay:0.7s; }
-
-/* TYPEWRITER */
-.typewriter-wrap { margin: 2.5rem 0; min-height: 80px; display: flex; align-items: center; }
-#typewriter {
-  font-family: 'Playfair Display', serif; font-size: clamp(18px,3vw,26px); font-style: italic;
-  color: var(--gold-light); border-right: 2px solid var(--gold);
-  white-space: nowrap; overflow: hidden; width: 0;
-}
-#typewriter.typing { animation: typeIt 2.8s steps(48,end) forwards, blink 0.7s step-end infinite; }
-@keyframes typeIt { to { width: 100%; } }
-@keyframes blink  { 0%,100%{border-color:var(--gold);} 50%{border-color:transparent;} }
-
-/* TAGS */
-.tag {
-  display: inline-block; padding: 5px 14px; border-radius: 20px;
-  font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
-  margin-right: 8px; margin-bottom: 8px;
-  transition: transform 0.25s, box-shadow 0.25s;
-}
-.tag:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
-.tag-green { background: rgba(30,92,40,0.4); color: #7ecf8e; border: 1px solid rgba(30,92,40,0.6); }
-.tag-gold  { background: rgba(200,150,42,0.18); color: var(--gold-light); border: 1px solid rgba(200,150,42,0.35); }
-.tag-red   { background: rgba(184,48,32,0.2); color: #e07060; border: 1px solid rgba(184,48,32,0.4); }
-
-.tag-list .tag { opacity: 0; transform: translateY(14px); }
-.tag-list.visible .tag { animation: tagPop 0.4s ease forwards; }
-.tag-list.visible .tag:nth-child(1){animation-delay:0.00s}
-.tag-list.visible .tag:nth-child(2){animation-delay:0.08s}
-.tag-list.visible .tag:nth-child(3){animation-delay:0.16s}
-.tag-list.visible .tag:nth-child(4){animation-delay:0.24s}
-.tag-list.visible .tag:nth-child(5){animation-delay:0.32s}
-.tag-list.visible .tag:nth-child(6){animation-delay:0.40s}
-.tag-list.visible .tag:nth-child(7){animation-delay:0.48s}
-.tag-list.visible .tag:nth-child(8){animation-delay:0.56s}
-@keyframes tagPop { to { opacity:1; transform:translateY(0); } }
 
 /* FOOTER */
 footer { padding: 3rem 0 2.5rem; border-top: 1px solid rgba(200,150,42,0.12); text-align: center; }
@@ -334,9 +346,9 @@ footer strong { color: var(--gold); }
 
 /* CORE REVEAL */
 @keyframes fadeUp { from{opacity:0;transform:translateY(28px);} to{opacity:1;transform:translateY(0);} }
-
 .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.22,1,.36,1); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+.stagger { opacity: 0; }
 .reveal.visible .stagger { animation: fadeUp 0.7s ease forwards; }
 .reveal.visible .stagger:nth-child(1){animation-delay:0.1s}
 .reveal.visible .stagger:nth-child(2){animation-delay:0.25s}
@@ -351,10 +363,16 @@ footer strong { color: var(--gold); }
   0%   { width:0; height:0; opacity:0.9; }
   100% { width:80px; height:80px; opacity:0; margin-left:-40px; margin-top:-40px; }
 }
+
+/* NAV MOBILE */
+@media (max-width: 600px) {
+  .nav-links { gap: 1rem; }
+  nav { padding: 1rem 1.25rem; }
+  .nav-links a { font-size: 12px; }
+}
 </style>
 </head>
 <body>
-
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 <div id="progress-bar"></div>
@@ -362,12 +380,12 @@ footer strong { color: var(--gold); }
 
 <!-- NAV -->
 <nav id="main-nav">
-  <div class="nav-logo">One Love Blog</div>
+  <div class="nav-logo">Mukul Namagiri</div>
   <ul class="nav-links">
-    <li><a href="#song">Song</a></li>
-    <li><a href="#legacy">Legacy</a></li>
-    <li><a href="#themes">Themes</a></li>
-    <li><a href="#listen">Listen</a></li>
+    <li><a href="#writing">Writing</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#support">Support</a></li>
   </ul>
 </nav>
 
@@ -378,122 +396,189 @@ footer strong { color: var(--gold); }
     <div class="hero-glow hero-glow-1"></div>
     <div class="hero-glow hero-glow-2"></div>
     <div class="hero-glow hero-glow-3"></div>
-
-    <div class="hero-eyebrow"><span>Bob Marley &amp; The Wailers · 1980</span></div>
-    <h1>Could You<em>Be Loved?</em></h1>
-    <p class="hero-sub">A deep dive into reggae's most hypnotic anthem — rhythm, rebellion, and the eternal question of unconditional love.</p>
+    <div class="hero-eyebrow"><span>Writing · Research · Projects</span></div>
+    <h1>Ideas that<em>refuse to sit still.</em></h1>
+    <p class="hero-sub">Essays on AI fairness, machine learning, geopolitics, software craft, and the quiet politics of how we build things. By Mukul Namagiri.</p>
     <div class="hero-meta">
-      <span class="meta-pill"><span class="meta-dot"></span>Uprising · Island Records</span>
-      <span class="meta-pill"><span class="meta-dot"></span>3 min 34 sec</span>
-      <span class="meta-pill"><span class="meta-dot"></span>Roots Reggae · Disco fusion</span>
+      <span class="meta-pill"><span class="meta-dot"></span>AI & Society</span>
+      <span class="meta-pill"><span class="meta-dot gold"></span>Fairness & Policy</span>
+      <span class="meta-pill"><span class="meta-dot red"></span>Software Craft</span>
     </div>
-
-    <div class="visualizer" style="margin-top:3rem; max-width:260px; opacity:0; animation: fadeUp 1s 1.1s forwards;">
+    <div class="visualizer" style="margin-top:3rem; max-width:240px; opacity:0; animation: fadeUp 1s 1.1s forwards;">
       <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
       <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
       <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+      <div class="viz-bar"></div>
     </div>
-
     <div class="scroll-hint">
       <span>Scroll</span>
       <div class="scroll-line"></div>
     </div>
   </section>
 
-  <!-- RASTA DIVIDER -->
-  <div class="rasta-divider" id="rasta-div"><span></span><span></span><span></span></div>
+  <!-- DIVIDER -->
+  <div class="rasta-divider" id="rasta-div-1"><span></span><span></span><span></span></div>
 
-  <!-- SONG SECTION -->
-  <section class="section reveal" id="song">
-    <p class="section-label stagger">The Song</p>
-    <h2 class="stagger">Rhythm That Rewired the World</h2>
-    <p class="stagger">Released in June 1980 as the lead single from the <em>Uprising</em> album, "Could You Be Loved" stands apart in Bob Marley's catalog. Where many of his songs lean into Nyahbinghi drumming and roots gravity, this track rides a slippery disco groove — a deliberate move to reach dance floors from Kingston to London to Lagos.</p>
-    <p>Marley co-wrote it with his band, layering a deceptively simple melodic hook over a syncopated skank guitar. The result is a song that feels effortless yet carries enormous philosophical weight.</p>
+  <!-- WRITING / BLOGS -->
+  <section class="section reveal" id="writing">
+    <p class="section-label stagger">The Writing</p>
+    <h2 class="stagger">Essays, Opinions & Deep Dives</h2>
+    <p class="stagger" style="max-width:580px;">A collection of long-form thinking across AI fairness, machine learning theory, responsible scaling, software archaeology, and the geopolitics of intelligence.</p>
 
-    <div class="typewriter-wrap">
-      <div id="typewriter">"Don't let them fool ya, or even try to school ya."</div>
+    <div class="blog-grid">
+
+      <!-- FEATURED -->
+      <a class="blog-card featured" href="https://factity.github.io/fairness/" target="_blank" rel="noopener">
+        <div>
+          <span class="blog-tag opinion">Opinion</span>
+          <h4>Well, Well, Well: It Turns Out Machines Are Also Bigots</h4>
+          <p>Microsoft's Fairlearn enters the ring, armed with charts, good intentions, and a frank acknowledgment that it cannot fix everything — much like us. A sharp, satirical take on how human bias gets laundered into AI datasets with admirable efficiency.</p>
+          <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <blockquote style="margin:0;border-radius:8px;">
+            <p style="font-size:16px;">"The same snap judgements we pass in the cereal aisle have been laundered into the datasets that now make consequential decisions."</p>
+          </blockquote>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="blog-tag ai">AI Fairness</span>
+            <span class="blog-tag tech">Fairlearn</span>
+            <span class="blog-tag opinion">Satire</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 2 -->
+      <a class="blog-card" href="https://factity.github.io/fairness/draftnormal" target="_blank" rel="noopener">
+        <span class="blog-tag ai">Machine Learning</span>
+        <h4>A Healthy AI is More Accurate</h4>
+        <p>On normalization — the quiet discipline that keeps neural networks from growing unchecked. Drawn from linear algebra and biology, this is about why controlled scaling matters more than raw power.</p>
+        <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+      </a>
+
+      <!-- CARD 3 -->
+      <a class="blog-card" href="https://factity.github.io/fairness/blogstructures" target="_blank" rel="noopener">
+        <span class="blog-tag tech">Software Craft</span>
+        <h4>The Story of Broken Structures</h4>
+        <p>On the quiet collapse of codebases, the illusion of order, and why a cheat sheet might just save us all. A meditation for the weary debugger who arrived from pure science and found beautiful chaos.</p>
+        <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+      </a>
+
+      <!-- CARD 4 -->
+      <a class="blog-card" href="https://factity.github.io/fairness/blogdragon" target="_blank" rel="noopener">
+        <span class="blog-tag policy">AI Governance</span>
+        <h4>How to Grow AI? — Scaling Carefully</h4>
+        <p>AI is an emergent phenomenon, not a developed technology. On responsible scaling policies, the nuclear analogy, and what happens when something this capable is released before we fully understand it.</p>
+        <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+      </a>
+
+      <!-- CARD 5 -->
+      <a class="blog-card" href="https://factity.github.io/fairness/diplomacy" target="_blank" rel="noopener">
+        <span class="blog-tag econ">Geopolitics & AI</span>
+        <h4>AI Diplomacy — From Coins to Cognition</h4>
+        <p>On trust, trade, and the strange new currencies of model weights being minted at the edge of human intelligence. From Mesopotamian grain trades to AI geopolitics — the question beneath every transaction.</p>
+        <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+      </a>
+
+      <!-- CARD 6 — factapp blog -->
+      <a class="blog-card" href="https://factapp-ea1z.onrender.com/blog" target="_blank" rel="noopener">
+        <span class="blog-tag ai">Agentic AI</span>
+        <h4>Agents: The Age of Action</h4>
+        <p>On agentic AI systems, introspection, and what it means for machines to move from thinking to doing. A personal essay on slow deliberation in a world rewarding quick reflexes.</p>
+        <span class="read-more">Read essay <span class="read-arrow">→</span></span>
+      </a>
+
     </div>
-    <p style="font-size:13px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:-1rem;">— Bob Marley</p>
-
-    <p style="margin-top:1.5rem;">The lyrics deliver a call to self-determination wrapped in an irresistible groove — Marley at his most politically sharp and musically accessible at the same time.</p>
   </section>
 
-  <!-- THEMES SECTION -->
-  <section class="section reveal" id="themes">
-    <p class="section-label stagger">Core Themes</p>
-    <h2 class="stagger">What the Song Is Really About</h2>
+  <!-- DIVIDER -->
+  <div class="rasta-divider" id="rasta-div-2"><span></span><span></span><span></span></div>
 
-    <div class="lyrics-strip" id="lyrics-strip">
-      <div class="lyric-line accent">Could you be loved</div>
-      <div class="lyric-line">and be loved?</div>
-      <div class="lyric-line accent">Don't let them change ya,</div>
-      <div class="lyric-line">or even rearrange ya.</div>
-    </div>
+  <!-- PROJECTS -->
+  <section class="section reveal" id="projects">
+    <p class="section-label stagger">Projects</p>
+    <h2 class="stagger">Things I've Built</h2>
+    <p class="stagger">Live applications exploring the intersection of information, fairness, and intelligence.</p>
 
-    <div class="card-grid">
-      <div class="card"><span class="card-icon">♥</span><h4>Unconditional Love</h4><p>Marley challenges us to ask whether we can love without condition — and whether we're worthy of being loved in return.</p></div>
-      <div class="card"><span class="card-icon">✊</span><h4>Resistance</h4><p>A warning against manipulation and systems designed to keep people oppressed — "don't let them fool ya."</p></div>
-      <div class="card"><span class="card-icon">☀</span><h4>Oneness</h4><p>Rooted in Rastafari philosophy, the song celebrates unity across race, class, and nationality.</p></div>
-    </div>
-  </section>
-
-  <!-- LEGACY SECTION -->
-  <section class="section reveal" id="legacy">
-    <p class="section-label stagger">Legacy</p>
-    <h2 class="stagger">A Song That Never Stops</h2>
-    <p class="stagger">Forty-five years on, "Could You Be Loved" remains one of the most-played reggae songs worldwide. It charted in the UK at number five during its original release and has since appeared in countless films, advertisements, and political movements.</p>
-    <p>Its genius is the paradox: a song with a serious social message that makes you want to dance. Marley understood that joy and justice are not opposites — rhythm can be a radical act.</p>
-
-    <h3>Tags &amp; Themes</h3>
-    <div class="tag-list" id="tag-list">
-      <span class="tag tag-green">Reggae</span>
-      <span class="tag tag-gold">Uprising Album</span>
-      <span class="tag tag-red">Political</span>
-      <span class="tag tag-green">Rastafari</span>
-      <span class="tag tag-gold">1980</span>
-      <span class="tag tag-red">Island Records</span>
-      <span class="tag tag-green">One Love</span>
-      <span class="tag tag-gold">Disco-Reggae Fusion</span>
+    <div class="project-grid">
+      <a class="project-card" href="https://factapp-ea1z.onrender.com" target="_blank" rel="noopener">
+        <span class="project-card-icon">⚡</span>
+        <h4>Factapp</h4>
+        <p>A live web application — home to essays, experiments, and ideas on AI, agency, and the question of what machines should be allowed to decide.</p>
+        <span class="read-more" style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px;margin-top:1rem;">Visit app →</span>
+      </a>
+      <a class="project-card" href="https://mukullight.pythonanywhere.com/form" target="_blank" rel="noopener">
+        <span class="project-card-icon">📋</span>
+        <h4>Form Project</h4>
+        <p>A hosted form application built on PythonAnywhere — part of an ongoing effort to make data collection thoughtful and accessible.</p>
+        <span class="read-more" style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px;margin-top:1rem;">Open form →</span>
+      </a>
+      <a class="project-card" href="https://factity.github.io/fairness/" target="_blank" rel="noopener">
+        <span class="project-card-icon">⚖</span>
+        <h4>Factity — The Unfair Observer</h4>
+        <p>A long-form publication on AI fairness, bias, and the societal stakes of algorithmic decision-making. Essays that implicate the reader.</p>
+        <span class="read-more" style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px;margin-top:1rem;">Read publication →</span>
+      </a>
     </div>
   </section>
 
-  <!-- LISTEN SECTION -->
-  <section class="section reveal" id="listen">
-    <p class="section-label stagger">Listen</p>
-    <h2 class="stagger">Hear It for Yourself</h2>
-    <p class="stagger">The original 1980 recording remains the definitive version. Stream it on any major platform and pay close attention to the bass line — Carlton Barrett's drumming locked in with Robbie Shakespeare creates a pocket that few songs have ever matched.</p>
+  <!-- DIVIDER -->
+  <div class="rasta-divider" id="rasta-div-3"><span></span><span></span><span></span></div>
 
-    <div id="player-card" style="margin-top:2rem; padding:1.5rem; border:1px solid rgba(200,150,42,0.25); border-radius:12px; display:flex; align-items:center; gap:1.5rem; background:rgba(22,32,22,0.5); transition:border-color 0.3s, transform 0.3s;">
-      <div id="play-btn" style="width:64px;height:64px;border-radius:50%;background:rgba(30,92,40,0.5);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;cursor:pointer;transition:transform 0.3s,background 0.3s;" onmouseover="this.style.transform='scale(1.15)';this.style.background='rgba(30,92,40,0.9)'" onmouseout="this.style.transform='scale(1)';this.style.background='rgba(30,92,40,0.5)'">▶</div>
-      <div>
-        <p style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin:0 0 4px;">Could You Be Loved</p>
-        <p style="font-size:14px;color:var(--muted);margin:0;">Bob Marley &amp; The Wailers · Uprising · 1980</p>
+  <!-- PORTFOLIO -->
+  <section class="section reveal" id="portfolio">
+    <p class="section-label stagger">Portfolio</p>
+    <h2 class="stagger">Work & Profile</h2>
+    <p class="stagger">A curated view of projects, skills, and background — built for those who want the full picture.</p>
+    <div class="portfolio-block">
+      <div class="port-text">
+        <h4>Mukul Namagiri — Portfolio</h4>
+        <p>Research, writing, and technical work across machine learning, AI fairness, and software. The full professional profile.</p>
+        <a class="btn-primary" href="https://mukullight.github.io/mukul-portfolio/" target="_blank" rel="noopener">
+          View Portfolio →
+        </a>
       </div>
-      <div style="margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="https://open.spotify.com/search/Could%20You%20Be%20Loved%20Bob%20Marley" target="_blank" style="text-decoration:none;padding:8px 18px;border:1px solid rgba(200,150,42,0.4);border-radius:20px;font-size:13px;color:var(--gold-light);transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='rgba(200,150,42,0.15)';this.style.transform='scale(1.05)'" onmouseout="this.style.background='transparent';this.style.transform='scale(1)'">Spotify</a>
-        <a href="https://www.youtube.com/watch?v=1ti2YCFgCoI" target="_blank" style="text-decoration:none;padding:8px 18px;border:1px solid rgba(184,48,32,0.4);border-radius:20px;font-size:13px;color:#e07060;transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='rgba(184,48,32,0.15)';this.style.transform='scale(1.05)'" onmouseout="this.style.background='transparent';this.style.transform='scale(1)'">YouTube</a>
-      </div>
+      <div style="font-family:'Playfair Display',serif; font-size:clamp(60px,12vw,100px); color:rgba(200,150,42,0.08); line-height:1; user-select:none; flex-shrink:0;">✦</div>
     </div>
+  </section>
 
-    <div class="visualizer" style="margin-top:2.5rem; max-width:100%;">
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-      <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+  <!-- DIVIDER -->
+  <div class="rasta-divider" id="rasta-div-4"><span></span><span></span><span></span></div>
+
+  <!-- SUPPORT -->
+  <section class="section reveal" id="support">
+    <p class="section-label stagger">Support</p>
+    <h2 class="stagger">Consider Supporting the Work</h2>
+    <p class="stagger" style="max-width:520px;">Good writing takes time. If any of this thinking has been useful, interesting, or even just made you pause — a small contribution keeps it going.</p>
+    <div class="support-block">
+      <h3>Every contribution is deeply appreciated</h3>
+      <p>Click the button or scan the QR code — whichever is easier.</p>
+      <div class="support-inner">
+        <a class="bmc-btn" href="https://buymeacoffee.com/mukullight" target="_blank" rel="noopener">
+          ☕ Click here to contribute
+        </a>
+        <div class="qr-wrap">
+          <img src="./qr-code (2).png" alt="QR code — scan to support on Buy Me a Coffee">
+          <p>Scan to support</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <p><strong>One Love Blog</strong> · A tribute to the music of Bob Marley &amp; The Wailers</p>
-    <p style="margin-top:6px;">"The greatness of a man is not in how much wealth he acquires, but in his integrity." — Bob Marley</p>
+    <p><strong>Mukul Namagiri</strong> · Writing on AI, fairness, software & ideas that matter</p>
+    <p style="margin-top:8px; font-size:13px;">"An idea that is not dangerous is unworthy of being called an idea at all." — Oscar Wilde</p>
+    <div style="margin-top:1.5rem; display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
+      <a href="https://factity.github.io/fairness/" style="color:var(--muted);font-size:13px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='var(--muted)'">Factity</a>
+      <a href="https://factapp-ea1z.onrender.com" style="color:var(--muted);font-size:13px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='var(--muted)'">Factapp</a>
+      <a href="https://mukullight.github.io/mukul-portfolio/" style="color:var(--muted);font-size:13px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='var(--muted)'">Portfolio</a>
+      <a href="https://buymeacoffee.com/mukullight" style="color:var(--muted);font-size:13px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='var(--muted)'">Support</a>
+    </div>
   </footer>
+
 </div>
 
-<!-- THREE.JS -->
+<!-- THREE.JS BACKGROUND -->
 <script>
 (function(){
   const canvas = document.getElementById('canvas-bg');
@@ -501,153 +586,71 @@ footer strong { color: var(--gold); }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000, 0);
-
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 300);
   camera.position.set(0, 0, 32);
-
   const RASTA = [
     new THREE.Color(0xb83020), new THREE.Color(0xc8a020),
     new THREE.Color(0x1e7030), new THREE.Color(0xf0c050),
     new THREE.Color(0x2eac50),
   ];
-
-  /* 1. PARTICLES with sine wobble */
   const N = 700;
   const pPos = new Float32Array(N*3), pCol = new Float32Array(N*3), pPhase = [];
   for(let i=0;i<N;i++){
-    pPos[i*3]   = (Math.random()-0.5)*140;
-    pPos[i*3+1] = (Math.random()-0.5)*110;
-    pPos[i*3+2] = (Math.random()-0.5)*80 - 10;
-    const c = RASTA[Math.floor(Math.random()*RASTA.length)];
-    pCol[i*3]=c.r; pCol[i*3+1]=c.g; pCol[i*3+2]=c.b;
-    pPhase.push(Math.random()*Math.PI*2);
+    pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=(Math.random()-0.5)*110; pPos[i*3+2]=(Math.random()-0.5)*80-10;
+    const c=RASTA[Math.floor(Math.random()*RASTA.length)];
+    pCol[i*3]=c.r; pCol[i*3+1]=c.g; pCol[i*3+2]=c.b; pPhase.push(Math.random()*Math.PI*2);
   }
   const pGeo = new THREE.BufferGeometry();
   pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
   pGeo.setAttribute('color',    new THREE.BufferAttribute(pCol,3));
-  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-    size:0.5, vertexColors:true, transparent:true, opacity:0.65,
-    depthWrite:false, blending:THREE.AdditiveBlending,
-  })));
-
-  /* 2. RINGS with pulsing opacity */
-  const rings = [];
-  [
-    {color:0xb83020, r:14, tube:0.09, pos:[-18,10,-15],  rot:[0.4,0,0.3]},
-    {color:0xc8a020, r:10, tube:0.08, pos:[16,-8,-18],   rot:[0.6,0.5,0]},
-    {color:0x1e7030, r:20, tube:0.06, pos:[0,-14,-24],   rot:[1.1,0.2,0.8]},
-    {color:0xf0c050, r:7,  tube:0.10, pos:[22,14,-12],   rot:[0.2,0.9,0.4]},
-    {color:0x2eac50, r:13, tube:0.05, pos:[-22,-4,-20],  rot:[0.8,0.1,1.0]},
-    {color:0xb83020, r:6,  tube:0.12, pos:[10,18,-10],   rot:[1.3,0.4,0.6]},
-    {color:0xc8a020, r:17, tube:0.04, pos:[-8,-20,-28],  rot:[0.3,1.2,0.5]},
-  ].forEach(d=>{
-    const m = new THREE.Mesh(
-      new THREE.TorusGeometry(d.r, d.tube, 24, 90),
-      new THREE.MeshBasicMaterial({color:d.color, transparent:true, opacity:0.2})
-    );
+  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({size:0.5,vertexColors:true,transparent:true,opacity:0.65,depthWrite:false,blending:THREE.AdditiveBlending})));
+  const rings=[];
+  [{color:0xb83020,r:14,tube:0.09,pos:[-18,10,-15],rot:[0.4,0,0.3]},{color:0xc8a020,r:10,tube:0.08,pos:[16,-8,-18],rot:[0.6,0.5,0]},
+   {color:0x1e7030,r:20,tube:0.06,pos:[0,-14,-24],rot:[1.1,0.2,0.8]},{color:0xf0c050,r:7,tube:0.10,pos:[22,14,-12],rot:[0.2,0.9,0.4]},
+   {color:0x2eac50,r:13,tube:0.05,pos:[-22,-4,-20],rot:[0.8,0.1,1.0]}].forEach(d=>{
+    const m=new THREE.Mesh(new THREE.TorusGeometry(d.r,d.tube,24,90),new THREE.MeshBasicMaterial({color:d.color,transparent:true,opacity:0.2}));
     m.position.set(...d.pos); m.rotation.set(...d.rot);
-    m.userData.speed = Math.random()*0.004+0.001;
-    m.userData.axis  = new THREE.Vector3(Math.random(),Math.random(),Math.random()).normalize();
-    m.userData.baseOp = 0.2;
+    m.userData.speed=Math.random()*0.004+0.001; m.userData.axis=new THREE.Vector3(Math.random(),Math.random(),Math.random()).normalize(); m.userData.baseOp=0.2;
     scene.add(m); rings.push(m);
   });
-
-  /* 3. ANIMATED WAVE PLANES */
-  const wave1Geo = new THREE.PlaneGeometry(160,90,90,55);
-  const wave1 = new THREE.Mesh(wave1Geo, new THREE.MeshBasicMaterial({color:0x1e5c28,wireframe:true,transparent:true,opacity:0.06}));
+  const wave1Geo=new THREE.PlaneGeometry(160,90,90,55);
+  const wave1=new THREE.Mesh(wave1Geo,new THREE.MeshBasicMaterial({color:0x1e5c28,wireframe:true,transparent:true,opacity:0.05}));
   wave1.position.set(0,-20,-32); wave1.rotation.x=-0.4; scene.add(wave1);
-
-  const wave2Geo = new THREE.PlaneGeometry(160,90,60,40);
-  const wave2 = new THREE.Mesh(wave2Geo, new THREE.MeshBasicMaterial({color:0xc8a020,wireframe:true,transparent:true,opacity:0.03}));
-  wave2.position.set(0,14,-40); wave2.rotation.x=0.4; scene.add(wave2);
-
-  /* 4. FLOATING WIREFRAME ICOSAHEDRA */
-  const icos = [];
-  [{color:0xb83020,pos:[-30,-12,-28],s:1.5},{color:0xc8a020,pos:[28,16,-30],s:1.0},
-   {color:0x1e7030,pos:[0,28,-35],s:1.8},{color:0xf0c050,pos:[-24,20,-26],s:0.9},
-   {color:0x2eac50,pos:[30,-20,-32],s:1.2}].forEach(d=>{
-    const m = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(d.s, 0),
-      new THREE.MeshBasicMaterial({color:d.color,wireframe:true,transparent:true,opacity:0.28})
-    );
-    m.position.set(...d.pos);
-    m.userData.sp = Math.random()*0.008+0.003;
-    m.userData.fp = Math.random()*Math.PI*2;
-    m.userData.fa = Math.random()*3+2;
+  const icos=[];
+  [{color:0xb83020,pos:[-30,-12,-28],s:1.5},{color:0xc8a020,pos:[28,16,-30],s:1.0},{color:0x1e7030,pos:[0,28,-35],s:1.8}].forEach(d=>{
+    const m=new THREE.Mesh(new THREE.IcosahedronGeometry(d.s,0),new THREE.MeshBasicMaterial({color:d.color,wireframe:true,transparent:true,opacity:0.25}));
+    m.position.set(...d.pos); m.userData.sp=Math.random()*0.008+0.003; m.userData.fp=Math.random()*Math.PI*2;
     scene.add(m); icos.push(m);
   });
-
-  /* 5. STAR FIELD */
   const sN=350, sP=new Float32Array(sN*3);
   for(let i=0;i<sN;i++){ sP[i*3]=(Math.random()-0.5)*260; sP[i*3+1]=(Math.random()-0.5)*200; sP[i*3+2]=-60-Math.random()*80; }
-  const sGeo = new THREE.BufferGeometry();
-  sGeo.setAttribute('position', new THREE.BufferAttribute(sP,3));
-  const starPoints = new THREE.Points(sGeo, new THREE.PointsMaterial({size:0.28,color:0xf5edd8,transparent:true,opacity:0.38}));
+  const sGeo=new THREE.BufferGeometry();
+  sGeo.setAttribute('position',new THREE.BufferAttribute(sP,3));
+  const starPoints=new THREE.Points(sGeo,new THREE.PointsMaterial({size:0.28,color:0xf5edd8,transparent:true,opacity:0.35}));
   scene.add(starPoints);
-
-  /* 6. ORBITING SPHERES around a central point */
-  const orbiters = [];
-  [{color:0xb83020,r:0.6,orbitR:18,speed:0.008,phase:0},
-   {color:0xc8a020,r:0.45,orbitR:14,speed:0.012,phase:2.1},
-   {color:0x1e7030,r:0.55,orbitR:22,speed:0.006,phase:4.2}].forEach(d=>{
-    const m = new THREE.Mesh(
-      new THREE.SphereGeometry(d.r,8,8),
-      new THREE.MeshBasicMaterial({color:d.color,transparent:true,opacity:0.5})
-    );
-    m.userData = {...d};
-    scene.add(m); orbiters.push(m);
-  });
-
-  /* Mouse / scroll */
   let mx=0,my=0,tx=0,ty=0;
   document.addEventListener('mousemove',e=>{ mx=(e.clientX/window.innerWidth-0.5)*2; my=(e.clientY/window.innerHeight-0.5)*2; });
   let sY=0; window.addEventListener('scroll',()=>sY=window.scrollY);
   window.addEventListener('resize',()=>{ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
-
   let t=0;
   function animate(){
     requestAnimationFrame(animate); t+=0.009;
-
-    /* Smooth camera */
     tx+=(mx*5-tx)*0.05; ty+=(-my*3-ty)*0.05;
     camera.position.x=tx; camera.position.y=ty-sY*0.003; camera.lookAt(0,0,0);
-
-    /* Waves */
     const v1=wave1Geo.attributes.position;
     for(let i=0;i<v1.count;i++) v1.setZ(i,Math.sin(v1.getX(i)*0.07+t)*1.7+Math.cos(v1.getY(i)*0.1+t*0.7)*1.1);
     v1.needsUpdate=true;
-    const v2=wave2Geo.attributes.position;
-    for(let i=0;i<v2.count;i++) v2.setZ(i,Math.cos(v2.getX(i)*0.05+t*0.6)*1.3+Math.sin(v2.getY(i)*0.08+t*0.5)*0.9);
-    v2.needsUpdate=true;
-
-    /* Rings */
     rings.forEach((r,i)=>{ r.rotateOnAxis(r.userData.axis,r.userData.speed); r.material.opacity=r.userData.baseOp+Math.sin(t*1.2+i)*0.09; });
-
-    /* Icos */
     icos.forEach(ico=>{ ico.rotation.x+=ico.userData.sp; ico.rotation.y+=ico.userData.sp*0.7; ico.position.y+=Math.sin(t+ico.userData.fp)*0.022; });
-
-    /* Particles */
     const pos=pGeo.attributes.position;
     for(let i=0;i<N;i++){
       let y=pos.getY(i)+0.016+Math.sin(t*0.8+pPhase[i])*0.009;
       if(y>55) y=-55;
-      pos.setY(i,y);
-      pos.setX(i,pos.getX(i)+Math.sin(t*0.4+pPhase[i])*0.005);
+      pos.setY(i,y); pos.setX(i,pos.getX(i)+Math.sin(t*0.4+pPhase[i])*0.005);
     }
     pos.needsUpdate=true;
-
-    /* Orbiters */
-    orbiters.forEach(o=>{
-      const a=t*o.userData.speed*60+o.userData.phase;
-      o.position.x=Math.cos(a)*o.userData.orbitR-10;
-      o.position.y=Math.sin(a)*o.userData.orbitR*0.4;
-      o.position.z=-20+Math.sin(a*0.5)*5;
-    });
-
-    /* Slow star rotation */
     starPoints.rotation.z+=0.00012;
-
     renderer.render(scene,camera);
   }
   animate();
@@ -667,7 +670,7 @@ footer strong { color: var(--gold); }
     b.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;background:${cols[Math.floor(Math.random()*3)]};`;
     document.body.appendChild(b); setTimeout(()=>b.remove(),700);
   });
-  document.querySelectorAll('a,.card,.tag,button').forEach(el=>{
+  document.querySelectorAll('a,.blog-card,.project-card,.btn-primary,.bmc-btn').forEach(el=>{
     el.addEventListener('mouseenter',()=>{ cur.style.transform='translate(-50%,-50%) scale(2.5)'; cur.style.opacity='0.4'; });
     el.addEventListener('mouseleave',()=>{ cur.style.transform='translate(-50%,-50%) scale(1)';   cur.style.opacity='1'; });
   });
@@ -688,38 +691,11 @@ footer strong { color: var(--gold); }
 <!-- INTERSECTION OBSERVERS -->
 <script>
 (function(){
-  /* Generic reveal */
-  new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');} }),{threshold:0.12})
-    .observe.bind(new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');} }),{threshold:0.12}));
-
-  const mainObs = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');} }),{threshold:0.12});
+  const mainObs=new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el=>mainObs.observe(el));
-
-  /* Rasta divider */
-  new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.5})
-    .observe(document.getElementById('rasta-div'));
-
-  /* Lyrics */
-  new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.3})
-    .observe(document.getElementById('lyrics-strip'));
-
-  /* Tags */
-  new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.3})
-    .observe(document.getElementById('tag-list'));
-
-  /* Typewriter */
-  const tw=document.getElementById('typewriter');
-  new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) tw.classList.add('typing'); }),{threshold:0.5})
-    .observe(tw);
-
-  /* Player card hover */
-  const pc=document.getElementById('player-card');
-  if(pc){
-    pc.addEventListener('mouseover',()=>{ pc.style.borderColor='rgba(200,150,42,0.6)'; pc.style.transform='translateY(-4px)'; });
-    pc.addEventListener('mouseout', ()=>{ pc.style.borderColor='rgba(200,150,42,0.25)'; pc.style.transform='none'; });
-  }
+  const divObs=new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.5});
+  document.querySelectorAll('.rasta-divider').forEach(el=>divObs.observe(el));
 })();
 </script>
-
 </body>
 </html>
