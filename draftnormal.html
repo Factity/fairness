@@ -3712,14 +3712,153 @@ One effective way to enforce structural constraints—such as orthogonality, low
 
 
 
- <!-- 1. Hypersphere S² -->
-         <h2 class="subsection header">Spherical Manifold </h2>
-         <div class="canvas-wrapper" id="sphere-container" style="min-height: 460px;"></div>
+
+
+
+
+
+<p>
+    <h2 class="subsection header">Spherical Manifold – Definition & Hyperspherical Descent</h2>
+</p>
+  <div class="canvas-wrapper" id="sphere-container" style="min-height: 460px;"></div>
        
-         <h2 class="subsection header">Oblique Manifold </h2>
+<p><strong>Definition:</strong> The sphere (hypersphere) is the set of unit‑norm vectors in \(\mathbb{R}^d\):</p>
+<p style="text-align:center;">\[ S^{d-1} = \{ w \in \mathbb{R}^d \mid \|w\|_2 = 1 \}. \]</p>
+<p><strong>Tangent space</strong> at \(w\): \( T_w S^{d-1} = \{ v \in \mathbb{R}^d \mid v^\top w = 0 \} \).<br>
+<strong>Riemannian metric:</strong> \( g_w(v_1, v_2) = v_1^\top v_2 \).<br>
+<strong>Geodesic distance:</strong> \( d(w_1, w_2) = \arccos(w_1^\top w_2) \).<br>
+<strong>Retraction (normalisation):</strong> \( \operatorname{Retr}_w(v) = \frac{w + v}{\|w + v\|_2} \).</p>
+
+<p><strong>Optimization problem:</strong> Minimise loss \(f(w)\) subject to \(w \in S^{d-1}\). Given Euclidean gradient \(g = \nabla f(w)\), find update \(a \in T_w S^{d-1}\) that:</p>
+<ol>
+  <li>Minimises \(a^\top g\) (linearised loss change),</li>
+  <li>Satisfies \(\|a\|_2 = \eta\) (learning rate),</li>
+  <li>Lies in tangent space: \(a^\top w = 0\).</li>
+</ol>
+<p>Lagrange multiplier solution yields:</p>
+<p style="text-align:center;">\[ a_{\text{opt}} = -\eta \; \frac{g - (w^\top g) w}{\|g - (w^\top g) w\|_2}. \]</p>
+
+<p><strong>Step‑by‑step hyperspherical descent algorithm:</strong></p>
+<ol>
+  <li><strong>Initialise</strong> \(w = w_0 / \|w_0\|_2\).</li>
+  <li><strong>Compute</strong> Euclidean gradient \(g = \nabla f(w)\).</li>
+  <li><strong>Project</strong> \(\tilde{g} = g - (w^\top g) w\).</li>
+  <li>If \(\|\tilde{g}\|_2 = 0\), stop (stationary point).</li>
+  <li><strong>Compute update direction</strong> \(a = -\eta \cdot \tilde{g} / \|\tilde{g}\|_2\).</li>
+  <li><strong>Tentative update</strong> \(w_{\text{temp}} = w + a\).</li>
+  <li><strong>Retract</strong> \(w \leftarrow w_{\text{temp}} / \|w_{\text{temp}}\|_2\) (equivalent to \(w \leftarrow \frac{w - \eta \tilde{g}/\|\tilde{g}\|_2}{\sqrt{1+\eta^2}}\)).</li>
+  <li>Repeat from step 2 until convergence.</li>
+</ol>
+
+<p><strong>Python implementation:</strong></p>
+<pre><code>import numpy as np
+
+def hyperspherical_descent(f, grad_f, w0, eta, num_iters):
+    w = w0 / np.linalg.norm(w0)
+    for _ in range(num_iters):
+        g = grad_f(w)
+        w_dot_g = np.dot(w, g)
+        g_tilde = g - w_dot_g * w
+        norm_g_tilde = np.linalg.norm(g_tilde)
+        if norm_g_tilde == 0:
+            break
+        a = -eta * (g_tilde / norm_g_tilde)
+        w = (w + a) / np.linalg.norm(w + a)
+    return w</code></pre>
+
+<p><strong>Remarks:</strong> \(\eta\) is the Euclidean step length in the tangent space. For small \(\eta\), the retraction approximates Riemannian gradient descent. Convergence to a stationary point holds under standard Lipschitz gradient assumptions. The normalisation retraction is the simplest and most common.</p>
+
+<hr>
+
+<p>
+    <h2 class="subsection header">Analytical Derivation – Optimal Update on the Hypersphere</h2>
+</p>
+<p>We derive the optimal update from first principles using Lagrange multipliers, exactly as done for the Stiefel manifold in the <em>Manifold Muon</em> text.</p>
+
+<p><strong>Problem setup.</strong> Current point \(w \in S^{n-1} \subset \mathbb{R}^n\) with \(\|w\|_2 = 1\); Euclidean gradient \(g = \nabla f(w) \in \mathbb{R}^n\); learning rate \(\eta > 0\). We seek an update vector \(a \in \mathbb{R}^n\) that minimises the linearised loss change \(a^\top g\) subject to:</p>
+<p style="text-align:center;">\[ \text{(i)}\; \|a\|_2 = \eta, \qquad \text{(ii)}\; a^\top w = 0. \]</p>
+
+<p><strong>1. Lagrangian formulation.</strong> Introduce multipliers \(\lambda\) (norm constraint) and \(\mu\) (orthogonality):</p>
+<p>\[ \mathcal{L}(a,\lambda,\mu) = a^\top g + \frac{\lambda}{2}(a^\top a - \eta^2) + \mu (a^\top w). \]</p>
+<p>Derivative w.r.t. \(a\): \(g + \lambda a + \mu w = 0 \;\Rightarrow\; a = -\frac{1}{\lambda}(g + \mu w).\)</p>
+
+<p><strong>2. Enforce constraints.</strong> From \(a^\top w = 0\):</p>
+<p>\[ -\frac{1}{\lambda}(g^\top w + \mu (w^\top w)) = 0 \;\Rightarrow\; g^\top w + \mu = 0 \;\Rightarrow\; \mu = -g^\top w. \]</p>
+<p>Thus \(a = -\frac{1}{\lambda}(g - (g^\top w) w)\). Define the tangent component:</p>
+<p>\[ \tilde{g} = g - (g^\top w) w \in T_w S^{n-1}. \]</p>
+<p>Now enforce \(\|a\|_2 = \eta\): \(\|-\frac{1}{\lambda} \tilde{g}\|_2 = \frac{\|\tilde{g}\|_2}{|\lambda|} = \eta \;\Rightarrow\; |\lambda| = \frac{\|\tilde{g}\|_2}{\eta}.\)<br>
+Choose \(\lambda > 0\) (descent direction) to obtain:</p>
+<p>\[ a_{\text{opt}} = -\eta \,\frac{\tilde{g}}{\|\tilde{g}\|_2}. \]</p>
+
+<p><strong>3. Retraction (radial projection).</strong> After the update \(w' = w + a_{\text{opt}}\), the point leaves the sphere. Because \(a_{\text{opt}} \perp w\):</p>
+<p>\[ \|w + a_{\text{opt}}\|_2^2 = \|w\|_2^2 + \|a_{\text{opt}}\|_2^2 = 1 + \eta^2. \]</p>
+<p>Hence the normalised (retracted) point is</p>
+<p>\[ w_{\text{new}} = \frac{w + a_{\text{opt}}}{\sqrt{1+\eta^2}}. \]</p>
+
+<p><strong>4. Full update rule.</strong> Substituting \(a_{\text{opt}}\):</p>
+<p>\[ w_{\text{new}} = \frac{w - \eta \,\frac{\tilde{g}}{\|\tilde{g}\|_2}}{\sqrt{1+\eta^2}}, \qquad \tilde{g} = g - (g^\top w) w. \]</p>
+<p>Equivalently, in a single line:</p>
+<p class="boxed">\[ \boxed{w \;\leftarrow\; \frac{w - \eta\,\frac{g - (w^\top g) w}{\|g - (w^\top g) w\|_2}}{\sqrt{1+\eta^2}}} \]</p>
+
+<p><strong>5. Comparison with Stiefel (Manifold Muon).</strong></p>
+<table>
+    <thead>
+        <tr><th>Aspect</th><th>Sphere \(S^{n-1}\)</th><th>Stiefel \(\operatorname{St}(m,n)\)</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Constraint</td><td>\(w^\top w = 1\)</td><td>\(W^\top W = I_n\)</td></tr>
+        <tr><td>Tangent condition</td><td>\(a^\top w = 0\)</td><td>\(A^\top W + W^\top A = 0\)</td></tr>
+        <tr><td>Norm used</td><td>Euclidean (\(\ell_2\))</td><td>Spectral norm</td></tr>
+        <tr><td>Optimal update direction</td><td>\(-\eta \, \tilde{g} / \|\tilde{g}\|_2\)</td><td>\(-\eta \, \operatorname{msign}(G + 2W(\Lambda+\Lambda^\top))\) (dual ascent)</td></tr>
+        <tr><td>Retraction</td><td>\(w \leftarrow (w + a)/\sqrt{1+\eta^2}\)</td><td>\(W \leftarrow \operatorname{msign}(W)\)</td></tr>
+    </tbody>
+</table>
+<p>The spherical case is simpler because the tangent space is a linear subspace and the norm constraint is isotropic. The Stiefel case requires solving a dual problem (\(\Lambda\) ascent) due to the non‑trivial coupling of columns via the spectral norm.</p>
+
+<p><strong>6. Algorithm summary (hyperspherical descent).</strong></p>
+<p>Input: current \(w\) on sphere, gradient \(g\), learning rate \(\eta\).<br>
+Compute tangent gradient: \(\tilde{g} = g - (w^\top g) w\).<br>
+If \(\tilde{g} = 0\): stationary point → skip update.<br>
+Else set \(a = -\eta \, \tilde{g} / \|\tilde{g}\|_2\) and update \(w \leftarrow (w + a) / \sqrt{1+\eta^2}\).<br>
+Optionally renormalise for numerical stability.</p>
+
+
+<br>
+<br>
+
+
+<h3 class="subsection header">CONSIDER SUPPORTING ME click or scan  </h3>
+<br>
+<a href="https://buymeacoffee.com/mukullight" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.75rem; background-color: #FFDD00; color: #000; padding: 0.75rem 1.5rem; border-radius: 40px; text-decoration: none; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: 0.2s;">
+  
+  <span>Click here to contribute</span>
+</a>
+<br>
+<div style="text-align: center;">
+    <img src="./qr-code (2).png" alt="Scan here" style="width: 120px; height: auto; border-radius: 12px;">
+    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #5c3b1f;">Scan to support</p>
+  </div>
+<br>
+
+
+<br>
+
+
+
+
+
+
+<p>
+
+
+  Some example manifold shapes 
+</p>
+
+
+         <h4 class="subsection header">Oblique Manifold </h4>
         <div class="canvas-wrapper" id="oblique-container" style="min-height: 460px;"></div>
       
-         <h2 class="subsection header">Stiefel Manifold </h2>
+         <h4 class="subsection header">Stiefel Manifold </h4>
        <div class="canvas-wrapper" id="stiefel-container" style="min-height: 460px;"></div>
 
 
@@ -3727,62 +3866,7 @@ One effective way to enforce structural constraints—such as orthogonality, low
 
 
 
-    <div class="proof">
-      <span class="proof__label">Proof.</span>
-      <span class="proof__qed">□</span>
-      Let ε &gt; 0. Since f is continuous at x, there exists δ &gt; 0 such that |f(t) − f(x)| &lt; ε whenever |t − x| &lt; δ. For 0 &lt; |h| &lt; δ, we estimate the difference quotient...
-    </div>
-  </section>
-  <!-- SECTION: MATH BLOCKS -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Math Blocks</h2>
-    <div class="math-block">
-      ζ(s) = Σ<sub>n=1</sub><sup>∞</sup> n<sup>−s</sup> = ∏<sub>p prime</sub> (1 − p<sup>−s</sup>)<sup>−1</sup>
-    </div>
-    <div class="math-block math-block--numbered">
-      <div style="flex:1;text-align:center">∫<sub>−∞</sub><sup>+∞</sup> e<sup>−x²</sup> dx = √π</div>
-      <span class="eq-number">(1.7)</span>
-    </div>
-    <p>The inline variant <span class="math-inline">f(x) = x²</span> works within a sentence without breaking flow.</p>
-  </section>
-  <!-- SECTION: CALLOUTS -->
 
-
-
-
-
-
-
-
-  <!-- SECTION: CODE -->
-  <section style="margin-bottom: 3rem">
-    <h2 class="section-heading">Code Blocks</h2>
-    <div class="code-block__header">
-      <span>riemann_zeta.py</span>
-      <span>Python 3.11</span>
-    </div>
-<pre><code>from mpmath import mp, zetazero
-# Set precision to 50 decimal places
-mp.dps = 50
-# Compute the first 10 nontrivial zeros
-zeros = [zetazero(n) for n in range(1, 11)]
-for z in zeros:
-    print(f"ρ = {z}")</code></pre>
-  </section>
-
-
-
-  <!-- SECTION: BLOCKQUOTES & PULL QUOTE -->
-  <section style="margin-bottom:3rem">
-    <h2 class="section-heading">Quotes</h2>
-    <blockquote>
-      Mathematics is the language in which God has written the universe.
-      <cite>Galileo Galilei</cite>
-    </blockquote>
-    <div class="pull-quote">
-      "It is not knowledge, but the act of learning, not possession but the act of getting there, which grants the greatest enjoyment."
-    </div>
-  </section>
   <!-- SECTION: AUTHOR CARD & PAGINATION -->
   <section style="margin-bottom:3rem">
     <h2 class="section-heading">Author &amp; Navigation</h2>
@@ -3792,16 +3876,6 @@ for z in zeros:
         <div class="author-card__name">Mukul namagiri</div>
         <p class="author-card__bio">AI guy</p>
       </div>
-    </div>
-    <div class="pagination" style="margin-top:2rem">
-      <a href="#" class="pagination__link pagination__link--prev">
-        <span class="pagination__dir">← Previous</span>
-        <span class="pagination__title">Euler's Identity and Group Theory</span>
-      </a>
-      <a href="#" class="pagination__link pagination__link--next">
-        <span class="pagination__dir">Next →</span>
-        <span class="pagination__title">Modular Forms in Depth</span>
-      </a>
     </div>
   </section>
 
@@ -4505,7 +4579,7 @@ if (document.readyState === 'loading') {
 <footer class="site-footer">
   <div class="container">
     <div class="site-footer__inner">
-      <span>© 2025 ∂Math — A Journal of Mathematical Exposition</span>
+      <span>Factity </span>
       <span>Built with curiosity &amp; rigor</span>
     </div>
   </div>
