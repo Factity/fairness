@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mega Roblox Guide 2025 — RobloxZone</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Bootstrap 5 CSS (lightweight, overrides will be handled by your custom CSS) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#e2231a;--blue:#0055a5;--yellow:#ffd700;--green:#00b14f;
+  --orange:#ff6b00;--purple:#7b2fbe;--cyan:#00c8e0;--pink:#ff4f9b;
+  --dark:#0d1117;--surface:rgba(255,255,255,0.04);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--dark);color:#e0e0e0;
+  overflow-x:hidden;cursor:none;
+}
+
+/* CUSTOM CURSOR */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--yellow);border-radius:2px;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%) rotate(45deg);
+  transition:transform 0.1s,width 0.2s,height 0.2s,background 0.2s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:2px solid rgba(255,215,0,0.4);border-radius:4px;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%) rotate(45deg);
+  transition:transform 0.15s ease,width 0.2s,height 0.2s;
+}
+body:hover #cursor{width:14px;height:14px;}
+
+/* THREE.JS CANVASES */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* SECTION SCENE CANVASES */
+.scene-canvas{
+  width:100%;height:280px;border-radius:16px;
+  margin:1.5rem 0;display:block;
+  border:1px solid rgba(255,255,255,0.07);
+}
+
+/* LOADING SCREEN */
+#loader{
+  position:fixed;inset:0;z-index:10000;
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.5rem;transition:opacity 0.6s,visibility 0.6s;
+}
+#loader.done{opacity:0;visibility:hidden;}
+.loader-logo{
+  font-family:'Fredoka One',cursive;font-size:3rem;
+  color:var(--yellow);letter-spacing:3px;
+  animation:logo-pop 0.5s ease both;
+}
+@keyframes logo-pop{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.loader-bar-wrap{
+  width:220px;height:6px;background:rgba(255,255,255,0.1);
+  border-radius:30px;overflow:hidden;
+}
+.loader-bar{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--yellow));
+  border-radius:30px;transition:width 0.05s;
+}
+.loader-text{
+  font-size:0.75rem;font-weight:800;letter-spacing:3px;
+  text-transform:uppercase;color:rgba(255,255,255,0.3);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* MOBILE MENU ADDITIONS */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 210;
+  padding: 0;
+}
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--yellow);
+  border-radius: 4px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .topbar-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(13, 17, 23, 0.98);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    padding: 1.5rem;
+    transform: translateY(-110%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.25s;
+    pointer-events: none;
+    border-bottom: 2px solid var(--red);
+    border-radius: 0 0 18px 18px;
+    z-index: 150;
+  }
+  .topbar-nav.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+  }
+  .topbar-nav a {
+    text-align: center;
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(13,17,23,0.9);backdrop-filter:blur(16px);
+  border-bottom:2px solid var(--red);
+  padding:0.7rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  animation:slide-down 0.5s ease both 1.2s;
+}
+@keyframes slide-down{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.topbar-logo{
+  font-family:'Fredoka One',cursive;
+  color:var(--yellow);font-size:1.25rem;letter-spacing:1px;
+}
+.topbar-nav{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.topbar-nav a{
+  font-size:0.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);text-decoration:none;
+  padding:0.3rem 0.7rem;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.08);
+  transition:all 0.2s;
+}
+.topbar-nav a:hover{color:#fff;border-color:var(--yellow);background:rgba(255,215,0,0.08);}
+
+/* PROGRESS BAR */
+#progress{
+  position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--red),var(--yellow),var(--cyan));
+  z-index:9000;width:0%;transition:width 0.1s;
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:6rem 2rem 4rem;position:relative;
+  overflow:hidden;
+}
+.hero-canvas{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+}
+.hero-content{position:relative;z-index:1;max-width:800px;}
+
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.72rem;font-weight:900;letter-spacing:4px;
+  text-transform:uppercase;color:var(--cyan);
+  margin-bottom:1.5rem;
+  animation:fade-up 0.7s ease both 1.4s;
+}
+.hero-kicker-line{display:inline-block;width:32px;height:2px;background:var(--cyan);}
+
+.hero h1{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(2.8rem,8vw,5.5rem);
+  color:#fff;line-height:1.05;
+  margin-bottom:1.5rem;letter-spacing:1px;
+  text-shadow:0 0 60px rgba(226,35,26,0.3);
+  animation:fade-up 0.7s ease both 1.5s;
+}
+.hero h1 .y{color:var(--yellow);}
+.hero h1 .r{color:var(--red);}
+.hero h1 .b{color:var(--cyan);}
+
+.hero-sub{
+  font-size:1.1rem;color:rgba(255,255,255,0.55);font-weight:600;
+  max-width:600px;margin:0 auto 2.5rem;line-height:1.7;
+  animation:fade-up 0.7s ease both 1.6s;
+}
+
+.hero-badges{
+  display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;
+  animation:fade-up 0.7s ease both 1.7s;
+}
+.hbadge{
+  padding:0.4rem 1rem;border-radius:30px;
+  font-size:0.72rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;
+}
+.hb-r{background:rgba(226,35,26,0.2);color:#ff7066;border:1px solid rgba(226,35,26,0.4);}
+.hb-y{background:rgba(255,215,0,0.15);color:#fcd34d;border:1px solid rgba(255,215,0,0.35);}
+.hb-c{background:rgba(0,200,224,0.12);color:#67e8f9;border:1px solid rgba(0,200,224,0.3);}
+.hb-g{background:rgba(0,177,79,0.15);color:#4ade80;border:1px solid rgba(0,177,79,0.3);}
+
+.scroll-hint{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+  animation:fade-up 1s ease both 2.2s;
+}
+.scroll-hint span{
+  font-size:0.68rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);
+}
+.scroll-arrow{
+  width:24px;height:36px;border:2px solid rgba(255,255,255,0.15);
+  border-radius:12px;display:flex;align-items:flex-start;justify-content:center;
+  padding-top:5px;
+}
+.scroll-dot{
+  width:4px;height:8px;background:var(--yellow);border-radius:2px;
+  animation:scroll-bounce 1.4s ease-in-out infinite;
+}
+@keyframes scroll-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(12px);opacity:0.3;}}
+
+@keyframes fade-up{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* FLOATING PARTICLES */
+.particle{
+  position:fixed;border-radius:2px;pointer-events:none;z-index:1;
+  animation:particle-float linear infinite;opacity:0;
+}
+@keyframes particle-float{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:0.6;}
+  100%{transform:translateY(-20px) rotate(720deg);opacity:0;}
+}
+
+/* MAIN WRAP */
+.wrap{
+  position:relative;z-index:2;
+  max-width:820px;margin:0 auto;
+  padding:0 1.5rem 8rem;
+}
+
+/* STAT HERO STRIP */
+.stat-hero{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  margin:0 0 4rem;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;
+}
+.stat-h{
+  background:rgba(13,17,23,0.95);padding:1.5rem 1rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.stat-h::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+}
+.stat-h:nth-child(1)::before{background:var(--red);}
+.stat-h:nth-child(2)::before{background:var(--blue);}
+.stat-h:nth-child(3)::before{background:var(--yellow);}
+.stat-h:nth-child(4)::before{background:var(--green);}
+
+.stat-v{
+  font-family:'Fredoka One',cursive;
+  font-size:2rem;color:#fff;margin-bottom:0.25rem;
+  transition:transform 0.3s;
+}
+.stat-h:hover .stat-v{transform:scale(1.1);}
+.stat-l{font-size:0.65rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+
+/* TOC */
+.toc{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-left:4px solid var(--yellow);
+  border-radius:0 14px 14px 0;
+  padding:1.6rem 1.8rem;margin-bottom:4rem;
+  position:relative;overflow:hidden;
+}
+.toc::before{
+  content:'';position:absolute;top:-50%;right:-20px;
+  width:120px;height:200%;
+  background:linear-gradient(180deg,transparent,rgba(255,215,0,0.03),transparent);
+  animation:toc-shine 4s ease-in-out infinite;
+}
+@keyframes toc-shine{0%,100%{transform:translateY(-100%);}50%{transform:translateY(100%);}}
+.toc-title{
+  font-family:'Fredoka One',cursive;color:var(--yellow);
+  font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;
+}
+.toc ol{list-style:none;counter-reset:toc;display:flex;flex-direction:column;gap:0.4rem;}
+.toc ol li{counter-increment:toc;display:flex;align-items:baseline;gap:0.5rem;}
+.toc ol li::before{
+  content:counter(toc);
+  min-width:20px;height:20px;background:var(--red);color:#fff;
+  font-weight:900;font-size:0.65rem;border-radius:4px;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.toc a{
+  color:rgba(255,255,255,0.6);text-decoration:none;
+  font-size:0.88rem;font-weight:700;transition:color 0.15s,padding-left 0.15s;
+}
+.toc a:hover{color:var(--yellow);padding-left:4px;}
+.toc .sub{
+  margin-left:2rem;margin-top:0.3rem;
+  display:flex;flex-direction:column;gap:0.2rem;
+  counter-reset:none;
+}
+.toc .sub li{counter-increment:none;}
+.toc .sub li::before{content:"↳";background:none;color:rgba(255,255,255,0.2);font-size:0.8rem;}
+.toc .sub a{font-size:0.8rem;color:rgba(255,255,255,0.38);}
+.toc .sub a:hover{color:var(--cyan);}
+
+/* SECTION STYLING */
+section{margin-bottom:5rem;position:relative;}
+
+.section-divider{
+  display:flex;align-items:center;gap:1rem;margin:5rem 0 3rem;
+}
+.section-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);}
+.section-divider-icon{
+  font-family:'Fredoka One',cursive;font-size:0.7rem;
+  color:rgba(255,255,255,0.2);letter-spacing:3px;text-transform:uppercase;
+  white-space:nowrap;
+}
+
+h2.sec{
+  font-family:'Fredoka One',cursive;
+  font-size:2rem;color:#fff;
+  margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:0.75rem;
+  position:relative;
+}
+h2.sec::after{
+  content:'';position:absolute;bottom:-8px;left:0;
+  height:3px;width:60px;border-radius:2px;
+  background:linear-gradient(90deg,var(--red),transparent);
+}
+.sec-num{
+  font-family:'Nunito',sans-serif;
+  font-size:0.7rem;font-weight:900;
+  background:var(--red);color:#fff;
+  padding:0.2rem 0.65rem;border-radius:6px;
+  letter-spacing:1px;
+}
+
+h3.sub{
+  font-family:'Fredoka One',cursive;
+  font-size:1.3rem;color:var(--cyan);
+  margin:2.2rem 0 0.8rem;
+  padding-left:0.9rem;
+  border-left:3px solid var(--cyan);
+  position:relative;
+}
+
+h4.subsub{
+  font-family:'Fredoka One',cursive;
+  font-size:1.05rem;color:rgba(255,255,255,0.7);
+  margin:1.4rem 0 0.6rem;
+}
+
+p{
+  color:rgba(255,255,255,0.65);
+  font-size:0.96rem;margin-bottom:1rem;line-height:1.82;
+}
+p strong{color:rgba(255,255,255,0.9);}
+
+/* REVEAL ANIMATION */
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:opacity 0.6s ease,transform 0.6s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+
+/* CALLOUTS */
+.callout{
+  border-radius:12px;padding:1.1rem 1.3rem;
+  margin:1.6rem 0;font-size:0.9rem;font-weight:700;
+  display:flex;gap:0.9rem;align-items:flex-start;
+  position:relative;overflow:hidden;
+}
+.callout::before{
+  content:'';position:absolute;inset:0;opacity:0.06;
+  background:repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 8px);
+}
+.callout .icon{font-size:1.4rem;flex-shrink:0;margin-top:1px;}
+.callout .body{color:inherit;line-height:1.6;}
+.callout .body strong{display:block;font-size:0.68rem;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:0.3rem;}
+.ct{background:rgba(0,200,224,0.1);border:1px solid rgba(0,200,224,0.3);color:rgba(0,200,224,0.9);}
+.cw{background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);color:rgba(255,160,70,0.95);}
+.cf{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);color:rgba(255,215,0,0.9);}
+.cd{background:rgba(226,35,26,0.1);border:1px solid rgba(226,35,26,0.3);color:rgba(255,100,90,0.95);}
+.cp{background:rgba(123,47,190,0.12);border:1px solid rgba(123,47,190,0.35);color:rgba(196,132,252,0.95);}
+.cg{background:rgba(0,177,79,0.1);border:1px solid rgba(0,177,79,0.3);color:rgba(74,222,128,0.95);}
+
+/* LISTS */
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:0.6rem;margin:0.8rem 0 1.2rem;}
+ul.s li{
+  color:rgba(255,255,255,0.68);font-size:0.92rem;font-weight:600;line-height:1.6;
+  padding-left:1.6rem;position:relative;
+}
+ul.s li::before{
+  content:"▸";color:var(--yellow);position:absolute;left:0;
+}
+ol.s{counter-reset:ol;}
+ol.s li{counter-increment:ol;padding-left:2rem;}
+ol.s li::before{
+  content:counter(ol);
+  background:var(--blue);color:#fff;font-weight:900;font-size:0.68rem;
+  width:20px;height:20px;border-radius:4px;
+  display:inline-flex;align-items:center;justify-content:center;
+  position:absolute;left:0;top:1px;
+}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;margin:1rem 0 1.4rem;font-size:0.87rem;}
+.tbl th{
+  text-align:left;padding:0.6rem 0.9rem;
+  background:rgba(255,255,255,0.05);
+  color:rgba(255,255,255,0.35);font-size:0.68rem;
+  letter-spacing:2px;text-transform:uppercase;font-weight:900;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.tbl td{
+  padding:0.65rem 0.9rem;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.68);font-weight:600;
+  vertical-align:middle;
+}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,0.025);}
+.tier{font-weight:900;font-size:0.75rem;padding:0.2rem 0.55rem;border-radius:5px;}
+.ts{background:rgba(255,215,0,0.2);color:#fcd34d;}
+.ta{background:rgba(0,177,79,0.2);color:#4ade80;}
+.tb{background:rgba(0,85,165,0.2);color:#60a5fa;}
+.tc{background:rgba(123,47,190,0.2);color:#c084fc;}
+.td{background:rgba(120,120,120,0.2);color:#aaa;}
+
+/* BADGES */
+.badge{
+  display:inline-block;padding:0.2rem 0.75rem;border-radius:30px;
+  font-size:0.68rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;
+}
+.br{background:rgba(226,35,26,0.18);color:#ff7066;border:1px solid rgba(226,35,26,0.4);}
+.bb{background:rgba(0,85,165,0.18);color:#60a5fa;border:1px solid rgba(0,85,165,0.4);}
+.bg2{background:rgba(0,177,79,0.18);color:#4ade80;border:1px solid rgba(0,177,79,0.4);}
+.by{background:rgba(255,215,0,0.15);color:#fcd34d;border:1px solid rgba(255,215,0,0.35);}
+.bp{background:rgba(123,47,190,0.2);color:#c084fc;border:1px solid rgba(123,47,190,0.4);}
+.bo{background:rgba(255,107,0,0.18);color:#fb923c;border:1px solid rgba(255,107,0,0.4);}
+.bc{background:rgba(0,200,224,0.12);color:#67e8f9;border:1px solid rgba(0,200,224,0.3);}
+
+/* BLOCKQUOTE */
+blockquote{
+  border-left:4px solid var(--purple);
+  padding:1rem 1.4rem;margin:1.6rem 0;
+  background:rgba(123,47,190,0.07);border-radius:0 12px 12px 0;
+  position:relative;overflow:hidden;
+}
+blockquote::before{
+  content:'"';position:absolute;top:-10px;left:10px;
+  font-size:5rem;font-family:'Fredoka One',cursive;
+  color:rgba(123,47,190,0.15);line-height:1;pointer-events:none;
+}
+blockquote p{color:rgba(255,255,255,0.58);font-style:italic;font-size:1rem;margin:0;}
+blockquote cite{
+  display:block;margin-top:0.6rem;font-size:0.73rem;
+  font-weight:900;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--purple);font-style:normal;
+}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0;}
+@media(max-width:600px){.card-grid{grid-template-columns:1fr;}}
+.card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);border-radius:14px;
+  padding:1.2rem;transition:transform 0.2s,border-color 0.2s,background 0.2s;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.card:nth-child(1)::before{background:var(--red);}
+.card:nth-child(2)::before{background:var(--blue);}
+.card:nth-child(3)::before{background:var(--yellow);}
+.card:nth-child(4)::before{background:var(--green);}
+.card:nth-child(5)::before{background:var(--purple);}
+.card:nth-child(6)::before{background:var(--cyan);}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);}
+.card h4{font-family:'Fredoka One',cursive;color:#fff;font-size:1rem;margin-bottom:0.4rem;}
+.card p{font-size:0.82rem;color:rgba(255,255,255,0.5);margin:0;line-height:1.55;}
+.card-icon{font-size:1.6rem;margin-bottom:0.6rem;}
+
+/* HORIZONTAL RULE */
+.hr{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);margin:3rem 0;}
+
+/* INLINE STAT */
+.istat{
+  display:inline-flex;align-items:baseline;gap:0.3rem;
+  font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--yellow);
+}
+.istat small{font-family:'Nunito',sans-serif;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.4);}
+
+/* STEP LIST */
+.steps{display:flex;flex-direction:column;gap:1rem;margin:1rem 0 1.4rem;}
+.step{display:flex;gap:1rem;align-items:flex-start;}
+.step-num{
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--blue);color:#fff;
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:0.85rem;margin-top:1px;
+}
+.step-body h4{font-weight:800;color:rgba(255,255,255,0.85);font-size:0.92rem;margin-bottom:0.2rem;}
+.step-body p{font-size:0.85rem;color:rgba(255,255,255,0.5);margin:0;line-height:1.55;}
+
+/* PULL QUOTE */
+.pull{
+  text-align:center;padding:2rem 1rem;
+  position:relative;margin:2rem 0;
+}
+.pull::before,.pull::after{
+  content:'';display:block;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  margin:1rem 0;
+}
+.pull p{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(1.3rem,3vw,1.8rem);color:#fff;
+  line-height:1.3;font-style:normal;margin:0;
+}
+.pull p span{color:var(--yellow);}
+
+/* ROBUX CHART */
+.robux-bars{display:flex;flex-direction:column;gap:0.7rem;margin:1rem 0;}
+.rbar-row{display:flex;align-items:center;gap:0.8rem;}
+.rbar-label{font-size:0.78rem;font-weight:800;color:rgba(255,255,255,0.5);width:120px;flex-shrink:0;}
+.rbar-track{flex:1;height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;}
+.rbar-fill{height:100%;border-radius:5px;transition:width 1.5s cubic-bezier(0.22,1,0.36,1);}
+.rbar-val{font-size:0.78rem;font-weight:900;color:rgba(255,255,255,0.6);width:60px;text-align:right;}
+
+/* FOOTER */
+.foot{
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:3rem 0;text-align:center;
+}
+.foot-logo{font-family:'Fredoka One',cursive;color:var(--yellow);font-size:1.6rem;letter-spacing:1px;margin-bottom:0.5rem;}
+.foot p{font-size:0.73rem;color:rgba(255,255,255,0.18);margin:0;line-height:1.8;}
+
+/* GLITCH */
+.glitch{position:relative;display:inline-block;}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;top:0;left:0;width:100%;
+}
+.glitch::before{
+  color:var(--red);animation:glitch-a 3s infinite linear;clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
+}
+.glitch::after{
+  color:var(--cyan);animation:glitch-b 3s infinite linear;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
+}
+@keyframes glitch-a{
+  0%,90%,100%{transform:translate(0);}
+  92%{transform:translate(-2px,1px);}
+  94%{transform:translate(2px,-1px);}
+  96%{transform:translate(-1px,2px);}
+}
+@keyframes glitch-b{
+  0%,90%,100%{transform:translate(0);}
+  92%{transform:translate(2px,-1px);}
+  94%{transform:translate(-2px,1px);}
+  96%{transform:translate(1px,-2px);}
+}
+
+/* COUNTER */
+.counter-num{
+  font-family:'Fredoka One',cursive;font-size:2.5rem;color:var(--yellow);
+  display:inline-block;
+}
+
+@media(max-width:600px){
+  .stat-hero{grid-template-columns:repeat(2,1fr);}
+  h2.sec{font-size:1.6rem;}
+}
+/* ===== HORIZONTAL SCROLL FIXES FOR MOBILE ===== */
+/* Prevent unwanted horizontal overflow when mobile menu is active */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Allow horizontal scroll only for wide content (tables, code, etc.) */
+.wrap, .hero-content, .toc, section {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Make tables responsive with horizontal scroll on small screens */
+.tbl {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure code blocks or pre elements can scroll horizontally */
+pre, .scene-canvas, .card-grid {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Mobile menu: prevent body shifting, ensure menu fits */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  .topbar-nav {
+    max-height: 70vh;
+    overflow-y: auto;  /* allows scrolling inside menu if many links */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+  }
+  
+  /* Keep all content inside viewport, no horizontal overflow */
+  .wrap {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Fix any rogue margin/padding on Bootstrap container */
+  .navbar-collapse {
+    max-width: 100%;
+  }
+  
+  /* Make sure the hamburger toggler doesn't cause overflow */
+  .navbar-toggler {
+    margin-right: 0;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- PROGRESS BAR -->
+<div id="progress"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">🎮 RobloxZone</div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="lbar"></div></div>
+  <div class="loader-text" id="ltext">Loading world...</div>
+</div>
+
+<!-- GLOBAL BG CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- TOPBAR 
+<div class="topbar">
+  <div class="topbar-logo">🎮 RobloxZone</div>
+
+</div>-->
+
+<!-- HERO -->
+<section class="hero">
+  <canvas class="hero-canvas" id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-kicker">
+      <div class="hero-kicker-line"></div>
+      The Definitive 2025 Guide
+      <div class="hero-kicker-line"></div>
+    </div>
+    <h1>
+      <span class="glitch" data-text="Everything">Everything</span><br>
+      About <span class="y">Roblox</span><br>
+      <span class="b">Right</span> <span class="r">Now</span>
+    </h1>
+    <p class="hero-sub">The world's most complete breakdown of Roblox in 2025 — gameplay, economy, development, community, safety, history, and what comes next. No fluff. All signal.</p>
+    <div class="hero-badges">
+      <span class="hbadge hb-r">🔥 Updated May 2025</span>
+      <span class="hbadge hb-y">⭐ All Levels</span>
+      <span class="hbadge hb-c">📖 ~25 Min Read</span>
+      <span class="hbadge hb-g">✅ Fact-Checked</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"><div class="scroll-dot"></div></div>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- STAT STRIP -->
+<div class="stat-hero reveal">
+  <div class="stat-h"><div class="stat-v counter-num" data-target="88">0</div><div class="stat-l">Million Daily Players</div></div>
+  <div class="stat-h"><div class="stat-v counter-num" data-target="40">0</div><div class="stat-l">Million Experiences</div></div>
+  <div class="stat-h"><div class="stat-v counter-num" data-target="923">0</div><div class="stat-l">Million Dev Payouts</div></div>
+  <div class="stat-h"><div class="stat-v counter-num" data-target="190">0</div><div class="stat-l">Countries Reached</div></div>
+</div>
+
+<!-- TOC -->
+<div class="toc reveal">
+  <div class="toc-title">📋 Table of Contents</div>
+  <ol>
+    <li><a href="#s1">What Is Roblox?</a>
+      <ul class="sub"><li><a href="#s1a">Platform philosophy</a></li><li><a href="#s1b">A brief history</a></li><li><a href="#s1c">Who actually plays it</a></li></ul>
+    </li>
+    <li><a href="#s2">Getting Started</a>
+      <ul class="sub"><li><a href="#s2a">Account creation</a></li><li><a href="#s2b">Avatar customisation</a></li><li><a href="#s2c">Navigating the platform</a></li><li><a href="#s2d">Settings & parental controls</a></li></ul>
+    </li>
+    <li><a href="#s3">The Robux Economy</a>
+      <ul class="sub"><li><a href="#s3a">Understanding Robux</a></li><li><a href="#s3b">Earning free Robux legitimately</a></li><li><a href="#s3c">Roblox Premium breakdown</a></li><li><a href="#s3d">The trading economy</a></li><li><a href="#s3e">Scams to avoid</a></li></ul>
+    </li>
+    <li><a href="#s4">Top Games by Genre</a>
+      <ul class="sub"><li><a href="#s4a">Simulators</a></li><li><a href="#s4b">Roleplay & social</a></li><li><a href="#s4c">Fighting & PvP</a></li><li><a href="#s4d">Horror</a></li><li><a href="#s4e">Obby & platformers</a></li><li><a href="#s4f">Hidden gems</a></li></ul>
+    </li>
+    <li><a href="#s5">Game Development</a>
+      <ul class="sub"><li><a href="#s5a">Roblox Studio</a></li><li><a href="#s5b">Lua scripting</a></li><li><a href="#s5c">Game design principles</a></li><li><a href="#s5d">Monetisation</a></li><li><a href="#s5e">Growing your game</a></li></ul>
+    </li>
+    <li><a href="#s6">Safety & Community</a></li>
+    <li><a href="#s7">Advanced Player Strategies</a></li>
+    <li><a href="#s8">The Future of Roblox</a></li>
+  </ol>
+</div>
+
+<!-- ══ SECTION 1 ══ -->
+<section id="s1">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 01</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">01</span> What Is Roblox?</h2>
+
+  <p class="reveal">Roblox is not a game. That's the single most important thing to understand before anything else in this guide. Roblox is a <strong>platform</strong> — a persistent, social, 3D universe where players can create, share, and experience an almost infinite variety of games built by other users. Calling Roblox a game is like calling YouTube a video.</p>
+
+  <p class="reveal">Launched publicly in 2006 by David Baszucki and Erik Cassel, Roblox spent over a decade as a niche platform beloved by a relatively small community of young players and passionate developers. Then the pandemic happened. Between 2019 and 2021, daily active users tripled. The platform hit the stock market via a direct listing in March 2021, valued at over $38 billion on its first day of trading. By 2025 it has become one of the defining entertainment platforms of the generation.</p>
+
+  <canvas class="scene-canvas" id="scene1"></canvas>
+
+  <h3 class="sub reveal" id="s1a">Platform Philosophy</h3>
+  <p class="reveal">Roblox's core thesis is radical: give anyone the tools to build a 3D world, give everyone access to those worlds for free, and let the community decide what's worth playing. The engine, the hosting infrastructure, the social graph, the economy, the analytics — Roblox provides all of it. Developers provide the creativity.</p>
+
+  <p class="reveal">This model creates a flywheel: more players attract more developers, more great games attract more players. Roblox monetises the platform by taking a cut of every Robux transaction — developers keep roughly 24.5 cents of every dollar spent in their games through the Developer Exchange program. It's a controversial split that the community frequently debates, but it has still minted dozens of millionaire developers.</p>
+
+  <div class="callout cf reveal">
+    <div class="icon">🌍</div>
+    <div class="body"><strong>Scale Check</strong>If Roblox's daily active users were a country, it would be the 17th most populous nation on Earth — larger than France, larger than the UK, just behind Germany.</div>
+  </div>
+
+  <h3 class="sub reveal" id="s1b">A Brief History</h3>
+
+  <div class="steps reveal">
+    <div class="step"><div class="step-num">06</div><div class="step-body"><h4>2006 — Public Launch</h4><p>Roblox launches publicly after a closed beta. The blocky aesthetic is a technical choice born of hardware limitations, not artistic intention — but it becomes iconic.</p></div></div>
+    <div class="step"><div class="step-num">13</div><div class="step-body"><h4>2013 — Robux Unified Currency</h4><p>The platform consolidates its dual-currency system into Robux alone. The marketplace begins to take shape.</p></div></div>
+    <div class="step"><div class="step-num">17</div><div class="step-body"><h4>2017 — DevEx Expansion</h4><p>Developer Exchange is broadened, allowing far more creators to convert Robux to real money. The creator economy explodes.</p></div></div>
+    <div class="step"><div class="step-num">20</div><div class="step-body"><h4>2020 — Pandemic Boom</h4><p>COVID lockdowns push Roblox's DAU from 17M to 37M in under a year. Revenue triples. The platform is suddenly everywhere.</p></div></div>
+    <div class="step"><div class="step-num">21</div><div class="step-body"><h4>2021 — NYSE Direct Listing</h4><p>Roblox goes public at $45/share, closing day one at $69.50. Market cap peaks above $70 billion.</p></div></div>
+    <div class="step"><div class="step-num">25</div><div class="step-body"><h4>2025 — AI & 3D Evolution</h4><p>Roblox integrates AI generation tools into Studio, rolls out dynamic spatial audio, and pushes its rendering engine toward photorealism.</p></div></div>
+  </div>
+
+  <h3 class="sub reveal" id="s1c">Who Actually Plays It</h3>
+  <p class="reveal">The perception of Roblox as a "kids' platform" has always been a simplification, and by 2025 it's become outright inaccurate. Roblox's own data shows that over <strong>38% of daily active users are aged 17 or older</strong>. The platform's demographics have aged with its original user base — kids who played in 2012 are adults now, and many never left.</p>
+
+  <div class="card-grid reveal">
+    <div class="card"><div class="card-icon">👧</div><h4>Under 13</h4><p>Still a massive cohort. Play primarily social, roleplay, and easy simulator games. Subject to strict content restrictions.</p></div>
+    <div class="card"><div class="card-icon">🧑</div><h4>13–17</h4><p>The core gaming demographic. Deeply engaged with PvP, competitive simulators, and limited item trading.</p></div>
+    <div class="card"><div class="card-icon">👨</div><h4>18–24</h4><p>Many are developers or serious traders. Engage with the DevEx economy and high-end UGC market.</p></div>
+    <div class="card"><div class="card-icon">👨‍💼</div><h4>25+</h4><p>Creators, investors, researchers, and parents. Roblox's enterprise and brand partnership division targets this group directly.</p></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 2 ══ -->
+<section id="s2">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 02</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">02</span> Getting Started</h2>
+
+  <p class="reveal">Getting into Roblox is free, fast, and available on almost every device. The platform runs on Windows, Mac, iOS, Android, Xbox One, Xbox Series X|S, PlayStation 5, Meta Quest, and modern web browsers. Your account, avatar, and currency work identically across all of them.</p>
+
+  <h3 class="sub reveal" id="s2a">Account Creation</h3>
+  <p class="reveal">Visit roblox.com and click Sign Up. You'll enter a username, birthdate, and an optional email address. The username is the most consequential decision you'll make — it's permanently tied to your identity on the platform. You get one rename opportunity (for a Robux fee), and after that it's locked forever.</p>
+
+  <div class="callout cw reveal">
+    <div class="icon">⚠️</div>
+    <div class="body"><strong>Username Strategy</strong>Avoid using your real name, year of birth, or any personal info in your username. Short, memorable, and original names hold social value — especially if you plan to become a developer or public figure on the platform. Good usernames are increasingly rare and some sell for substantial sums in the secondary market.</div>
+  </div>
+
+  <p class="reveal">After creating your account, immediately go to Settings → Security and enable <strong>Two-Factor Authentication (2FA)</strong> via an authenticator app. Account theft is the number-one issue reported by Roblox players, and 2FA is the single most effective defence against it. A stolen account is difficult or impossible to fully recover.</p>
+
+  <h3 class="sub reveal" id="s2b">Avatar Customisation</h3>
+  <p class="reveal">Your avatar is your identity in every experience across the entire platform. The Avatar Editor lets you mix and match heads, faces, bodies, clothing, accessories, emotes, and animations to create a look that's uniquely yours. There are millions of items in the Avatar Shop, ranging from completely free to extraordinarily expensive.</p>
+
+  <ul class="s reveal">
+    <li><strong>Classic body type</strong> — the original blocky Roblox look. Nostalgic and iconic. Many players deliberately stick to it.</li>
+    <li><strong>Rthro body type</strong> — taller, more humanoid proportions. More customisation surface area for clothing and accessories.</li>
+    <li><strong>Layered clothing</strong> — the newest system, where items stack realistically on your character like real fabric. A jacket over a hoodie over a shirt, all rendering correctly.</li>
+    <li><strong>Dynamic heads</strong> — faces that express emotions and react to voice chat in real time. Increasingly common in social experiences.</li>
+    <li><strong>UGC items</strong> — accessories created by approved community members (User Generated Content). Often the most creative and interesting items in the catalog.</li>
+  </ul>
+
+  <h3 class="sub reveal" id="s2c">Navigating the Platform</h3>
+  <p class="reveal">The Roblox home feed serves experiences based on your history, trending titles, friend activity, and editorial picks. The Charts tab shows the most-played games globally and by category. The Discover page surfaces curated collections by genre, theme, and occasion.</p>
+
+  <p class="reveal">The Friends system is core to the Roblox experience. You can see exactly what game your friends are playing and join their session with one click — a feature that drives enormous amounts of cross-game discovery. Many players find their favourite games not through the charts but through a friend dragging them in.</p>
+
+  <h3 class="sub reveal" id="s2d">Settings & Parental Controls</h3>
+  <p class="reveal">Parents or guardians can link a child's account to their own via the Family Controls system. This gives full visibility over friend requests, chat access, spending, and game content categories. The most restrictive setting — "Supervised Mode" — requires parental approval before a child can follow anyone, join experiences, or enable chat.</p>
+
+  <canvas class="scene-canvas" id="scene2"></canvas>
+
+  <div class="callout ct reveal">
+    <div class="icon">💡</div>
+    <div class="body"><strong>First Game Tip</strong>If you're completely new, start with Brookhaven RP or Adopt Me! — both have enormous, welcoming communities and zero skill barriers to entry. They're essentially social spaces, not traditional games, which makes them ideal for learning how the platform works without pressure.</div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 3 ══ -->
+<section id="s3">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 03</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">03</span> The Robux Economy</h2>
+
+  <p class="reveal">Robux (R$) is Roblox's virtual currency and the engine of the entire platform economy. Everything of value on Roblox — from a hat to a game pass to a private server — is priced in Robux. Understanding how Robux flows, where it comes from, and where it goes is essential knowledge for any serious player or developer.</p>
+
+  <h3 class="sub reveal" id="s3a">Understanding Robux</h3>
+  <p class="reveal">Robux is purchased through the official Roblox website or app using real money. The exchange rate varies by bundle size — you generally get better value per dollar with larger purchases. Robux doesn't expire, can be spent across any experience, and accumulates until you choose to spend it.</p>
+
+  <div class="robux-bars reveal" id="rbars">
+    <div class="rbar-row"><div class="rbar-label">$5 — 400 R$</div><div class="rbar-track"><div class="rbar-fill" style="width:0%;background:var(--red);" data-w="20%"></div></div><div class="rbar-val">400 R$</div></div>
+    <div class="rbar-row"><div class="rbar-label">$10 — 800 R$</div><div class="rbar-track"><div class="rbar-fill" style="width:0%;background:var(--orange);" data-w="40%"></div></div><div class="rbar-val">800 R$</div></div>
+    <div class="rbar-row"><div class="rbar-label">$25 — 2,000 R$</div><div class="rbar-track"><div class="rbar-fill" style="width:0%;background:var(--yellow);" data-w="58%"></div></div><div class="rbar-val">2,000 R$</div></div>
+    <div class="rbar-row"><div class="rbar-label">$50 — 4,500 R$</div><div class="rbar-track"><div class="rbar-fill" style="width:0%;background:var(--green);" data-w="75%"></div></div><div class="rbar-val">4,500 R$</div></div>
+    <div class="rbar-row"><div class="rbar-label">$100 — 10,000 R$</div><div class="rbar-track"><div class="rbar-fill" style="width:0%;background:var(--cyan);" data-w="100%"></div></div><div class="rbar-val">10,000 R$</div></div>
+  </div>
+
+  <h3 class="sub reveal" id="s3b">Earning Free Robux Legitimately</h3>
+  <p class="reveal">You cannot earn Robux simply by playing games as a consumer. Roblox does not have a "watch ads for Robux" system or any passive earning mechanic for regular players. The legitimate paths to earning Robux all involve <em>contributing value to the platform</em>, not consuming it.</p>
+
+  <ol class="s reveal">
+    <li><strong>Build and publish games.</strong> Earn Robux through game passes, developer products, and private server fees. This is the primary income source for Roblox developers.</li>
+    <li><strong>Create and sell UGC items.</strong> Approved UGC creators can design and sell avatar items in the catalog. Top UGC creators earn millions of Robux per month.</li>
+    <li><strong>Participate in affiliate programs.</strong> Roblox has an affiliate system that rewards creators for bringing new paying users to the platform.</li>
+    <li><strong>Trade limited items profitably.</strong> With Roblox Premium, you can trade limited-edition items. Skilled traders who understand market cycles can accumulate significant Robux value.</li>
+    <li><strong>Group payouts.</strong> Group owners can distribute Robux to group members as payment for work — art, scripting, building, etc.</li>
+  </ol>
+
+  <h3 class="sub reveal" id="s3c">Roblox Premium</h3>
+  <p class="reveal">Roblox Premium is a monthly subscription available in three tiers: 450 R$/month ($4.99), 1,000 R$/month ($9.99), and 2,200 R$/month ($19.99). Beyond the monthly Robux stipend, all Premium tiers unlock the ability to trade items with other players — a feature entirely unavailable to non-subscribers.</p>
+
+  <div class="card-grid reveal">
+    <div class="card"><div class="card-icon">💰</div><h4>450 R$/month ($4.99)</h4><p>Best for casual players who spend a little each month. The stipend effectively offsets the cost.</p></div>
+    <div class="card"><div class="card-icon">💎</div><h4>1,000 R$/month ($9.99)</h4><p>The sweet spot for most active players. Covers a game pass or a couple of accessories monthly.</p></div>
+    <div class="card"><div class="card-icon">👑</div><h4>2,200 R$/month ($19.99)</h4><p>For serious traders and collectors. The 10% bonus on all Robux purchases adds up fast.</p></div>
+  </div>
+
+  <h3 class="sub reveal" id="s3d">The Trading Economy</h3>
+  <p class="reveal">The limited-item trading market on Roblox functions like a genuine collectibles market, complete with price discovery, speculation, manipulation, and bull and bear cycles. Limited items are avatar accessories or gear with a fixed supply — once they go off-sale, the only way to get one is to trade for it.</p>
+
+  <p class="reveal">Prices are tracked by third-party sites like Rolimons and RBXFlip, which function like stock tickers for Roblox items. Some items have appreciated thousands of percent from their original price. The Dominus Empyreus, originally sold for 13,337 Robux in 2010, has traded for well over 400,000 Robux in recent years.</p>
+
+  <blockquote class="reveal">
+    <p>The Roblox economy is one of the most sophisticated virtual economies ever created — it has its own version of every real-world financial phenomenon, from pump-and-dump schemes to blue-chip investments to market panics.</p>
+    <cite>— Roblox Developer Forum, veteran trader analysis thread</cite>
+  </blockquote>
+
+  <h3 class="sub reveal" id="s3e">Scams to Absolutely Avoid</h3>
+  <p class="reveal">The Roblox economy attracts an enormous volume of scam attempts. Understanding the most common vectors is the best protection.</p>
+
+  <div class="callout cd reveal">
+    <div class="icon">🚫</div>
+    <div class="body"><strong>Critical Warning</strong>"Free Robux generators" are 100% scams, every single time, without exception. They either steal your account credentials, install malware on your device, or collect personal information for phishing. No website, extension, or tool can generate Robux externally — it's technically impossible. Anyone claiming otherwise is lying to you.</div>
+  </div>
+
+  <ul class="s reveal">
+    <li><strong>Trade scams</strong> — a trader shows you a high-value item in chat, then swaps it for a low-value item at the last second. Always verify items on the actual trade screen, never in chat.</li>
+    <li><strong>Middleman scams</strong> — a third party offers to "hold" items during an off-platform trade. They keep everything. Never trade off-platform.</li>
+    <li><strong>Phishing links</strong> — fake Roblox login pages sent via DM or Discord. Always check the URL bar. Only log in at roblox.com.</li>
+    <li><strong>Fake giveaways</strong> — creators or accounts claiming to give free Robux or limiteds in exchange for following steps. If it sounds too good to be true, it is.</li>
+  </ul>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 4 ══ -->
+<section id="s4">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 04</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">04</span> Top Games by Genre</h2>
+  <p class="reveal">With over 40 million experiences on the platform, finding truly great games requires knowing where to look. Here is the definitive breakdown of every major genre, with the best titles in each as of May 2025.</p>
+
+  <canvas class="scene-canvas" id="scene3"></canvas>
+
+  <h3 class="sub reveal" id="s4a">Simulators</h3>
+  <p class="reveal">Simulators are Roblox's dominant genre by player count. The core loop — collect resource, upgrade tool, expand operation, repeat — is simple to learn and deeply addictive to master. The best simulators layer seasonal events, rebirth systems, pet companions, and competitive leaderboards onto this foundation to sustain player engagement for years.</p>
+
+  <table class="tbl reveal">
+    <thead><tr><th>Tier</th><th>Game</th><th>Peak Players</th><th>Core Hook</th><th>Since</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tier ts">S</span></td><td>Pet Simulator 99</td><td>400,000+</td><td>Collection, trading, seasonal events</td><td>2023</td></tr>
+      <tr><td><span class="tier ts">S</span></td><td>Blox Fruits</td><td>420,000+</td><td>Devil fruits, combat, world exploration</td><td>2019</td></tr>
+      <tr><td><span class="tier ta">A</span></td><td>Mining Simulator 2</td><td>180,000+</td><td>Deep underground progression</td><td>2021</td></tr>
+      <tr><td><span class="tier ta">A</span></td><td>Anime Adventures</td><td>150,000+</td><td>Tower defence + anime collection</td><td>2022</td></tr>
+      <tr><td><span class="tier ta">A</span></td><td>Clicker Simulator</td><td>110,000+</td><td>Pure dopamine loop, idle mechanics</td><td>2020</td></tr>
+      <tr><td><span class="tier tb">B</span></td><td>Fruit Battlegrounds</td><td>90,000+</td><td>Fast PvP, devil fruit powers</td><td>2022</td></tr>
+      <tr><td><span class="tier tb">B</span></td><td>Strongman Simulator</td><td>75,000+</td><td>Lifting, strength building, progression</td><td>2022</td></tr>
+      <tr><td><span class="tier tc">C</span></td><td>Shrimpo Survivor</td><td>55,000+</td><td>Bullet-hell survivor, casual</td><td>2024</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub reveal" id="s4b">Roleplay & Social</h3>
+  <p class="reveal">Roleplay games are Roblox's most visited category by all-time visit count. They're less games and more virtual social spaces — players create their own stories, build homes, establish characters, and simply hang out. The best RP games are phenomenally detailed virtual worlds.</p>
+
+  <ul class="s reveal">
+    <li><strong>Brookhaven RP</strong> — The defining Roblox social experience. A suburban open world with hundreds of properties, vehicles, and activities. No objectives, no win states — just vibes. Has accumulated over 30 billion visits.</li>
+    <li><strong>Adopt Me!</strong> — Pet-collecting and home-decorating with a fully functional player-driven economy. One of the most-visited games in Roblox history. Pets trade for real money in parallel markets.</li>
+    <li><strong>Welcome to Bloxburg</strong> — A one-time paid-access ($25 Robux) life simulator with the deepest home building tools on the platform. Bloxburg builds have become an art form in their own right.</li>
+    <li><strong>Livetopia</strong> — A newer, more event-driven competitor to Brookhaven with more structured activities and a younger-skewing community.</li>
+    <li><strong>Royale High</strong> — A fashion and fantasy school RP with seasonal events and a massive accessory economy. Has its own independent price tracking community.</li>
+    <li><strong>Berry Avenue</strong> — Rising star in the RP space, notable for its cinematic aesthetic and highly active community.</li>
+  </ul>
+
+  <h3 class="sub reveal" id="s4c">Fighting & PvP</h3>
+  <p class="reveal">Competitive fighting on Roblox has matured into a serious genre with games that rival traditional fighting titles for depth and skill ceiling. The rise of anime-inspired combat games has been particularly dramatic since 2021.</p>
+
+  <table class="tbl reveal">
+    <thead><tr><th>Game</th><th>Style</th><th>Skill Ceiling</th><th>Community</th></tr></thead>
+    <tbody>
+      <tr><td>Blox Fruits</td><td>Open-world PvP + PvE</td><td>Very High</td><td>Massive, competitive</td></tr>
+      <tr><td>King Legacy</td><td>One Piece inspired combat</td><td>High</td><td>Large, passionate</td></tr>
+      <tr><td>Strongest Battlegrounds</td><td>Ranked 1v1</td><td>Very High</td><td>Hardcore competitive</td></tr>
+      <tr><td>Jujutsu Shenanigans</td><td>Anime brawler</td><td>Medium-High</td><td>Welcoming, fast growing</td></tr>
+      <tr><td>The Strongest Battlegrounds</td><td>Hero/villain combat</td><td>High</td><td>Active, daily updates</td></tr>
+      <tr><td>Fruit Battlegrounds</td><td>Casual PvP</td><td>Low-Medium</td><td>Good for beginners</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub reveal" id="s4d">Horror</h3>
+  <p class="reveal">Roblox horror punches enormously above its weight class. The platform's blocky aesthetic, far from undermining fear, creates a uniquely uncanny quality that skilled horror developers have weaponised into genuinely terrifying experiences. The genre saw explosive growth following the backrooms trend of 2022–2023.</p>
+
+  <div class="card-grid reveal">
+    <div class="card"><div class="card-icon">🚪</div><h4>Doors</h4><p>The definitive Roblox horror game. Masterclass in monster design, tension, and environmental storytelling across 100 procedurally-generated rooms.</p></div>
+    <div class="card"><div class="card-icon">🏯</div><h4>The Mimic</h4><p>Japanese folklore horror with multiple full story chapters. Some of the most polished narrative design on the platform.</p></div>
+    <div class="card"><div class="card-icon">🌀</div><h4>Apeirophobia</h4><p>Backrooms-style liminal horror through increasingly disturbing levels. Atmospheric dread done right.</p></div>
+    <div class="card"><div class="card-icon">🐻</div><h4>Bear (Alpha)</h4><p>Asymmetric horror: one player hunts, the rest survive. Social tension at its finest.</p></div>
+    <div class="card"><div class="card-icon">🏠</div><h4>Alone in a Dark House</h4><p>Point-and-click mystery horror. Story-driven, slow-burn, deeply atmospheric.</p></div>
+    <div class="card"><div class="card-icon">👁️</div><h4>Rainbow Friends</h4><p>Colorful monsters, sinister undertones. Inspired an entire content creator wave on YouTube.</p></div>
+  </div>
+
+  <h3 class="sub reveal" id="s4e">Obbies & Platformers</h3>
+  <p class="reveal">The obby (obstacle course) is Roblox's oldest and most prolific genre. Every player has run through hundreds of them. At their best, obbies are brutally precise tests of spatial memory, timing, and persistence. At their worst, they're five minutes of coloured bricks. The gap between these two extremes is enormous.</p>
+
+  <ul class="s reveal">
+    <li><strong>Tower of Hell</strong> — The most competitive obby on the platform. No checkpoints. Procedurally generated towers. A brutal, pure, timing test that has produced a dedicated speedrunning community.</li>
+    <li><strong>Flood Escape 2</strong> — Cooperative obby where you race rising water. Beautiful map design, excellent progression system.</li>
+    <li><strong>Break In</strong> — Narrative obby with story sequences and boss fights. Pioneered the "cinematic obby" subgenre.</li>
+    <li><strong>Obby But You're On A Bike</strong> — Physics-based chaos. Comedy and frustration in equal measure.</li>
+  </ul>
+
+  <h3 class="sub reveal" id="s4f">Hidden Gems</h3>
+  <p class="reveal">Beyond the charts, a thriving ecosystem of smaller, more ambitious experiences rewards players willing to explore. These games often push the engine harder and tell more interesting stories than anything in the top 10.</p>
+
+  <ul class="s reveal">
+    <li><strong>Project Mugetsu</strong> — Bleach-inspired with one of the best combat systems on the platform</li>
+    <li><strong>Piggy</strong> — Survival horror with an actually compelling multi-chapter narrative</li>
+    <li><strong>Entry Point</strong> — Roblox's best stealth/heist game, criminally underrated</li>
+    <li><strong>Phantom Forces</strong> — Military FPS that competes with AAA titles on gunplay feel alone</li>
+    <li><strong>Vesteria</strong> — A genuine MMORPG built in Roblox with class systems, dungeons, and raids</li>
+    <li><strong>Murder Mystery 2</strong> — The original social deduction game on the platform, still reliably fun</li>
+  </ul>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 5 ══ -->
+<section id="s5">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 05</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">05</span> Game Development</h2>
+
+  <p class="reveal">Roblox is not just the world's most popular gaming platform — it's one of the world's most widely-used game development environments. More people have shipped a game on Roblox than on any other platform in history, and an increasing number of those creators earn meaningful income from their work.</p>
+
+  <div class="pull reveal">
+    <p>In 2024, Roblox paid out <span>$923 million</span> to developers and creators. Over 4,000 developers earned more than $10,000. Hundreds earned more than $100,000.</p>
+  </div>
+
+  <canvas class="scene-canvas" id="scene4"></canvas>
+
+  <h3 class="sub reveal" id="s5a">Roblox Studio</h3>
+  <p class="reveal">Roblox Studio is a free, professional-grade game development environment available for Windows and Mac. It combines a full 3D scene editor, terrain sculpting tools, a physics engine, a Lua script editor with autocomplete and debugging, built-in playtesting, team collaboration features, and one-click publishing to the platform's 88 million daily players.</p>
+
+  <p class="reveal">The Studio interface is organised around several key panels. The <strong>Explorer</strong> shows your scene hierarchy — every object in your experience as a tree structure. The <strong>Properties panel</strong> lets you modify any attribute of any selected object. The <strong>Toolbox</strong> provides access to millions of free community-made assets. The <strong>Script Editor</strong> is where all your game logic lives, written in Luau.</p>
+
+  <ul class="s reveal">
+    <li><strong>Parts</strong> — The fundamental building blocks. Boxes, spheres, cylinders, and wedges that you position, size, rotate, and material-paint to construct your world.</li>
+    <li><strong>Models</strong> — Groups of Parts assembled into reusable structures. A car, a tree, a building — all Models.</li>
+    <li><strong>Terrain</strong> — Roblox's voxel terrain system for creating organic landscapes: mountains, oceans, caves, forests.</li>
+    <li><strong>Scripts</strong> — Lua files attached to objects that give them behaviour. Server scripts run on the server; local scripts run on each player's client; module scripts are shared libraries.</li>
+    <li><strong>GUIs</strong> — ScreenGui, SurfaceGui, BillboardGui — interfaces that appear on-screen or attached to 3D objects.</li>
+  </ul>
+
+  <h3 class="sub reveal" id="s5b">Lua Scripting</h3>
+  <p class="reveal">Roblox uses Luau — Roblox's extended, statically-typed variant of Lua 5.1. Lua is consistently ranked as one of the easiest programming languages to learn, with a syntax that reads almost like English. The feedback loop in Roblox Studio (write code → hit Play → see result immediately) is among the most motivating learning environments for new programmers.</p>
+
+  <h4 class="subsub reveal">Key Roblox scripting concepts</h4>
+  <ul class="s reveal">
+    <li><strong>The DataModel (game)</strong> — The root object that contains everything in your experience. You navigate it like a file system: game.Workspace.MyPart</li>
+    <li><strong>Services</strong> — game:GetService("Players"), game:GetService("TweenService"), etc. The API for everything Roblox provides.</li>
+    <li><strong>Events</strong> — game.Players.PlayerAdded:Connect(function(player) ... end) — the way your code reacts to things happening.</li>
+    <li><strong>RemoteEvents & RemoteFunctions</strong> — the communication bridge between server scripts and client scripts. The foundation of all multiplayer game logic.</li>
+    <li><strong>DataStores</strong> — the persistent storage system. Player data that survives between sessions lives here.</li>
+    <li><strong>Tweens</strong> — smooth animation of any numeric property over time. The easiest way to add polish and juice to your game.</li>
+  </ul>
+
+  <div class="callout ct reveal">
+    <div class="icon">💡</div>
+    <div class="body"><strong>Learning Path</strong>Start with the official Roblox Creator Hub documentation — it's genuinely excellent. Then work through the free "Core curriculum" on the Education site. After that, reverse-engineer open-source games from the Toolbox to see how professionals solve real problems. The Developer Forum is your community — search before posting, and you'll find solutions to most problems have already been discussed.</div>
+  </div>
+
+  <h3 class="sub reveal" id="s5c">Game Design Principles</h3>
+  <p class="reveal">Technical skill is only half of game development. The other half is design — understanding what makes players want to come back. Roblox's most successful games are not necessarily the most technically impressive. They're the ones that best understand player psychology.</p>
+
+  <ul class="s reveal">
+    <li><strong>Retention is everything.</strong> The Roblox algorithm rewards games with high Day 1, Day 7, and Day 30 retention — the percentage of players who return after 1, 7, and 30 days. A game with 50,000 visits and 40% Day-1 retention will outperform a game with 500,000 visits and 5% retention.</li>
+    <li><strong>Session length matters.</strong> Aim for 20–40 minute average sessions. Too short and players don't invest; too long and it feels like a commitment.</li>
+    <li><strong>The first two minutes are everything.</strong> Most players quit before they fully understand a game. Your tutorial and onboarding must hook someone before they consciously decide whether to stay.</li>
+    <li><strong>Social mechanics multiply engagement.</strong> Games where you play with or against friends have dramatically higher retention than solo experiences. Build in social features from day one.</li>
+    <li><strong>Update cadence signals vitality.</strong> The algorithm surfaces games that update frequently. A weekly update — even a small one — tells both the algorithm and players that you're active.</li>
+  </ul>
+
+  <h3 class="sub reveal" id="s5d">Monetisation</h3>
+  <p class="reveal">Once your game has players, there are several mechanisms to earn Robux from them. All Robux earned through these methods can eventually be converted to real currency through the Developer Exchange (DevEx) program, at a rate of $350 per 100,000 Robux, with a minimum threshold of 30,000 Robux.</p>
+
+  <table class="tbl reveal">
+    <thead><tr><th>Method</th><th>Type</th><th>Best For</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Game Passes</td><td>One-time purchase</td><td>Permanent perks, VIP access</td><td>Higher price point is fine for high-value perks</td></tr>
+      <tr><td>Developer Products</td><td>Repeatable purchase</td><td>In-game currency, consumables</td><td>The highest-earning monetisation method</td></tr>
+      <tr><td>Private Servers</td><td>Subscription</td><td>Social games, RP</td><td>Players pay monthly to own a server</td></tr>
+      <tr><td>Paid Access</td><td>One-time entry fee</td><td>Premium experiences</td><td>High barrier, used sparingly (Bloxburg model)</td></tr>
+      <tr><td>UGC Accessories</td><td>Avatar item sale</td><td>Games with strong brands</td><td>Requires UGC creator approval</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub reveal" id="s5e">Growing Your Game</h3>
+  <p class="reveal">Publishing a game is only the beginning. Getting players to find it is the harder problem. The Roblox discovery algorithm is partially opaque, but its key inputs are well-understood by experienced developers.</p>
+
+  <ul class="s reveal">
+    <li><strong>Thumbnail and icon quality.</strong> Your game icon and thumbnail are your first impression in a feed of hundreds of options. Invest in high-quality art from a professional artist — it pays back more than almost anything else.</li>
+    <li><strong>Algorithm signals.</strong> High concurrent player count, high retention, frequent updates, and positive engagement metrics all push your game up in the charts. The algorithm rewards momentum.</li>
+    <li><strong>Content creator partnerships.</strong> A single video from a Roblox YouTuber with 1M+ subscribers can drive hundreds of thousands of visits overnight. Reach out professionally with a free game pass offer.</li>
+    <li><strong>Discord community.</strong> Every serious game needs a Discord server. It's where your most engaged players live, where you announce updates, gather feedback, and build the culture around your game.</li>
+    <li><strong>Cross-promotion.</strong> Partner with games in adjacent genres for mutual shoutouts. If your game is a mining sim, find a crafting game. Players who like one will often try the other.</li>
+  </ul>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 6 ══ -->
+<section id="s6">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 06</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">06</span> Safety & Community</h2>
+
+  <p class="reveal">With 88 million daily users spanning a vast age range, Roblox has built one of the most elaborate safety and moderation systems in consumer technology. Understanding these systems — and the risks they're designed to prevent — is essential for every player and every parent.</p>
+
+  <h3 class="sub reveal">Community Standards</h3>
+  <p class="reveal">Roblox's Community Standards are comprehensive and actively enforced. Prohibited content and behaviour includes: harassment, bullying, and hate speech based on any protected characteristic; sexual content of any kind; glorification of real-world violence or extremism; cheating, exploiting, or using third-party tools to gain unfair advantages; scamming other players; sharing personal information; and impersonating Roblox staff or other users.</p>
+
+  <p class="reveal">Violations are handled at three levels: in-experience (developer banning), platform-level (Roblox Trust & Safety action), and in some cases legal referral (for the most serious content violations, particularly anything involving minors).</p>
+
+  <div class="callout cd reveal">
+    <div class="icon">🔒</div>
+    <div class="body"><strong>Account Security Checklist</strong>Enable 2FA with an authenticator app (not SMS — SIM swap attacks are real). Use a unique, strong password not used on any other site. Never share your credentials with anyone, ever. Enable login notifications so you're alerted to any new sign-ins immediately.</div>
+  </div>
+
+  <h3 class="sub reveal">Moderation Systems</h3>
+  <p class="reveal">Roblox employs both automated AI moderation and a large human review team. The automated system scans all chat messages, user-generated content, and experience content in real time. The human team handles appeals, complex cases, and the most serious violations.</p>
+
+  <p class="reveal">The Report system is available on every player, experience, chat message, and piece of content on the platform. The flag icon is omnipresent — use it whenever you see something that violates the community standards. Reports are reviewed and actioned, typically within 24 hours for serious violations.</p>
+
+  <h3 class="sub reveal">Parental Controls in Detail</h3>
+  <ul class="s reveal">
+    <li><strong>Communication & Privacy</strong> — Control who can message and follow your child. Options range from "Everyone" to "Friends" to "No one".</li>
+    <li><strong>Allowed Experiences</strong> — Restrict which content maturity levels your child can access (All Ages, 9+, 13+, 17+).</li>
+    <li><strong>Spending Controls</strong> — Set monthly Robux spending limits or disable purchases entirely.</li>
+    <li><strong>Screen Time</strong> — Monthly playtime reports and the ability to set session time limits.</li>
+    <li><strong>Supervised Accounts</strong> — Full parental approval required for all social features. The most restrictive setting.</li>
+  </ul>
+
+  <div class="callout cp reveal">
+    <div class="icon">🛡️</div>
+    <div class="body"><strong>For Parents</strong>The single most effective thing you can do is talk openly with your child about what they're doing on Roblox. Ask to see their favourite games. Ask who they're playing with. The platform's safety systems are good, but no system replaces an engaged, informed parent.</div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 7 ══ -->
+<section id="s7">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 07</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">07</span> Advanced Player Strategies</h2>
+
+  <p class="reveal">Beyond the basics, veteran Roblox players have developed sophisticated approaches to maximising their enjoyment, efficiency, and value extraction from the platform. Whether you play for fun, compete seriously, or trade in the economy, these strategies will elevate your game.</p>
+
+  <h3 class="sub reveal">For Competitive Players</h3>
+  <ul class="s reveal">
+    <li><strong>Understand the meta before you grind.</strong> Every PvP game has a current meta — the optimal fruits, abilities, or builds. Check the game's Discord and wiki before investing hours into a suboptimal strategy.</li>
+    <li><strong>VIP servers are worth every Robux.</strong> Grinding in public servers means lag, griefers, and competition for resources. A private server gives you a controlled environment. For fruit-hunting games in particular, the efficiency difference is dramatic.</li>
+    <li><strong>Use the reset mechanic strategically.</strong> Many games have "rebirth" or "reset" systems that sacrifice progress for permanent multipliers. The optimal rebirth timing is usually documented in community wikis.</li>
+    <li><strong>Log in during event windows.</strong> Seasonal events typically run for 1–2 weeks and offer items with significant long-term value. Missing an event often means paying 10x the original price in the trade market later.</li>
+    <li><strong>Analyse your deaths.</strong> In PvP games, losing to the same technique repeatedly means you have a specific gap in your knowledge. Watch players who beat you to understand what they're doing.</li>
+  </ul>
+
+  <h3 class="sub reveal">For Collectors & Traders</h3>
+  <p class="reveal">The Roblox limited item market has its own set of sophisticated strategies that mirror real financial markets more closely than most players realise.</p>
+
+  <ul class="s reveal">
+    <li><strong>Track price history, not just current price.</strong> Rolimons shows full price history for every limited item. Understanding where an item has been tells you as much as where it is.</li>
+    <li><strong>Buy during FUD, sell during hype.</strong> When the community is anxious or bearish about a specific item, prices dip. When a YouTuber features an item or an event drives demand, prices spike. This cycle repeats endlessly.</li>
+    <li><strong>Limited-time items > permanent items.</strong> Items with a defined supply ceiling appreciate. Items that can always be restocked or recreated don't have the same floor.</li>
+    <li><strong>The "Big Hat" series and Dominus line have historically been blue chips.</strong> If you must hold one category long-term, these are the safest bets based on historical price behaviour.</li>
+    <li><strong>Demand-side knowledge is your edge.</strong> Understanding which communities want which items — and why — gives you an information advantage over people who only look at price charts.</li>
+    <li><strong>Never trade under pressure.</strong> Scammers always create urgency. "This deal expires in 5 minutes." "Someone else is about to take it." Take your time. Walk away from any trade that feels rushed.</li>
+  </ul>
+
+  <h3 class="sub reveal">For Aspiring Developers</h3>
+  <ul class="s reveal">
+    <li><strong>Ship early, iterate constantly.</strong> The worst thing you can do is spend a year on a game nobody asked for. Launch a playable demo, gather real player feedback, and build based on what people actually respond to.</li>
+    <li><strong>Study your analytics weekly.</strong> Roblox's Game Analytics dashboard shows you session length, funnel drop-off points, revenue per player, and more. The data tells you exactly where your game is losing players — that's where to focus.</li>
+    <li><strong>Build a team.</strong> The most successful Roblox games are made by teams, not solo developers. Find a builder, find a scripter, find a UI artist. The developer forum has active hiring threads.</li>
+    <li><strong>Copy structure, not content.</strong> Study the monetisation structure, tutorial flow, and session design of successful games in your genre. Those patterns exist because they work. Build your own content on top of proven structures.</li>
+    <li><strong>The algorithm rewards consistency.</strong> A game that updates every two weeks for a year will consistently outperform a game that has two massive updates and then goes quiet for six months.</li>
+    <li><strong>Treat your community as co-developers.</strong> Your Discord server's most active members are your best testers and your loudest advocates. Give them early access, ask for their opinions, and credit them publicly when their feedback improves the game.</li>
+  </ul>
+</section>
+
+<div class="hr"></div>
+
+<!-- ══ SECTION 8 ══ -->
+<section id="s8">
+  <div class="section-divider reveal">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-icon">Section 08</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <h2 class="sec reveal"><span class="sec-num">08</span> The Future of Roblox</h2>
+
+  <p class="reveal">Roblox in 2025 is a dramatically different platform from Roblox in 2020 — and 2030's Roblox will likely be unrecognisable again. The company has made its strategic priorities clear through public announcements, its developer summit presentations, and the features it's actively building.</p>
+
+  <canvas class="scene-canvas" id="scene5"></canvas>
+
+  <h3 class="sub reveal">AI Integration</h3>
+  <p class="reveal">Roblox has been aggressively integrating AI across both the creator and player experience. On the creator side, <strong>Roblox Assistant</strong> is an AI coding companion embedded in Studio that can generate Lua scripts, debug errors, and explain the API — dramatically lowering the barrier to scripting for new developers.</p>
+
+  <p class="reveal">The <strong>3D generation tools</strong> being rolled out allow creators to describe objects in natural language and have AI generate usable 3D models directly into Studio. This is still early — the output often requires cleanup — but the direction is clear: AI is going to remove the bottleneck of 3D asset creation from the developer workflow.</p>
+
+  <div class="callout cp reveal">
+    <div class="icon">🤖</div>
+    <div class="body"><strong>Roblox x AI</strong>Roblox's stated goal is that "anyone should be able to create an experience just by describing it." By 2027, they aim to have AI tools that can generate a functional game from a written description. The implications for the platform's already-enormous creator base are staggering.</div>
+  </div>
+
+  <h3 class="sub reveal">Spatial Computing & VR</h3>
+  <p class="reveal">Roblox has supported Meta Quest for several years and continues to invest in the VR experience. As headsets become more affordable and mainstream, the platform is well-positioned — it already has the content library and social infrastructure that every VR platform lacks. The question is whether consumer VR reaches mass adoption quickly enough to matter in the near term.</p>
+
+  <h3 class="sub reveal">The Creator Economy Evolution</h3>
+  <p class="reveal">Roblox's most contentious ongoing story is its revenue share model. Developers currently keep roughly 24.5 cents per dollar spent in their games — a rate the community has long argued is too low compared to other platforms (Apple App Store: 30% to the platform, 70% to developers; Epic Games Store: 12% to the platform, 88% to developers).</p>
+
+  <p class="reveal">Roblox has made commitments to improve this ratio and has introduced mechanisms like UGC creator royalties and the Premium Payouts system that reward games attracting Premium subscribers. The trajectory is toward a more developer-friendly split, driven partly by competitive pressure from Fortnite's creator economy and partly by the lobbying of Roblox's most prominent developer community members.</p>
+
+  <h3 class="sub reveal">Roblox as Infrastructure</h3>
+  <p class="reveal">Perhaps the most ambitious aspect of Roblox's long-term vision is positioning the platform not as a gaming destination but as the infrastructure layer for a new kind of shared 3D internet. Concerts, brand activations, education, training simulations, social events — all of these have been piloted on Roblox, and all of them performed better than the companies running them expected.</p>
+
+  <blockquote class="reveal">
+    <p>We don't think of this as gaming. We think of it as the next evolution of how humans spend time together — a spatial, social internet that happens to be built by the most creative community on Earth.</p>
+    <cite>— Roblox Executive Presentation, 2024 Investor Day</cite>
+  </blockquote>
+
+  <div class="pull reveal">
+    <p>The most interesting chapter in <span>Roblox's story</span> hasn't been written yet. And whoever writes it might be reading this guide right now.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="foot reveal">
+  <div class="foot-logo">🎮 RobloxZone</div>
+  <p>Your community-first Roblox news and guides hub.<br>Not affiliated with or endorsed by Roblox Corporation.<br>Roblox® is a registered trademark of Roblox Corporation. All game names are property of their respective developers.</p>
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+// ── CURSOR ──
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+setInterval(()=>{rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';},16);
+document.querySelectorAll('a,button,.card,.stat-h').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--cyan)';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';cur.style.background='var(--yellow)';});
+});
+
+// ── LOADER ──
+const lbar=document.getElementById('lbar');
+const ltext=document.getElementById('ltext');
+const msgs=['Loading world...','Spawning cubes...','Warming up engine...','Almost ready!'];
+let prog=0;
+const lint=setInterval(()=>{
+  prog+=Math.random()*8+4;
+  if(prog>100)prog=100;
+  lbar.style.width=prog+'%';
+  ltext.textContent=msgs[Math.floor(prog/26)%msgs.length];
+  if(prog>=100){clearInterval(lint);setTimeout(()=>{document.getElementById('loader').classList.add('done');},400);}
+},80);
+
+// ── PROGRESS BAR ──
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('progress').style.width=pct+'%';
+});
+
+// ── REVEAL ON SCROLL ──
+const revEls=document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+revEls.forEach(el=>obs.observe(el));
+
+// ── COUNTER ANIMATION ──
+const counters=document.querySelectorAll('.counter-num');
+const cobs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){
+      e.target.dataset.done=1;
+      const target=+e.target.dataset.target;
+      const suffix=e.target.dataset.target>100?'M+':'+';
+      let n=0;const step=target/60;
+      const t=setInterval(()=>{n=Math.min(n+step,target);e.target.textContent=Math.floor(n)+(target>50?'M+':'+');if(n>=target)clearInterval(t);},16);
+    }
+  });
+},{threshold:0.5});
+counters.forEach(c=>cobs.observe(c));
+
+// ── ROBUX BARS ──
+const rbars=document.getElementById('rbars');
+if(rbars){
+  const bobs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.querySelectorAll('.rbar-fill').forEach(f=>{f.style.width=f.dataset.w;});
+        bobs.disconnect();
+      }
+    });
+  },{threshold:0.3});
+  bobs.observe(rbars);
+}
+
+// ── THREE.JS GLOBAL BACKGROUND ──
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  const R=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  R.setPixelRatio(Math.min(devicePixelRatio,2));
+  R.setSize(innerWidth,innerHeight);
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,500);
+  cam.position.z=25;
+
+  const cols=[0xe2231a,0x0055a5,0xffd700,0x00b14f,0xff6b00,0x7b2fbe,0x00c8e0,0xff4f9b];
+  const meshes=[];
+
+  for(let i=0;i<80;i++){
+    const s=0.15+Math.random()*0.7;
+    const g=Math.random()>0.5?new THREE.BoxGeometry(s,s,s):new THREE.OctahedronGeometry(s*0.7);
+    const m=new THREE.MeshBasicMaterial({
+      color:cols[i%cols.length],
+      wireframe:Math.random()>0.35,
+      opacity:0.05+Math.random()*0.09,transparent:true
+    });
+    const mesh=new THREE.Mesh(g,m);
+    mesh.position.set((Math.random()-.5)*70,(Math.random()-.5)*70,(Math.random()-.5)*25);
+    mesh.rotation.set(Math.random()*6,Math.random()*6,Math.random()*6);
+    mesh.userData={rx:(Math.random()-.5)*0.01,ry:(Math.random()-.5)*0.01,dx:(Math.random()-.5)*0.008,dy:(Math.random()-.5)*0.008};
+    scene.add(mesh);meshes.push(mesh);
+  }
+
+  let sy=0;
+  window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight);});
+  window.addEventListener('scroll',()=>sy=scrollY);
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    cam.position.y=-sy*0.003;
+    meshes.forEach(m=>{
+      m.rotation.x+=m.userData.rx;m.rotation.y+=m.userData.ry;
+      m.position.x+=m.userData.dx;m.position.y+=m.userData.dy;
+      if(m.position.x>40)m.position.x=-40;if(m.position.x<-40)m.position.x=40;
+      if(m.position.y>40)m.position.y=-40;if(m.position.y<-40)m.position.y=40;
+    });
+    R.render(scene,cam);
+  })();
+})();
+
+// ── HERO SCENE ──
+(function(){
+  const canvas=document.getElementById('hero-canvas');
+  if(!canvas)return;
+  const R=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  R.setPixelRatio(Math.min(devicePixelRatio,2));
+  function resize(){R.setSize(canvas.parentElement.offsetWidth,canvas.parentElement.offsetHeight);}
+  resize();window.addEventListener('resize',resize);
+  const scene=new THREE.Scene();
+  const w=canvas.parentElement.offsetWidth,h=canvas.parentElement.offsetHeight;
+  const cam=new THREE.PerspectiveCamera(70,w/h,0.1,200);cam.position.z=18;
+
+  const light1=new THREE.PointLight(0xe2231a,2,40);light1.position.set(-8,5,5);scene.add(light1);
+  const light2=new THREE.PointLight(0x0055a5,2,40);light2.position.set(8,-5,5);scene.add(light2);
+  const light3=new THREE.PointLight(0xffd700,1.5,30);light3.position.set(0,8,-5);scene.add(light3);
+  scene.add(new THREE.AmbientLight(0xffffff,0.2));
+
+  const objs=[];
+  const shapes=[
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.OctahedronGeometry(0.7),
+    new THREE.TetrahedronGeometry(0.8),
+    new THREE.IcosahedronGeometry(0.6),
+    new THREE.CylinderGeometry(0.4,0.4,1,6)
+  ];
+  const cols=[0xe2231a,0x0055a5,0xffd700,0x00b14f,0xff6b00,0x7b2fbe,0x00c8e0];
+
+  for(let i=0;i<35;i++){
+    const geo=shapes[i%shapes.length];
+    const s=0.4+Math.random()*1.4;
+    const mat=new THREE.MeshPhongMaterial({
+      color:cols[i%cols.length],
+      shininess:120,
+      opacity:0.25+Math.random()*0.5,transparent:true,
+      wireframe:Math.random()>0.6
+    });
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.scale.setScalar(s);
+    const r=4+Math.random()*9;
+    const a=Math.random()*Math.PI*2;
+    const el=(Math.random()-.5)*Math.PI;
+    mesh.position.set(Math.cos(a)*Math.cos(el)*r,Math.sin(el)*r*0.8,Math.sin(a)*Math.cos(el)*r-5);
+    mesh.userData={
+      rx:(Math.random()-.5)*0.025,ry:(Math.random()-.5)*0.025,
+      orbitR:r,orbitA:a,orbitS:(Math.random()-.5)*0.006
+    };
+    scene.add(mesh);objs.push(mesh);
+  }
+
+  let mx=0,my=0;
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2;});
+
+  let t=0;
+  (function loop(){
+    requestAnimationFrame(loop);t+=0.008;
+    cam.position.x+=(mx*2-cam.position.x)*0.03;
+    cam.position.y+=(-my*1.5-cam.position.y)*0.03;
+    cam.lookAt(0,0,0);
+    objs.forEach((m,i)=>{
+      m.rotation.x+=m.userData.rx;m.rotation.y+=m.userData.ry;
+      m.userData.orbitA+=m.userData.orbitS;
+      const r=m.userData.orbitR;
+      const a=m.userData.orbitA;
+      m.position.x=Math.cos(a+t*0.1)*r;
+      m.position.z=Math.sin(a+t*0.1)*r-5;
+      m.position.y=Math.sin(t*0.3+i*0.5)*2;
+    });
+    light1.position.x=Math.sin(t)*10;light1.position.z=Math.cos(t)*10;
+    light2.position.x=Math.cos(t*0.7)*10;light2.position.z=Math.sin(t*0.7)*10;
+    R.render(scene,cam);
+  })();
+})();
+
+// ── INLINE SECTION SCENES ──
+function makeScene(id,colorSet,shapeType){
+  const canvas=document.getElementById(id);
+  if(!canvas)return;
+  const R=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  R.setPixelRatio(Math.min(devicePixelRatio,2));
+  R.setSize(canvas.offsetWidth,canvas.offsetHeight||280);
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(60,canvas.offsetWidth/(canvas.offsetHeight||280),0.1,100);
+  cam.position.z=12;
+
+  colorSet.forEach(c=>{const l=new THREE.PointLight(c,1.5,25);l.position.set((Math.random()-.5)*10,(Math.random()-.5)*10,5);scene.add(l);});
+  scene.add(new THREE.AmbientLight(0xffffff,0.15));
+
+  const objs=[];
+  for(let i=0;i<20;i++){
+    let geo;
+    if(shapeType===0)geo=new THREE.BoxGeometry(1,1,1);
+    else if(shapeType===1)geo=new THREE.OctahedronGeometry(0.7);
+    else if(shapeType===2)geo=new THREE.IcosahedronGeometry(0.7);
+    else if(shapeType===3)geo=new THREE.TorusGeometry(0.5,0.2,8,16);
+    else geo=new THREE.CylinderGeometry(0.3,0.5,1,8);
+
+    const s=0.3+Math.random()*1.2;
+    const c=colorSet[i%colorSet.length];
+    const mat=new THREE.MeshPhongMaterial({color:c,shininess:100,opacity:0.4+Math.random()*0.5,transparent:true,wireframe:Math.random()>0.5});
+    const m=new THREE.Mesh(geo,mat);
+    m.scale.setScalar(s);
+    const r=2+Math.random()*5;
+    const a=Math.random()*Math.PI*2;
+    m.position.set(Math.cos(a)*r,(Math.random()-.5)*3,Math.sin(a)*r-2);
+    m.userData={rx:(Math.random()-.5)*0.03,ry:(Math.random()-.5)*0.03,r,a,s:(Math.random()-.5)*0.01};
+    scene.add(m);objs.push(m);
+  }
+
+  let t=0,visible=false;
+  const vobs=new IntersectionObserver(e=>{visible=e[0].isIntersecting;},{threshold:0.1});
+  vobs.observe(canvas);
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(!visible)return;
+    t+=0.01;
+    objs.forEach((m,i)=>{
+      m.rotation.x+=m.userData.rx;m.rotation.y+=m.userData.ry;
+      m.userData.a+=m.userData.s;
+      m.position.x=Math.cos(m.userData.a+t*0.05)*m.userData.r;
+      m.position.y=Math.sin(t*0.4+i)*1.5;
+      m.position.z=Math.sin(m.userData.a+t*0.05)*m.userData.r-2;
+    });
+    R.render(scene,cam);
+  })();
+}
+
+makeScene('scene1',[0xe2231a,0xffd700,0x0055a5],0);
+makeScene('scene2',[0x00b14f,0x00c8e0,0xffd700],2);
+makeScene('scene3',[0xff6b00,0xff4f9b,0x7b2fbe],1);
+makeScene('scene4',[0x0055a5,0x7b2fbe,0x00c8e0],3);
+makeScene('scene5',[0xe2231a,0xff6b00,0xffd700],4);
+
+// ── FLOATING PARTICLES ──
+const pcols=['#e2231a','#0055a5','#ffd700','#00b14f','#ff6b00','#7b2fbe','#00c8e0','#ff4f9b'];
+for(let i=0;i<30;i++){
+  const el=document.createElement('div');
+  el.className='particle';
+  const s=4+Math.random()*8;
+  el.style.cssText=`width:${s}px;height:${s}px;background:${pcols[i%pcols.length]};left:${Math.random()*100}vw;animation-duration:${12+Math.random()*18}s;animation-delay:-${Math.random()*20}s;border-radius:${Math.random()>0.5?'2px':'50%'};`;
+  document.body.appendChild(el);
+}
+</script>
+</body>
+</html>      
