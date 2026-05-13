@@ -1,0 +1,3257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Longshot Features — 1984 | Noir Comics</title>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Special+Elite&family=Cinzel:wght@400;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+        html,
+        body {
+            width: 100%;
+            overflow-x: hidden;
+            background: #000;
+            color: #e8e0ce;
+            font-family: 'Courier Prime', monospace;
+            cursor: crosshair;
+            scroll-behavior: smooth
+        }
+
+        #grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.45;
+            mix-blend-mode: screen
+        }
+        #scan {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9001;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.18) 2px, rgba(0, 0, 0, 0.18) 4px)
+        }
+        #vig {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9002;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.97) 100%)
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 3rem;
+            border-bottom: 2px solid rgba(232, 224, 206, 0.1);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            transition: background 0.4s
+        }
+        header.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom-color: rgba(232, 224, 206, 0.2)
+        }
+        .logo {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 3px
+        }
+        .logo-main {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.7rem;
+            color: #e8e0ce;
+            letter-spacing: 0.02em;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(255, 255, 200, 0.08);
+            transition: text-shadow 0.5s
+        }
+        .logo:hover .logo-main {
+            text-shadow: 0 0 35px rgba(255, 255, 200, 0.25)
+        }
+        .logo-sub {
+            font-family: 'Cinzel', serif;
+            font-size: 0.4rem;
+            letter-spacing: 0.55em;
+            color: rgba(232, 224, 206, 0.4);
+            text-transform: uppercase
+        }
+        nav {
+            display: flex;
+            gap: 2.5rem
+        }
+        nav a {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.45);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #e8e0ce;
+            transition: width 0.3s
+        }
+        nav a:hover {
+            color: #e8e0ce
+        }
+        nav a:hover::after {
+            width: 100%
+        }
+
+        #three-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden
+        }
+        #threeCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100% !important;
+            height: 100% !important;
+            display: block
+        }
+
+        .caption-box {
+            position: absolute;
+            z-index: 50;
+            background: #e8e0ce;
+            border: 3px solid #000;
+            padding: 0.6rem 0.9rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.4;
+            max-width: 240px;
+            box-shadow: 5px 5px 0 #000;
+            text-transform: uppercase;
+            letter-spacing: 0.04em
+        }
+        .caption-box::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid #000
+        }
+        #cap1 {
+            top: 130px;
+            left: 40px;
+            animation: capFlicker 6s ease-in-out infinite
+        }
+        #cap2 {
+            top: 230px;
+            left: 40px;
+            animation: capFlicker 6s ease-in-out 0.5s infinite;
+            display: none
+        }
+
+        .hero-title-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 4rem 4rem 3rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.98) 70%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem
+        }
+        .hero-title-overlay h1 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(5rem, 13vw, 11rem);
+            color: #e8e0ce;
+            line-height: 0.9;
+            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.9), 0 0 60px rgba(200, 180, 140, 0.2)
+        }
+        .hero-byline {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.55em;
+            color: rgba(232, 224, 206, 0.4);
+            text-transform: uppercase
+        }
+        .hero-scroll {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 3rem;
+            z-index: 50;
+            font-family: 'Cinzel', serif;
+            font-size: 0.45rem;
+            letter-spacing: 0.4em;
+            color: rgba(232, 224, 206, 0.3);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: scrollPulse 3s ease-in-out infinite
+        }
+        .hero-scroll::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: rgba(232, 224, 206, 0.2);
+            animation: scrollLine 2s ease-in-out infinite
+        }
+
+        @keyframes scrollPulse {
+            0%,
+            100% {
+                opacity: 0.3
+            }
+            50% {
+                opacity: 0.7
+            }
+        }
+        @keyframes scrollLine {
+            0%,
+            100% {
+                width: 40px
+            }
+            50% {
+                width: 70px
+            }
+        }
+
+        .marquee-bar {
+            overflow: hidden;
+            border-top: 2px solid rgba(232, 224, 206, 0.15);
+            border-bottom: 2px solid rgba(232, 224, 206, 0.15);
+            padding: 0.65rem 0;
+            background: #000;
+            position: relative;
+            z-index: 20
+        }
+        .marquee-track {
+            display: flex;
+            animation: marquee 40s linear infinite;
+            width: max-content;
+            white-space: nowrap
+        }
+        .m-item {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.35);
+            padding: 0 2rem
+        }
+        .m-sep {
+            color: rgba(232, 224, 206, 0.15);
+            padding: 0 0.5rem;
+            font-size: 0.8rem
+        }
+
+        .panels-section {
+            padding: 6rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto
+        }
+        .panels-header {
+            text-align: center;
+            margin-bottom: 4rem
+        }
+        .panels-header h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            color: #e8e0ce;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 40px rgba(200, 180, 140, 0.15)
+        }
+        .panels-header p {
+            font-family: 'Courier Prime', monospace;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: rgba(232, 224, 206, 0.4)
+        }
+
+        .comic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 4px
+        }
+        .comic-panel {
+            position: relative;
+            overflow: hidden;
+            background: #0a0a08;
+            border: 3px solid #1a1a16;
+            cursor: crosshair;
+            transition: border-color 0.4s, box-shadow 0.4s
+        }
+        .comic-panel:hover {
+            border-color: rgba(232, 224, 206, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 60px rgba(0, 0, 0, 0.4)
+        }
+        .comic-panel.wide {
+            grid-column: span 2
+        }
+        .comic-panel.tall {
+            grid-row: span 2
+        }
+        .comic-panel.full {
+            grid-column: span 3
+        }
+        .panel-canvas-wrap {
+            width: 100%;
+            aspect-ratio: unset
+        }
+        .panel-canvas-wrap canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+        .comic-caption {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #e8e0ce;
+            border: 2px solid #000;
+            padding: 5px 10px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.3;
+            max-width: 200px;
+            box-shadow: 2px 2px 0 #000;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.02em
+        }
+        .panel-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+            font-family: 'Cinzel', serif;
+            font-size: 0.48rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.5)
+        }
+
+        /* SVG Illustration Section */
+        .illustration-section {
+            padding: 5rem 3rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+            border-top: 1px solid rgba(232, 224, 206, 0.06);
+            border-bottom: 1px solid rgba(232, 224, 206, 0.06)
+        }
+        .illustration-section h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            color: #e8e0ce;
+            margin-bottom: 0.5rem
+        }
+        .illustration-section .subtitle {
+            font-family: 'Courier Prime', monospace;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: rgba(232, 224, 206, 0.35);
+            margin-bottom: 3rem
+        }
+        .svg-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            align-items: start
+        }
+        .svg-card {
+            background: #0a0a08;
+            border: 2px solid #1a1a16;
+            padding: 1rem;
+            transition: all 0.4s;
+            cursor: crosshair
+        }
+        .svg-card:hover {
+            border-color: rgba(232, 224, 206, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7)
+        }
+        .svg-card svg {
+            width: 100%;
+            height: auto;
+            display: block
+        }
+        .svg-card .card-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.45rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.4);
+            margin-top: 0.8rem;
+            text-align: center
+        }
+
+        .telescreen-section {
+            padding: 7rem 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(232, 224, 206, 0.08);
+            border-bottom: 1px solid rgba(232, 224, 206, 0.08);
+            position: relative;
+            overflow: hidden
+        }
+        .telescreen-section h2 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            color: #e8e0ce;
+            margin-bottom: 0.5rem
+        }
+        .telescreen-section p {
+            font-family: 'Courier Prime', monospace;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: rgba(232, 224, 206, 0.4);
+            margin-bottom: 2.5rem
+        }
+        #tsWrap {
+            position: relative;
+            width: min(800px, 92vw);
+            margin: 0 auto
+        }
+        #tsCanvas {
+            width: 100%;
+            display: block;
+            border: 3px solid #1a1a16;
+            box-shadow: 0 0 0 8px #000, 0 0 0 10px #1a1a16
+        }
+        .ts-scanlines {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.2) 3px, rgba(0, 0, 0, 0.2) 4px);
+            pointer-events: none
+        }
+        .ts-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.25);
+            margin-top: 1rem
+        }
+
+        .manifesto {
+            padding: 9rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden
+        }
+        .manifesto-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 25vw;
+            color: rgba(232, 224, 206, 0.018);
+            pointer-events: none;
+            user-select: none;
+            line-height: 1;
+            white-space: nowrap
+        }
+        .manifesto blockquote {
+            font-family: 'Special Elite', monospace;
+            font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+            color: #e8e0ce;
+            max-width: 760px;
+            margin: 0 auto 2rem;
+            line-height: 1.75;
+            position: relative;
+            z-index: 1
+        }
+        .manifesto-source {
+            font-family: 'Cinzel', serif;
+            font-size: 0.5rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.3)
+        }
+        .big-quote {
+            font-family: 'Courier Prime', monospace;
+            font-size: 6rem;
+            color: rgba(232, 224, 206, 0.1);
+            line-height: 0.5;
+            display: block;
+            margin-bottom: 1rem
+        }
+
+        /* Noir Poster Strip */
+        .poster-strip {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(232, 224, 206, 0.08);
+            border-bottom: 1px solid rgba(232, 224, 206, 0.08);
+            scrollbar-width: none;
+            -ms-overflow-style: none
+        }
+        .poster-strip::-webkit-scrollbar {
+            display: none
+        }
+        .poster-item {
+            flex: 0 0 auto;
+            width: 300px;
+            padding: 0 0.5rem;
+            transition: transform 0.4s
+        }
+        .poster-item:hover {
+            transform: scale(1.03)
+        }
+        .poster-item svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 2px solid #1a1a16
+        }
+
+        footer {
+            border-top: 2px solid rgba(232, 224, 206, 0.12);
+            padding: 5rem 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3rem;
+            max-width: 1300px;
+            margin: 0 auto
+        }
+        .f-logo {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 2.2rem;
+            color: #e8e0ce;
+            display: block;
+            text-decoration: none;
+            margin-bottom: 0.6rem
+        }
+        .f-tag {
+            font-family: 'Courier Prime', monospace;
+            font-style: italic;
+            font-size: 0.8rem;
+            color: rgba(232, 224, 206, 0.35);
+            line-height: 1.7
+        }
+        .f-head {
+            font-family: 'Cinzel', serif;
+            font-size: 0.48rem;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.4);
+            margin-bottom: 1.2rem
+        }
+        .f-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem
+        }
+        .f-list a {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.3);
+            text-decoration: none;
+            transition: color 0.3s
+        }
+        .f-list a:hover {
+            color: #e8e0ce
+        }
+        .f-contact p {
+            font-family: 'Courier Prime', monospace;
+            font-style: italic;
+            font-size: 0.82rem;
+            color: rgba(232, 224, 206, 0.3);
+            line-height: 2
+        }
+        .f-bottom {
+            border-top: 1px solid rgba(232, 224, 206, 0.07);
+            padding: 1.8rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto
+        }
+        .f-copy {
+            font-family: 'Cinzel', serif;
+            font-size: 0.42rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(232, 224, 206, 0.2)
+        }
+        .f-rune {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.1rem;
+            color: rgba(232, 224, 206, 0.15)
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0)
+            }
+            to {
+                transform: translateX(-50%)
+            }
+        }
+        @keyframes capFlicker {
+            0%,
+            100% {
+                opacity: 1
+            }
+            50% {
+                opacity: 0.82
+            }
+            55% {
+                opacity: 1
+            }
+            70% {
+                opacity: 0.88
+            }
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.9s, transform 0.9s
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: none
+        }
+
+        @media(max-width:768px) {
+            header {
+                padding: 1rem 1.5rem
+            }
+            nav {
+                gap: 1.2rem
+            }
+            .comic-grid {
+                grid-template-columns: 1fr 1fr
+            }
+            .comic-panel.wide {
+                grid-column: span 2
+            }
+            .comic-panel.full {
+                grid-column: span 2
+            }
+            footer {
+                grid-template-columns: 1fr;
+                padding: 3rem 1.5rem
+            }
+            .f-bottom {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center
+            }
+            .hero-title-overlay {
+                padding: 2rem 1.5rem 2rem
+            }
+            .caption-box {
+                font-size: 0.7rem;
+                max-width: 180px;
+                padding: 0.4rem 0.6rem
+            }
+            #cap1 {
+                top: 100px;
+                left: 15px
+            }
+            .svg-gallery {
+                grid-template-columns: 1fr
+            }
+            .poster-item {
+                width: 220px
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========== SPIDER-NOIR THEME – UNIQUE ANIMATIONS ========== */
+.smn-noir-zone {
+  max-width: 1300px;
+  margin: 4rem auto;
+  padding: 1rem 2rem;
+  background: radial-gradient(ellipse at 20% 30%, #0a0a08, #000);
+  border-top: 1px solid rgba(200, 180, 140, 0.2);
+  border-bottom: 1px solid rgba(200, 180, 140, 0.2);
+}
+
+/* ROOFTOP CANVAS */
+.smn-rooftop {
+  margin-bottom: 4rem;
+  position: relative;
+}
+.smn-roof-silhouette canvas {
+  display: block;
+  width: 100%;
+  border: 2px solid #1f1f18;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+}
+.smn-caption {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 0.8rem;
+  color: rgba(232,224,206,0.5);
+  letter-spacing: 0.2em;
+}
+
+/* CAROUSEL */
+.smn-carousel-section {
+  margin: 5rem 0;
+}
+.smn-carousel-title {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: 1.8rem;
+  text-align: center;
+  color: #e8e0ce;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px #5a4e3a;
+}
+.smn-carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+}
+.smn-carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 2rem;
+  padding: 1rem 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #6a5a3a #1a1a12;
+  width: 80%;
+}
+.smn-carousel-track::-webkit-scrollbar {
+  height: 4px;
+}
+.smn-carousel-track::-webkit-scrollbar-track {
+  background: #1a1a12;
+}
+.smn-carousel-track::-webkit-scrollbar-thumb {
+  background: #6a5a3a;
+}
+.smn-carousel-card {
+  flex: 0 0 220px;
+  text-align: center;
+  background: #070605;
+  border: 2px solid #2e2a20;
+  padding: 1.5rem 0.5rem;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.smn-carousel-card:hover {
+  transform: scale(1.02);
+  border-color: #b8a880;
+}
+.smn-character {
+  width: 140px;
+  height: 200px;
+  margin: 0 auto;
+  position: relative;
+  background: #0a0a08;
+  border-radius: 30% 30% 20% 20%;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 12px rgba(0,0,0,0.3);
+  animation: smnIdleSway 3s ease-in-out infinite;
+}
+.smn-eye-glow {
+  position: absolute;
+  top: 60px;
+  left: 35%;
+  width: 14px;
+  height: 14px;
+  background: #dcd0a0;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #ffd966;
+  animation: smnGlowPulse 2s infinite;
+}
+.smn-eye-glow.smn-red {
+  background: #b33;
+  box-shadow: 0 0 12px #f66;
+}
+.smn-coat {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background: #1a1812;
+  clip-path: polygon(0% 20%, 100% 20%, 90% 100%, 10% 100%);
+  animation: smnCoatFlap 2.5s infinite alternate;
+}
+.smn-longcoat {
+  clip-path: polygon(0% 10%, 100% 10%, 95% 100%, 5% 100%);
+}
+.smn-hat {
+  position: absolute;
+  top: 10px;
+  left: 20%;
+  width: 60%;
+  height: 30px;
+  background: #0f0e0a;
+  border-radius: 50% 50% 10% 10%;
+  transform: rotate(-5deg);
+}
+.smn-fedora {
+  top: 5px;
+  height: 35px;
+  border-radius: 60% 60% 5% 5%;
+}
+.smn-mask {
+  position: absolute;
+  top: 45px;
+  left: 30%;
+  width: 40px;
+  height: 40px;
+  background: #222;
+  border-radius: 50%;
+  border: 2px solid #8a7a5a;
+}
+.smn-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  margin-top: 1rem;
+  color: #e8e0ce;
+}
+.smn-tagline {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.55rem;
+  color: rgba(232,224,206,0.5);
+}
+
+/* CAROUSEL BUTTONS */
+.smn-carousel-btn {
+  background: #000;
+  border: 2px solid #7a6a4a;
+  color: #e8e0ce;
+  font-size: 1.5rem;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.smn-carousel-btn:hover {
+  background: #2a2418;
+  transform: scale(1.1);
+}
+
+/* INTERROGATION PANEL */
+.smn-interrogation {
+  background: #050403;
+  border-left: 8px solid #b33;
+  margin: 3rem 0;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0,0,0,0.9);
+}
+.smn-interro-header {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: #a88e6a;
+  margin-bottom: 1rem;
+}
+.smn-interro-light {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 20px;
+  height: 100%;
+  background: radial-gradient(ellipse, rgba(255,240,150,0.15) 0%, transparent 70%);
+  animation: smnSwingLight 4s infinite alternate;
+}
+.smn-interro-figure {
+  width: 80px;
+  height: 140px;
+  background: #0d0c08;
+  margin: 1rem auto;
+  border-radius: 20% 20% 5% 5%;
+  position: relative;
+  box-shadow: 0 0 0 3px #2a241a;
+}
+.smn-interro-figure::before {
+  content: "?";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: #c99e6e;
+  font-family: monospace;
+  text-shadow: 0 0 8px #ffa;
+}
+.smn-interro-question {
+  font-family: 'Special Elite', monospace;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #e8debc;
+}
+.smn-interro-answers {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.smn-answer-btn {
+  background: #11100c;
+  border: 1px solid #6a5a3a;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  padding: 0.5rem 1rem;
+  color: #dac88a;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.smn-answer-btn:hover {
+  background: #2a2418;
+  border-color: #f0d88a;
+  transform: scale(0.96);
+}
+.smn-interro-feedback {
+  margin-top: 1rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #c2ad7a;
+  min-height: 50px;
+}
+
+/* TYPEWRITER */
+.smn-typewriter {
+  background: #030201;
+  border: 2px solid #4a3e2c;
+  padding: 1.5rem;
+  margin: 3rem 0;
+}
+.smn-typewriter-header {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  border-bottom: 1px dashed #5a4e3a;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: #b89a6a;
+}
+.smn-typewriter-text {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #ddccaa;
+  white-space: pre-wrap;
+  min-height: 100px;
+}
+.smn-cursor {
+  animation: smnBlinkCursor 1s step-end infinite;
+}
+.smn-noir-button {
+  background: #000;
+  border: 2px solid #7a6a4a;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  padding: 0.6rem 1.2rem;
+  color: #e8e0ce;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+.smn-noir-button:hover {
+  background: #1e1c14;
+}
+
+/* SMOKE EFFECTS */
+.smn-smoke-container {
+  position: relative;
+  height: 40px;
+  overflow: hidden;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.smn-smoke {
+  position: absolute;
+  bottom: 0;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #4a4434, transparent);
+  border-radius: 50%;
+  filter: blur(12px);
+  animation: smnRiseSmoke 8s infinite ease-out;
+}
+.smn-smoke1 { left: 10%; animation-delay: 0s; width: 80px; height: 80px; }
+.smn-smoke2 { left: 40%; animation-delay: 1.5s; width: 50px; height: 50px; }
+.smn-smoke3 { left: 75%; animation-delay: 3s; width: 70px; height: 70px; }
+
+/* KEYFRAMES (unique) */
+@keyframes smnIdleSway {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(1deg); }
+}
+@keyframes smnCoatFlap {
+  0% { clip-path: polygon(0% 20%, 100% 20%, 95% 100%, 5% 100%); }
+  100% { clip-path: polygon(0% 18%, 100% 22%, 93% 100%, 7% 100%); }
+}
+@keyframes smnGlowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 18px #ffcc88; }
+}
+@keyframes smnSwingLight {
+  0% { left: 15%; opacity: 0.4; }
+  100% { left: 65%; opacity: 0.9; }
+}
+@keyframes smnBlinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes smnRiseSmoke {
+  0% { transform: translateY(0) scale(1); opacity: 0.4; }
+  100% { transform: translateY(-120px) scale(2.5); opacity: 0; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 780px) {
+  .smn-carousel-track { width: 70%; }
+  .smn-carousel-card { flex: 0 0 180px; }
+  .smn-interro-question { font-size: 1rem; }
+  .smn-typewriter-text { font-size: 0.7rem; }
+}
+@media (max-width: 550px) {
+  .smn-noir-zone { padding: 0.5rem; }
+  .smn-carousel-btn { display: none; }
+  .smn-carousel-track { width: 100%; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========== DEEP NOIR MODULES – UNIQUE STYLES ========== */
+.noir2-deepzone {
+  max-width: 1300px;
+  margin: 5rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+/* TIMELINE */
+.noir2-timeline {
+  background: #030302;
+  border: 2px solid #2c2820;
+  padding: 1.5rem;
+}
+.noir2-tl-header {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: #b8a56a;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.noir2-tl-stats {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.65rem;
+  margin-top: 1rem;
+  color: #a09070;
+  text-align: center;
+  min-height: 40px;
+}
+
+/* GENERATOR */
+.noir2-generator {
+  background: #0a0806;
+  border-left: 6px solid #9c3;
+  padding: 2rem;
+  text-align: center;
+}
+.noir2-gen-screen {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.65rem;
+  background: #000;
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  color: #6f6a4a;
+  letter-spacing: 0.2em;
+}
+.noir2-gen-output {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: 2.2rem;
+  margin: 1.5rem 0;
+  color: #e8d8b0;
+  text-shadow: 0 0 5px #5a4a2a;
+  animation: noir2Glitch 0.2s ease-in-out infinite alternate;
+  transition: all 0.1s;
+}
+.noir2-gen-btn {
+  background: #000;
+  border: 2px solid #6a5a3a;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  padding: 0.6rem 1.5rem;
+  color: #e8e0ce;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.noir2-gen-btn:hover {
+  background: #2a2418;
+  transform: scale(0.96);
+  border-color: #b88;
+}
+.noir2-gen-stamp {
+  margin-top: 1rem;
+  font-size: 0.5rem;
+  font-family: monospace;
+  color: #5a4e3a;
+}
+
+/* SOUNDSCAPE VISUALIZER */
+.noir2-soundscape {
+  background: #010101;
+  padding: 1rem;
+}
+.noir2-sound-header {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.6rem;
+  color: #7a6a4a;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.noir2-sound-label {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.55rem;
+  text-align: center;
+  margin-top: 0.8rem;
+  color: #4a4230;
+}
+
+/* SHREDDER */
+.noir2-shredder {
+  border: 2px dashed #5a4e3a;
+  padding: 1.5rem;
+  background: #050504;
+}
+.noir2-shredder-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.noir2-shredder-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.noir2-doc {
+  background: #1e1c14;
+  padding: 1rem;
+  width: 160px;
+  text-align: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.8rem;
+  border: 1px solid #7a6a4a;
+  cursor: grab;
+  transition: 0.1s;
+  user-select: none;
+}
+.noir2-doc:active {
+  cursor: grabbing;
+  opacity: 0.5;
+}
+.noir2-slot {
+  width: 180px;
+  height: 100px;
+  background: #0f0e0a;
+  border: 2px solid #3a3224;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #6a5a3a;
+  font-family: monospace;
+  transition: all 0.2s;
+}
+.noir2-slot.drag-over {
+  border-color: #c88;
+  background: #2a2018;
+  transform: scale(1.02);
+}
+.noir2-shredder-msg {
+  margin-top: 1rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  text-align: center;
+  color: #b99e6a;
+  min-height: 2rem;
+}
+
+/* DYSTOPIAN CLOCK */
+.noir2-clock {
+  background: radial-gradient(circle at 30% 20%, #141210, #000);
+  border: 1px solid #4a4230;
+  padding: 1.5rem;
+  text-align: center;
+}
+.noir2-clock-face {
+  position: relative;
+  display: inline-block;
+  padding: 1rem 2rem;
+  border: 2px solid #8a7a5a;
+  border-radius: 4px;
+}
+.noir2-clock-eye {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  background: #d4c89a;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #ffd;
+  animation: noir2WatchEye 2s infinite;
+}
+.noir2-time {
+  font-family: 'Courier Prime', monospace;
+  font-size: 2.2rem;
+  letter-spacing: 0.2em;
+  color: #e8d8a0;
+}
+.noir2-date {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: #6a5a3a;
+  margin-top: 0.5rem;
+}
+.noir2-clock-caption {
+  margin-top: 0.8rem;
+  font-size: 0.5rem;
+  font-family: monospace;
+  color: #4a4230;
+}
+
+/* KEYFRAMES (unique) */
+@keyframes noir2Glitch {
+  0% { text-shadow: -1px 0 #8a6; transform: skew(0deg); }
+  100% { text-shadow: 1px -1px #a63; transform: skew(0.5deg); }
+}
+@keyframes noir2WatchEye {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); background: #ffecb0; }
+}
+@keyframes noir2ShredFlash {
+  0% { background: #2a1e0e; border-color: #f88; }
+  100% { background: #0f0e0a; border-color: #3a3224; }
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .noir2-shredder-area { flex-direction: column; align-items: center; }
+  .noir2-gen-output { font-size: 1.6rem; }
+  .noir2-time { font-size: 1.4rem; }
+}
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <canvas id="grain" width="400" height="400"></canvas>
+    <div id="scan"></div>
+    <div id="vig"></div>
+
+    <header id="header">
+        <a href="#" class="logo">
+            <span class="logo-main">Longshot</span>
+            <span class="logo-sub">Features · MCMLXXXIV</span>
+        </a>
+        <nav>
+            <a href="#panels">Panels</a>
+            <a href="#illustrations">Illustrations</a>
+            <a href="#telescreen">Telescreen</a>
+            <a href="#manifesto">Manifesto</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section id="three-hero">
+        <canvas id="threeCanvas"></canvas>
+        <div class="caption-box" id="cap1">THE CITY WAS A<br>TOUGH PLACE TO<br>KEEP SECRETS.</div>
+        <div class="caption-box" id="cap2">HE KNEW THEY<br>WERE WATCHING.<br>HE DIDN'T CARE.</div>
+        <div class="hero-title-overlay">
+            <p class="hero-byline">Longshot Features · A Documentary in Ink</p>
+            <h1>1984</h1>
+            <p class="hero-byline">War is Peace · Freedom is Slavery · Ignorance is Strength</p>
+        </div>
+        <div class="hero-scroll">Descend into the city</div>
+    </section>
+
+    <div class="marquee-bar">
+        <div class="marquee-track" id="mtrack">
+            <span class="m-item">Big Brother is Watching</span><span class="m-sep">⌇</span>
+            <span class="m-item">Ministry of Truth</span><span class="m-sep">⌇</span>
+            <span class="m-item">Thought Police</span><span class="m-sep">⌇</span>
+            <span class="m-item">Doublethink</span><span class="m-sep">⌇</span>
+            <span class="m-item">Room 101</span><span class="m-sep">⌇</span>
+            <span class="m-item">AI Surveillance</span><span class="m-sep">⌇</span>
+            <span class="m-item">Newspeak</span><span class="m-sep">⌇</span>
+            <span class="m-item">Memory Hole</span><span class="m-sep">⌇</span>
+            <span class="m-item">Two Minutes Hate</span><span class="m-sep">⌇</span>
+            <span class="m-item">Unperson</span><span class="m-sep">⌇</span>
+            <span class="m-item">Big Brother is Watching</span><span class="m-sep">⌇</span>
+            <span class="m-item">Ministry of Truth</span><span class="m-sep">⌇</span>
+            <span class="m-item">Thought Police</span><span class="m-sep">⌇</span>
+            <span class="m-item">Doublethink</span><span class="m-sep">⌇</span>
+            <span class="m-item">Room 101</span><span class="m-sep">⌇</span>
+            <span class="m-item">AI Surveillance</span><span class="m-sep">⌇</span>
+            <span class="m-item">Newspeak</span><span class="m-sep">⌇</span>
+            <span class="m-item">Memory Hole</span><span class="m-sep">⌇</span>
+            <span class="m-item">Two Minutes Hate</span><span class="m-sep">⌇</span>
+            <span class="m-item">Unperson</span><span class="m-sep">⌇</span>
+        </div>
+    </div>
+
+    <!-- COMIC PANELS -->
+    <section class="panels-section" id="panels">
+        <div class="panels-header reveal">
+            <h2>Dispatches from Oceania</h2>
+            <p>Ink and shadow — documentary evidence from inside the machine</p>
+        </div>
+        <div class="comic-grid" id="comicGrid">
+            <div class="comic-panel tall" style="min-height:420px">
+                <div class="comic-caption">HE STOOD IN THE<br>RAIN. WATCHING.<br>ALWAYS WATCHING.</div>
+                <canvas id="p1" width="400" height="600"></canvas>
+                <div class="panel-label">Winston Smith · Ministry of Truth</div>
+            </div>
+            <div class="comic-panel" style="min-height:200px">
+                <div class="comic-caption">THE EYE NEVER<br>CLOSES.</div>
+                <canvas id="p2" width="400" height="300"></canvas>
+                <div class="panel-label">Big Brother · Always Watching</div>
+            </div>
+            <div class="comic-panel" style="min-height:200px">
+                <div class="comic-caption">MACHINES THAT<br>THINK. MACHINES<br>THAT JUDGE.</div>
+                <canvas id="p3" width="400" height="300"></canvas>
+                <div class="panel-label">The AI · Neural Surveillance</div>
+            </div>
+            <div class="comic-panel wide" style="min-height:260px">
+                <div class="comic-caption">THE PROLES MARCHED.<br>THEY ALWAYS MARCHED.</div>
+                <canvas id="p4" width="800" height="380"></canvas>
+                <div class="panel-label">The Proles · 85% of Oceania</div>
+            </div>
+            <div class="comic-panel" style="min-height:260px">
+                <div class="comic-caption">ROOM 101 WAITED<br>FOR EVERYONE.</div>
+                <canvas id="p5" width="400" height="380"></canvas>
+                <div class="panel-label">Thought Police · Room 101</div>
+            </div>
+            <div class="comic-panel full" style="min-height:300px">
+                <div class="comic-caption" style="max-width:340px">THE CITY WAS A MACHINE. THE MACHINE WAS THE CITY. AND SOMEWHERE INSIDE IT, A MAN TRIED TO REMEMBER WHAT TRUTH WAS.</div>
+                <canvas id="p6" width="1200" height="400"></canvas>
+                <div class="panel-label">Airstrip One · London · 1984</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SVG NOIR ILLUSTRATIONS SECTION -->
+    <section class="illustration-section" id="illustrations">
+        <h2 class="reveal">Noir Visions</h2>
+        <p class="subtitle reveal">Each frame a story — each shadow a secret</p>
+        <div class="svg-gallery">
+            <!-- Card 1: Detective in Rain -->
+            <div class="svg-card reveal">
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="lamp1" cx="70%" cy="15%"><stop offset="0%" stop-color="#fffde0" stop-opacity="0.9"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+                        <pattern id="hatch1" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#1a1a14" stroke-width="0.8"/></pattern>
+                    </defs>
+                    <rect width="400" height="500" fill="#050508"/>
+                    <!-- Buildings -->
+                    <rect x="0" y="80" width="90" height="300" fill="#0d0d10" stroke="#000" stroke-width="2"/>
+                    <rect x="85" y="120" width="70" height="260" fill="#0a0a0d" stroke="#000" stroke-width="2"/>
+                    <rect x="150" y="60" width="110" height="320" fill="#0f0f13" stroke="#000" stroke-width="2"/>
+                    <rect x="255" y="100" width="80" height="280" fill="#0c0c0f" stroke="#000" stroke-width="2"/>
+                    <rect x="330" y="140" width="70" height="240" fill="#0b0b0e" stroke="#000" stroke-width="2"/>
+                    <!-- Windows -->
+                    <g fill="#d4c890" opacity="0.6">
+                        <rect x="160" y="75" width="14" height="18"/><rect x="185" y="75" width="14" height="18"/><rect x="210" y="75" width="14" height="18"/>
+                        <rect x="160" y="105" width="14" height="18"/><rect x="210" y="105" width="14" height="18"/>
+                        <rect x="160" y="135" width="14" height="18"/><rect x="185" y="135" width="14" height="18"/><rect x="210" y="135" width="14" height="18"/>
+                        <rect x="265" y="115" width="12" height="16"/><rect x="285" y="115" width="12" height="16"/>
+                        <rect x="265" y="145" width="12" height="16"/><rect x="285" y="145" width="12" height="16"/>
+                    </g>
+                    <!-- Street -->
+                    <rect x="0" y="380" width="400" height="120" fill="#0e0e0c"/>
+                    <rect x="0" y="380" width="400" height="120" fill="url(#hatch1)" opacity="0.4"/>
+                    <!-- Puddle -->
+                    <ellipse cx="280" cy="430" rx="70" ry="20" fill="#141410" stroke="#1a1a14" stroke-width="1.5"/>
+                    <text x="280" y="435" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.3)" transform="scale(1,-0.5) translate(0,-870)">MINITRUE</text>
+                    <!-- Lamp post -->
+                    <line x1="280" y1="0" x2="280" y2="380" stroke="#1a1a16" stroke-width="7"/>
+                    <line x1="280" y1="30" x2="330" y2="30" stroke="#1a1a16" stroke-width="6"/>
+                    <circle cx="330" cy="30" r="14" fill="#fffde0" opacity="0.9"/>
+                    <circle cx="330" cy="30" r="50" fill="url(#lamp1)"/>
+                    <!-- Rain -->
+                    <g stroke="rgba(210,205,180,0.45)" stroke-width="1.2">
+                        <line x1="50" y1="20" x2="35" y2="60"/><line x1="120" y1="10" x2="105" y2="50"/><line x1="200" y1="40" x2="185" y2="80"/>
+                        <line x1="310" y1="5" x2="295" y2="45"/><line x1="370" y1="30" x2="355" y2="70"/>
+                        <line x1="80" y1="100" x2="65" y2="140"/><line x1="170" y1="90" x2="155" y2="130"/><line x1="340" y1="110" x2="325" y2="150"/>
+                        <line x1="30" y1="180" x2="15" y2="220"/><line x1="140" y1="200" x2="125" y2="240"/><line x1="250" y1="170" x2="235" y2="210"/>
+                        <line x1="360" y1="220" x2="345" y2="260"/><line x1="60" y1="280" x2="45" y2="320"/><line x1="190" y1="300" x2="175" y2="340"/>
+                    </g>
+                    <!-- Detective Figure -->
+                    <g transform="translate(140,310)">
+                        <!-- Shadow oval -->
+                        <ellipse cx="0" cy="100" rx="40" ry="10" fill="rgba(0,0,0,0.6)"/>
+                        <!-- Legs -->
+                        <rect x="-12" y="60" width="22" height="50" fill="#0d0d0a" rx="2"/>
+                        <rect x="4" y="60" width="22" height="50" fill="#0d0d0a" rx="2"/>
+                        <rect x="-16" y="108" width="24" height="10" fill="#050504" rx="2"/>
+                        <rect x="2" y="108" width="24" height="10" fill="#050504" rx="2"/>
+                        <!-- Coat body -->
+                        <path d="M-30,-55 L30,-55 L38,70 L-38,70 Z" fill="#11110d" stroke="#000" stroke-width="2.5"/>
+                        <!-- Coat hatching -->
+                        <path d="M-28,-50 L28,-50 L35,65 L-35,65 Z" fill="url(#hatch1)" opacity="0.5"/>
+                        <!-- Belt -->
+                        <rect x="-30" y="8" width="60" height="6" fill="#080806" stroke="#000" stroke-width="1.5"/>
+                        <!-- Collar -->
+                        <path d="M-14,-55 L0,-40 L14,-55" fill="none" stroke="#000" stroke-width="2"/>
+                        <!-- Neck -->
+                        <rect x="-6" y="-78" width="12" height="24" fill="#1a1812"/>
+                        <!-- Head -->
+                        <ellipse cx="0" cy="-82" rx="18" ry="22" fill="#1c1a14" stroke="#000" stroke-width="2"/>
+                        <ellipse cx="4" cy="-82" rx="14" ry="20" fill="#0a0a06" stroke="none"/>
+                        <!-- Jaw -->
+                        <path d="M-14,-74 L14,-74 L10,-58 L-10,-58 Z" fill="#14120e"/>
+                        <!-- Eye glint -->
+                        <rect x="-10" y="-85" width="7" height="3" fill="rgba(220,215,190,0.6)" rx="1"/>
+                        <!-- Hat -->
+                        <ellipse cx="0" cy="-103" rx="34" ry="7" fill="#0a0907" stroke="#000" stroke-width="2.5"/>
+                        <path d="M-20,-103 L-18,-128 Q0,-134 18,-128 L20,-103 Z" fill="#0d0c09" stroke="#000" stroke-width="2.5"/>
+                        <rect x="-18" y="-110" width="36" height="5" fill="#050504"/>
+                        <!-- Arms -->
+                        <line x1="-26" y1="-20" x2="-34" y2="40" stroke="#0a0a06" stroke-width="10" stroke-linecap="round"/>
+                        <line x1="26" y1="-20" x2="30" y2="45" stroke="#0a0a06" stroke-width="10" stroke-linecap="round"/>
+                    </g>
+                    <!-- Border -->
+                    <rect width="400" height="500" fill="none" stroke="#000" stroke-width="5"/>
+                </svg>
+                <div class="card-label">Detective in the Rain · Airstrip One</div>
+            </div>
+
+            <!-- Card 2: Big Brother Eye -->
+            <div class="svg-card reveal">
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="eyeGlow" cx="50%" cy="50%"><stop offset="0%" stop-color="#2a2820"/><stop offset="100%" stop-color="#050505"/></radialGradient>
+                    </defs>
+                    <rect width="400" height="500" fill="#040404"/>
+                    <!-- Radiating hatch lines -->
+                    <g stroke="rgba(40,38,30,0.7)" stroke-width="1" transform="translate(200,230)">
+                        <line x1="0" y1="0" x2="200" y2="-180"/><line x1="0" y1="0" x2="250" y2="-120"/>
+                        <line x1="0" y1="0" x2="280" y2="-40"/><line x1="0" y1="0" x2="280" y2="50"/>
+                        <line x1="0" y1="0" x2="250" y2="130"/><line x1="0" y1="0" x2="200" y2="190"/>
+                        <line x1="0" y1="0" x2="140" y2="230"/><line x1="0" y1="0" x2="40" y2="260"/>
+                        <line x1="0" y1="0" x2="-60" y2="250"/><line x1="0" y1="0" x2="-140" y2="210"/>
+                        <line x1="0" y1="0" x2="-200" y2="150"/><line x1="0" y1="0" x2="-240" y2="70"/>
+                        <line x1="0" y1="0" x2="-260" y2="-20"/><line x1="0" y1="0" x2="-240" y2="-100"/>
+                        <line x1="0" y1="0" x2="-200" y2="-160"/><line x1="0" y1="0" x2="-140" y2="-210"/>
+                    </g>
+                    <!-- Eye -->
+                    <ellipse cx="200" cy="230" rx="130" ry="100" fill="#d8d0b5" stroke="#000" stroke-width="5"/>
+                    <!-- Iris -->
+                    <circle cx="210" cy="225" r="65" fill="url(#eyeGlow)" stroke="#000" stroke-width="3"/>
+                    <!-- Iris radial lines -->
+                    <g stroke="rgba(0,0,0,0.7)" stroke-width="1.5" transform="translate(210,225)">
+                        <line x1="0" y1="0" x2="55" y2="-20"/><line x1="0" y1="0" x2="50" y2="30"/>
+                        <line x1="0" y1="0" x2="20" y2="55"/><line x1="0" y1="0" x2="-20" y2="55"/>
+                        <line x1="0" y1="0" x2="-50" y2="30"/><line x1="0" y1="0" x2="-55" y2="-20"/>
+                        <line x1="0" y1="0" x2="-30" y2="-50"/><line x1="0" y1="0" x2="20" y2="-55"/>
+                    </g>
+                    <!-- Pupil -->
+                    <circle cx="210" cy="225" r="28" fill="#000"/>
+                    <!-- Glint -->
+                    <circle cx="198" cy="218" r="7" fill="rgba(255,255,240,0.8)"/>
+                    <!-- Eyelids -->
+                    <path d="M70,230 Q200,120 330,230" fill="none" stroke="#000" stroke-width="7"/>
+                    <path d="M70,230 Q200,340 330,230" fill="none" stroke="#000" stroke-width="7"/>
+                    <!-- Lashes -->
+                    <g stroke="#000" stroke-width="2.5">
+                        <line x1="85" y1="187" x2="78" y2="165"/><line x1="115" y1="164" x2="108" y2="140"/>
+                        <line x1="155" y1="148" x2="150" y2="122"/><line x1="200" y1="142" x2="198" y2="115"/>
+                        <line x1="245" y1="148" x2="250" y2="122"/><line x1="285" y1="164" x2="292" y2="140"/>
+                        <line x1="315" y1="187" x2="322" y2="165"/>
+                    </g>
+                    <text x="200" y="400" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="rgba(200,190,150,0.5)" letter-spacing="8">BIG BROTHER</text>
+                    <text x="200" y="435" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="13" fill="rgba(200,190,150,0.3)">IS WATCHING YOU</text>
+                    <rect width="400" height="500" fill="none" stroke="#000" stroke-width="5"/>
+                </svg>
+                <div class="card-label">Big Brother · The Eye That Never Sleeps</div>
+            </div>
+
+            <!-- Card 3: Room 101 -->
+            <div class="svg-card reveal">
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="spotlight" cx="50%" cy="0%"><stop offset="0%" stop-color="#fffde0" stop-opacity="0.7"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+                    </defs>
+                    <rect width="400" height="500" fill="#020202"/>
+                    <!-- Walls -->
+                    <rect x="0" y="0" width="30" height="500" fill="#151510"/><rect x="370" y="0" width="30" height="500" fill="#151510"/>
+                    <rect x="0" y="350" width="400" height="150" fill="#0f0f0c"/>
+                    <!-- Spotlight -->
+                    <polygon points="200,0 100,500 300,500" fill="url(#spotlight)" opacity="0.5"/>
+                    <!-- Hanging lamp -->
+                    <line x1="200" y1="0" x2="200" y2="60" stroke="#0a0a08" stroke-width="3"/>
+                    <circle cx="200" cy="60" r="15" fill="#fffde0" opacity="0.85"/>
+                    <circle cx="200" cy="60" r="35" fill="rgba(255,252,200,0.15)"/>
+                    <!-- Chair -->
+                    <rect x="155" y="310" width="90" height="12" fill="#1a1a14" stroke="#000" stroke-width="2" rx="2"/>
+                    <line x1="170" y1="322" x2="170" y2="360" stroke="#1a1a14" stroke-width="5"/>
+                    <line x1="230" y1="322" x2="230" y2="360" stroke="#1a1a14" stroke-width="5"/>
+                    <!-- Figure in chair -->
+                    <g transform="translate(200,315)">
+                        <ellipse cx="0" cy="25" rx="28" ry="6" fill="rgba(0,0,0,0.5)"/>
+                        <rect x="-10" y="-5" width="20" height="30" fill="#0e0e0a" rx="2"/>
+                        <ellipse cx="0" cy="-12" rx="14" ry="16" fill="#181610"/>
+                        <rect x="-3" y="-28" width="6" height="18" fill="#1a1812"/>
+                    </g>
+                    <!-- Door -->
+                    <rect x="310" y="150" width="55" height="160" fill="#0d0d0a" stroke="#000" stroke-width="3" rx="2"/>
+                    <text x="337" y="240" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.5)" transform="rotate(-90,337,240)">ROOM 101</text>
+                    <rect width="400" height="500" fill="none" stroke="#000" stroke-width="5"/>
+                </svg>
+                <div class="card-label">Room 101 · Thought Police Headquarters</div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+<!-- ========== DEEPER NOIR – UNIQUE INTERACTIVE MODULES (no repetition) ========== -->
+<div class="noir2-deepzone">
+
+  <!-- 1. THOUGHTCRIME TIMELINE – interactive chart that reacts to mouse -->
+  <div class="noir2-timeline">
+    <div class="noir2-tl-header">⌇ MINITRUE ARCHIVE – THOUGHTCRIME INDEX (1984) ⌇</div>
+    <canvas id="noir2TimelineCanvas" width="800" height="300" style="width:100%; height:auto; background:#020202;"></canvas>
+    <div class="noir2-tl-stats" id="noir2Stats">Hover over peaks → crime details</div>
+  </div>
+
+  <!-- 2. PROPAGANDA GENERATOR (MiniTru machine) – random slogans + glitch -->
+  <div class="noir2-generator">
+    <div class="noir2-gen-screen" id="noir2GenScreen">⏣ INGSOC PROPAGANDA TERMINAL ⏣</div>
+    <div class="noir2-gen-output" id="noir2GenOutput">WAR IS PEACE</div>
+    <button id="noir2GenBtn" class="noir2-gen-btn">⌧ GENERATE NEW TRUTH ⌧</button>
+    <div class="noir2-gen-stamp">APPROVED BY MINISTRY OF TRUTH</div>
+  </div>
+
+  <!-- 3. NOIR SOUNDSCAPE VISUALIZER (purely visual – no actual audio) -->
+  <div class="noir2-soundscape">
+    <div class="noir2-sound-header">◉ TELESCREEN FREQUENCY ANALYZER ◉</div>
+    <canvas id="noir2AudioVis" width="600" height="150" style="width:100%; background:#000; border:1px solid #3a3428;"></canvas>
+    <div class="noir2-sound-label">“THE AIR HUMS WITH SURVEILLANCE”</div>
+  </div>
+
+  <!-- 4. MEMORY HOLE SHREDDER – interactive drag/drop (virtual) -->
+  <div class="noir2-shredder">
+    <div class="noir2-shredder-title">⌇ MEMORY HOLE SHREDDER ⌇</div>
+    <div class="noir2-shredder-area">
+      <div class="noir2-doc" id="noir2Doc" draggable="true">📄 GOLDSTEIN’S CHAPTER 3</div>
+      <div class="noir2-slot" id="noir2Slot"></div>
+    </div>
+    <div id="noir2ShredderMsg" class="noir2-shredder-msg"></div>
+  </div>
+
+  <!-- 5. DYSTOPIAN CLOCK – always watching, always ticking -->
+  <div class="noir2-clock">
+    <div class="noir2-clock-face">
+      <div class="noir2-clock-eye"></div>
+      <div class="noir2-time" id="noir2TimeDisplay">--:--:--</div>
+      <div class="noir2-date" id="noir2DateDisplay"></div>
+    </div>
+    <div class="noir2-clock-caption">BIG BROTHER’S TIME – ALL TIME IS NOW</div>
+  </div>
+
+</div>
+
+
+
+
+
+
+<!-- ========== SPIDER-MAN NOIR STYLE – ANIMATED CHARACTERS & SCENES ========== -->
+<div class="smn-noir-zone">
+
+  <!-- ROOFTOP SILHOUETTE SCENE (animated city + noir figure) -->
+  <div class="smn-rooftop">
+    <div class="smn-roof-silhouette">
+      <canvas id="smnRooftopCanvas" width="800" height="400" style="width:100%; height:auto; background:#000;"></canvas>
+    </div>
+    <div class="smn-caption">“THE CITY NEVER SLEEPS. NEITHER DO I.”</div>
+  </div>
+
+  <!-- CHARACTER CAROUSEL (Spider-Noir style rotation) -->
+  <div class="smn-carousel-section">
+    <div class="smn-carousel-title">⌇ SHADOWS OF THE CITY ⌇</div>
+    <div class="smn-carousel-container">
+      <button class="smn-carousel-btn smn-prev">◀</button>
+      <div class="smn-carousel-track">
+        <div class="smn-carousel-card">
+          <div class="smn-character" data-id="0">
+            <div class="smn-eye-glow"></div>
+            <div class="smn-coat"></div>
+            <div class="smn-hat"></div>
+            <div class="smn-shadow"></div>
+          </div>
+          <div class="smn-name">THE SPECTRE</div>
+          <div class="smn-tagline">“Justice is a bullet.”</div>
+        </div>
+        <div class="smn-carousel-card">
+          <div class="smn-character" data-id="1">
+            <div class="smn-eye-glow"></div>
+            <div class="smn-coat smn-longcoat"></div>
+            <div class="smn-hat smn-fedora"></div>
+          </div>
+          <div class="smn-name">FELINE NOIR</div>
+          <div class="smn-tagline">“The dark always wins.”</div>
+        </div>
+        <div class="smn-carousel-card">
+          <div class="smn-character" data-id="2">
+            <div class="smn-eye-glow smn-red"></div>
+            <div class="smn-coat smn-ripped"></div>
+            <div class="smn-mask"></div>
+          </div>
+          <div class="smn-name">THE UNSEEN</div>
+          <div class="smn-tagline">“You can’t hide from yourself.”</div>
+        </div>
+      </div>
+      <button class="smn-carousel-btn smn-next">▶</button>
+    </div>
+  </div>
+
+  <!-- INTERROGATION PANEL (click & answer) -->
+  <div class="smn-interrogation">
+    <div class="smn-interro-header">⌇ THOUGHT POLICE INTERROGATION ⌇</div>
+    <div class="smn-interro-content">
+      <div class="smn-interro-light"></div>
+      <div class="smn-interro-figure"></div>
+      <div class="smn-interro-question" id="smnQuestion">“Do you love Big Brother?”</div>
+      <div class="smn-interro-answers">
+        <button class="smn-answer-btn" data-ans="yes">YES</button>
+        <button class="smn-answer-btn" data-ans="no">NO</button>
+        <button class="smn-answer-btn" data-ans="doubt">DOUBLETHINK</button>
+      </div>
+      <div class="smn-interro-feedback" id="smnFeedback"></div>
+    </div>
+  </div>
+
+  <!-- TYPEWRITER CONFESSION LOG -->
+  <div class="smn-typewriter">
+    <div class="smn-typewriter-header">📜 CONFESSION LOG – WINSTON’S DIARY (FRAGMENT)</div>
+    <div class="smn-typewriter-text" id="smnDiary">
+      <span id="smnTyped"></span><span class="smn-cursor">_</span>
+    </div>
+    <button id="smnRevealBtn" class="smn-noir-button">⏎ REVEAL NEXT LINE ⏎</button>
+  </div>
+
+  <!-- FLOATING NOIR SMOKE PARTICLES (CSS only) -->
+  <div class="smn-smoke-container">
+    <div class="smn-smoke smn-smoke1"></div>
+    <div class="smn-smoke smn-smoke2"></div>
+    <div class="smn-smoke smn-smoke3"></div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- POSTER STRIP -->
+    <div class="poster-strip" id="posters">
+        <!-- Poster 1 -->
+        <div class="poster-item">
+            <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="420" fill="#0a0a08"/>
+                <rect x="10" y="10" width="280" height="400" fill="none" stroke="rgba(200,190,150,0.3)" stroke-width="1"/>
+                <text x="150" y="50" text-anchor="middle" font-family="'UnifrakturMaguntia',cursive" font-size="28" fill="#d4c890">OCEANIA</text>
+                <text x="150" y="75" text-anchor="middle" font-family="'Cinzel',serif" font-size="9" fill="rgba(200,190,150,0.5)" letter-spacing="6">A DOCUMENTARY</text>
+                <circle cx="150" cy="200" r="90" fill="none" stroke="rgba(200,190,150,0.4)" stroke-width="2"/>
+                <circle cx="150" cy="200" r="40" fill="none" stroke="rgba(200,190,150,0.6)" stroke-width="3"/>
+                <circle cx="150" cy="200" r="12" fill="rgba(200,190,150,0.7)"/>
+                <text x="150" y="330" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.5)">WAR IS PEACE</text>
+                <text x="150" y="355" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.5)">FREEDOM IS SLAVERY</text>
+                <text x="150" y="380" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.5)">IGNORANCE IS STRENGTH</text>
+                <text x="150" y="405" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="rgba(200,190,150,0.3)" letter-spacing="4">LONGSHOT FEATURES</text>
+            </svg>
+        </div>
+        <!-- Poster 2 -->
+        <div class="poster-item">
+            <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="420" fill="#060608"/>
+                <g transform="translate(150,180)">
+                    <ellipse cx="0" cy="0" rx="100" ry="70" fill="none" stroke="rgba(200,190,150,0.5)" stroke-width="3"/>
+                    <circle cx="10" cy="-5" r="35" fill="none" stroke="rgba(200,190,150,0.6)" stroke-width="2"/>
+                    <circle cx="10" cy="-5" r="10" fill="rgba(200,190,150,0.7)"/>
+                    <line x1="-25" y1="35" x2="-70" y2="70" stroke="rgba(200,190,150,0.3)" stroke-width="1"/>
+                    <line x1="30" y1="30" x2="75" y2="65" stroke="rgba(200,190,150,0.3)" stroke-width="1"/>
+                </g>
+                <text x="150" y="300" text-anchor="middle" font-family="'UnifrakturMaguntia',cursive" font-size="22" fill="#d4c890">BIG BROTHER</text>
+                <text x="150" y="330" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="10" fill="rgba(200,190,150,0.4)">IS WATCHING YOU</text>
+                <text x="150" y="400" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="rgba(200,190,150,0.25)" letter-spacing="4">MCMLXXXIV</text>
+            </svg>
+        </div>
+        <!-- Poster 3 -->
+        <div class="poster-item">
+            <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="420" fill="#040405"/>
+                <rect x="60" y="60" width="180" height="280" fill="none" stroke="rgba(200,190,150,0.3)" stroke-width="1"/>
+                <line x1="150" y1="60" x2="150" y2="340" stroke="rgba(200,190,150,0.15)" stroke-width="1"/>
+                <line x1="60" y1="200" x2="240" y2="200" stroke="rgba(200,190,150,0.15)" stroke-width="1"/>
+                <circle cx="150" cy="200" r="25" fill="none" stroke="rgba(200,190,150,0.5)" stroke-width="2"/>
+                <circle cx="150" cy="200" r="5" fill="rgba(200,190,150,0.6)"/>
+                <text x="150" y="370" text-anchor="middle" font-family="'Cinzel',serif" font-size="10" fill="rgba(200,190,150,0.4)" letter-spacing="5">TELESCREEN</text>
+                <text x="150" y="395" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="8" fill="rgba(200,190,150,0.3)">ALWAYS TRANSMITTING</text>
+            </svg>
+        </div>
+        <!-- Poster 4 -->
+        <div class="poster-item">
+            <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="420" fill="#08080a"/>
+                <text x="150" y="100" text-anchor="middle" font-family="'UnifrakturMaguntia',cursive" font-size="30" fill="#d4c890">1984</text>
+                <line x1="80" y1="120" x2="220" y2="120" stroke="rgba(200,190,150,0.4)" stroke-width="1"/>
+                <text x="150" y="155" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="rgba(200,190,150,0.35)" letter-spacing="4">A FILM BY LONGSHOT FEATURES</text>
+                <rect x="50" y="190" width="200" height="130" fill="none" stroke="rgba(200,190,150,0.25)" stroke-width="1"/>
+                <text x="150" y="245" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.4)">"THE CITY WAS A</text>
+                <text x="150" y="268" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.4)">TOUGH PLACE TO</text>
+                <text x="150" y="291" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="11" fill="rgba(200,190,150,0.4)">KEEP SECRETS."</text>
+                <text x="150" y="380" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="rgba(200,190,150,0.25)" letter-spacing="5">SAN FRANCISCO · MMXXV</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- TELESCREEN -->
+    <section class="telescreen-section" id="telescreen">
+        <h2 class="reveal">The Telescreen</h2>
+        <p class="reveal">Always transmitting. Always receiving. The eye that never sleeps.</p>
+        <div id="tsWrap" class="reveal">
+            <canvas id="tsCanvas" width="800" height="460"></canvas>
+            <div class="ts-scanlines"></div>
+        </div>
+        <p class="ts-label reveal">OCEANIAN STATE BROADCAST · ALL CHANNELS · CONTINUOUS · APR 4, 1984</p>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" id="manifesto">
+        <div class="manifesto-watermark">𝕷</div>
+        <span class="big-quote reveal">"</span>
+        <blockquote class="reveal">
+            We make films about the cities already watching you. About the machines that learned your face before you gave it a name. About the humans who still write by hand in burning rooms — and why that act alone is an act of war.
+        </blockquote>
+        <p class="manifesto-source reveal">Longshot Features · San Francisco · MCMLXXXIV</p>
+    </section>
+
+    <footer id="contact">
+        <div>
+            <a href="#" class="f-logo">Longshot</a>
+            <p class="f-tag">Arthouse Cult × Production Company<br>San Francisco, California<br>Founded MMXIX</p>
+        </div>
+        <div>
+            <p class="f-head">Navigation</p>
+            <ul class="f-list">
+                <li><a href="#panels">Panels</a></li>
+                <li><a href="#illustrations">Illustrations</a></li>
+                <li><a href="#telescreen">Telescreen</a></li>
+                <li><a href="#manifesto">Manifesto</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="f-contact">
+            <p class="f-head">Contact</p>
+            <p>info@longshotfeatures.com<br>press@longshotfeatures.com<br>San Francisco, CA</p>
+        </div>
+    </footer>
+    <div class="f-bottom">
+        <span class="f-copy">© MMXXV Longshot Features · All Rights Reserved</span>
+        <span class="f-rune">⌇ 𝕷 ⌇</span>
+        <span class="f-copy">War is Peace · Freedom is Slavery · Ignorance is Strength</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+
+    <script>
+        // ══════════════════════════════════════════════════════════════════
+        // NOIR INK 2D ENGINE — enhanced comic panel renderer
+        // ══════════════════════════════════════════════════════════════════
+
+        function inkLine(ctx, x1, y1, x2, y2, w, alpha) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x1 + (Math.random() - 0.5) * 0.8, y1 + (Math.random() - 0.5) * 0.8);
+            const steps = Math.max(3, Math.floor(Math.hypot(x2 - x1, y2 - y1) / 15));
+            for (let i = 1; i <= steps; i++) {
+                const t = i / steps;
+                ctx.lineTo(x1 + (x2 - x1) * t + (Math.random() - 0.5) * 0.6, y1 + (y2 - y1) * t + (Math.random() -
+                    0.5) * 0.6);
+            }
+            ctx.strokeStyle = `rgba(232,224,206,${alpha})`;
+            ctx.lineWidth = w;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function inkFill(ctx, x, y, w, h, lightness) {
+            ctx.fillStyle = `rgb(${lightness},${lightness},${lightness})`;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function hatch(ctx, x, y, w, h, spacing, angle, alpha, lw = 0.7) {
+            ctx.save();
+            ctx.translate(x + w / 2, y + h / 2);
+            ctx.rotate(angle * Math.PI / 180);
+            ctx.beginPath();
+            const d = Math.sqrt(w * w + h * h);
+            for (let i = -d; i < d; i += spacing) {
+                ctx.moveTo(i, -d);
+                ctx.lineTo(i, d);
+            }
+            ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
+            ctx.lineWidth = lw;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function boldOutline(ctx, x, y, w, h, lw = 3) {
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = lw;
+            ctx.strokeRect(x + lw / 2, y + lw / 2, w - lw, h - lw);
+        }
+
+        function drawRain(ctx, W, H, density, t, alpha = 0.55) {
+            ctx.save();
+            ctx.strokeStyle = `rgba(232,224,206,${alpha})`;
+            ctx.lineWidth = 1;
+            for (let i = 0; i < density; i++) {
+                const seed = i * 137.508;
+                const x = ((seed * 9301 + 49297) % W + (t * 180 + i * 30) % W) % W;
+                const y = ((seed * 6971 + 31337) % H + (t * 500 + i * 70) % H) % H;
+                const len = 18 + (seed % 20);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - len * 0.25, y + len);
+                ctx.globalAlpha = 0.3 + (seed % 10) * 0.04;
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawLightCone(ctx, cx, cy, radius, angle, spread, intensity) {
+            ctx.save();
+            const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+            grd.addColorStop(0, `rgba(255,255,240,${intensity})`);
+            grd.addColorStop(0.4, `rgba(200,190,160,${intensity*0.4})`);
+            grd.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, radius, angle - spread / 2, angle + spread / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalAlpha = 0.08;
+            for (let r = 20; r < radius; r += 12) {
+                const arcW = r * spread;
+                for (let li = 0; li < arcW / 10; li++) {
+                    const a = angle - spread / 2 + (li / Math.max(1, (arcW / 10))) * spread;
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + Math.cos(a) * (r + 10), cy + Math.sin(a) * (r + 10));
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+        }
+
+        function drawStreet(ctx, x, y, w, h) {
+            inkFill(ctx, x, y, w, h, 18);
+            const stoneW = 28,
+                stoneH = 18;
+            for (let row = 0; row < Math.ceil(h / stoneH); row++) {
+                for (let col = 0; col < Math.ceil(w / stoneW); col++) {
+                    const ox = (row % 2 === 0 ? 0 : stoneW / 2);
+                    const sx = x + col * stoneW + ox,
+                        sy = y + row * stoneH;
+                    const jx = (Math.random() - 0.5) * 3,
+                        jy = (Math.random() - 0.5) * 2;
+                    ctx.strokeStyle = 'rgba(50,48,42,0.9)';
+                    ctx.lineWidth = 1.2;
+                    ctx.strokeRect(sx + jx, sy + jy, stoneW - 2 + jx, stoneH - 2 + jy);
+                }
+            }
+        }
+
+        function drawPuddle(ctx, cx, cy, rx, ry, text, fontSize) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+            grd.addColorStop(0, 'rgba(60,58,52,0.7)');
+            grd.addColorStop(1, 'rgba(20,18,14,0.9)');
+            ctx.fillStyle = grd;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(232,224,206,0.12)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            if (text) {
+                ctx.save();
+                ctx.translate(cx, cy + ry * 0.1);
+                ctx.scale(1, -0.55);
+                ctx.font = `bold ${fontSize}px 'Special Elite', monospace`;
+                ctx.fillStyle = 'rgba(180,170,140,0.35)';
+                ctx.textAlign = 'center';
+                ctx.fillText(text, 0, 0);
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+
+        // Enhanced detective figure — more detailed noir silhouette
+        function drawDetective(ctx, x, y, scale, facing, t) {
+            const s = scale;
+            const f = facing;
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Ground shadow
+            ctx.save();
+            ctx.scale(1, 0.15);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 38 * s, 65 * s, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.65)';
+            ctx.fill();
+            ctx.restore();
+
+            // Legs
+            inkFill(ctx, -15 * s, 60 * s, 30 * s, 85 * s, 20);
+            hatch(ctx, -15 * s, 60 * s, 30 * s, 85 * s, 5, 45 + Math.sin(t) * 3, 0.55, 1);
+            boldOutline(ctx, -15 * s, 60 * s, 30 * s, 85 * s, 2 * s);
+
+            // Shoes
+            ctx.fillStyle = '#050504';
+            ctx.fillRect(-19 * s, 143 * s, 24 * s, 11 * s);
+            ctx.fillRect(4 * s, 143 * s, 24 * s, 11 * s);
+            boldOutline(ctx, -19 * s, 143 * s, 24 * s, 11 * s, 1.5 * s);
+            boldOutline(ctx, 4 * s, 143 * s, 24 * s, 11 * s, 1.5 * s);
+
+            // Trenchcoat
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(-30 * s, -55 * s);
+            ctx.lineTo(30 * s, -55 * s);
+            ctx.lineTo(38 * s, 85 * s);
+            ctx.lineTo(-38 * s, 85 * s);
+            ctx.closePath();
+            ctx.fillStyle = '#11110d';
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2.8 * s;
+            ctx.stroke();
+            ctx.restore();
+
+            // Coat lapels
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.6 * s;
+            ctx.beginPath();
+            ctx.moveTo(-9 * s, -55 * s);
+            ctx.lineTo(-6 * s, 12 * s);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(9 * s, -55 * s);
+            ctx.lineTo(6 * s, 12 * s);
+            ctx.stroke();
+
+            // Belt
+            inkFill(ctx, -30 * s, 12 * s, 60 * s, 8 * s, 8);
+            boldOutline(ctx, -30 * s, 12 * s, 60 * s, 8 * s, 1.6 * s);
+
+            // Cross-hatch coat
+            hatch(ctx, -30 * s, -55 * s, 60 * s, 140 * s, 6, 55, 0.4, 0.8 * s);
+
+            // Collar + neck
+            ctx.fillStyle = '#0a0a07';
+            ctx.beginPath();
+            ctx.moveTo(-13 * s, -55 * s);
+            ctx.lineTo(0, -40 * s);
+            ctx.lineTo(13 * s, -55 * s);
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.6 * s;
+            ctx.stroke();
+
+            // Tie
+            ctx.beginPath();
+            ctx.moveTo(-3.5 * s, -46 * s);
+            ctx.lineTo(0, 6 * s);
+            ctx.lineTo(3.5 * s, -46 * s);
+            ctx.fillStyle = '#040403';
+            ctx.fill();
+
+            // Neck
+            ctx.fillStyle = '#252218';
+            ctx.fillRect(-5.5 * s, -75 * s, 11 * s, 24 * s);
+
+            // Head
+            ctx.save();
+            ctx.translate(0, -80 * s);
+            ctx.rotate(0.13 * f);
+            ctx.fillStyle = '#1a1812';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 18 * s, 22 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#060604';
+            ctx.beginPath();
+            ctx.ellipse(f * 5 * s, 0, 15 * s, 21 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#12100c';
+            ctx.beginPath();
+            ctx.moveTo(-15 * s, 5 * s);
+            ctx.lineTo(15 * s, 5 * s);
+            ctx.lineTo(11 * s, 20 * s);
+            ctx.lineTo(-11 * s, 20 * s);
+            ctx.closePath();
+            ctx.fill();
+            hatch(ctx, -11 * s, 5 * s, 22 * s, 15 * s, 3, 80, 0.5, 0.5 * s);
+            ctx.fillStyle = 'rgba(220,215,190,0.65)';
+            ctx.fillRect(-11 * s * f + f * 2 * s, -3 * s, 7 * s, 3 * s);
+            ctx.restore();
+
+            // Hat
+            ctx.save();
+            ctx.translate(0, -100 * s);
+            ctx.fillStyle = '#080706';
+            ctx.beginPath();
+            ctx.ellipse(0, 7 * s, 34 * s, 7 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2.2 * s;
+            ctx.stroke();
+            ctx.fillStyle = '#0b0a08';
+            ctx.beginPath();
+            ctx.moveTo(-19 * s, 7 * s);
+            ctx.lineTo(-17 * s, -22 * s);
+            ctx.bezierCurveTo(-17 * s, -28 * s, 17 * s, -28 * s, 17 * s, -22 * s);
+            ctx.lineTo(19 * s, 7 * s);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2.6 * s;
+            ctx.stroke();
+            ctx.fillStyle = '#040403';
+            ctx.fillRect(-17 * s, -1 * s, 34 * s, 5 * s);
+            hatch(ctx, -17 * s, -20 * s, 34 * s, 26 * s, 5, 0, 0.5, 0.6 * s);
+            ctx.restore();
+
+            // Arms
+            ctx.strokeStyle = '#060604';
+            ctx.lineWidth = 10 * s;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-26 * s, -18 * s);
+            ctx.lineTo(-32 * s, 32 * s);
+            ctx.lineTo(-30 * s, 68 * s);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(26 * s, -18 * s);
+            ctx.lineTo(30 * s + Math.sin(t) * 2.5 * s, 38 * s);
+            ctx.lineTo(28 * s, 68 * s);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawBuilding(ctx, x, y, w, h, floors, winCols, lightness = 18) {
+            inkFill(ctx, x, y, w, h, lightness);
+            hatch(ctx, x, y, w, h, 9, 90, 0.4, 0.7);
+            boldOutline(ctx, x, y, w, h, 2.5);
+            const floorH = h / floors,
+                winW = (w - 20) / (winCols + 1),
+                winH = floorH * 0.45;
+            for (let f = 0; f < floors; f++) {
+                for (let c = 0; c < winCols; c++) {
+                    const wx = x + 10 + (c + 0.5) * winW + c * 5,
+                        wy = y + f * floorH + floorH * 0.2;
+                    const lit = Math.random() > 0.45;
+                    inkFill(ctx, wx, wy, winW - 4, winH, lit ? 80 : 12);
+                    if (lit) hatch(ctx, wx, wy, winW - 4, winH, 4, 45, 0.3, 0.5);
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeRect(wx, wy, winW - 4, winH);
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // THREE.JS NOIR CITY — Enhanced Hero Scene
+        // ═══════════════════════════════════════════
+
+        const heroEl = document.getElementById('threeCanvas');
+        const renderer = new THREE.WebGLRenderer({ canvas: heroEl, antialias: false, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setClearColor(0x000000, 1);
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+        scene.fog = new THREE.FogExp2(0x000000, 0.032);
+
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 200);
+        camera.position.set(0, 4, 14);
+        camera.lookAt(0, 2, 0);
+
+        function darkMat(v = 0.04) { return new THREE.MeshToonMaterial({ color: new THREE.Color(v, v, v) }); }
+
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.MeshToonMaterial({ color: 0x050504 }));
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.01;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        function makeBuilding(x, z, w, d, h, brightness) {
+            const grp = new THREE.Group();
+            const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshToonMaterial({ color: new THREE
+                    .Color(brightness, brightness, brightness) }));
+            body.position.y = h / 2;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            grp.add(body);
+            const winRows = Math.floor(h / 1.2);
+            const winCols = Math.floor(w / 0.9);
+            for (let r = 0; r < winRows; r++) {
+                for (let c = 0; c < winCols; c++) {
+                    if (Math.random() < 0.4) {
+                        const lit = Math.random() > 0.3;
+                        const win = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.5), new THREE.MeshBasicMaterial({
+                            color: lit ? 0xd4c890 : 0x050504 }));
+                        win.position.set(-w / 2 + 0.55 + c * 0.85, 0.8 + r * 1.15, d / 2 + 0.01);
+                        grp.add(win);
+                    }
+                }
+            }
+            grp.position.set(x, 0, z);
+            scene.add(grp);
+            return grp;
+        }
+
+        makeBuilding(-14, -8, 5, 4, 18, 0.06);
+        makeBuilding(-9, -10, 4, 3, 12, 0.05);
+        makeBuilding(-18, -6, 6, 5, 22, 0.04);
+        makeBuilding(-22, -4, 4, 4, 14, 0.07);
+        makeBuilding(14, -8, 5, 4, 20, 0.055);
+        makeBuilding(10, -10, 4, 3, 14, 0.06);
+        makeBuilding(19, -6, 6, 5, 24, 0.04);
+        makeBuilding(23, -4, 4, 4, 16, 0.065);
+        makeBuilding(-6, -20, 8, 6, 30, 0.03);
+        makeBuilding(6, -20, 8, 6, 28, 0.03);
+        makeBuilding(0, -22, 10, 6, 35, 0.025);
+        makeBuilding(-14, -22, 6, 4, 25, 0.025);
+        makeBuilding(14, -22, 6, 4, 26, 0.025);
+
+        const lampPost = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 7, 6), darkMat(0.3));
+        lampPost.position.set(-3.5, 3.5, 4);
+        lampPost.castShadow = true;
+        scene.add(lampPost);
+
+        const lampArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.5, 6), darkMat(0.3));
+        lampArm.rotation.z = Math.PI / 2;
+        lampArm.position.set(-2.85, 7.1, 4);
+        scene.add(lampArm);
+
+        const lampGlobe = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfff8d0 }));
+        lampGlobe.position.set(-2.1, 7.1, 4);
+        scene.add(lampGlobe);
+
+        const lampLight = new THREE.SpotLight(0xfff5cc, 8, 18, Math.PI / 4, 0.4, 1.5);
+        lampLight.position.set(-2.1, 7.1, 4);
+        lampLight.target.position.set(-2.1, 0, 4);
+        lampLight.castShadow = true;
+        lampLight.shadow.mapSize.set(512, 512);
+        scene.add(lampLight);
+        scene.add(lampLight.target);
+
+        const signBack = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 0.15), new THREE.MeshToonMaterial({ color: 0x0a0a08 }));
+        signBack.position.set(7, 7, -5);
+        scene.add(signBack);
+
+        const detectiveGroup = new THREE.Group();
+        const coat = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.65, 3.2, 8), darkMat(0.08));
+        coat.position.y = 1.6;
+        detectiveGroup.add(coat);
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.75, 0.65), new THREE.MeshToonMaterial({ color: 0x1a1810 }));
+        head.position.y = 3.45;
+        detectiveGroup.add(head);
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.08, 12), darkMat(0.06));
+        brim.position.y = 3.85;
+        detectiveGroup.add(brim);
+        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.7, 8), darkMat(0.05));
+        crown.position.y = 4.25;
+        detectiveGroup.add(crown);
+        const legGeo = new THREE.BoxGeometry(0.28, 1.4, 0.28);
+        const legL = new THREE.Mesh(legGeo, darkMat(0.07));
+        legL.position.set(-0.2, 0.7, 0);
+        detectiveGroup.add(legL);
+        const legR = new THREE.Mesh(legGeo, darkMat(0.07));
+        legR.position.set(0.2, 0.7, 0);
+        detectiveGroup.add(legR);
+        detectiveGroup.position.set(-2.1, 0, 4.5);
+        detectiveGroup.castShadow = true;
+        scene.add(detectiveGroup);
+
+        const puddle = new THREE.Mesh(new THREE.CircleGeometry(2.8, 16), new THREE.MeshToonMaterial({ color: 0x0c0c0a,
+            side: THREE.DoubleSide }));
+        puddle.rotation.x = -Math.PI / 2;
+        puddle.position.set(2, 0.02, 5.5);
+        scene.add(puddle);
+
+        const ambient = new THREE.AmbientLight(0x111110, 0.4);
+        scene.add(ambient);
+        const fillLight = new THREE.DirectionalLight(0x1a1a22, 0.3);
+        fillLight.position.set(5, 10, 5);
+        scene.add(fillLight);
+        const signLight = new THREE.PointLight(0xddddcc, 1.2, 12);
+        signLight.position.set(7, 7, -3.5);
+        scene.add(signLight);
+
+        const rainCount = 3000;
+        const rainPositions = new Float32Array(rainCount * 3);
+        const rainVelocities = new Float32Array(rainCount);
+        for (let i = 0; i < rainCount; i++) {
+            rainPositions[i * 3] = (Math.random() - 0.5) * 50;
+            rainPositions[i * 3 + 1] = Math.random() * 30;
+            rainPositions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+            rainVelocities[i] = 0.12 + Math.random() * 0.1;
+        }
+        const rainGeo = new THREE.BufferGeometry();
+        rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
+        const rainMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.04, transparent: true, opacity: 0.55 });
+        const rain = new THREE.Points(rainGeo, rainMat);
+        scene.add(rain);
+
+        const tsBoard = new THREE.Mesh(new THREE.BoxGeometry(4.5, 2.8, 0.2), new THREE.MeshBasicMaterial({ color: 0x080808 }));
+        tsBoard.position.set(7, 6, -4.8);
+        scene.add(tsBoard);
+        const tsScreen = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.5), new THREE.MeshBasicMaterial({ color: 0x151510 }));
+        tsScreen.position.set(7, 6, -4.68);
+        scene.add(tsScreen);
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        const grainCanvas = document.getElementById('grain');
+        const grainCtx = grainCanvas.getContext('2d');
+
+        function animateGrain() {
+            const img = grainCtx.createImageData(400, 400);
+            for (let i = 0; i < img.data.length; i += 4) {
+                const v = Math.random() * 50;
+                img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+                img.data[i + 3] = v > 30 ? 60 : 0;
+            }
+            grainCtx.putImageData(img, 0, 0);
+        }
+
+        let heroT = 0;
+        let lastGrain = 0;
+
+        function animateHero(ts) {
+            requestAnimationFrame(animateHero);
+            heroT += 0.012;
+            if (ts - lastGrain > 80) { animateGrain();
+                lastGrain = ts; }
+            const pos = rainGeo.attributes.position;
+            for (let i = 0; i < rainCount; i++) {
+                pos.array[i * 3 + 1] -= rainVelocities[i];
+                pos.array[i * 3] -= rainVelocities[i] * 0.3;
+                if (pos.array[i * 3 + 1] < 0) {
+                    pos.array[i * 3] = (Math.random() - 0.5) * 50;
+                    pos.array[i * 3 + 1] = 28 + Math.random() * 5;
+                    pos.array[i * 3 + 2] = (Math.random() - 0.5) * 40;
+                }
+            }
+            pos.needsUpdate = true;
+            lampLight.intensity = 7.5 + Math.sin(heroT * 4.1) * 0.5 + (Math.random() - 0.5) * 0.3;
+            camera.position.x = Math.sin(heroT * 0.07) * 1.2;
+            camera.position.y = 4 + Math.sin(heroT * 0.05) * 0.4;
+            camera.lookAt(Math.sin(heroT * 0.06) * 0.5, 2.5, 0);
+            detectiveGroup.rotation.y = Math.sin(heroT * 0.15) * 0.04;
+            legL.rotation.x = Math.sin(heroT * 1.5) * 0.03;
+            legR.rotation.x = -Math.sin(heroT * 1.5) * 0.03;
+            signLight.intensity = 1.0 + Math.sin(heroT * 3.7) * 0.3;
+            renderer.render(scene, camera);
+        }
+        requestAnimationFrame(animateHero);
+
+        // ══════════════════════════════════════════════════════════════════
+        // 2D NOIR COMIC PANELS
+        // ══════════════════════════════════════════════════════════════════
+        let panelT = 0;
+
+        const p1 = document.getElementById('p1');
+        const p1c = p1.getContext('2d');
+
+        function drawP1(t) {
+            const W = p1.width,
+                H = p1.height;
+            p1c.fillStyle = '#000';
+            p1c.fillRect(0, 0, W, H);
+            drawBuilding(p1c, 0, 0, 120, H * 0.5, 8, 3, 14);
+            drawBuilding(p1c, 110, 0, 90, H * 0.42, 6, 3, 12);
+            drawBuilding(p1c, 290, 0, 130, H * 0.55, 9, 4, 13);
+            drawStreet(p1c, 0, H * 0.7, W, H * 0.3);
+            drawPuddle(p1c, W * 0.62, H * 0.82, 90, 30, 'MINITRUE', 13);
+            drawLightCone(p1c, W * 0.52, 30, 340, Math.PI / 2, 0.55, 0.65);
+            drawRain(p1c, W, H, 120, t, 0.6);
+            p1c.strokeStyle = '#1a1a14';
+            p1c.lineWidth = 6;
+            p1c.beginPath();
+            p1c.moveTo(W * 0.52, 0);
+            p1c.lineTo(W * 0.52, H * 0.7);
+            p1c.stroke();
+            p1c.strokeStyle = '#1a1a14';
+            p1c.lineWidth = 5;
+            p1c.beginPath();
+            p1c.moveTo(W * 0.52, 30);
+            p1c.lineTo(W * 0.68, 30);
+            p1c.stroke();
+            p1c.fillStyle = '#fffcc0';
+            p1c.beginPath();
+            p1c.arc(W * 0.68, 30, 12, 0, Math.PI * 2);
+            p1c.fill();
+            const glow = p1c.createRadialGradient(W * 0.68, 30, 0, W * 0.68, 30, 60);
+            glow.addColorStop(0, 'rgba(255,252,180,0.4)');
+            glow.addColorStop(1, 'rgba(0,0,0,0)');
+            p1c.fillStyle = glow;
+            p1c.beginPath();
+            p1c.arc(W * 0.68, 30, 60, 0, Math.PI * 2);
+            p1c.fill();
+            drawDetective(p1c, W * 0.25, H * 0.72, 1.1, 1, t);
+            p1c.strokeStyle = '#000';
+            p1c.lineWidth = 5;
+            p1c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        const p2 = document.getElementById('p2');
+        const p2c = p2.getContext('2d');
+
+        function drawP2(t) {
+            const W = p2.width,
+                H = p2.height;
+            p2c.fillStyle = '#060605';
+            p2c.fillRect(0, 0, W, H);
+            p2c.save();
+            p2c.translate(W / 2, H / 2);
+            for (let a = 0; a < Math.PI * 2; a += 0.08) {
+                p2c.beginPath();
+                p2c.moveTo(Math.cos(a) * 30, Math.sin(a) * 20);
+                p2c.lineTo(Math.cos(a) * (W * 0.7), Math.sin(a) * (H * 0.7));
+                p2c.strokeStyle = 'rgba(30,28,22,0.9)';
+                p2c.lineWidth = 1.2;
+                p2c.stroke();
+            }
+            p2c.restore();
+            p2c.save();
+            p2c.translate(W / 2, H / 2);
+            p2c.beginPath();
+            p2c.ellipse(0, 0, W * 0.42, H * 0.33, 0, 0, Math.PI * 2);
+            p2c.fillStyle = '#d8d0b8';
+            p2c.fill();
+            p2c.strokeStyle = '#000';
+            p2c.lineWidth = 5;
+            p2c.stroke();
+            p2c.beginPath();
+            p2c.arc(Math.sin(t * 0.4) * 12, Math.cos(t * 0.3) * 8, H * 0.2, 0, Math.PI * 2);
+            p2c.fillStyle = '#2a2820';
+            p2c.fill();
+            p2c.strokeStyle = '#000';
+            p2c.lineWidth = 3;
+            p2c.stroke();
+            for (let a = 0; a < Math.PI * 2; a += 0.18) {
+                p2c.beginPath();
+                p2c.moveTo(Math.sin(t * 0.4) * 12 + Math.cos(a) * 18, Math.cos(t * 0.3) * 8 + Math.sin(a) * 18);
+                p2c.lineTo(Math.sin(t * 0.4) * 12 + Math.cos(a) * H * 0.18, Math.cos(t * 0.3) * 8 + Math.sin(a) * H * 0.18);
+                p2c.strokeStyle = 'rgba(0,0,0,0.8)';
+                p2c.lineWidth = 1.5;
+                p2c.stroke();
+            }
+            p2c.beginPath();
+            p2c.arc(Math.sin(t * 0.4) * 12, Math.cos(t * 0.3) * 8, H * 0.09, 0, Math.PI * 2);
+            p2c.fillStyle = '#000';
+            p2c.fill();
+            p2c.beginPath();
+            p2c.arc(Math.sin(t * 0.4) * 12 - 8, Math.cos(t * 0.3) * 8 - 6, 6, 0, Math.PI * 2);
+            p2c.fillStyle = 'rgba(255,255,240,0.7)';
+            p2c.fill();
+            p2c.beginPath();
+            p2c.moveTo(-W * 0.42, 0);
+            p2c.quadraticCurveTo(0, -H * 0.4, W * 0.42, 0);
+            p2c.strokeStyle = '#000';
+            p2c.lineWidth = 6;
+            p2c.stroke();
+            p2c.beginPath();
+            p2c.moveTo(-W * 0.42, 0);
+            p2c.quadraticCurveTo(0, H * 0.4, W * 0.42, 0);
+            p2c.strokeStyle = '#000';
+            p2c.lineWidth = 6;
+            p2c.stroke();
+            for (let i = -5; i <= 5; i++) {
+                const lx = i * (W * 0.42 / 5.5);
+                const ly = -Math.sqrt(Math.max(0, (H * 0.33) * (H * 0.33) - (lx * lx * (H * 0.33 * H * 0.33) / (W * 0.42 * W *
+                    0.42))));
+                p2c.beginPath();
+                p2c.moveTo(lx, ly);
+                p2c.lineTo(lx + (Math.random() - 0.5) * 8, ly - 18 - Math.random() * 12);
+                p2c.strokeStyle = '#000';
+                p2c.lineWidth = 2 + Math.random();
+                p2c.stroke();
+            }
+            p2c.restore();
+            p2c.strokeStyle = '#000';
+            p2c.lineWidth = 5;
+            p2c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        const p3 = document.getElementById('p3');
+        const p3c = p3.getContext('2d');
+
+        function drawP3(t) {
+            const W = p3.width,
+                H = p3.height;
+            p3c.fillStyle = '#040403';
+            p3c.fillRect(0, 0, W, H);
+            hatch(p3c, 0, 0, W, H, 15, 45, 0.4, 0.7);
+            const rackW = 90,
+                rackH = 200;
+            for (let ri = 0; ri < 3; ri++) {
+                const rx = 30 + ri * 115,
+                    ry = H / 2 - rackH / 2 + 20;
+                inkFill(p3c, rx, ry, rackW, rackH, 16);
+                boldOutline(p3c, rx, ry, rackW, rackH, 3);
+                for (let r = 0; r < 9; r++) {
+                    const slotY = ry + 8 + r * 21;
+                    const active = Math.sin(t * 2 + ri * 1.3 + r * 0.7) > 0;
+                    inkFill(p3c, rx + 6, slotY, rackW - 12, 15, active ? 55 : 8);
+                    hatch(p3c, rx + 6, slotY, rackW - 12, 15, 4, 0, active ? 0.25 : 0.5, 0.6);
+                    p3c.strokeStyle = '#000';
+                    p3c.lineWidth = 1.5;
+                    p3c.strokeRect(rx + 6, slotY, rackW - 12, 15);
+                    if (active) {
+                        p3c.fillStyle = 'rgba(220,220,180,0.9)';
+                        p3c.fillRect(rx + rackW - 16, slotY + 5, 6, 5);
+                    }
+                }
+            }
+            for (let n = 0; n < 20; n++) {
+                const fromR = Math.floor(Math.random() * 3);
+                const toR = (fromR + 1) % 3;
+                const fx = 30 + fromR * 115 + rackW,
+                    fy = H / 2 - rackH / 2 + 20 + Math.random() * rackH;
+                const tx = 30 + toR * 115,
+                    ty = H / 2 - rackH / 2 + 20 + Math.random() * rackH;
+                inkLine(p3c, fx, fy, tx, ty, 0.8, 0.2);
+            }
+            p3c.strokeStyle = 'rgba(180,170,140,0.12)';
+            p3c.lineWidth = 0.8;
+            for (let ci = 0; ci < 12; ci++) {
+                p3c.beginPath();
+                p3c.moveTo(Math.random() * W, Math.random() * H);
+                p3c.lineTo(Math.random() * W, Math.random() * H);
+                p3c.stroke();
+            }
+            p3c.fillStyle = 'rgba(232,224,206,0.7)';
+            p3c.font = "bold 14px 'Special Elite', monospace";
+            p3c.fillText('INGSOC · NEURAL CORE · v4.0', 16, 24);
+            p3c.strokeStyle = '#000';
+            p3c.lineWidth = 5;
+            p3c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        const p4 = document.getElementById('p4');
+        const p4c = p4.getContext('2d');
+
+        function drawP4(t) {
+            const W = p4.width,
+                H = p4.height;
+            p4c.fillStyle = '#020201';
+            p4c.fillRect(0, 0, W, H);
+            hatch(p4c, 0, 0, W, H * 0.45, 12, 90, 0.5, 0.8);
+            const bProps = [{ x: 0, w: 100, h: 0.35 }, { x: 90, w: 80, h: 0.28 }, { x: 160, w: 120, h: 0.42 }, { x: 270, w: 90,
+                h: 0.32 }, { x: 350, w: 110, h: 0.38 }, { x: 450, w: 80, h: 0.3 }, { x: 520, w: 100, h: 0.44 }, { x: 610,
+                w: 90, h: 0.3 }, { x: 690, w: 110, h: 0.36 }];
+            bProps.forEach(b => {
+                const bh = H * b.h;
+                inkFill(p4c, b.x, H * 0.45 - bh, b.w, bh, 12);
+                hatch(p4c, b.x, H * 0.45 - bh, b.w, bh, 10, 90, 0.45, 0.7);
+                boldOutline(p4c, b.x, H * 0.45 - bh, b.w, bh, 2);
+            });
+            drawStreet(p4c, 0, H * 0.45, W, H * 0.55);
+            p4c.strokeStyle = 'rgba(30,28,22,0.7)';
+            p4c.lineWidth = 1;
+            p4c.beginPath();
+            p4c.moveTo(0, H * 0.8);
+            p4c.lineTo(W / 2, H * 0.45);
+            p4c.stroke();
+            p4c.beginPath();
+            p4c.moveTo(W, H * 0.8);
+            p4c.lineTo(W / 2, H * 0.45);
+            p4c.stroke();
+            drawPuddle(p4c, W * 0.35, H * 0.78, 50, 18, '', 0);
+            drawPuddle(p4c, W * 0.65, H * 0.82, 40, 14, '', 0);
+            drawRain(p4c, W, H, 200, t, 0.5);
+            const rows = [{ count: 8, y: H * 0.95, scale: 1.1, alpha: 0.85 }, { count: 12, y: H * 0.84, scale: 0.75,
+                alpha: 0.65 }, { count: 18, y: H * 0.75, scale: 0.5, alpha: 0.45 }, { count: 24, y: H * 0.67, scale: 0.33,
+                alpha: 0.3 }, { count: 32, y: H * 0.61, scale: 0.22, alpha: 0.2 }];
+            rows.forEach((row, ri) => {
+                const stride = W / row.count;
+                for (let i = 0; i < row.count; i++) {
+                    const fx = (i + 0.5) * stride + Math.sin(t + i * 0.7) * 4 * row.scale;
+                    drawDetective(p4c, fx, row.y, row.scale, (i % 2 === 0 ? 1 : -1), t + i * 0.4);
+                }
+            });
+            inkFill(p4c, W * 0.4, H * 0.15, W * 0.2, H * 0.12, 15);
+            boldOutline(p4c, W * 0.4, H * 0.15, W * 0.2, H * 0.12, 3);
+            hatch(p4c, W * 0.4, H * 0.15, W * 0.2, H * 0.12, 5, 0, 0.35, 0.8);
+            p4c.strokeStyle = '#000';
+            p4c.lineWidth = 5;
+            p4c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        const p5 = document.getElementById('p5');
+        const p5c = p5.getContext('2d');
+
+        function drawP5(t) {
+            const W = p5.width,
+                H = p5.height;
+            p5c.fillStyle = '#020202';
+            p5c.fillRect(0, 0, W, H);
+            inkFill(p5c, 0, H * 0.6, W, H * 0.4, 15);
+            hatch(p5c, 0, H * 0.6, W, H * 0.4, 8, 0, 0.4, 0.7);
+            inkFill(p5c, 0, 0, W * 0.08, H, 20);
+            hatch(p5c, 0, 0, W * 0.08, H, 6, 90, 0.45, 0.7);
+            inkFill(p5c, W * 0.92, 0, W * 0.08, H, 20);
+            hatch(p5c, W * 0.92, 0, W * 0.08, H, 6, 90, 0.45, 0.7);
+            inkFill(p5c, W * 0.38, H * 0.52, W * 0.24, H * 0.08, 25);
+            boldOutline(p5c, W * 0.38, H * 0.52, W * 0.24, H * 0.08, 2);
+            p5c.strokeStyle = '#1a1a14';
+            p5c.lineWidth = 4;
+            p5c.beginPath();
+            p5c.moveTo(W * 0.42, H * 0.6);
+            p5c.lineTo(W * 0.42, H * 0.75);
+            p5c.stroke();
+            p5c.beginPath();
+            p5c.moveTo(W * 0.58, H * 0.6);
+            p5c.lineTo(W * 0.58, H * 0.75);
+            p5c.stroke();
+            drawDetective(p5c, W * 0.5, H * 0.62, 0.85, 1, t * 0.2);
+            drawLightCone(p5c, W * 0.5, 0, H * 0.75, Math.PI / 2, 0.4, 0.7);
+            p5c.strokeStyle = '#0a0a08';
+            p5c.lineWidth = 2;
+            p5c.beginPath();
+            p5c.moveTo(W * 0.5, 0);
+            p5c.lineTo(W * 0.5, 50);
+            p5c.stroke();
+            p5c.fillStyle = '#d0c890';
+            p5c.beginPath();
+            p5c.arc(W * 0.5, 50, 12, 0, Math.PI * 2);
+            p5c.fill();
+            inkFill(p5c, W * 0.8, H * 0.3, W * 0.12, H * 0.3, 12);
+            hatch(p5c, W * 0.8, H * 0.3, W * 0.12, H * 0.3, 6, 90, 0.45, 0.7);
+            boldOutline(p5c, W * 0.8, H * 0.3, W * 0.12, H * 0.3, 2.5);
+            p5c.fillStyle = 'rgba(232,224,206,0.5)';
+            p5c.font = "bold 11px 'Courier Prime'";
+            p5c.save();
+            p5c.translate(W * 0.86, H * 0.47);
+            p5c.rotate(-Math.PI / 2);
+            p5c.textAlign = 'center';
+            p5c.fillText('ROOM 101', 0, 0);
+            p5c.restore();
+            const shad = p5c.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, W * 0.4);
+            shad.addColorStop(0, 'rgba(0,0,0,0)');
+            shad.addColorStop(1, 'rgba(0,0,0,0.8)');
+            p5c.fillStyle = shad;
+            p5c.fillRect(0, 0, W, H);
+            p5c.strokeStyle = '#000';
+            p5c.lineWidth = 5;
+            p5c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        const p6 = document.getElementById('p6');
+        const p6c = p6.getContext('2d');
+
+        function drawP6(t) {
+            const W = p6.width,
+                H = p6.height;
+            p6c.fillStyle = '#000';
+            p6c.fillRect(0, 0, W, H);
+            hatch(p6c, 0, 0, W, H * 0.5, 20, 90, 0.35, 0.6);
+            const buildings6 = [
+                { x: 0, w: 90, h: 0.55 }, { x: 80, w: 60, h: 0.38 }, { x: 130, w: 110, h: 0.65 }, { x: 230, w: 70, h: 0.45 },
+                { x: 290, w: 140, h: 0.75 }, { x: 420, w: 80, h: 0.5 }, { x: 490, w: 100, h: 0.62 }, { x: 580, w: 90,
+                h: 0.48 },
+                { x: 660, w: 120, h: 0.7 }, { x: 770, w: 75, h: 0.42 }, { x: 835, w: 95, h: 0.55 }, { x: 920, w: 130,
+                h: 0.68 },
+                { x: 1040, w: 80, h: 0.45 }, { x: 1110, w: 100, h: 0.6 }, { x: 1100, w: 80, h: 0.52 },
+            ];
+            buildings6.forEach((b, i) => {
+                const bh = H * b.h;
+                const by = H * 0.55 - bh;
+                inkFill(p6c, b.x, by, b.w, bh, 10 + i % 4 * 3);
+                hatch(p6c, b.x, by, b.w, bh, 10, 90, 0.4, 0.6);
+                boldOutline(p6c, b.x, by, b.w, bh, 2.5);
+                const wRows = Math.floor(bh / 22),
+                    wCols = Math.floor(b.w / 20);
+                for (let r = 0; r < wRows; r++)
+                    for (let c = 0; c < wCols; c++) {
+                        if (Math.random() > 0.55) {
+                            const lit = Math.random() > 0.35;
+                            p6c.fillStyle = lit ? 'rgba(200,190,140,0.7)' : 'rgba(0,0,0,0.8)';
+                            p6c.fillRect(b.x + 4 + c * 18, by + 4 + r * 22, 12, 14);
+                            p6c.strokeStyle = 'rgba(0,0,0,0.9)';
+                            p6c.lineWidth = 1;
+                            p6c.strokeRect(b.x + 4 + c * 18, by + 4 + r * 22, 12, 14);
+                        }
+                    }
+            });
+            drawStreet(p6c, 0, H * 0.55, W, H * 0.45);
+            drawPuddle(p6c, W * 0.2, H * 0.82, 70, 22, 'MINITRUE', 12);
+            drawPuddle(p6c, W * 0.5, H * 0.78, 90, 28, '1984', 18);
+            drawPuddle(p6c, W * 0.8, H * 0.82, 65, 20, 'INGSOC', 12);
+            drawRain(p6c, W, H, 350, t, 0.55);
+            [W * 0.18, W * 0.38, W * 0.62, W * 0.82].forEach((lx, li) => {
+                p6c.strokeStyle = '#111';
+                p6c.lineWidth = 5;
+                p6c.beginPath();
+                p6c.moveTo(lx, H * 0.55);
+                p6c.lineTo(lx, H * 0.15);
+                p6c.stroke();
+                p6c.strokeStyle = '#111';
+                p6c.lineWidth = 4;
+                p6c.beginPath();
+                p6c.moveTo(lx, H * 0.15);
+                p6c.lineTo(lx + 40, H * 0.15);
+                p6c.stroke();
+                p6c.fillStyle = '#fffcc0';
+                p6c.beginPath();
+                p6c.arc(lx + 40, H * 0.15, 10, 0, Math.PI * 2);
+                p6c.fill();
+                drawLightCone(p6c, lx + 40, H * 0.15, 180, Math.PI / 2, 0.6, 0.5 * (0.8 + Math.sin(t * 3 + li) * 0.2));
+            });
+            for (let fi = 0; fi < 14; fi++) {
+                const fx = 60 + fi * (W - 100) / 13;
+                const fy = H * 0.57 + Math.random() * H * 0.25;
+                const fs = 0.5 + (fy - H * 0.57) / (H * 0.25) * 0.7;
+                drawDetective(p6c, fx, fy + fs * 150, fs, fi % 2 ? 1 : -1, t + fi * 0.35);
+            }
+            inkFill(p6c, W * 0.44, H * 0.1, W * 0.12, H * 0.18, 12);
+            boldOutline(p6c, W * 0.44, H * 0.1, W * 0.12, H * 0.18, 3);
+            p6c.strokeStyle = 'rgba(200,190,140,0.6)';
+            p6c.lineWidth = 2;
+            p6c.beginPath();
+            p6c.ellipse(W * 0.5, H * 0.16, W * 0.04, H * 0.04, 0, 0, Math.PI * 2);
+            p6c.stroke();
+            p6c.beginPath();
+            p6c.arc(W * 0.5, H * 0.16, W * 0.015, 0, Math.PI * 2);
+            p6c.fillStyle = 'rgba(200,190,140,0.4)';
+            p6c.fill();
+            p6c.fillStyle = 'rgba(200,190,140,0.55)';
+            p6c.font = `bold ${Math.floor(W*0.007)}px 'Courier Prime'`;
+            p6c.textAlign = 'center';
+            p6c.fillText('INGSOC', W * 0.5, H * 0.27);
+            p6c.strokeStyle = '#000';
+            p6c.lineWidth = 5;
+            p6c.strokeRect(2, 2, W - 4, H - 4);
+        }
+
+        // Telescreen
+        const tsC = document.getElementById('tsCanvas');
+        const tsX = tsC.getContext('2d');
+
+        function drawTelescreen(t) {
+            const W = tsC.width,
+                H = tsC.height;
+            tsX.fillStyle = '#06060a';
+            tsX.fillRect(0, 0, W, H);
+            const imgData = tsX.createImageData(W, H);
+            for (let i = 0; i < imgData.data.length; i += 4) {
+                const v = Math.random() > 0.96 ? Math.random() * 80 : 0;
+                imgData.data[i] = imgData.data[i + 1] = imgData.data[i + 2] = v;
+                imgData.data[i + 3] = v > 0 ? 180 : 0;
+            }
+            tsX.putImageData(imgData, 0, 0);
+            const lW = W * 0.5,
+                lH = H;
+            tsX.fillStyle = '#050505';
+            tsX.fillRect(0, 0, lW, lH);
+            tsX.fillStyle = '#181614';
+            tsX.fillRect(lW * 0.2, H * 0.05, lW * 0.6, H * 0.6);
+            hatch(tsX, lW * 0.2, H * 0.05, lW * 0.6, H * 0.6, 10, 20, 0.4, 0.8);
+            const eyeX1 = lW * 0.33,
+                eyeX2 = lW * 0.67,
+                eyeY = H * 0.25,
+                eyeRx = lW * 0.12,
+                eyeRy = H * 0.1;
+            [eyeX1, eyeX2].forEach(ex => {
+                tsX.beginPath();
+                tsX.ellipse(ex, eyeY, eyeRx, eyeRy, 0, 0, Math.PI * 2);
+                tsX.fillStyle = '#d0c8a8';
+                tsX.fill();
+                tsX.strokeStyle = '#000';
+                tsX.lineWidth = 3;
+                tsX.stroke();
+                const px = ex + Math.sin(t * 0.5) * 8,
+                    py = eyeY + Math.cos(t * 0.4) * 5;
+                tsX.beginPath();
+                tsX.arc(px, py, eyeRy * 0.5, 0, Math.PI * 2);
+                tsX.fillStyle = '#1a1814';
+                tsX.fill();
+                tsX.stroke();
+                tsX.beginPath();
+                tsX.arc(px, py, eyeRy * 0.22, 0, Math.PI * 2);
+                tsX.fillStyle = '#000';
+                tsX.fill();
+                tsX.beginPath();
+                tsX.arc(px - 5, py - 4, 5, 0, Math.PI * 2);
+                tsX.fillStyle = 'rgba(255,255,240,0.6)';
+                tsX.fill();
+            });
+            tsX.strokeStyle = '#000';
+            tsX.lineWidth = 8;
+            tsX.beginPath();
+            tsX.moveTo(lW * 0.18, H * 0.15);
+            tsX.lineTo(lW * 0.82, H * 0.15);
+            tsX.stroke();
+            tsX.fillStyle = '#000';
+            tsX.beginPath();
+            tsX.rect(lW * 0.32, H * 0.42, lW * 0.36, H * 0.07);
+            tsX.fill();
+            hatch(tsX, lW * 0.32, H * 0.42, lW * 0.36, H * 0.07, 4, 0, 0.7, 0.8);
+            tsX.fillStyle = 'rgba(200,190,140,0.7)';
+            tsX.font = `bold ${Math.floor(W*0.018)}px 'Special Elite', monospace`;
+            tsX.textAlign = 'center';
+            tsX.fillText('BIG BROTHER', lW / 2, H * 0.78);
+            tsX.font = `${Math.floor(W*0.012)}px 'Courier Prime', monospace`;
+            tsX.fillStyle = 'rgba(200,190,140,0.45)';
+            tsX.fillText('IS WATCHING YOU', lW / 2, H * 0.86);
+            tsX.strokeStyle = '#000';
+            tsX.lineWidth = 3;
+            tsX.beginPath();
+            tsX.moveTo(lW, 0);
+            tsX.lineTo(lW, H);
+            tsX.stroke();
+            tsX.fillStyle = '#040408';
+            tsX.fillRect(lW, 0, W * 0.5, H);
+            hatch(tsX, lW, 0, W * 0.5, H, 18, 90, 0.3, 0.6);
+            drawStreet(tsX, lW, H * 0.65, W * 0.5, H * 0.35);
+            for (let fi = 0; fi < 5; fi++) {
+                const offset = ((t * 60 + fi * 80) % 280) - 40;
+                drawDetective(tsX, lW + offset, H * 0.7, 0.5, 1, t + fi * 0.7);
+            }
+            drawRain(tsX, W, H, 80, t, 0.4);
+            tsX.strokeStyle = 'rgba(200,190,140,0.3)';
+            tsX.lineWidth = 1;
+            const cx = lW + W * 0.25,
+                cy = H * 0.4;
+            tsX.beginPath();
+            tsX.moveTo(cx - 20, cy);
+            tsX.lineTo(cx + 20, cy);
+            tsX.stroke();
+            tsX.beginPath();
+            tsX.moveTo(cx, cy - 20);
+            tsX.lineTo(cx, cy + 20);
+            tsX.stroke();
+            tsX.beginPath();
+            tsX.arc(cx, cy, 18, 0, Math.PI * 2);
+            tsX.strokeStyle = 'rgba(200,190,140,0.25)';
+            tsX.stroke();
+            tsX.textAlign = 'left';
+            tsX.fillStyle = 'rgba(200,190,140,0.5)';
+            tsX.font = `${Math.floor(W*0.011)}px 'Courier Prime', monospace`;
+            tsX.fillText(
+                `APR 04 1984  ${String(Math.floor(t/3)%24).padStart(2,'0')}:${String(Math.floor(t*2)%60).padStart(2,'0')}:${String(Math.floor(t*30)%60).padStart(2,'0')}`,
+                lW + 10, H - 30);
+            tsX.textAlign = 'right';
+            tsX.fillText('MINITRUE · REC', W - 10, H - 30);
+            if (Math.sin(t * 3) > 0) { tsX.fillStyle = 'rgba(200,190,140,0.8)';
+                tsX.beginPath();
+                tsX.arc(W - 80, H - 36, 5, 0, Math.PI * 2);
+                tsX.fill(); }
+            tsX.strokeStyle = '#000';
+            tsX.lineWidth = 6;
+            tsX.strokeRect(3, 3, W - 6, H - 6);
+        }
+
+        // Main 2D animation
+        let t2d = 0;
+        let lastFrame2d = 0;
+        const fps2d = 18;
+        const panelVis = { p1: false, p2: false, p3: false, p4: false, p5: false, p6: false, ts: false };
+
+        function observePanel(id, key) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            new IntersectionObserver(([e]) => { panelVis[key] = e.isIntersecting; }, { threshold: 0.05 }).observe(el);
+        }
+        observePanel('p1', 'p1');
+        observePanel('p2', 'p2');
+        observePanel('p3', 'p3');
+        observePanel('p4', 'p4');
+        observePanel('p5', 'p5');
+        observePanel('p6', 'p6');
+        observePanel('tsCanvas', 'ts');
+
+        function anim2d(ts) {
+            requestAnimationFrame(anim2d);
+            if (ts - lastFrame2d < 1000 / fps2d) return;
+            lastFrame2d = ts;
+            t2d += 0.06;
+            if (panelVis.p1) drawP1(t2d);
+            if (panelVis.p2) drawP2(t2d);
+            if (panelVis.p3) drawP3(t2d);
+            if (panelVis.p4) drawP4(t2d);
+            if (panelVis.p5) drawP5(t2d);
+            if (panelVis.p6) drawP6(t2d);
+            if (panelVis.ts) drawTelescreen(t2d);
+        }
+        requestAnimationFrame(anim2d);
+
+        // Marquee
+        const mt = document.getElementById('mtrack');
+        mt.innerHTML += mt.innerHTML;
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => {
+            new IntersectionObserver(([e]) => { if (e.isIntersecting) el.classList.add('visible'); }, { threshold: 0.1 })
+                .observe(el);
+        });
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 60) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        // Caption box rotation
+        let capIndex = 0;
+        const caps = [document.getElementById('cap1'), document.getElementById('cap2')];
+        setInterval(() => {
+            caps[capIndex].style.display = 'none';
+            capIndex = (capIndex + 1) % caps.length;
+            caps[capIndex].style.display = 'block';
+        }, 5000);
+        caps[1].style.display = 'none';
+        caps[0].style.display = 'block';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ========== SPIDER-NOIR DYNAMICS (Canvas + Carousel + Interrogation + Typewriter) ==========
+(function() {
+
+  // ---- ROOFTOP CANVAS (animated city lights + noir figure) ----
+  const canvas = document.getElementById('smnRooftopCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let width = canvas.clientWidth;
+    let height = 400;
+    let animationId;
+
+    function resizeCanvas() {
+      width = canvas.clientWidth;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let time = 0;
+    function drawRooftop() {
+      if (!ctx) return;
+      ctx.fillStyle = '#010101';
+      ctx.fillRect(0, 0, width, height);
+      
+      // distant buildings
+      ctx.fillStyle = '#14120e';
+      for (let i = 0; i < 15; i++) {
+        let bw = 25 + Math.sin(i) * 12;
+        let bh = 80 + Math.sin(i * 0.7 + time) * 30;
+        ctx.fillRect(i * 55, height - bh, bw, bh);
+      }
+      // windows (flicker)
+      for (let i = 0; i < 80; i++) {
+        if (Math.random() > 0.85) {
+          ctx.fillStyle = `rgba(210, 190, 120, ${0.3 + Math.sin(time + i) * 0.2})`;
+          ctx.fillRect(20 + (i * 23) % width, height - 40 - (i % 7) * 18, 8, 12);
+        }
+      }
+      // moon / spotlight
+      ctx.fillStyle = `rgba(210,200,130,0.15)`;
+      ctx.beginPath();
+      ctx.arc(width * 0.8, 70, 40, 0, Math.PI*2);
+      ctx.fill();
+      
+      // ROOFTOP FIGURE (Spider-Noir silhouette)
+      ctx.fillStyle = '#050504';
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = '#000';
+      // body
+      ctx.fillRect(width - 120, height - 110, 28, 100);
+      // head + hat
+      ctx.beginPath();
+      ctx.ellipse(width - 106, height - 125, 14, 18, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillRect(width - 120, height - 140, 28, 8);
+      ctx.fillRect(width - 114, height - 148, 16, 12);
+      // coat tails
+      ctx.beginPath();
+      ctx.moveTo(width - 120, height - 60);
+      ctx.lineTo(width - 100, height - 60);
+      ctx.lineTo(width - 110, height - 20);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(width - 92, height - 60);
+      ctx.lineTo(width - 78, height - 60);
+      ctx.lineTo(width - 86, height - 20);
+      ctx.fill();
+      // glowing eye
+      ctx.fillStyle = '#e6dcb0';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(width - 108, height - 126, 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      
+      time += 0.05;
+      animationId = requestAnimationFrame(drawRooftop);
+    }
+    drawRooftop();
+  }
+
+  // ---- CAROUSEL SCROLL (buttons) ----
+  const track = document.querySelector('.smn-carousel-track');
+  const prevBtn = document.querySelector('.smn-prev');
+  const nextBtn = document.querySelector('.smn-next');
+  if (track && prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      track.scrollBy({ left: -240, behavior: 'smooth' });
+    });
+    nextBtn.addEventListener('click', () => {
+      track.scrollBy({ left: 240, behavior: 'smooth' });
+    });
+  }
+
+  // ---- INTERROGATION LOGIC ----
+  const answers = document.querySelectorAll('.smn-answer-btn');
+  const feedbackDiv = document.getElementById('smnFeedback');
+  const questionDiv = document.getElementById('smnQuestion');
+  if (answers.length && feedbackDiv) {
+    answers.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const ans = btn.getAttribute('data-ans');
+        let msg = '';
+        if (ans === 'yes') {
+          msg = '⛓️ “THEN YOU HAVE NOTHING TO FEAR. CONTINUE WALKING.” ⛓️';
+          feedbackDiv.style.color = '#b8a87a';
+        } else if (ans === 'no') {
+          msg = '⚠️ “THOUGHTCRIME DETECTED. PLEASE REMAIN FOR RE-EDUCATION.” ⚠️';
+          feedbackDiv.style.color = '#c44';
+          // glitch effect
+          document.body.style.filter = 'blur(0.6px)';
+          setTimeout(() => document.body.style.filter = '', 300);
+        } else {
+          msg = '◈ “DOUBLETHINK ACCEPTED. 2 + 2 = 5. PROCEED.” ◈';
+          feedbackDiv.style.color = '#cfc38a';
+          if (questionDiv) questionDiv.innerText = '“IS FREEDOM SLAVERY?”';
+          setTimeout(() => {
+            if(questionDiv) questionDiv.innerText = '“Do you love Big Brother?”';
+          }, 2000);
+        }
+        feedbackDiv.innerText = msg;
+        // shake effect on question
+        if (questionDiv) questionDiv.style.transform = 'translateX(4px)';
+        setTimeout(() => { if(questionDiv) questionDiv.style.transform = ''; }, 100);
+      });
+    });
+  }
+
+  // ---- TYPEWRITER DIARY ----
+  const typedSpan = document.getElementById('smnTyped');
+  const revealBtn = document.getElementById('smnRevealBtn');
+  const lines = [
+    "April 4th, 1984. They say Big Brother sees everything.",
+    "I bought a diary today. A real one. Paper.",
+    "If the Thought Police find this, I'm already dead.",
+    "But I have to write. Someone must remember the truth.",
+    "The telescreen never blinks. Neither do I now."
+  ];
+  let lineIndex = 0;
+  let charIndex = 0;
+  let currentLine = "";
+  let isTyping = false;
+
+  function typeNextChar() {
+    if (!typedSpan) return;
+    if (charIndex < currentLine.length) {
+      typedSpan.innerText += currentLine.charAt(charIndex);
+      charIndex++;
+      setTimeout(typeNextChar, 45);
+    } else {
+      isTyping = false;
+      if (lineIndex < lines.length - 1 && revealBtn) revealBtn.disabled = false;
+      else if (revealBtn) revealBtn.innerText = "⌇ JOURNAL COMPLETE ⌇";
+    }
+  }
+
+  if (revealBtn && typedSpan) {
+    revealBtn.addEventListener('click', () => {
+      if (isTyping) return;
+      if (lineIndex < lines.length) {
+        currentLine = lines[lineIndex];
+        typedSpan.innerText = "";
+        charIndex = 0;
+        isTyping = true;
+        typeNextChar();
+        lineIndex++;
+        if (lineIndex >= lines.length) revealBtn.disabled = true;
+        else revealBtn.disabled = true; // disable while typing
+        setTimeout(() => { if(revealBtn && !isTyping) revealBtn.disabled = false; }, currentLine.length * 45 + 100);
+      }
+    });
+  }
+
+  // auto start first line after page load
+  if (revealBtn && lines.length) {
+    setTimeout(() => revealBtn.click(), 400);
+  }
+
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

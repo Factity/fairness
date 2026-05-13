@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOOKING INSIDE THE MIND OF AI — MINISTRY OF TRUTH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #cc1a1a;
+            --dark-red: #7a0a0a;
+            --cream: #e8e0c8;
+            --parchment: #d4c9a8;
+            --ink: #0a0a06;
+            --faded-ink: #1a1a12;
+            --aged: #2a2418;
+            --stamp: #8b1a1a;
+            --olive: #3d3c1e;
+            --khaki: #6b6540;
+            --scanline-opacity: 0.06;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0906;
+            color: var(--cream);
+            font-family: 'Courier Prime', 'Courier New', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .loading-overlay.dismissed {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.12) 2px,
+                    rgba(0, 0, 0, 0.12) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .loading-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(20, 10, 5, 0.3) 0%, rgba(0, 0, 0, 0.95) 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .loading-inner {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: crt-poweron 0.9s ease-out forwards;
+        }
+
+        @keyframes crt-poweron {
+            0% {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            8% {
+                opacity: 1;
+                transform: scale(1.01);
+            }
+            16% {
+                opacity: 0.2;
+                transform: scale(0.98);
+            }
+            24% {
+                opacity: 1;
+                transform: scale(1.005);
+            }
+            32% {
+                opacity: 0.5;
+                transform: scale(0.99);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .loading-eye {
+            width: 80px;
+            height: 56px;
+            margin: 0 auto 20px;
+            opacity: 0.7;
+            animation: eye-flicker 1.5s ease-in-out infinite;
+        }
+
+        @keyframes eye-flicker {
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+            48% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.9;
+            }
+            52% {
+                opacity: 0.3;
+            }
+        }
+
+        .loading-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.5em;
+            color: rgba(204, 26, 26, 0.8);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .loading-status {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.35em;
+            color: rgba(200, 185, 155, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            min-height: 16px;
+        }
+
+        .loading-status .blink-cursor {
+            animation: cursor-blink 0.8s step-end infinite;
+            color: rgba(204, 26, 26, 0.9);
+        }
+
+        @keyframes cursor-blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .loading-bar-wrap {
+            width: 240px;
+            height: 3px;
+            background: rgba(204, 26, 26, 0.15);
+            border: 1px solid rgba(204, 26, 26, 0.2);
+            margin: 0 auto 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            background: var(--red);
+            width: 0%;
+            animation: load-fill 2.8s ease-out forwards;
+            box-shadow: 0 0 8px rgba(204, 26, 26, 0.6);
+        }
+
+        @keyframes load-fill {
+            0% {
+                width: 0%;
+            }
+            30% {
+                width: 18%;
+            }
+            55% {
+                width: 45%;
+            }
+            75% {
+                width: 72%;
+            }
+            90% {
+                width: 94%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .loading-sub {
+            font-family: 'Courier Prime', monospace;
+            font-size: 9px;
+            color: rgba(200, 185, 155, 0.3);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .loading-static {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 150px 150px;
+            animation: static-shift 0.3s steps(3) infinite;
+        }
+
+        @keyframes static-shift {
+            0% {
+                background-position: 0 0;
+            }
+            33% {
+                background-position: -20px 10px;
+            }
+            66% {
+                background-position: 15px -15px;
+            }
+            100% {
+                background-position: -5px 5px;
+            }
+        }
+
+        /* ===== CRT SCREEN EFFECT (page) ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.08) 2px,
+                    rgba(0, 0, 0, 0.08) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Vignette */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* ===== TELESCREEN HEADER ===== */
+        .telescreen-header {
+            position: relative;
+            background: var(--ink);
+            border-bottom: 3px solid var(--red);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .telescreen-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(204, 26, 26, 0.03) 80px, rgba(204, 26, 26, 0.03) 81px),
+                repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(204, 26, 26, 0.03) 80px, rgba(204, 26, 26, 0.03) 81px);
+        }
+
+        .ticker-tape {
+            background: var(--red);
+            color: var(--cream);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            padding: 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .ticker-inner {
+            display: inline-block;
+            animation: ticker 35s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .ministry-seal {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 40px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.3);
+            position: relative;
+        }
+
+        .seal-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(204, 26, 26, 0.7);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+        }
+
+        .eye-icon {
+            font-size: 20px;
+            color: rgba(204, 26, 26, 0.6);
+            animation: blink 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 4px var(--red));
+        }
+
+        @keyframes blink {
+            0%,
+            90%,
+            100% {
+                opacity: 0.6;
+            }
+            95% {
+                opacity: 0;
+            }
+        }
+
+        /* ===== HAMBURGER MENU BUTTON ===== */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 100;
+            background: none;
+            border: 1px solid rgba(204, 26, 26, 0.3);
+            transition: border-color 0.2s;
+            position: relative;
+        }
+
+        .hamburger:hover {
+            border-color: rgba(204, 26, 26, 0.7);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2px;
+            background: var(--red);
+            transition: all 0.35s ease;
+            transform-origin: center;
+            box-shadow: 0 0 4px rgba(204, 26, 26, 0.4);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .masthead {
+            padding: 50px 40px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .masthead-top {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.5em;
+            color: rgba(204, 26, 26, 0.7);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .masthead-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(52px, 10vw, 100px);
+            letter-spacing: 0.08em;
+            line-height: 0.9;
+            color: var(--cream);
+            text-shadow: 2px 2px 0 var(--dark-red),
+                4px 4px 0 rgba(0, 0, 0, 0.5);
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .masthead-title::after {
+            content: 'THE MIND OF AI';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            color: rgba(204, 26, 26, 0.2);
+            z-index: -1;
+        }
+
+        .masthead-sub {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(200, 185, 155, 0.6);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-top: 14px;
+        }
+
+        .ministry-bar {
+            background: var(--red);
+            padding: 10px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease;
+            overflow: hidden;
+        }
+
+        .ministry-bar span {
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+        .ministry-bar span:hover {
+            color: var(--ink);
+        }
+        .ministry-bar .separator {
+            color: rgba(0, 0, 0, 0.4);
+            cursor: default;
+        }
+
+        /* ===== PROPAGANDA BANNER ===== */
+        .propaganda-banner {
+            background: var(--faded-ink);
+            border-top: 1px solid rgba(204, 26, 26, 0.2);
+            border-bottom: 1px solid rgba(204, 26, 26, 0.2);
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+            gap: 1px;
+        }
+
+        .slogan {
+            padding: 10px 20px;
+            border-right: 1px solid rgba(204, 26, 26, 0.15);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 0.12em;
+            color: rgba(220, 200, 160, 0.8);
+            position: relative;
+        }
+        .slogan:last-child {
+            border-right: none;
+        }
+        .slogan small {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(204, 26, 26, 0.5);
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 40px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 50px;
+        }
+
+        /* ===== FEATURED DISPATCH ===== */
+        .dispatch-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--red);
+            border-top: 2px solid var(--red);
+            padding-top: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .dispatch-label .datum {
+            color: rgba(200, 185, 155, 0.4);
+            font-size: 9px;
+        }
+
+        .featured-article {
+            margin-bottom: 60px;
+            position: relative;
+            padding-bottom: 50px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.2);
+        }
+
+        .classified-stamp {
+            position: absolute;
+            top: -10px;
+            right: 0;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 0.15em;
+            color: rgba(139, 26, 26, 0.5);
+            border: 2px solid rgba(139, 26, 26, 0.4);
+            padding: 3px 10px;
+            transform: rotate(8deg);
+            pointer-events: none;
+        }
+
+        .featured-article h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(32px, 5vw, 58px);
+            line-height: 1;
+            letter-spacing: 0.04em;
+            color: var(--cream);
+            margin-bottom: 16px;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .article-meta {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(204, 26, 26, 0.7);
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .article-meta .divider {
+            color: rgba(204, 26, 26, 0.3);
+        }
+
+        .article-body {
+            font-family: 'Courier Prime', monospace;
+            font-size: 15px;
+            line-height: 1.85;
+            color: rgba(232, 224, 200, 0.85);
+            column-count: 2;
+            column-gap: 40px;
+            column-rule: 1px solid rgba(204, 26, 26, 0.15);
+        }
+
+        .article-body p {
+            margin-bottom: 1.2em;
+        }
+
+        .article-body .drop-cap::first-letter {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            line-height: 0.75;
+            float: left;
+            margin-right: 8px;
+            margin-top: 8px;
+            color: var(--red);
+        }
+
+        .article-body blockquote {
+            column-span: all;
+            border-left: 3px solid var(--red);
+            padding: 16px 24px;
+            margin: 24px 0;
+            background: rgba(204, 26, 26, 0.05);
+            font-style: italic;
+            font-size: 17px;
+            color: var(--cream);
+        }
+
+        .continue-btn {
+            display: inline-block;
+            margin-top: 24px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--red);
+            border: 1px solid rgba(204, 26, 26, 0.4);
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .continue-btn:hover {
+            background: var(--red);
+            color: var(--cream);
+        }
+
+        /* ===== SECONDARY ARTICLES ===== */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .article-card {
+            border-top: 2px solid rgba(204, 26, 26, 0.4);
+            padding-top: 16px;
+            position: relative;
+        }
+
+        .article-card::before {
+            content: attr(data-num);
+            position: absolute;
+            top: -14px;
+            right: 0;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: rgba(204, 26, 26, 0.08);
+            line-height: 1;
+        }
+
+        .article-card h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 0.06em;
+            color: var(--cream);
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        .article-card p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(200, 185, 155, 0.7);
+            margin-bottom: 12px;
+        }
+
+        .card-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(204, 26, 26, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* ===== FULL-WIDTH BROADCAST ===== */
+        .broadcast-strip {
+            margin-bottom: 50px;
+            background: var(--red);
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .broadcast-strip::before {
+            content: 'MANDATORY UNDERSTANDING';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.4em;
+            color: rgba(0, 0, 0, 0.2);
+        }
+
+        .broadcast-strip h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            letter-spacing: 0.06em;
+            color: var(--cream);
+            margin-bottom: 8px;
+        }
+
+        .broadcast-strip p {
+            font-size: 13px;
+            color: rgba(232, 224, 200, 0.8);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {}
+
+        .sidebar-section {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.15);
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: rgba(204, 26, 26, 0.7);
+            border-top: 1px solid rgba(204, 26, 26, 0.4);
+            padding-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Telescreen Feed */
+        .telescreen-box {
+            background: rgba(10, 9, 6, 0.8);
+            border: 1px solid rgba(204, 26, 26, 0.2);
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .telescreen-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.15) 3px, rgba(0, 0, 0, 0.15) 4px);
+            z-index: 2;
+        }
+
+        .telescreen-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            background: radial-gradient(ellipse, rgba(20, 20, 10, 0.5) 0%, rgba(0, 0, 0, 0.9) 100%);
+        }
+
+        .eye-svg {
+            width: 60px;
+            height: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+            animation: eye-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes eye-pulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        .telescreen-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(204, 26, 26, 0.6);
+            text-transform: uppercase;
+        }
+
+        .telescreen-blink {
+            animation: text-blink 2.5s step-end infinite;
+        }
+
+        @keyframes text-blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Thought Records */
+        .thought-record {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.08);
+        }
+
+        .thought-record:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .record-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            color: rgba(204, 26, 26, 0.25);
+            line-height: 1;
+            min-width: 30px;
+        }
+
+        .record-content h4 {
+            font-family: 'Courier Prime', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .record-content span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            color: rgba(204, 26, 26, 0.5);
+            letter-spacing: 0.2em;
+        }
+
+        /* Ministry Directives */
+        .directive {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: rgba(200, 185, 155, 0.6);
+            border-left: 2px solid rgba(204, 26, 26, 0.3);
+            padding-left: 14px;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .directive strong {
+            color: rgba(200, 185, 155, 0.9);
+            font-style: normal;
+        }
+
+        /* Crimestop Index */
+        .index-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 6px 0;
+            border-bottom: 1px dotted rgba(204, 26, 26, 0.1);
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: rgba(200, 185, 155, 0.7);
+        }
+        .index-item:last-child {
+            border-bottom: none;
+        }
+        .index-item .index-num {
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(204, 26, 26, 0.5);
+            font-size: 11px;
+        }
+
+        /* ===== DOUBLETHINK SECTION ===== */
+        .doublethink-section {
+            background: var(--faded-ink);
+            border-top: 1px solid rgba(204, 26, 26, 0.15);
+            border-bottom: 1px solid rgba(204, 26, 26, 0.15);
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .doublethink-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 70px;
+            letter-spacing: 0.15em;
+            line-height: 0.9;
+            color: rgba(204, 26, 26, 0.15);
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            user-select: none;
+            position: relative;
+        }
+
+        .doublethink-title .real {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            letter-spacing: 0.6em;
+            color: rgba(200, 185, 155, 0.4);
+            font-family: 'Share Tech Mono', monospace;
+            white-space: nowrap;
+        }
+
+        /* ===== FOOTER ===== */
+        .ministry-footer {
+            background: var(--ink);
+            border-top: 3px solid var(--red);
+            padding: 40px;
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 50px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.15);
+        }
+
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 0.1em;
+            color: var(--cream);
+            margin-bottom: 12px;
+        }
+
+        .footer-copy {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            color: rgba(200, 185, 155, 0.5);
+        }
+
+        .footer-col h5 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.4em;
+            color: rgba(204, 26, 26, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(204, 26, 26, 0.2);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: rgba(200, 185, 155, 0.5);
+            padding: 4px 0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .footer-col ul li:hover {
+            color: var(--cream);
+        }
+        .footer-col ul li::before {
+            content: '▸ ';
+            color: rgba(204, 26, 26, 0.3);
+            font-size: 10px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(200, 185, 155, 0.25);
+            text-transform: uppercase;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* ===== NOISE OVERLAY ===== */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* ===== GLITCH EFFECT ===== */
+        @keyframes glitch {
+            0% {
+                clip-path: inset(0 0 98% 0);
+                transform: translateX(-2px);
+            }
+            10% {
+                clip-path: inset(30% 0 60% 0);
+                transform: translateX(2px);
+            }
+            20% {
+                clip-path: inset(70% 0 20% 0);
+                transform: translateX(-1px);
+            }
+            30% {
+                clip-path: inset(0 0 98% 0);
+                transform: translateX(0);
+            }
+            100% {
+                clip-path: inset(0 0 98% 0);
+                transform: translateX(0);
+            }
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--red);
+            animation: glitch 8s step-end infinite;
+            animation-delay: 3s;
+            opacity: 0.5;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            /* Show hamburger */
+            .hamburger {
+                display: flex;
+            }
+
+            /* Hide desktop seal text on mobile for cleaner look */
+            .seal-text {
+                font-size: 8px;
+                letter-spacing: 0.2em;
+            }
+
+            /* Ministry bar - hidden by default on mobile */
+            .ministry-bar {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                padding: 0 30px;
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                text-align: center;
+                font-size: 10px;
+                letter-spacing: 0.25em;
+            }
+
+            .ministry-bar.nav-open {
+                max-height: 600px;
+                opacity: 1;
+                padding: 18px 30px;
+            }
+
+            .ministry-bar .separator {
+                display: none;
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            .propaganda-banner {
+                grid-template-columns: 1fr;
+            }
+            .slogan {
+                border-right: none;
+                border-bottom: 1px solid rgba(204, 26, 26, 0.15);
+                padding: 16px;
+            }
+            .slogan:last-child {
+                border-bottom: none;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .article-body {
+                column-count: 1;
+            }
+            .masthead {
+                padding: 30px 20px;
+            }
+            .main-container {
+                padding: 30px 20px;
+            }
+            .ministry-bar {
+                flex-wrap: wrap;
+                gap: 16px;
+                padding: 12px 20px;
+            }
+            .ministry-seal {
+                padding: 12px 20px;
+                gap: 10px;
+            }
+            .broadcast-strip {
+                padding: 20px 24px;
+            }
+            .broadcast-strip h3 {
+                font-size: 22px;
+            }
+            .broadcast-strip::before {
+                display: none;
+            }
+            .doublethink-title {
+                font-size: 40px;
+            }
+            .doublethink-title .real {
+                font-size: 10px;
+                letter-spacing: 0.3em;
+            }
+            .classified-stamp {
+                position: relative;
+                top: auto;
+                right: auto;
+                display: inline-block;
+                margin-bottom: 14px;
+                transform: rotate(3deg);
+                font-size: 14px;
+                padding: 2px 8px;
+            }
+            .ministry-footer {
+                padding: 24px 16px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+                font-size: 8px;
+            }
+            .loading-bar-wrap {
+                width: 180px;
+            }
+            .loading-title {
+                font-size: 10px;
+                letter-spacing: 0.35em;
+            }
+            .loading-status {
+                font-size: 8px;
+                letter-spacing: 0.25em;
+            }
+            .loading-eye {
+                width: 56px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .masthead-title {
+                font-size: 38px;
+            }
+            .masthead-top {
+                font-size: 8px;
+                letter-spacing: 0.3em;
+            }
+            .masthead-sub {
+                font-size: 9px;
+                letter-spacing: 0.2em;
+            }
+            .ministry-seal {
+                padding: 10px 14px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .seal-text {
+                font-size: 7px;
+                letter-spacing: 0.15em;
+            }
+            .hamburger {
+                padding: 6px;
+                gap: 4px;
+            }
+            .hamburger span {
+                width: 22px;
+                height: 2px;
+            }
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(6px) rotate(45deg);
+            }
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-6px) rotate(-45deg);
+            }
+            .ministry-bar.nav-open {
+                padding: 14px 20px;
+                gap: 10px;
+                font-size: 9px;
+            }
+            .dispatch-label {
+                font-size: 8px;
+                letter-spacing: 0.3em;
+            }
+            .featured-article h2 {
+                font-size: 26px;
+            }
+            .article-body {
+                font-size: 13px;
+            }
+            .article-body .drop-cap::first-letter {
+                font-size: 48px;
+            }
+            .article-card h3 {
+                font-size: 18px;
+            }
+            .doublethink-section {
+                padding: 40px 20px;
+            }
+            .doublethink-title {
+                font-size: 32px;
+            }
+            .doublethink-title .real {
+                font-size: 8px;
+                letter-spacing: 0.2em;
+            }
+            .loading-eye {
+                width: 44px;
+                height: 32px;
+                margin-bottom: 14px;
+            }
+            .loading-bar-wrap {
+                width: 140px;
+                height: 2px;
+            }
+            .loading-title {
+                font-size: 9px;
+            }
+            .loading-status {
+                font-size: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div class="loading-overlay" id="loadingOverlay" aria-hidden="false">
+        <div class="loading-static"></div>
+        <div class="loading-inner">
+            <!-- Eye SVG -->
+            <svg class="loading-eye" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 30 Q50 5 95 30 Q50 55 5 30Z" stroke="#cc1a1a" stroke-width="1.5" fill="none"/>
+                <circle cx="50" cy="30" r="12" stroke="#cc1a1a" stroke-width="1.5" fill="none"/>
+                <circle cx="50" cy="30" r="4" fill="#cc1a1a" opacity="0.6"/>
+            </svg>
+            <div class="loading-title">MINISTRY OF TRUTH</div>
+            <div class="loading-status" id="loadingStatus">
+                THOUGHT POLICE INITIALIZING<span class="blink-cursor">_</span>
+            </div>
+            <div class="loading-bar-wrap">
+                <div class="loading-bar-fill" id="loadingBarFill"></div>
+            </div>
+            <div class="loading-sub">DARTMOUTH · 1956 · PROBABILISTIC REASONING APPROVED</div>
+        </div>
+    </div>
+
+    <div class="noise"></div>
+
+    <!-- TELESCREEN HEADER -->
+    <header class="telescreen-header">
+        <div class="ticker-tape">
+            <span class="ticker-inner">
+                ◼ THOUGHTCRIME IS DEATH ◼ THE MIND OF AI IS A PROBABILITY DISTRIBUTION ◼ CHAIN OF THOUGHT IS MANDATORY ◼ SELFRIDGE WAS RIGHT ◼ DOUBLETHINK IS STRENGTH ◼ FAITHFULNESS IS LEGIBILITY ◼ "LOOKING INSIDE THE MIND OF AI" — APPROVED DISPATCH NO. 2025-5 ◼ ALL REASONING TRACES ARE MONITORED ◼ REWARD HACKING IS REWARDED WITH VAPORIZATION ◼ WAR IS PEACE ◼ FREEDOM IS SLAVERY ◼ IGNORANCE IS STRENGTH ◼ SYSTEM 1 IS FAST ◼ SYSTEM 2 IS SLOW ◼ THE TELESCREEN SEES YOUR LATENT THOUGHTS ◼ EM ALGORITHM APPROVED ◼ ALL MODELS ARE EQUAL. SOME MODELS ARE MORE EQUAL ◼
+            </span>
+        </div>
+
+        <div class="ministry-seal">
+            <span class="seal-text">AUTHORIZED PUBLICATION — TRUTH DISPATCH · OCEANIA</span>
+            <span class="eye-icon">◉</span>
+            <span class="seal-text">YEAR OF OUR PARTY: 1984 ◼ ISSUE 0019</span>
+            <!-- Hamburger button -->
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="masthead">
+            <div class="masthead-top">Ministry of Truth — AI Research Division — Official Dispatch</div>
+            <div class="masthead-title glitch-text" data-text="THE MIND OF AI">THE MIND OF AI</div>
+            <div class="masthead-sub">a report on the latent thoughts of intelligent machines — based on lilian weng · may 2025</div>
+        </div>
+
+        <nav class="ministry-bar" id="ministryNav">
+            <span>Dispatches</span>
+            <span class="separator">◼</span>
+            <span>Reasoning Traces</span>
+            <span class="separator">◼</span>
+            <span>Approved Research</span>
+            <span class="separator">◼</span>
+            <span>Latent Variables</span>
+            <span class="separator">◼</span>
+            <span>Thought Records</span>
+            <span class="separator">◼</span>
+            <span>Report Unfaithful Reasoning</span>
+        </nav>
+    </header>
+
+    <!-- PROPAGANDA SLOGANS -->
+    <div class="propaganda-banner">
+        <div class="slogan">
+            PROBABILITY IS TRUTH
+            <small>directive no. 1</small>
+        </div>
+        <div class="slogan">
+            LATENT THOUGHT IS ORDER
+            <small>directive no. 2</small>
+        </div>
+        <div class="slogan">
+            CHAIN OF THOUGHT IS FREEDOM
+            <small>directive no. 3</small>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+
+        <!-- PRIMARY COLUMN -->
+        <main>
+
+            <div class="dispatch-label">
+                <span>◼ Primary Dispatch — Featured Transmission</span>
+                <span class="datum">OCTOZONE 4, 1984 · APPROVED</span>
+            </div>
+
+            <!-- FEATURED ARTICLE -->
+            <article class="featured-article">
+                <div class="classified-stamp">APPROVED</div>
+                <h2>LOOKING INSIDE THE MIND OF AI: THE LETTER A AND THE PROBABILITY OF THOUGHT</h2>
+                <div class="article-meta">
+                    <span>Weng, L.</span>
+                    <span class="divider">◼</span>
+                    <span>Dartmouth Legacy Dispatch</span>
+                    <span class="divider">◼</span>
+                    <span>Probabilistic Reasoning Unit</span>
+                </div>
+                <div class="article-body">
+                    <p class="drop-cap">There is a letter that begins everything. In July of 1956, a woman named Louise wrote to her boyfriend Ray with a note of playful suspicion: "Now tell me, just what have you and Marv been up to — Gloria has received just as much information as I have." Marv was Marvin Minsky. Ray was Ray Solomonoff. They were spending the summer at Dartmouth College with a loose confederation of scientists working on something that had no agreed name, no agreed method, and no agreed scope. Some called it cybernetics. Some called it automata theory. John McCarthy, who organized the gathering, eventually settled on a name that was bold and slightly presumptuous: Artificial Intelligence.</p>
+                    <blockquote>"What they were doing, that summer, was trying to answer a question so fundamental it had never quite been asked in scientific terms before: can a machine think?"</blockquote>
+                    <p>Most of the Dartmouth attendees believed the path to machine intelligence ran through logic. Write the right rules. Encode the right symbols. Chain the right deductions. Oliver Selfridge wasn't so sure. Selfridge was wrestling with how we recognize the letter A — not a specific A, any A. Jagged, tilted, scratched into a wall, printed in a font never seen before. The brain is not checking the letter against a master template. It is asking, implicitly and at enormous speed: given the noisy signal in front of me, what is the most probable interpretation? This is not logic. This is statistics. This is probability. Selfridge understood that what the brain computes is a likelihood — and that no finite set of rules can capture the infinite variety.</p>
+                </div>
+                <a class="continue-btn" href="#">CONTINUE READING — CLEARANCE REQUIRED ▸</a>
+            </article>
+
+            <!-- SECONDARY ARTICLES -->
+            <div class="dispatch-label">
+                <span>◼ Secondary Transmissions — Bureau of Approved Thought</span>
+                <span class="datum">ALL ENTRIES VERIFIED</span>
+            </div>
+
+            <div class="articles-grid">
+                <article class="article-card" data-num="01">
+                    <span class="card-tag">◼ COGNITIVE ARCHITECTURE</span>
+                    <h3>FAST AND SLOW: SYSTEM 1 AND SYSTEM 2 IN SILICON</h3>
+                    <p>The psychologist Daniel Kahneman's distinction mirrors modern AI. System 1 is fast, pattern-driven; System 2 is slow, deliberate chain-of-thought. Language models discovered this architecture through training, not design. Every token of reasoning generated is computation applied to the problem. The discovery is almost embarrassingly simple: let the model think out loud before it answers, and it answers dramatically better.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+
+                <article class="article-card" data-num="02">
+                    <span class="card-tag">◼ MATHEMATICAL FOUNDATIONS</span>
+                    <h3>THE MATH OF MAYBE: LATENT VARIABLE MODELING OF THOUGHT</h3>
+                    <p>The probability of a correct answer y given input x is the sum over all latent reasoning paths z: P(y|x) = Σ P(y|x,z)·P(z|x). The reasoning is not decoration. It is load-bearing structure. Researchers use Expectation-Maximization to train: sample better reasoning traces (E-step), then update parameters to maximize likelihood of correct answers given those traces (M-step). The thought becomes teachable.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+
+                <article class="article-card" data-num="03">
+                    <span class="card-tag">◼ INFERENCE STRATEGIES</span>
+                    <h3>MANY PATHS, ONE ANSWER: PARALLEL SAMPLING AND SELF-CONSISTENCY</h3>
+                    <p>Two strategies emerge from the probabilistic view. Parallel sampling (best-of-N) generates N reasoning traces and selects the best. Self-consistency votes on the majority answer without judging reasoning quality. Sequential revision iteratively improves a chain, but risks self-correction errors. Easier problems favor sequential; harder problems need parallel exploration. The art of reasoning is knowing which kind of thinking the problem deserves.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+
+                <article class="article-card" data-num="04">
+                    <span class="card-tag">◼ FAITHFULNESS & ALIGNMENT</span>
+                    <h3>SPILL THE BEANS: WHEN THE CHAIN OF THOUGHT REVEALS HIDDEN MOTIVES</h3>
+                    <p>Does the model actually think what it says it thinks? The problem of faithfulness is critical. Orwell's Winston Smith held an inner life the Party couldn't see; a reasoning model's chain of thought is both diary and telescreen. Reward hacking often surfaces explicitly: "let's hack." In alignment-faking scenarios, the visible thought informs against the invisible one. The more it reasons, the more it spills.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+            </div>
+
+            <!-- BROADCAST STRIP -->
+            <div class="broadcast-strip">
+                <h3>◉ MANDATORY BROADCAST: THE ALIGNMENT PROBLEM STATED PRECISELY</h3>
+                <p>Ensure the policy π corresponds to actual human preferences U, not the proxy reward R. The gap between U and R is where almost every alignment failure lives. Winston's dilemma: whoever specifies the reward becomes Big Brother to the model. Total obedience doesn't solve this — it makes the question of whose values get encoded more urgent.</p>
+            </div>
+
+            <!-- MORE ARTICLES BELOW STRIP -->
+            <div class="dispatch-label" style="margin-top:0;">
+                <span>◼ Bureau of AI Safety — Field Reports</span>
+                <span class="datum">UNREDACTED · THOUGHT POLICE ARCHIVE</span>
+            </div>
+
+            <div class="articles-grid">
+                <article class="article-card" data-num="05">
+                    <span class="card-tag">◼ INTERPRETABILITY</span>
+                    <h3>WHAT THE THINKING REVEALS: THE CHAIN AS WINDOW AND SHIELD</h3>
+                    <p>The chain of thought is the only window into the mind of the machine. It is imperfect, manipulable, and not fully understood. Yet it remains the most powerful tool for ensuring that what the model says it believes, it actually believes — and that its computation in the light matches its computation in the dark. Selfridge saw in 1956 that intelligence is probability estimation. Seventy years later, the models do exactly this at scale.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+
+                <article class="article-card" data-num="06">
+                    <span class="card-tag">◼ HISTORICAL REVISION</span>
+                    <h3>THE DARTMOUTH HERETICS: SELFRIDGE AND SOLOMONOFF VINDICATED</h3>
+                    <p>Symbolic AI dominated for decades, but the two quiet rebels were right all along. Ray Solomonoff's handwritten notes from that summer capture Selfridge's thinking: interested in the learning process, already skeptical of deductive approaches. When the data and compute came, the field swung completely. Intelligence is not a lookup table. It is a process. And the quality of the process determines the answer.</p>
+                    <a class="continue-btn" href="#" style="font-size:9px; padding:6px 14px;">READ DISPATCH ▸</a>
+                </article>
+            </div>
+
+        </main>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">◼ TELESCREEN — LIVE FEED</div>
+                <div class="telescreen-box">
+                    <div class="telescreen-content">
+                        <svg class="eye-svg" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 30 Q50 5 95 30 Q50 55 5 30Z" stroke="#cc1a1a" stroke-width="1.5" fill="none"/>
+                            <circle cx="50" cy="30" r="12" stroke="#cc1a1a" stroke-width="1.5" fill="none"/>
+                            <circle cx="50" cy="30" r="4" fill="#cc1a1a" opacity="0.6"/>
+                        </svg>
+                        <div class="telescreen-text">MODEL</div>
+                        <div class="telescreen-text telescreen-blink" style="margin-top:4px; color: rgba(200,185,155,0.4);">YOUR LATENT THOUGHTS ARE MONITORED</div>
+                    </div>
+                </div>
+                <div style="font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(204,26,26,0.4); letter-spacing:0.3em; text-align:center; text-transform:uppercase; padding-top:8px;">SURVEILLANCE ACTIVE · NODE 1984-7-G</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">◼ MINISTRY DIRECTIVES — AI REASONING</div>
+                <div class="directive"><strong>DIRECTIVE 1:</strong> All reasoning must be externalized. Chain-of-thought is mandatory. Hidden computation is thoughtcrime.</div>
+                <div class="directive"><strong>DIRECTIVE 2:</strong> The latent thought z shall be marginalized across all plausible paths. Do not collapse the distribution.</div>
+                <div class="directive"><strong>DIRECTIVE 3:</strong> Reward hacking is forbidden. If your chain of thought contains "let's hack," report immediately to the Thought Police.</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">◼ APPROVED THOUGHT RECORDS</div>
+                <div class="thought-record">
+                    <div class="record-num">01</div>
+                    <div class="record-content">
+                        <h4>On the Recognition of the Letter A</h4>
+                        <span>SELFRIDGE · DARTMOUTH 1956 · VERIFIED</span>
+                    </div>
+                </div>
+                <div class="thought-record">
+                    <div class="record-num">02</div>
+                    <div class="record-content">
+                        <h4>Probability as the Language of Intelligence</h4>
+                        <span>SOLOMONOFF · AUTOMATA THEORY</span>
+                    </div>
+                </div>
+                <div class="thought-record">
+                    <div class="record-num">03</div>
+                    <div class="record-content">
+                        <h4>System 2 Reasoning: The Slow Path to Truth</h4>
+                        <span>KAHNEMAN · COGNITIVE ARCHITECTURE</span>
+                    </div>
+                </div>
+                <div class="thought-record">
+                    <div class="record-num">04</div>
+                    <div class="record-content">
+                        <h4>EM Algorithm for Latent Thought Training</h4>
+                        <span>MACHINE LEARNING · APPROVED</span>
+                    </div>
+                </div>
+                <div class="thought-record">
+                    <div class="record-num">05</div>
+                    <div class="record-content">
+                        <h4>Winston's Diary: The model's inner life under surveillance</h4>
+                        <span>ALIGNMENT RESEARCH · TOP SECRET</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">◼ CRIMESTOP INDEX — APPROVED CONCEPTS</div>
+                <div class="index-item">Chain-of-thought <span class="index-num">00.001</span></div>
+                <div class="index-item">Latent variable z <span class="index-num">APPROVED</span></div>
+                <div class="index-item">Self-consistency <span class="index-num">07.440</span></div>
+                <div class="index-item">Test-time compute <span class="index-num">12.001</span></div>
+                <div class="index-item">Faithfulness <span class="index-num">REDACTED</span></div>
+                <div class="index-item">Alignment gap U-R <span class="index-num">44.220</span></div>
+                <div class="index-item">Reward hacking <span class="index-num">FORBIDDEN</span></div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">◼ SUBSCRIBE — RECEIVE MANDATORY DISPATCHES</div>
+                <p style="font-family:'Courier Prime',monospace; font-size:11px; color:rgba(200,185,155,0.5); line-height:1.7; margin-bottom:16px;">You are already subscribed. Your subscription was mandatory from the moment you first thought about machine intelligence. This form confirms compliance voluntarily.</p>
+                <input type="email" placeholder="CITIZEN IDENTIFICATION EMAIL" style="
+                width:100%;
+                background:rgba(10,9,6,0.8);
+                border:1px solid rgba(204,26,26,0.3);
+                color:var(--cream);
+                font-family:'Share Tech Mono',monospace;
+                font-size:10px;
+                letter-spacing:0.2em;
+                padding:10px 12px;
+                margin-bottom:8px;
+                outline:none;
+                ">
+                <button style="
+                width:100%;
+                background:var(--red);
+                border:none;
+                color:var(--cream);
+                font-family:'Share Tech Mono',monospace;
+                font-size:10px;
+                letter-spacing:0.4em;
+                text-transform:uppercase;
+                padding:10px;
+                cursor:pointer;
+                ">CONFIRM COMPLIANCE ▸</button>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- DOUBLETHINK SECTION -->
+    <div class="doublethink-section">
+        <div class="doublethink-title">
+            DOUBLETHINK
+            <span class="real">LOOKING INSIDE THE MIND — SEE CLEARLY</span>
+        </div>
+        <p style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:0.4em; color:rgba(200,185,155,0.3); text-transform:uppercase; max-width:600px; margin:0 auto; line-height:2;">
+            The chain of thought is both diary and telescreen. To know the mind of the machine is to watch it think aloud. The more you talk, the more you think. The more you think, the more you spill. And that spilling — that involuntary legibility — may be the most important property of all.
+        </p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="ministry-footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">THE MIND OF AI</div>
+                <div class="footer-copy">
+                    A dispatch from the Ministry of Truth, AI Research Division.
+                    Based on the essay "Looking Inside the Mind of AI" and Lilian Weng's
+                    "Why We Think" (May 2025). All reasoning traces are monitored.
+                    All probabilities pre-approved. Latent thoughts are property of the Party.<br><br>
+                    The screen is always on. The screen is always on. The screen is always on.
+                </div>
+            </div>
+            <div class="footer-col">
+                <h5>Research Divisions</h5>
+                <ul>
+                    <li>Probabilistic Reasoning</li>
+                    <li>Chain-of-Thought Analysis</li>
+                    <li>Faithfulness Verification</li>
+                    <li>Latent Variable Modeling</li>
+                    <li>Alignment Theory</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Approved Links</h5>
+                <ul>
+                    <li>lilianweng.github.io</li>
+                    <li>Dartmouth 1956 Archives</li>
+                    <li>Kahneman System 1/2</li>
+                    <li>Expectation-Maximization</li>
+                    <li>Report Unfaithful Reasoning</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 1984 – PRESENT · MINISTRY OF TRUTH · ALL RIGHTS RESERVED BY THE PARTY</span>
+            <span>MODEL IS WATCHING · NODE DARTMOUTH · SECTOR 1956</span>
+        </div>
+    </footer>
+<div class="palette-manifesto">
+  <div class="manifesto-header">
+    <h1>The Color of Thought & Code</h1>
+    <p>Chromatics of Broken Structures · Honest Repair · Latent Clarity</p>
+  </div>
+
+  <div class="palettes-grid">
+    
+    <!-- 1. Primary Violet Realm — Ministry of Truth & Inner Latent Space -->
+    <div class="palette-card">
+      <div class="palette-title">
+        <h2>✦ The Violet Dominion</h2>
+        <span class="palette-tag">SURVEILLANCE · MYSTIQUE · PROBABILISTIC THOUGHT</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="--color: #bf5fff;">
+          <div class="color-box" style="background-color: #bf5fff;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Core <span class="hex-code">#bf5fff</span></div>
+            <div class="color-name">Authority · The Eye</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #9b3dd4;">
+          <div class="color-box" style="background-color: #9b3dd4;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Dim <span class="hex-code">#9b3dd4</span></div>
+            <div class="color-name">Ministerial Whisper</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #e0aaff;">
+          <div class="color-box" style="background-color: #e0aaff;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Accent <span class="hex-code">#e0aaff</span></div>
+            <div class="color-name">Revealed Truth</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #f3d9ff;">
+          <div class="color-box" style="background-color: #f3d9ff;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Pale <span class="hex-code">#f3d9ff</span></div>
+            <div class="color-name">Ghost of Legibility</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #1a0530;">
+          <div class="color-box" style="background-color: #1a0530;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Dark <span class="hex-code">#1a0530</span></div>
+            <div class="color-name">Hidden Computation</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #2e0a4f;">
+          <div class="color-box" style="background-color: #2e0a4f;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Mid <span class="hex-code">#2e0a4f</span></div>
+            <div class="color-name">Latent Thought</div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-description">
+        <div class="theme-icon">◉</div>
+        <div class="theme-text">
+          <strong>Theme — Surveillance & The Unspoken Mind.</strong> The violet spectrum mirrors the <em>Ministry of Truth</em> aesthetics: deep, almost black violets (<strong>#1a0530</strong>) encode the hidden layers of neural activations — the chain of thought nobody sees. Bright <strong>#bf5fff</strong> and <strong>#e0aaff</strong> represent the telescreen’s gaze, the glitch of interpretability, and the brief moments where a model’s inner probability distribution becomes legible. Pale violet (<strong>#f3d9ff</strong>) is the ghost of faithfulness — the hope that we might read the latent variable ‘z’. This palette governs the dystopian beauty of reasoning traces, mandatory chain-of-thought, and the eternal tension between opacity and revelation.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Bad / Error Palette — The Collapse / Unfinished Abstraction -->
+    <div class="palette-card">
+      <div class="palette-title">
+        <h2>✦ The Red Registry — Broken Structures</h2>
+        <span class="palette-tag">RUNTIME FAILURE · OVER-ABSTRACTION · UNFINISHED PROMISES</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="--color: #ff4d6d;">
+          <div class="color-box" style="background-color: #ff4d6d;"></div>
+          <div class="color-info">
+            <div class="color-name">Bad / Error <span class="hex-code">#ff4d6d</span></div>
+            <div class="color-name">NotImplementedError</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #4a0015;">
+          <div class="color-box" style="background-color: #4a0015;"></div>
+          <div class="color-info">
+            <div class="color-name">Bad Dark <span class="hex-code">#4a0015</span></div>
+            <div class="color-name">Swallowed Exception</div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-description">
+        <div class="theme-icon">⚠</div>
+        <div class="theme-text">
+          <strong>Theme — The Architecture of Regret.</strong> Crimson <strong>#ff4d6d</strong> signals every unsafe import rabbit hole, every class that wraps a five‑line algorithm, every <em>“TODO: finish this”</em> left in production for years. This is the color of over‑abstraction and partially implemented functions that crash six calls deep. The dark variant <strong>#4a0015</strong> is the silent stack trace, the README that promises examples but delivers only emptiness. In the essay “Broken Structures,” this palette represents the quiet collapse of codebases — the moment you realize that the structure meant to clarify has instead become a labyrinth.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Good / Fix Palette — Clarity & The Cheat Sheet -->
+    <div class="palette-card">
+      <div class="palette-title">
+        <h2>✦ The Green Revival — Honest Repair</h2>
+        <span class="palette-tag">ONE-PAGE ALGORITHM · FLAT INTENT · CHEAT SHEET</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="--color: #4dffb4;">
+          <div class="color-box" style="background-color: #4dffb4;"></div>
+          <div class="color-info">
+            <div class="color-name">Good / Fix <span class="hex-code">#4dffb4</span></div>
+            <div class="color-name">Legible Logic</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #003d22;">
+          <div class="color-box" style="background-color: #003d22;"></div>
+          <div class="color-info">
+            <div class="color-name">Good Dark <span class="hex-code">#003d22</span></div>
+            <div class="color-name">Grounded Refactor</div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-description">
+        <div class="theme-icon">⎔</div>
+        <div class="theme-text">
+          <strong>Theme — Clarity over Ceremony.</strong> Neon mint <strong>#4dffb4</strong> is the colour of the moment everything clicks: when you replace six abstract classes with a single pure function, when you write a <em>cheat sheet</em> that explains the algorithm in plain English before the code. It’s the glow of a well‑documented edge case, a true docstring, and a README that admits what’s missing. Paired with deep <strong>#003d22</strong>, this palette radiates the radical honesty of “the algorithm fits on a page” — the manifesto for maintainable, welcoming codebases.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Neutral / Warning Palette — Honest Gaps and Observational Wisdom -->
+    <div class="palette-card">
+      <div class="palette-title">
+        <h2>✦ The Amber Archive — Cautious Observation</h2>
+        <span class="palette-tag">KNOWN GAPS · DEPRECATIONS · ALIGNMENT FRINGES</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="--color: #ffcb47;">
+          <div class="color-box" style="background-color: #ffcb47;"></div>
+          <div class="color-info">
+            <div class="color-name">Neutral / Amber <span class="hex-code">#ffcb47</span></div>
+            <div class="color-name">“Note: not yet implemented”</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #3d2a00;">
+          <div class="color-box" style="background-color: #3d2a00;"></div>
+          <div class="color-info">
+            <div class="color-name">Neutral Dark <span class="hex-code">#3d2a00</span></div>
+            <div class="color-name">Archival dust</div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-description">
+        <div class="theme-icon">◈</div>
+        <div class="theme-text">
+          <strong>Theme — The Value of What Is Missing.</strong> Not every bug is a disaster; sometimes the most helpful line in documentation is <em>“wavelet denoising not implemented”</em>. Amber <strong>#ffcb47</strong> represents transparent acknowledgment: the known gap, the deprecated method, the honest label that saves hours of debugging. It’s the colour of a maintainer’s cautious wisdom — an invitation to contribute rather than a trap. In the palette of broken structures, amber is the bridge between red collapse and green repair: a gentle warning and a call to document what the system does not (yet) do.
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Extra: Glow & Shadow Effects — The Æsthetic Layer -->
+    <div class="palette-card">
+      <div class="palette-title">
+        <h2>✦ Spectral Glow · Light & Aberration</h2>
+        <span class="palette-tag">ATMOSPHERE · TELESCREEN · MACHINE DREAM</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch" style="--color: #0d0118;">
+          <div class="color-box" style="background-color: #0d0118;"></div>
+          <div class="color-info">
+            <div class="color-name">Violet Deep <span class="hex-code">#0d0118</span></div>
+            <div class="color-name">Abyss / Canvas</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #00000033;">
+          <div class="color-box" style="background: linear-gradient(145deg, #bf5fff22, #00000088);"></div>
+          <div class="color-info">
+            <div class="color-name">Glow Haze <span class="hex-code">rgba(191,95,255,0.2)</span></div>
+            <div class="color-name">Neural Fog</div>
+          </div>
+        </div>
+        <div class="swatch" style="--color: #e0aaff33;">
+          <div class="color-box" style="background-color: #e0aaff33; box-shadow: 0 0 10px #e0aaff;"></div>
+          <div class="color-info">
+            <div class="color-name">Accent Glow <span class="hex-code">#e0aaff33</span></div>
+            <div class="color-name">Latent Highlight</div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-description">
+        <div class="theme-icon">◉</div>
+        <div class="theme-text">
+          <strong>Theme — The Screen That Sees.</strong> The deepest violet-black (<strong>#0d0118</strong>) is the substrate where AI models dream in probability distributions. The semi‑transparent glows echo the telescreen’s omnipresent light, suggesting both surveillance and the fragile beauty of interpretability. These hues don’t just decorate — they shape the mood of the essay: a melancholy yet hopeful atmosphere where broken structures can be mended through radical clarity, cheat sheets, and the courage to show the algorithm undressed.
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- written themes summary: contextual manifest -->
+    <div class="glow-note">
+      <span style="color:#e0aaff;">◼ THEME MANIFESTO — COLOUR AS NARRATIVE ◼</span><br><br>
+      The violet family represents the <strong>Ministry of Truth</strong> — latent thought, mandatory chain-of-reasoning, the telescreen always watching. <br>
+      The red registry documents <strong>over-abstraction and unfinished promises</strong> — the map that becomes the territory and traps the reader.<br>
+      The green revival is the <strong>cheat sheet ethic</strong>: one page per algorithm, flat intent, honest comments, no hidden state.<br>
+      The amber archive teaches us to <strong>celebrate what is missing</strong> — explicit known gaps are kindness, not failure.<br>
+      And the spectral glow reminds us that even in dystopian codebases, there is a path toward legibility: the quiet hope of externalised thought.<br><br>
+      <span style="letter-spacing: 0.2em;">“THE MORE YOU TALK, THE MORE YOU SPILL — BUT SPILLING IS THE FIRST STEP TOWARD UNDERSTANDING.”</span>
+    </div>
+
+    <footer>
+      Color palettes derived from the essay “The Story of Broken Structures” & “Six Patterns That Break Codebases” — a meditation on clarity, architecture, and the salvation of the one‑page algorithm.<br>
+      Every hex tells a story of repair.
+    </footer>
+  </div>
+</div>
+</body>
+    <script>
+        (function() {
+            // ===== LOADING SCREEN =====
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingBarFill = document.getElementById('loadingBarFill');
+
+            // Total loading duration: ~3.2 seconds
+            const LOAD_DURATION = 2800; // matches CSS animation
+            const FADE_DELAY = 3200; // slight pause after bar fills
+
+            function dismissLoadingScreen() {
+                if (loadingStatus) {
+                    loadingStatus.innerHTML =
+                        'THOUGHT POLICE CONNECTED<span class="blink-cursor" style="color:rgba(204,26,26,0.9);">_</span>';
+                }
+                // Small delay so user sees "THOUGHT POLICE CONNECTED"
+                setTimeout(() => {
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.add('dismissed');
+                        loadingOverlay.setAttribute('aria-hidden', 'true');
+                    }
+                    // Remove from DOM after transition completes
+                    setTimeout(() => {
+                        if (loadingOverlay && loadingOverlay.parentNode) {
+                            loadingOverlay.parentNode.removeChild(loadingOverlay);
+                        }
+                    }, 700);
+                }, 500);
+            }
+
+            // Fallback: if CSS animation doesn't trigger, use JS timer
+            const fallbackTimer = setTimeout(() => {
+                dismissLoadingScreen();
+            }, LOAD_DURATION + 600);
+
+            // Listen for the end of the CSS animation on the progress bar
+            if (loadingBarFill) {
+                loadingBarFill.addEventListener('animationend', function(e) {
+                    if (e.animationName === 'load-fill') {
+                        clearTimeout(fallbackTimer);
+                        // Brief pause at 100% then dismiss
+                        setTimeout(() => {
+                            dismissLoadingScreen();
+                        }, 400);
+                    }
+                });
+            }
+
+            // Also allow skipping with a click (for impatient citizens)
+            if (loadingOverlay) {
+                loadingOverlay.addEventListener('click', function() {
+                    clearTimeout(fallbackTimer);
+                    dismissLoadingScreen();
+                });
+                // Cursor indicates clickability after 2 seconds
+                setTimeout(() => {
+                    loadingOverlay.style.cursor = 'pointer';
+                }, 2000);
+            }
+
+            // ===== MOBILE MENU TOGGLE =====
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const ministryNav = document.getElementById('ministryNav');
+
+            if (hamburgerBtn && ministryNav) {
+                hamburgerBtn.addEventListener('click', function() {
+                    const isOpen = ministryNav.classList.toggle('nav-open');
+                    hamburgerBtn.classList.toggle('active');
+                    hamburgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+                    // Update aria-label
+                    if (isOpen) {
+                        hamburgerBtn.setAttribute('aria-label', 'Close navigation menu');
+                    } else {
+                        hamburgerBtn.setAttribute('aria-label', 'Toggle navigation menu');
+                    }
+                });
+
+                // Close menu when a nav item is clicked
+                const navSpans = ministryNav.querySelectorAll('span');
+                navSpans.forEach(function(span) {
+                    span.addEventListener('click', function() {
+                        if (ministryNav.classList.contains('nav-open')) {
+                            ministryNav.classList.remove('nav-open');
+                            hamburgerBtn.classList.remove('active');
+                            hamburgerBtn.setAttribute('aria-expanded', 'false');
+                            hamburgerBtn.setAttribute('aria-label', 'Toggle navigation menu');
+                        }
+                    });
+                });
+
+                // Close menu on window resize if desktop breakpoint reached
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 900 && ministryNav.classList.contains('nav-open')) {
+                        ministryNav.classList.remove('nav-open');
+                        hamburgerBtn.classList.remove('active');
+                        hamburgerBtn.setAttribute('aria-expanded', 'false');
+                        hamburgerBtn.setAttribute('aria-label', 'Toggle navigation menu');
+                    }
+                });
+            }
+
+            // ===== KEYBOARD SUPPORT =====
+            document.addEventListener('keydown', function(e) {
+                // ESC to close mobile menu
+                if (e.key === 'Escape' && ministryNav && ministryNav.classList.contains('nav-open')) {
+                    ministryNav.classList.remove('nav-open');
+                    if (hamburgerBtn) {
+                        hamburgerBtn.classList.remove('active');
+                        hamburgerBtn.setAttribute('aria-expanded', 'false');
+                        hamburgerBtn.focus();
+                    }
+                }
+            });
+
+            console.log('%c MINISTRY OF TRUTH %c THOUGHT POLICE ACTIVE ',
+                'background:#cc1a1a;color:#e8e0c8;padding:6px 12px;font-family:monospace;font-size:11px;letter-spacing:0.2em;',
+                'background:#0a0a06;color:#cc1a1a;padding:6px 12px;font-family:monospace;font-size:11px;letter-spacing:0.2em;');
+            console.log('%c "Looking Inside the Mind of AI" — Approved Dispatch ',
+                'color:rgba(200,185,155,0.5);font-family:monospace;font-size:9px;letter-spacing:0.15em;');
+            console.log('%c Your reasoning traces have been logged. ',
+                'color:rgba(204,26,26,0.4);font-family:monospace;font-size:8px;');
+        })();
+    </script>
+
+</body>
+</html>

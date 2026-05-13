@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palette & Fonts — Full Reference</title>
+  <style>
+    /* ---- base reset & theme variables (exactly as in original) ---- */
+    :root {
+      --ink: #1a1f36;
+      --ink-muted: #3d4466;
+      --ink-faint: #6b7299;
+      --page: #faf8f3;
+      --page-raised: #ffffff;
+      --page-sunken: #f0ede4;
+      --page-deep: #1a1f36;
+      --gold: #c98b2a;
+      --gold-light: #f5d98b;
+      --gold-dark: #8a5e14;
+      --teal: #1c6f7a;
+      --teal-light: #d4f0f3;
+      --teal-dark: #104850;
+      --sage: #4a7c59;
+      --sage-light: #dff0e3;
+      --rose: #8b3a4a;
+      --rose-light: #fce8ec;
+      --border: #d8d2c4;
+      --border-strong: #b8b0a0;
+      --font-serif: 'Source Serif 4', 'Libre Baskerville', Georgia, serif;
+      --font-display: 'EB Garamond', Garamond, serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    .theme-dark {
+      --ink: #f0f2f7;
+      --ink-muted: #c5c9d6;
+      --ink-faint: #8f96b0;
+      --page: #0b0d12;
+      --page-raised: #13161f;
+      --page-sunken: #08090e;
+      --page-deep: #05060a;
+      --gold: #f4c17f;
+      --gold-light: #2a261b;
+      --gold-dark: #d9a14f;
+      --teal: #4ed9e6;
+      --teal-light: #18272b;
+      --teal-dark: #2eb8c7;
+      --sage: #89e8a0;
+      --sage-light: #1d2a23;
+      --rose: #ff7d95;
+      --rose-light: #2c1f23;
+      --border: #1f222f;
+      --border-strong: #363d52;
+    }
+
+    .theme-high-contrast {
+      --ink: #000000;
+      --ink-muted: #000000;
+      --ink-faint: #333333;
+      --page: #ffffff;
+      --page-raised: #ffffff;
+      --page-sunken: #f0f0f0;
+      --page-deep: #000000;
+      --gold: #855b00;
+      --gold-light: #fff2cf;
+      --gold-dark: #573d00;
+      --teal: #005f6b;
+      --teal-light: #e0f5f7;
+      --teal-dark: #00363d;
+      --sage: #2d5a3b;
+      --sage-light: #ecf6ef;
+      --rose: #8b3a4a;
+      --rose-light: #fce8ec;
+      --border: #000000;
+      --border-strong: #000000;
+    }
+
+    .theme-slate {
+      --ink: #2d3436;
+      --ink-muted: #636e72;
+      --ink-faint: #b2bec3;
+      --page: #f1f2f6;
+      --page-raised: #ffffff;
+      --page-sunken: #dfe4ea;
+      --page-deep: #2d3436;
+      --gold: #2f3542;
+      --gold-light: #dfe4ea;
+      --gold-dark: #1e272e;
+      --teal: #00b894;
+      --teal-light: #d5f5f0;
+      --teal-dark: #00997a;
+      --sage: #55efc4;
+      --sage-light: #e8faf5;
+      --rose: #d63031;
+      --rose-light: #ffeaea;
+      --border: #ced6e0;
+      --border-strong: #a4b0be;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--page);
+      color: var(--ink);
+      font-family: var(--font-serif);
+      padding: 2rem 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* theme toggle bar */
+    .theme-bar {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      background: var(--page-raised);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .theme-btn.active {
+      background: var(--gold);
+      color: var(--page-deep);
+      border-color: var(--gold-dark);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .sub {
+      color: var(--ink-faint);
+      margin-bottom: 2rem;
+      border-left: 3px solid var(--gold);
+      padding-left: 1rem;
+    }
+
+    /* color grid */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .color-card {
+      background: var(--page-raised);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: transform 0.1s ease;
+    }
+
+    .color-swatch {
+      height: 96px;
+      background: var(--swatch-bg);
+    }
+
+    .color-meta {
+      padding: 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+    }
+
+    .var-name {
+      font-weight: 600;
+      color: var(--gold-dark);
+      background: var(--page-sunken);
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      border-radius: 6px;
+      margin-bottom: 0.4rem;
+      font-size: 0.65rem;
+    }
+
+    .hex-code {
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+      margin-top: 0.2rem;
+      color: var(--ink-muted);
+    }
+
+    .role {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+
+    /* font section */
+    .font-panel {
+      margin-top: 3rem;
+      background: var(--page-raised);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    .font-panel h3 {
+      font-family: var(--font-display);
+      margin-bottom: 1rem;
+    }
+
+    .font-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .font-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: bold;
+      width: 90px;
+    }
+
+    .font-example {
+      font-size: 1rem;
+      flex: 1;
+    }
+
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+  </style>
+</head>
+<body class="theme-default" id="app-body">
+  <div class="container">
+    <div class="theme-bar">
+      <button class="theme-btn active" data-theme="default">🌿 Classic</button>
+      <button class="theme-btn" data-theme="dark">🌙 Dark</button>
+      <button class="theme-btn" data-theme="high-contrast">⚡ High Contrast</button>
+      <button class="theme-btn" data-theme="slate">🪨 Slate</button>
+    </div>
+
+    <h1>Color Palette & Typography</h1>
+    <div class="sub">Design tokens — light, dark, high‑contrast, slate themes</div>
+
+    <!-- ========== COLOR GRID (all CSS variables) ========== -->
+    <div id="palette-container" class="palette-grid"></div>
+
+    <!-- Font families section -->
+    <div class="font-panel">
+      <h3>✧ Font Families (unchanged across themes)</h3>
+      <div class="font-row">
+        <div class="font-label">Serif (body)</div>
+        <div class="font-example" style="font-family: 'Source Serif 4', 'Libre Baskerville', Georgia, serif;">
+          Source Serif 4, Libre Baskerville, Georgia — <em>reading comfort</em>
+        </div>
+      </div>
+      <div class="font-row">
+        <div class="font-label">Display (headings)</div>
+        <div class="font-example" style="font-family: 'EB Garamond', Garamond, serif;">
+          EB Garamond, Garamond — <strong>elegant headings</strong>
+        </div>
+      </div>
+      <div class="font-row">
+        <div class="font-label">Monospace (code)</div>
+        <div class="font-example" style="font-family: 'JetBrains Mono', 'Courier New', monospace;">
+          JetBrains Mono, Courier New — /* clean code */
+        </div>
+      </div>
+    </div>
+    <footer>All variables defined in :root and per‑theme overrides. Swatches reflect active theme — click theme buttons to preview.</footer>
+  </div>
+
+  <script>
+    // Full list of color variables with roles and display order
+    const colorVariables = [
+      { varName: "--ink", role: "Primary text / headings" },
+      { varName: "--ink-muted", role: "Secondary text, less emphasis" },
+      { varName: "--ink-faint", role: "Subtle text, captions" },
+      { varName: "--page", role: "Main background" },
+      { varName: "--page-raised", role: "Cards, modals, elevated surfaces" },
+      { varName: "--page-sunken", role: "Sunken areas, code blocks, inputs" },
+      { varName: "--gold", role: "Main accent (links, highlights)" },
+      { varName: "--gold-light", role: "Light gold backgrounds" },
+      { varName: "--gold-dark", role: "Dark gold for text contrast" },
+      { varName: "--teal", role: "Theorems, proofs, mathematics" },
+      { varName: "--teal-light", role: "Teal backgrounds" },
+      { varName: "--teal-dark", role: "Dark teal for text" },
+      { varName: "--sage", role: "Definitions, examples" },
+      { varName: "--sage-light", role: "Sage backgrounds" },
+      { varName: "--rose", role: "Warnings, notes, attention" },
+      { varName: "--rose-light", role: "Rose backgrounds" },
+      { varName: "--border", role: "Borders, dividers" },
+      { varName: "--border-strong", role: "Strong borders, table headers" }
+    ];
+
+    // Helper: get current computed style value for a given variable
+    function getCurrentColorValue(varName) {
+      const body = document.getElementById('app-body');
+      return getComputedStyle(body).getPropertyValue(varName).trim();
+    }
+
+    // Render the palette grid based on current theme
+    function renderPalette() {
+      const container = document.getElementById('palette-container');
+      if (!container) return;
+      let html = '';
+      for (const item of colorVariables) {
+        const hex = getCurrentColorValue(item.varName);
+        // fallback for missing hex (should never happen)
+        const safeHex = hex && hex !== '' ? hex : '#cccccc';
+        html += `
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: ${safeHex};"></div>
+            <div class="color-meta">
+              <div class="var-name">${item.varName}</div>
+              <div class="hex-code">${safeHex}</div>
+              <div class="role">${item.role}</div>
+            </div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    // theme switching logic
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const bodyEl = document.getElementById('app-body');
+
+    function applyTheme(themeName) {
+      // remove existing theme classes
+      bodyEl.classList.remove('theme-dark', 'theme-high-contrast', 'theme-slate');
+      if (themeName === 'dark') {
+        bodyEl.classList.add('theme-dark');
+      } else if (themeName === 'high-contrast') {
+        bodyEl.classList.add('theme-high-contrast');
+      } else if (themeName === 'slate') {
+        bodyEl.classList.add('theme-slate');
+      }
+      // default: no extra class (default light theme)
+      // update active button styling
+      themeButtons.forEach(btn => {
+        if (btn.getAttribute('data-theme') === themeName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      // re-render palette with new computed colors
+      renderPalette();
+    }
+
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.getAttribute('data-theme');
+        applyTheme(theme);
+      });
+    });
+
+    // initial render (default theme)
+    renderPalette();
+
+    // optional: add small live listener to re-render if needed (but theme change already calls render)
+  </script>
+</body>
+</html>
