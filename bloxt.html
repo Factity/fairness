@@ -148,7 +148,7 @@ p strong { color:rgba(255,255,255,0.9); }
 .reveal-left.visible { opacity:1; transform:translateX(0); }
 .reveal-right { opacity:0; transform:translateX(24px); transition:opacity 0.6s ease,transform 0.6s ease; }
 .reveal-right.visible { opacity:1; transform:translateX(0); }
-.callout { border-radius:12px; padding:1.1rem 1.3rem; margin:1.6rem 0; font-size:0.9rem; font-weight:700; display:flex; gap:0.9rem; align-items:flex-start; position:relative; overflow:hidden; }
+.callout { border-radius:12px; overflow-x: auto; padding:1.1rem 1.3rem; margin:1.6rem 0; font-size:0.9rem; font-weight:700; display:flex; gap:0.9rem; align-items:flex-start; position:relative; overflow:hidden; }
 .callout::before { content:''; position:absolute; inset:0; opacity:0.06; background:repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 8px); }
 .callout .icon { font-size:1.4rem; flex-shrink:0; margin-top:1px; }
 .callout .body { color:inherit; line-height:1.6; }
@@ -491,7 +491,7 @@ body, .wrap, .hero, .topbar, section, .toc, .card-grid { overflow-x:hidden; }
     This single equation reframes everything. It says that the best answer is not the output of a single reflex, but the answer that emerges most consistently when we average over all plausible ways of thinking about the problem. The reasoning trace is not decoration — it is the load‑bearing latent structure of the model.
   </p>
 
-  <div class="callout cp reveal">
+  <div class="callout cp reveal" >
     <div class="icon">🧮</div>
     <div ><strong>Expectation‑Maximization (EM)</strong>This framing gives researchers a rigorous way to train better thinkers. The EM algorithm alternates between two moves. In the <strong>E‑step</strong>, the model samples better reasoning traces — it estimates the posterior over latent thoughts given a known correct answer: \(r^* \sim P(r \mid x, y)\). It asks: <em>given that I know the answer is \(y\), what reasoning paths probably led there?</em> In the <strong>M‑step</strong>, the model updates its parameters to maximise the log‑likelihood of the answer under those refined reasoning traces: \(\theta \leftarrow \arg\max_\theta \mathbb{E}_{r\sim P(r\mid x,y)}[\log P_\theta(y, r \mid x)]\). Iterating these two steps gradually teaches the model not just what the right answers are, but how to reason its way to them. The thought becomes teachable; the process becomes trainable.</div>
   </div>
