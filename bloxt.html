@@ -245,7 +245,32 @@ body, .wrap, .hero, .topbar, section, .toc, .card-grid { overflow-x:hidden; }
   overflow-x: auto;
 
 }
+/* ── Fix: callout horizontal scroll on mobile ── */
+.callout {
+  overflow-x: auto;
+  overflow-y: hidden;           /* was: overflow:hidden — killed x‑scroll */
+  -webkit-overflow-scrolling: touch;
+}
 
+/* Let the body text shrink inside the flex layout */
+.callout .body {
+  min-width: 0;                 /* prevents flex blowout */
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Keep the icon from squishing */
+.callout .icon {
+  flex-shrink: 0;
+}
+
+/* Ensure MathJax inside callouts scrolls if needed */
+.callout .MathJax,
+.callout .MathJax_Display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
 </style>
 </head>
 <body>
