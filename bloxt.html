@@ -493,7 +493,7 @@ body, .wrap, .hero, .topbar, section, .toc, .card-grid { overflow-x:hidden; }
 
   <div class="callout cp reveal">
     <div class="icon">🧮</div>
-    <div class="body"><strong>Expectation‑Maximization (EM)</strong>This framing gives researchers a rigorous way to train better thinkers. The EM algorithm alternates between two moves. In the <strong>E‑step</strong>, the model samples better reasoning traces — it estimates the posterior over latent thoughts given a known correct answer: \(r^* \sim P(r \mid x, y)\). It asks: <em>given that I know the answer is \(y\), what reasoning paths probably led there?</em> In the <strong>M‑step</strong>, the model updates its parameters to maximise the log‑likelihood of the answer under those refined reasoning traces: \(\theta \leftarrow \arg\max_\theta \mathbb{E}_{r\sim P(r\mid x,y)}[\log P_\theta(y, r \mid x)]\). Iterating these two steps gradually teaches the model not just what the right answers are, but how to reason its way to them. The thought becomes teachable; the process becomes trainable.</div>
+    <div ><strong>Expectation‑Maximization (EM)</strong>This framing gives researchers a rigorous way to train better thinkers. The EM algorithm alternates between two moves. In the <strong>E‑step</strong>, the model samples better reasoning traces — it estimates the posterior over latent thoughts given a known correct answer: \(r^* \sim P(r \mid x, y)\). It asks: <em>given that I know the answer is \(y\), what reasoning paths probably led there?</em> In the <strong>M‑step</strong>, the model updates its parameters to maximise the log‑likelihood of the answer under those refined reasoning traces: \(\theta \leftarrow \arg\max_\theta \mathbb{E}_{r\sim P(r\mid x,y)}[\log P_\theta(y, r \mid x)]\). Iterating these two steps gradually teaches the model not just what the right answers are, but how to reason its way to them. The thought becomes teachable; the process becomes trainable.</div>
   </div>
 
   <h3 class="sub reveal" id="s3b">Probabilistic Reasoning at Scale</h3>
@@ -603,7 +603,7 @@ body, .wrap, .hero, .topbar, section, .toc, .card-grid { overflow-x:hidden; }
 
   <div class="callout cp reveal">
     <div class="icon">🔬</div>
-    <div class="body"><strong>Enforcing Lipschitzness During Training</strong>The most direct approach adds a regularisation penalty to the training loss that punishes large changes in reasoning when inputs are semantically close:
+    <div ><strong>Enforcing Lipschitzness During Training</strong>The most direct approach adds a regularisation penalty to the training loss that punishes large changes in reasoning when inputs are semantically close:
     \[\mathcal{L}_{\text{Lip}} = \lambda \cdot \mathbb{E}_{x_1, x_2}\!\left[\max\!\left(0,\; d_\mathcal{R}(r(x_1), r(x_2)) - K \cdot d_\mathcal{X}(x_1, x_2)\right)^2\right]\]
     Training pairs \((x_1, x_2)\) can be generated from natural paraphrases, adversarial perturbations like the biasing sentences of Turpin et al., or embedding-space interpolations (mixup). This directly penalises the observed failure: when a bias is added, the reasoning changes drastically while \(d_\mathcal{X}\) is tiny, yielding a large, gradient-producing penalty. Alternatively, architectural Lipschitzness can be enforced by spectral normalisation on all layers, bounding the network's global Lipschitz constant by the product of per-layer spectral norms.</div>
   </div>
