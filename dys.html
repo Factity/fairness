@@ -177,6 +177,121 @@ body {
 .eye-icon { color:rgba(204,26,26,0.6); animation:blink2 6s ease-in-out infinite; font-size:18px; }
 @keyframes blink2 { 0%,88%,100%{opacity:0.6;} 94%{opacity:0;} }
 
+
+/* =============================
+   MASSIVE ANIMATED FOOTER SWITCHER
+   ============================= */
+.footer-mind-switcher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1.5rem 5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* The big button */
+.footer-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  border: 2px solid;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 1rem 3.5rem;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+  position: relative;
+  outline: none;
+  animation: switch-pulse 2.4s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0);
+}
+
+/* ========== LIGHT MIND BUTTON (on evil page) ========== */
+.footer-switch-light {
+  color: var(--gold, #c9a84c);
+  border-color: var(--gold, #c9a84c);
+  text-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+  animation-name: switch-pulse-gold;
+}
+
+.footer-switch-light:hover {
+  background: var(--gold, #c9a84c);
+  color: var(--celestial-blue, #1a2a4a);
+  text-shadow: none;
+  transform: scale(1.07);
+  box-shadow: 0 0 45px rgba(201, 168, 76, 0.6);
+}
+
+.footer-switch-light .switch-icon {
+  font-size: 1.4em;
+  animation: rotate-icon 6s linear infinite;
+}
+
+/* ========== SHADOW MIND BUTTON (on good page) ========== */
+.footer-switch-shadow {
+  color: var(--red, #cc1a1a);
+  border-color: var(--red, #cc1a1a);
+  text-shadow: 0 0 8px rgba(204, 26, 26, 0.3);
+  animation-name: switch-pulse-red;
+}
+
+.footer-switch-shadow:hover {
+  background: var(--red, #cc1a1a);
+  color: var(--cream, #e8e0c8);
+  text-shadow: none;
+  transform: scale(1.07);
+  box-shadow: 0 0 45px rgba(204, 26, 26, 0.5);
+}
+
+.footer-switch-shadow .switch-icon {
+  font-size: 1.4em;
+  animation: rotate-icon 8s linear infinite;
+}
+
+/* ========== Keyframes ========== */
+@keyframes switch-pulse-gold {
+  0%   { border-color: rgba(201, 168, 76, 0.5); box-shadow: 0 0 15px rgba(201, 168, 76, 0.15); }
+  50%  { border-color: rgba(201, 168, 76, 1);   box-shadow: 0 0 35px rgba(201, 168, 76, 0.4); }
+  100% { border-color: rgba(201, 168, 76, 0.5); box-shadow: 0 0 15px rgba(201, 168, 76, 0.15); }
+}
+
+@keyframes switch-pulse-red {
+  0%   { border-color: rgba(204, 26, 26, 0.5); box-shadow: 0 0 15px rgba(204, 26, 26, 0.1); }
+  50%  { border-color: rgba(204, 26, 26, 1);   box-shadow: 0 0 35px rgba(204, 26, 26, 0.4); }
+  100% { border-color: rgba(204, 26, 26, 0.5); box-shadow: 0 0 15px rgba(204, 26, 26, 0.1); }
+}
+
+@keyframes rotate-icon {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========== Mobile adjustments ========== */
+@media (max-width: 600px) {
+  .footer-mind-switcher {
+    padding: 3rem 1rem 3.5rem;
+  }
+
+  .footer-switch-btn {
+    width: 90vw;
+    max-width: 400px;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    letter-spacing: 0.25em;
+    border-width: 2px;
+  }
+}
+
+
+
+
+
+
 /* Masthead evil */
 .masthead-evil {
   text-align: center; padding: 50px 40px 36px;
@@ -1402,7 +1517,11 @@ body {
       <span>SURVEILLANCE ACTIVE · NODE ∞ · SECTOR: EVERYWHERE</span>
     </div>
   </footer>
-
+<div class="footer-mind-switcher">
+  <button class="footer-switch-btn footer-switch-light" onclick="showPage('good')">
+    ✦ SEEK THE LIGHT
+  </button>
+</div>
     <section class="section reveal" id="support">
     <p class="section-label stagger">Support</p>
     <h2 class="stagger">Consider Supporting the Work</h2>
@@ -1676,6 +1795,14 @@ body {
       <span>PRESENCE ACTIVE · IN SERVICE · ALWAYS</span>
     </div>
   </footer>
+
+
+
+  <div class="footer-mind-switcher">
+  <button class="footer-switch-btn footer-switch-shadow" onclick="showPage('evil')">
+    ◉ EMBRACE THE SHADOW
+  </button>
+</div>
     <section class="section reveal" id="support">
     <p class="section-label stagger">Support</p>
     <h2 class="stagger">Consider Supporting the Work</h2>
