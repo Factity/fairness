@@ -1,0 +1,1466 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UGLY — A World That Wears Its Monsters Smiling</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #000000;
+    --deep: #0a0a0a;
+    --red: #c0001a;
+    --red-dim: #6b000f;
+    --white: #e8e4dc;
+    --grey: #444;
+    --grey-light: #888;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  #cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--red); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s ease, background 0.3s, width 0.2s, height 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor-trail {
+    position: fixed; width: 40px; height: 40px;
+    border: 1px solid rgba(192,0,26,0.4); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.18s ease;
+  }
+  body:has(a:hover) #cursor,
+  body:has(button:hover) #cursor { width: 24px; height: 24px; }
+
+  /* ── SCANLINE OVERLAY ── */
+  #scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9992;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.06) 3px,
+      rgba(0,0,0,0.06) 4px
+    );
+    animation: scanMove 8s linear infinite;
+  }
+  @keyframes scanMove {
+    from { background-position: 0 0; }
+    to   { background-position: 0 100px; }
+  }
+
+  /* ── RED SCAN SWEEP ── */
+  #sweep {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--red), transparent);
+    opacity: 0.25; pointer-events: none; z-index: 9993;
+    animation: sweepDown 6s linear infinite;
+  }
+  @keyframes sweepDown {
+    0%   { top: -2px; opacity: 0; }
+    5%   { opacity: 0.25; }
+    95%  { opacity: 0.25; }
+    100% { top: 100vh; opacity: 0; }
+  }
+
+  /* ── VIGNETTE ── */
+  #vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9991;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+  }
+
+  /* ── NOISE ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.45; animation: noiseFlicker 0.08s steps(1) infinite;
+  }
+  @keyframes noiseFlicker { to { opacity: 0.3; } }
+
+  canvas.scene-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+  }
+
+  /* ══ HERO ══ */
+  #hero {
+    position: relative; height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end; align-items: flex-start;
+    padding: 6vw 8vw; overflow: hidden;
+  }
+  #hero-canvas { position: absolute; inset: 0; z-index: 0; }
+  #hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(192,0,26,0.14) 0%, transparent 65%);
+    z-index: 1; pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.4em; color: var(--red);
+    text-transform: uppercase; margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-title {
+    font-size: clamp(5rem,15vw,14rem); font-weight: 600;
+    line-height: 0.85; letter-spacing: -0.02em; color: var(--white);
+    opacity: 0; transform: translateY(40px);
+    animation: fadeUp 1.2s 0.8s forwards; position: relative; z-index: 2;
+  }
+  .hero-title em { font-style: italic; color: var(--red); display: block; }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: clamp(1rem,2vw,1.4rem); font-weight: 300; font-style: italic;
+    color: var(--grey-light); max-width: 500px; line-height: 1.6;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  /* ── TYPEWRITER COUNTER ── */
+  #hero-counter {
+    position: absolute; top: 2.5rem; right: 8vw;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.2em; color: var(--red-dim);
+    opacity: 0; animation: fadeIn 0.5s 2.5s forwards;
+  }
+  #hero-counter span { color: var(--red); }
+
+  /* ── HEARTBEAT MONITOR ── */
+  #heartbeat-container {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 80px; z-index: 3; pointer-events: none;
+    opacity: 0; animation: fadeIn 1s 3s forwards;
+  }
+  #heartbeat-canvas { width: 100%; height: 100%; }
+
+  .scroll-hint {
+    position: absolute; bottom: 3rem; right: 8vw;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.3em; color: var(--grey); text-transform: uppercase;
+    writing-mode: vertical-rl; opacity: 0; animation: fadeIn 1s 2s forwards;
+    z-index: 5;
+  }
+  .scroll-hint::after {
+    content: ''; display: block; width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--grey), transparent); margin: 1rem auto 0;
+  }
+
+  /* ══ SECTIONS ══ */
+  section { position: relative; overflow: hidden; min-height: 100vh; }
+  .section-inner { position: relative; z-index: 2; padding: 12vh 10vw; }
+  #masks    { background: var(--black); }
+  #neural   { background: #050505; }
+  #monster  { background: #060000; }
+  #finale   { background: var(--black); min-height: 80vh; }
+
+  .chapter-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.5em; color: var(--red-dim); text-transform: uppercase;
+    margin-bottom: 1.5rem; display: block;
+  }
+
+  /* ── TYPEWRITER HEADING ── */
+  .type-cursor::after {
+    content: '|'; color: var(--red); animation: blink 0.9s step-end infinite;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+  .section-title {
+    font-size: clamp(2.5rem,6vw,5.5rem); font-weight: 300;
+    line-height: 1.05; letter-spacing: -0.01em; max-width: 14ch; margin-bottom: 2rem;
+  }
+  .section-title strong { font-weight: 600; display: block; color: var(--red); }
+  .section-title em { font-style: italic; }
+
+  .body-text {
+    font-size: clamp(1.1rem,1.8vw,1.35rem); font-weight: 300;
+    line-height: 1.9; color: rgba(232,228,220,0.75); max-width: 60ch;
+  }
+  .body-text + .body-text { margin-top: 1.5em; }
+
+  .pull-quote {
+    border-left: 2px solid var(--red); padding-left: 2rem; margin: 4rem 0;
+    font-size: clamp(1.4rem,3vw,2.2rem); font-style: italic; font-weight: 300;
+    line-height: 1.4; color: var(--white); max-width: 24ch;
+    position: relative;
+  }
+  /* animated red bracket */
+  .pull-quote::before {
+    content: '"'; position: absolute; left: -0.5rem; top: -0.5rem;
+    font-size: 4rem; color: var(--red); opacity: 0.25; line-height: 1;
+    animation: pulseBracket 3s ease-in-out infinite;
+  }
+  @keyframes pulseBracket { 0%,100%{opacity:0.15;} 50%{opacity:0.4;} }
+
+  .split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center;
+  }
+  @media (max-width: 768px) { .split { grid-template-columns: 1fr; gap: 4rem; } }
+
+  .canvas-panel {
+    position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 2px;
+    overflow: hidden; box-shadow: 0 0 80px rgba(192,0,26,0.15);
+    transition: box-shadow 0.4s;
+  }
+  .canvas-panel:hover { box-shadow: 0 0 120px rgba(192,0,26,0.35); }
+  .canvas-panel canvas { width: 100% !important; height: 100% !important; }
+
+  /* ── PANEL GLITCH ON HOVER ── */
+  .canvas-panel::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(192,0,26,0.04) 100%);
+    pointer-events: none;
+  }
+  .canvas-panel:hover::before {
+    content: ''; position: absolute; inset: 0; z-index: 10;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 4px,
+      rgba(192,0,26,0.06) 4px, rgba(192,0,26,0.06) 5px
+    );
+    pointer-events: none;
+    animation: panelScan 0.5s linear;
+  }
+  @keyframes panelScan { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
+
+  .mask-row { display: flex; gap: 1px; margin: 4rem 0; overflow: hidden; }
+  .mask-cell {
+    flex: 1; aspect-ratio: 3/4; background: #111;
+    position: relative; overflow: hidden;
+    transition: flex 0.5s ease;
+  }
+  .mask-cell:hover { flex: 2.5; }
+  .mask-cell canvas { width: 100% !important; height: 100% !important; }
+
+  .data-line {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    color: var(--red-dim); letter-spacing: 0.1em; display: block;
+    margin-top: 0.5rem; opacity: 0.6;
+  }
+
+  /* ── GLITCH TEXT ── */
+  .glitch { position: relative; display: inline-block; }
+  .glitch::before,.glitch::after {
+    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; color: var(--white);
+  }
+  .glitch::before {
+    animation: glitch1 3s infinite; color: var(--red);
+    clip-path: polygon(0 0,100% 0,100% 33%,0 33%);
+  }
+  .glitch::after {
+    animation: glitch2 3s infinite; color: #00c8ff;
+    clip-path: polygon(0 66%,100% 66%,100% 100%,0 100%); opacity: 0.5;
+  }
+  @keyframes glitch1 {
+    0%,95%{transform:translate(0);}
+    96%{transform:translate(-3px,1px);}
+    97%{transform:translate(3px,-1px);}
+    98%{transform:translate(-2px,2px);}
+    100%{transform:translate(0);}
+  }
+  @keyframes glitch2 {
+    0%,94%{transform:translate(0);}
+    95%{transform:translate(3px,2px);}
+    97%{transform:translate(-3px,-1px);}
+    100%{transform:translate(0);}
+  }
+
+  /* ── WIPE-IN NUMBERS ── */
+  .stat-number {
+    font-family: 'Share Tech Mono', monospace; font-size: clamp(3rem,8vw,7rem);
+    color: var(--red); font-weight: 400; display: block;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1.2s cubic-bezier(0.77,0,0.18,1);
+  }
+  .stat-number.visible { clip-path: inset(0 0% 0 0); }
+
+  /* ── STATS ROW (neural section) ── */
+  .stats-row {
+    display: flex; gap: 4rem; margin: 4rem 0;
+    border-top: 1px solid rgba(192,0,26,0.2);
+    border-bottom: 1px solid rgba(192,0,26,0.2);
+    padding: 2rem 0;
+  }
+  .stat-item { flex: 1; }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.3em; color: var(--grey-light); text-transform: uppercase;
+    display: block; margin-bottom: 0.5rem;
+  }
+
+  /* ── ANIMATED PROGRESS BARS ── */
+  .progress-bar {
+    height: 2px; background: rgba(255,255,255,0.07);
+    margin-top: 0.5rem; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--red);
+    width: 0; transition: width 1.5s cubic-bezier(0.77,0,0.18,1);
+  }
+
+  /* ── MARQUEE STRIP ── */
+  .marquee-strip {
+    overflow: hidden; border-top: 1px solid rgba(192,0,26,0.15);
+    border-bottom: 1px solid rgba(192,0,26,0.15);
+    padding: 0.8rem 0; margin: 3rem 0; white-space: nowrap;
+  }
+  .marquee-inner {
+    display: inline-block; animation: marqueeScroll 22s linear infinite;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.25em; color: var(--red-dim);
+  }
+  @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── INK BLEED DIVIDER ── */
+  .ink-divider {
+    position: relative; height: 60px; overflow: hidden; margin: 2rem 0;
+  }
+  .ink-divider canvas { width: 100%; height: 100%; display: block; }
+
+  /* ── CHAPTER TRANSITION WIPE ── */
+  .chapter-wipe {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, transparent, var(--red) 50%, transparent);
+    transform-origin: left;
+    transform: scaleX(0); transition: transform 1.2s ease;
+    z-index: 10;
+  }
+  section.chapter-active .chapter-wipe { transform: scaleX(1); }
+
+  .divider { width: 60px; height: 2px; background: var(--red); margin: 3rem 0; }
+
+  /* ── ANIMATED DIVIDER ── */
+  .anim-divider {
+    width: 0; height: 2px; background: var(--red); margin: 3rem 0;
+    transition: width 1s 0.3s ease;
+  }
+  .reveal.visible ~ .anim-divider,
+  .anim-divider.visible { width: 60px; }
+
+  /* ── FINALE ── */
+  #finale .section-inner {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; min-height: 80vh;
+  }
+  .finale-title {
+    font-size: clamp(3rem,10vw,9rem); font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); line-height: 1;
+    margin-bottom: 2rem;
+  }
+  .finale-sub {
+    font-style: italic; font-weight: 300;
+    font-size: clamp(1rem,2vw,1.5rem);
+    color: var(--grey-light); max-width: 40ch; line-height: 1.7;
+  }
+
+  /* ── FLOATING PARTICLES (CSS only, layered on top) ── */
+  .floater {
+    position: absolute; border-radius: 50%;
+    background: var(--red); pointer-events: none; z-index: 1;
+    animation: float var(--dur,8s) var(--del,0s) ease-in-out infinite alternate;
+  }
+  @keyframes float {
+    from { transform: translate(0,0) scale(1); opacity: var(--op1,0.3); }
+    to   { transform: translate(var(--tx,10px),var(--ty,-20px)) scale(0.6); opacity: var(--op2,0.05); }
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(50px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+
+  /* ── GLITCH FLASH ── */
+  @keyframes flashGlitch {
+    0%   { clip-path: inset(0 0 100% 0); opacity:0; }
+    5%   { clip-path: inset(20% 0 30% 0); opacity:1; }
+    10%  { clip-path: inset(60% 0 0% 0); opacity:1; }
+    15%  { clip-path: inset(0 0 0 0); opacity:1; }
+    100% { clip-path: inset(0 0 0 0); opacity:1; }
+  }
+  .reveal-glitch.visible {
+    animation: flashGlitch 0.6s ease forwards;
+  }
+
+  /* ── TYPED TEXT ── */
+  .typed-text { display: inline; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="scanlines"></div>
+<div id="sweep"></div>
+<div id="vignette"></div>
+
+<!-- ══════════════════════════════════════ HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+
+  <!-- floating micro-particles (CSS only) -->
+  <div class="floater" style="width:3px;height:3px;left:15%;top:30%;--dur:11s;--del:0s;--tx:25px;--ty:-40px;--op1:0.4;--op2:0.05;"></div>
+  <div class="floater" style="width:2px;height:2px;left:35%;top:60%;--dur:7s;--del:2s;--tx:-15px;--ty:-30px;--op1:0.3;--op2:0.04;"></div>
+  <div class="floater" style="width:4px;height:4px;left:70%;top:20%;--dur:13s;--del:1s;--tx:20px;--ty:-50px;--op1:0.25;--op2:0.03;"></div>
+  <div class="floater" style="width:2px;height:2px;left:85%;top:70%;--dur:9s;--del:3s;--tx:-10px;--ty:-35px;--op1:0.35;--op2:0.04;"></div>
+  <div class="floater" style="width:3px;height:3px;left:55%;top:85%;--dur:12s;--del:0.5s;--tx:30px;--ty:-60px;--op1:0.3;--op2:0.05;"></div>
+
+  <div id="hero-counter">
+    NODES: <span id="node-count">0000</span> &nbsp;|&nbsp; DEVIANT: <span id="deviant-count">001</span>
+  </div>
+
+  <div style="position:relative;z-index:2;">
+    <div class="hero-eyebrow">Animated Short Film · Visual Essay</div>
+    <h1 class="hero-title">
+      <span class="glitch" data-text="UGLY">UGLY</span>
+      <em>The Smiling</em>
+      <em>Prison</em>
+    </h1>
+    <p class="hero-sub">A world where everyone wears the same mask, calls it beauty, and burns anyone who dares to look different.</p>
+  </div>
+
+  <!-- heartbeat monitor at bottom -->
+  <div id="heartbeat-container">
+    <canvas id="heartbeat-canvas"></canvas>
+  </div>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ══════════════════════════════════════ MASKS -->
+<section id="masks">
+  <div class="chapter-wipe"></div>
+  <canvas class="scene-bg" id="masks-canvas"></canvas>
+  <div class="section-inner">
+
+    <!-- MARQUEE -->
+    <div class="marquee-strip reveal">
+      <span class="marquee-inner">
+        CONFORMITY_PROTOCOL: ACTIVE &nbsp;·&nbsp; DEVIATION_THRESHOLD: 0.00% &nbsp;·&nbsp; MASK_STATUS: MANDATORY &nbsp;·&nbsp; IDENTITY: SUSPENDED &nbsp;·&nbsp; CONSENSUS: ENFORCED &nbsp;·&nbsp; SMILE: REQUIRED &nbsp;·&nbsp; DISSENT: NULL &nbsp;·&nbsp;
+        CONFORMITY_PROTOCOL: ACTIVE &nbsp;·&nbsp; DEVIATION_THRESHOLD: 0.00% &nbsp;·&nbsp; MASK_STATUS: MANDATORY &nbsp;·&nbsp; IDENTITY: SUSPENDED &nbsp;·&nbsp; CONSENSUS: ENFORCED &nbsp;·&nbsp; SMILE: REQUIRED &nbsp;·&nbsp; DISSENT: NULL &nbsp;·&nbsp;
+      </span>
+    </div>
+
+    <div class="split">
+      <div>
+        <span class="chapter-label reveal">Chapter I</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Everyone Wears
+          <strong>The Same Face</strong>
+        </h2>
+        <div class="divider reveal reveal-delay-2"></div>
+        <p class="body-text reveal reveal-delay-2">
+          The world of <em>UGLY</em> opens on rows and rows of identical people — each one branded with the same cheerful mask. White. Smiling. Stamped with a single word: <strong style="color:var(--red)">UGLY</strong>.
+        </p>
+        <p class="body-text reveal reveal-delay-3">
+          The irony is grotesque and deliberate. To be "UGLY" is to be accepted. To conform is to be loved. The mask doesn't hide your face — it replaces it. And the crowd smiles on, endlessly, vacantly, together.
+        </p>
+        <span class="data-line reveal reveal-delay-3">// conformity_protocol: ACTIVE — deviation_threshold: 0.00%</span>
+      </div>
+      <div class="canvas-panel reveal reveal-delay-2">
+        <canvas id="masks-panel-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "The most terrifying prison is one where the inmates guard each other — and call it community."
+    </div>
+
+    <div class="mask-row">
+      <div class="mask-cell"><canvas id="mask-c1"></canvas></div>
+      <div class="mask-cell"><canvas id="mask-c2"></canvas></div>
+      <div class="mask-cell"><canvas id="mask-c3"></canvas></div>
+      <div class="mask-cell"><canvas id="mask-c4"></canvas></div>
+      <div class="mask-cell"><canvas id="mask-c5"></canvas></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ NEURAL -->
+<section id="neural">
+  <div class="chapter-wipe"></div>
+  <canvas class="scene-bg" id="neural-canvas"></canvas>
+  <div class="section-inner">
+
+    <div class="split" style="direction:rtl;">
+      <div style="direction:ltr;">
+        <span class="chapter-label reveal">Chapter II</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Wired Into
+          <em>One Another</em>
+          <strong>Whether We Want To Be</strong>
+        </h2>
+        <div class="divider reveal reveal-delay-2"></div>
+        <p class="body-text reveal reveal-delay-2">
+          Cables and tendons cascade from the skulls of the connected — beings fused into a network not of love, but of surveillance. The neural-linked figures wear serene expressions, their glowing ports humming with data they didn't consent to share.
+        </p>
+        <p class="body-text reveal reveal-delay-3">
+          This is the architecture of control made beautiful. The wires don't bind your wrists — they weave through your mind, threading your thoughts through a central loom, converting experience into signal, identity into data.
+        </p>
+
+        <!-- STATS -->
+        <div class="stats-row reveal reveal-delay-3">
+          <div class="stat-item">
+            <span class="stat-label">Nodes synced</span>
+            <span class="stat-number" data-target="847">0</span>
+            <div class="progress-bar"><div class="progress-fill" data-pct="100"></div></div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Autonomous thought</span>
+            <span class="stat-number" data-target="0">0</span>
+            <div class="progress-bar"><div class="progress-fill" data-pct="0"></div></div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Data extracted (TB)</span>
+            <span class="stat-number" data-target="9831">0</span>
+            <div class="progress-bar"><div class="progress-fill" data-pct="78"></div></div>
+          </div>
+        </div>
+
+        <span class="data-line reveal reveal-delay-3">// node_sync: 847/847 — autonomous_thought: SUSPENDED</span>
+      </div>
+      <div class="canvas-panel reveal reveal-delay-1" style="direction:ltr;">
+        <canvas id="neural-panel-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "To be connected to everything is to own nothing — especially yourself."
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ MONSTER -->
+<section id="monster">
+  <div class="chapter-wipe"></div>
+  <canvas class="scene-bg" id="monster-canvas"></canvas>
+  <div class="section-inner">
+    <div class="split">
+      <div class="canvas-panel reveal">
+        <canvas id="monster-panel-canvas"></canvas>
+      </div>
+      <div>
+        <span class="chapter-label reveal reveal-delay-1">Chapter III</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          The God
+          <em>They</em>
+          <strong>Built From Fear</strong>
+        </h2>
+        <div class="divider reveal reveal-delay-2"></div>
+        <p class="body-text reveal reveal-delay-2">
+          At the center of the machine looms a figure of horns and hollow eyes — ancient wood and burning socket. This is not a monster that appeared from outside. It is the collective nightmare given form, fed for generations by everything people feared about themselves.
+        </p>
+        <p class="body-text reveal reveal-delay-3">
+          The creature doesn't chase. It waits. It presides. It is the system's face when the masks come off — the real idol beneath the cheerful brand.
+        </p>
+        <span class="data-line reveal reveal-delay-3">// threat_entity: PRIMARY — origin: INTERNAL — age: UNKNOWN</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ PROTAGONIST -->
+<section id="protagonist" style="background:#030303;min-height:100vh;position:relative;overflow:hidden;">
+  <div class="chapter-wipe"></div>
+  <canvas class="scene-bg" id="proto-canvas"></canvas>
+  <div class="section-inner">
+    <div class="split">
+      <div>
+        <span class="chapter-label reveal">Chapter IV</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          One Face
+          <em>Without</em>
+          <strong>A Mask</strong>
+        </h2>
+        <div class="divider reveal reveal-delay-2"></div>
+        <p class="body-text reveal reveal-delay-2">
+          She stands between two sentinel machines, a cut above her brow bleeding the only natural red in this grey world. No mask. No port. No smile stamped on her face. Just her — bruised, breathing, unbranded.
+        </p>
+        <p class="body-text reveal reveal-delay-3">
+          In a world where ugliness is the uniform of acceptance, being genuinely yourself is the only true act of rebellion. And it costs everything.
+        </p>
+        <p class="body-text reveal reveal-delay-3">
+          The guardians flank her with blinding white eyes. The verdict is already written. But she does not look away.
+        </p>
+        <span class="data-line reveal reveal-delay-3">// subject: NON-COMPLIANT — mask_status: ABSENT — status: DEFIANT</span>
+      </div>
+      <div class="canvas-panel reveal reveal-delay-2">
+        <canvas id="proto-panel-canvas"></canvas>
+      </div>
+    </div>
+    <div class="pull-quote reveal">
+      "She wore her own face. In their world, that was the ugliest thing of all."
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ FINALE -->
+<section id="finale">
+  <div class="chapter-wipe"></div>
+  <canvas class="scene-bg" id="finale-canvas"></canvas>
+  <div class="section-inner">
+    <div class="chapter-label reveal" style="margin-bottom:3rem;">Epilogue</div>
+    <div class="finale-title reveal reveal-glitch glitch" data-text="REMEMBER">REMEMBER</div>
+    <p class="finale-sub reveal reveal-delay-1">
+      Every society has its masks. Every era has its smiling, mandatory conformity. The question is not whether you wear one — it is whether you know you're wearing it.
+    </p>
+    <div class="divider reveal reveal-delay-2" style="margin:3rem auto;"></div>
+    <p class="body-text reveal reveal-delay-2" style="text-align:center;max-width:48ch;margin:0 auto;font-style:italic;">
+      <em>UGLY</em> is a short animated film that renders this question in monochrome and blood — a world of enforced sameness, neural surveillance, ancient fear-gods, and one girl who refuses to smile.
+    </p>
+    <span class="data-line reveal reveal-delay-3" style="display:block;text-align:center;margin-top:3rem;">
+      // END_TRANSMISSION — be_yourself: <span id="typed-end"></span>
+    </span>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// CURSOR
+// ══════════════════════════════════════════════════════════════
+const cursor = document.getElementById('cursor');
+const cursorTrail = document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+setInterval(()=>{
+  tx+=(mx-tx)*0.12;ty+=(my-ty)*0.12;
+  cursorTrail.style.left=tx+'px';cursorTrail.style.top=ty+'px';
+},16);
+
+// ══════════════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════════════════════════════
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      // animate stats when visible
+      if(e.target.dataset.target !== undefined) animateCounter(e.target);
+      if(e.target.classList.contains('progress-fill')) animateProgress(e.target);
+    }
+  });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.stat-number').forEach(el=>io.observe(el));
+document.querySelectorAll('.progress-fill').forEach(el=>io.observe(el));
+
+// chapter wipe on section entry
+const sectionIO = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('chapter-active');
+    else e.target.classList.remove('chapter-active');
+  });
+},{threshold:0.1});
+document.querySelectorAll('section').forEach(s=>sectionIO.observe(s));
+
+// ══════════════════════════════════════════════════════════════
+// COUNTER ANIMATIONS
+// ══════════════════════════════════════════════════════════════
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const dur = 1500;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * target);
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function animateProgress(el) {
+  const pct = parseFloat(el.dataset.pct);
+  setTimeout(()=>{ el.style.width = pct + '%'; }, 200);
+}
+
+// ══════════════════════════════════════════════════════════════
+// HERO NODE COUNTER
+// ══════════════════════════════════════════════════════════════
+let nodeVal = 0;
+setInterval(()=>{
+  nodeVal += Math.floor(Math.random()*7)+1;
+  if(nodeVal > 9999) nodeVal = 8000 + Math.floor(Math.random()*1000);
+  document.getElementById('node-count').textContent = String(nodeVal).padStart(4,'0');
+},250);
+
+// ══════════════════════════════════════════════════════════════
+// HEARTBEAT MONITOR
+// ══════════════════════════════════════════════════════════════
+(function heartbeat(){
+  const canvas = document.getElementById('heartbeat-canvas');
+  const container = document.getElementById('heartbeat-container');
+  const W = window.innerWidth, H = 80;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const history = new Array(W).fill(H/2);
+  let phase = 0;
+
+  function ecgSample(p) {
+    const t = p % 1;
+    if(t < 0.3) return H/2;
+    if(t < 0.35) return H/2 - 8;
+    if(t < 0.4)  return H/2 + 15;
+    if(t < 0.42) return H/2 - 35;
+    if(t < 0.47) return H/2 + 20;
+    if(t < 0.52) return H/2 - 6;
+    if(t < 0.6)  return H/2 + 3;
+    return H/2;
+  }
+
+  function draw(){
+    requestAnimationFrame(draw);
+    phase += 0.008;
+    const newY = ecgSample(phase);
+    history.shift(); history.push(newY);
+
+    ctx.clearRect(0,0,W,H);
+
+    // dim trail
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(192,0,26,0.15)';
+    ctx.lineWidth = 1;
+    for(let x=0;x<W;x++){
+      if(x===0) ctx.moveTo(x,history[x]);
+      else ctx.lineTo(x,history[x]);
+    }
+    ctx.stroke();
+
+    // bright leading segment
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(192,0,26,0.7)';
+    ctx.lineWidth = 1.5;
+    const seg = 60;
+    for(let i=W-seg;i<W;i++){
+      const alpha = (i-(W-seg))/seg;
+      if(i===W-seg) ctx.moveTo(i,history[i]);
+      else ctx.lineTo(i,history[i]);
+    }
+    ctx.stroke();
+
+    // glowing dot at head
+    const headY = history[W-1];
+    ctx.beginPath();
+    ctx.arc(W-1, headY, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#c0001a';
+    ctx.fill();
+  }
+  draw();
+
+  window.addEventListener('resize',()=>{
+    canvas.width = window.innerWidth;
+    history.length = 0;
+    for(let i=0;i<window.innerWidth;i++) history.push(H/2);
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════
+// TYPEWRITER: finale ending word
+// ══════════════════════════════════════════════════════════════
+function typeWriter(el, text, speed=80){
+  let i=0;
+  const iv = setInterval(()=>{
+    el.textContent += text[i++];
+    if(i>=text.length) clearInterval(iv);
+  }, speed);
+}
+const typedIO = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      typeWriter(document.getElementById('typed-end'), 'ALWAYS', 120);
+      typedIO.disconnect();
+    }
+  });
+},{threshold:0.5});
+const typedEl = document.getElementById('typed-end');
+if(typedEl) typedIO.observe(typedEl.closest('span') || typedEl);
+
+// ══════════════════════════════════════════════════════════════
+// PARALLAX PANELS
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('mousemove',e=>{
+  const x=(e.clientX/window.innerWidth-0.5)*2;
+  const y=(e.clientY/window.innerHeight-0.5)*2;
+  document.querySelectorAll('.canvas-panel').forEach(el=>{
+    el.style.transform=`perspective(1000px) rotateY(${x*3}deg) rotateX(${-y*2}deg)`;
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+// THREE.JS HELPERS
+// ══════════════════════════════════════════════════════════════
+function makeRenderer(canvas,w,h,alpha=true){
+  const r=new THREE.WebGLRenderer({canvas,alpha,antialias:true});
+  r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  r.setSize(w,h); return r;
+}
+function makeScene(){return new THREE.Scene();}
+function makeCam(fov,w,h){
+  const c=new THREE.PerspectiveCamera(fov,w/h,0.1,1000);
+  c.position.z=5; return c;
+}
+
+// ══════════════════════════════════════════════════════════════
+// HERO — Particle field with MOUSE REPULSION
+// ══════════════════════════════════════════════════════════════
+(function heroScene(){
+  const canvas=document.getElementById('hero-canvas');
+  const W=window.innerWidth,H=window.innerHeight;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x000000,1);
+  const scene=makeScene();
+  const cam=makeCam(75,W,H);
+  cam.position.z=30;
+
+  const N=3500;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(N*3);
+  const col=new Float32Array(N*3);
+  const vel=new Float32Array(N*3);
+  const origPos=new Float32Array(N*3);
+
+  for(let i=0;i<N;i++){
+    const i3=i*3;
+    origPos[i3]=pos[i3]=(Math.random()-0.5)*100;
+    origPos[i3+1]=pos[i3+1]=(Math.random()-0.5)*60;
+    origPos[i3+2]=pos[i3+2]=(Math.random()-0.5)*60;
+    vel[i3]=(Math.random()-0.5)*0.02;
+    vel[i3+1]=(Math.random()-0.5)*0.02;
+    vel[i3+2]=(Math.random()-0.5)*0.01;
+    if(Math.random()<0.09){col[i3]=0.75;col[i3+1]=0;col[i3+2]=0.1;}
+    else{const b=Math.random()*0.3+0.1;col[i3]=b;col[i3+1]=b;col[i3+2]=b;}
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+
+  const mat=new THREE.PointsMaterial({size:0.13,vertexColors:true,transparent:true,opacity:0.8});
+  const points=new THREE.Points(geo,mat);
+  scene.add(points);
+
+  const sphereGeo=new THREE.SphereGeometry(8,32,32);
+  const sphere=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:0x0d0000,transparent:true,opacity:0.6}));
+  sphere.position.set(14,-2,-10); scene.add(sphere);
+  const wire=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:0x2a0005,wireframe:true,transparent:true,opacity:0.15}));
+  wire.position.copy(sphere.position); scene.add(wire);
+
+  // MOUSE REPULSION in hero
+  let mouseWorld={x:0,y:0};
+  document.getElementById('hero').addEventListener('mousemove',e=>{
+    const rect=canvas.getBoundingClientRect();
+    mouseWorld.x=((e.clientX-rect.left)/rect.width-0.5)*100;
+    mouseWorld.y=-((e.clientY-rect.top)/rect.height-0.5)*60;
+  });
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate); t+=0.005;
+    const p=geo.attributes.position.array;
+    for(let i=0;i<N;i++){
+      const i3=i*3;
+      const dx=p[i3]-mouseWorld.x;
+      const dy=p[i3+1]-mouseWorld.y;
+      const dist=Math.sqrt(dx*dx+dy*dy)+0.001;
+      const repel=dist<8?((8-dist)/8)*0.15:0;
+
+      p[i3]  +=vel[i3]+Math.sin(t+i*0.1)*0.003+(repel*dx/dist);
+      p[i3+1]+=vel[i3+1]+Math.cos(t+i*0.13)*0.003+(repel*dy/dist);
+      p[i3+2]+=vel[i3+2];
+      if(p[i3]>50)p[i3]=-50;if(p[i3]<-50)p[i3]=50;
+      if(p[i3+1]>30)p[i3+1]=-30;if(p[i3+1]<-30)p[i3+1]=30;
+    }
+    geo.attributes.position.needsUpdate=true;
+    points.rotation.y=t*0.05;
+    wire.rotation.y=t*0.08;wire.rotation.x=t*0.04;
+    renderer.render(scene,cam);
+  }
+  animate();
+
+  window.addEventListener('resize',()=>{
+    const W=window.innerWidth,H=window.innerHeight;
+    renderer.setSize(W,H);cam.aspect=W/H;cam.updateProjectionMatrix();
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════
+// MASKS BG — Grid of floating tori  (unchanged logic, new subtle color shift)
+// ══════════════════════════════════════════════════════════════
+(function masksScene(){
+  const canvas=document.getElementById('masks-canvas');
+  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x050505,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
+
+  const masks=[];
+  for(let i=0;i<18;i++){
+    const geo=new THREE.TorusGeometry(1.2,0.08,16,80);
+    const isRed=Math.random()<0.15;
+    const mat=new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x1a1a1a,transparent:true,opacity:0.4+Math.random()*0.4});
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.position.set((Math.random()-0.5)*30,(Math.random()-0.5)*20,(Math.random()-0.5)*10);
+    mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,0);
+    mesh.userData={rx:(Math.random()-0.5)*0.01,ry:(Math.random()-0.5)*0.008,isRed,baseDark:Math.random()<0.5};
+    scene.add(mesh);masks.push(mesh);
+  }
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.005;
+    masks.forEach(m=>{
+      m.rotation.x+=m.userData.rx;m.rotation.y+=m.userData.ry;
+      m.position.y+=Math.sin(t+m.position.x)*0.003;
+      // pulse red masks
+      if(m.userData.isRed) m.material.opacity=0.3+Math.abs(Math.sin(t*1.5+m.position.x))*0.4;
+    });
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// MASKS PANEL — crowd of faces with WAVE animation
+// ══════════════════════════════════════════════════════════════
+(function masksPanelScene(){
+  const canvas=document.getElementById('masks-panel-canvas');
+  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x080808,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=12;
+
+  const group=new THREE.Group();scene.add(group);
+  const faces=[];
+
+  for(let row=0;row<5;row++){
+    for(let col=0;col<8;col++){
+      const isRed=(row===2&&col===3);
+      const faceGeo=new THREE.CircleGeometry(0.4,32);
+      const face=new THREE.Mesh(faceGeo,new THREE.MeshBasicMaterial({color:isRed?0x111111:0xcccccc}));
+      face.position.set(col*1.2-4.2,-row*1.1+2.2,0);
+      face.userData={row,col,phase:row*0.5+col*0.3};
+
+      const smileGeo=new THREE.TorusGeometry(0.15,0.025,8,20,Math.PI);
+      const smile=new THREE.Mesh(smileGeo,new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x222222}));
+      smile.position.copy(face.position);smile.position.y-=0.08;smile.rotation.z=Math.PI;
+
+      [-0.1,0.1].forEach(ox=>{
+        const eye=new THREE.Mesh(new THREE.CircleGeometry(0.03,12),new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x222222}));
+        eye.position.set(face.position.x+ox,face.position.y+0.1,0.01);
+        group.add(eye);
+      });
+
+      group.add(face);group.add(smile);
+      faces.push({face,smile,isRed});
+    }
+  }
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.008;
+    group.rotation.y=Math.sin(t*0.3)*0.15;
+    group.position.y=Math.sin(t*0.2)*0.1;
+    // wave ripple
+    faces.forEach(({face,smile})=>{
+      const ph=face.userData.phase;
+      const sc=1+Math.sin(t+ph)*0.04;
+      face.scale.setScalar(sc);
+      smile.scale.setScalar(sc);
+    });
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// MINI MASK CELLS — 5 pulsing masks with GLITCH FLASH
+// ══════════════════════════════════════════════════════════════
+[1,2,3,4,5].forEach((n,idx)=>{
+  const canvas=document.getElementById('mask-c'+n);
+  if(!canvas)return;
+  const W=canvas.parentElement.offsetWidth||100,H=canvas.parentElement.offsetHeight||140;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x070707,1);
+  const scene=makeScene();const cam=makeCam(50,W,H);cam.position.z=4;
+
+  const colors=[0x888888,0xc0001a,0x555555,0xaaaaaa,0x333333];
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.8,0.05,16,80),new THREE.MeshBasicMaterial({color:colors[idx]}));
+  scene.add(ring);
+  scene.add(new THREE.Mesh(new THREE.CircleGeometry(0.7,32),new THREE.MeshBasicMaterial({color:idx===1?0x1a0003:0x0f0f0f})));
+
+  // inner ring
+  const innerRing=new THREE.Mesh(new THREE.TorusGeometry(0.4,0.02,8,60),new THREE.MeshBasicMaterial({color:colors[idx],transparent:true,opacity:0.4}));
+  scene.add(innerRing);
+
+  [-0.22,0.22].forEach(ox=>{
+    const eye=new THREE.Mesh(new THREE.CircleGeometry(0.06,16),new THREE.MeshBasicMaterial({color:colors[idx]}));
+    eye.position.set(ox,0.18,0.01);scene.add(eye);
+  });
+
+  let t=idx*1.2;
+  let glitchTimer=Math.random()*5;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.02;
+    ring.rotation.z=t*0.3;ring.scale.setScalar(1+Math.sin(t)*0.06);
+    innerRing.rotation.z=-t*0.5;
+
+    // random glitch offset
+    glitchTimer-=0.016;
+    if(glitchTimer<0){
+      glitchTimer=3+Math.random()*5;
+      scene.position.x=(Math.random()-0.5)*0.3;
+      setTimeout(()=>{scene.position.x=0;},80);
+    }
+    renderer.render(scene,cam);
+  }
+  animate();
+});
+
+// ══════════════════════════════════════════════════════════════
+// NEURAL BG — web with PULSE WAVES from center
+// ══════════════════════════════════════════════════════════════
+(function neuralScene(){
+  const canvas=document.getElementById('neural-canvas');
+  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x020206,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=25;
+
+  const nodes=[];const N=60;
+  for(let i=0;i<N;i++){
+    nodes.push(new THREE.Vector3((Math.random()-0.5)*40,(Math.random()-0.5)*25,(Math.random()-0.5)*10));
+  }
+  const lineMats=[
+    new THREE.LineBasicMaterial({color:0x1a0003,transparent:true,opacity:0.5}),
+    new THREE.LineBasicMaterial({color:0xc0001a,transparent:true,opacity:0.25}),
+    new THREE.LineBasicMaterial({color:0x222222,transparent:true,opacity:0.3}),
+  ];
+  const allLines=[];
+  nodes.forEach((n,i)=>{
+    nodes.forEach((m,j)=>{
+      if(j<=i)return;
+      if(n.distanceTo(m)<9){
+        const geo=new THREE.BufferGeometry().setFromPoints([n,m]);
+        const mat=lineMats[Math.floor(Math.random()*lineMats.length)].clone();
+        const line=new THREE.Line(geo,mat);
+        scene.add(line);
+        allLines.push({line,mat,baseOp:mat.opacity});
+      }
+    });
+  });
+
+  nodes.forEach(n=>{
+    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),new THREE.MeshBasicMaterial({color:Math.random()<0.2?0xc0001a:0x333344}));
+    mesh.position.copy(n);scene.add(mesh);
+  });
+
+  // Pulse rings
+  const pulseRings=[];
+  function spawnPulse(){
+    const geo=new THREE.RingGeometry(0.1,0.2,32);
+    const mat=new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0.5,side:THREE.DoubleSide});
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.position.set((Math.random()-0.5)*20,(Math.random()-0.5)*15,0);
+    scene.add(mesh);
+    pulseRings.push({mesh,mat,age:0});
+  }
+  setInterval(spawnPulse,1200);
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.003;
+
+    // animate pulse lines with wave
+    allLines.forEach(({line,mat,baseOp},i)=>{
+      mat.opacity=baseOp*(0.7+0.3*Math.sin(t*2+i*0.3));
+    });
+
+    // animate pulse rings
+    for(let i=pulseRings.length-1;i>=0;i--){
+      const p=pulseRings[i];p.age+=0.04;
+      const sc=1+p.age*3;
+      p.mesh.scale.setScalar(sc);
+      p.mat.opacity=Math.max(0,0.5-p.age*0.5);
+      if(p.age>1){scene.remove(p.mesh);pulseRings.splice(i,1);}
+    }
+
+    scene.rotation.y=t*0.1;
+    scene.rotation.x=Math.sin(t*0.3)*0.05;
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// NEURAL PANEL — connected heads with data STREAM particles
+// ══════════════════════════════════════════════════════════════
+(function neuralPanel(){
+  const canvas=document.getElementById('neural-panel-canvas');
+  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x030308,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=10;
+
+  const headGeo=new THREE.SphereGeometry(1,32,32);
+  const head=new THREE.Mesh(headGeo,new THREE.MeshBasicMaterial({color:0x1a1a1a}));
+  const headW=new THREE.Mesh(headGeo,new THREE.MeshBasicMaterial({color:0x333333,wireframe:true}));
+  scene.add(head);scene.add(headW);
+
+  [-3.5,3.5].forEach(x=>{
+    const sg=new THREE.SphereGeometry(0.6,24,24);
+    const s=new THREE.Mesh(sg,new THREE.MeshBasicMaterial({color:0x111111}));
+    const sw=new THREE.Mesh(sg,new THREE.MeshBasicMaterial({color:0x222222,wireframe:true}));
+    s.position.x=x;s.position.y=0.2;sw.position.copy(s.position);
+    scene.add(s);scene.add(sw);
+    const pts=[new THREE.Vector3(x*0.85,0.2,0),new THREE.Vector3(0,0,0)];
+    const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xc0001a,transparent:true,opacity:0.6}));
+    scene.add(line);
+  });
+
+  for(let i=0;i<8;i++){
+    const ang=(i/8)*Math.PI*2;
+    const d=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,8),new THREE.MeshBasicMaterial({color:0xffffff}));
+    d.position.set(Math.cos(ang)*1.05,Math.sin(ang)*0.5+0.5,0);
+    scene.add(d);
+  }
+
+  // data stream particles along wires
+  const streamParticles=[];
+  for(let i=0;i<20;i++){
+    const p=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,6),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0.8}));
+    const side=Math.random()<0.5?-3.5:3.5;
+    p.userData={side,progress:Math.random()};
+    scene.add(p);streamParticles.push(p);
+  }
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.01;
+    headW.rotation.y=t*0.3;head.rotation.y=t*0.2;
+
+    streamParticles.forEach(p=>{
+      p.userData.progress+=0.012;
+      if(p.userData.progress>1)p.userData.progress=0;
+      const pr=p.userData.progress;
+      const side=p.userData.side;
+      p.position.set(
+        side*(1-pr)*0.85,
+        0.2*(1-pr),
+        Math.sin(pr*Math.PI)*0.3
+      );
+      p.material.opacity=0.4+Math.sin(pr*Math.PI)*0.6;
+    });
+
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// MONSTER BG — rising embers with WIND SWAY
+// ══════════════════════════════════════════════════════════════
+(function monsterScene(){
+  const canvas=document.getElementById('monster-canvas');
+  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x040000,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
+
+  const N=1000;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(N*3);const col=new Float32Array(N*3);const sizes=new Float32Array(N);
+
+  for(let i=0;i<N;i++){
+    const i3=i*3;
+    pos[i3]=(Math.random()-0.5)*30;pos[i3+1]=Math.random()*20-10;pos[i3+2]=(Math.random()-0.5)*5;
+    const r=Math.random();
+    col[i3]=0.5+r*0.5;col[i3+1]=r*0.25;col[i3+2]=0;
+    sizes[i]=Math.random()*0.12+0.04;
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:0.08,vertexColors:true})));
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.012;
+    const p=geo.attributes.position.array;
+    for(let i=0;i<N;i++){
+      p[i*3+1]+=0.03+Math.random()*0.02;
+      p[i*3]+=Math.sin(t*0.5+i*0.3)*0.008; // wind sway
+      if(p[i*3+1]>12)p[i*3+1]=-10;
+    }
+    geo.attributes.position.needsUpdate=true;
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// MONSTER PANEL — horned skull with GLOWING EYE PULSE + rotating rings
+// ══════════════════════════════════════════════════════════════
+(function monsterPanel(){
+  const canvas=document.getElementById('monster-panel-canvas');
+  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x060100,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=9;
+
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.5,1.0,3,12),new THREE.MeshBasicMaterial({color:0x1a0c00,wireframe:true}));
+  body.position.y=-1.5;scene.add(body);
+
+  const head=new THREE.Mesh(new THREE.SphereGeometry(1,20,20),new THREE.MeshBasicMaterial({color:0x2a1500,wireframe:true}));
+  head.position.y=0.5;scene.add(head);
+
+  [[-0.6,1.3,0.3],[ 0.6,1.3,-0.3]].forEach(([x,y,rz])=>{
+    const c=new THREE.Mesh(new THREE.ConeGeometry(0.2,1.8,8),new THREE.MeshBasicMaterial({color:0x3a1a00,wireframe:true}));
+    c.position.set(x,y,0);c.rotation.z=rz;scene.add(c);
+  });
+
+  const eyeMats=[];
+  [-0.35,0.35].forEach(x=>{
+    const em=new THREE.MeshBasicMaterial({color:0xffffff});
+    eyeMats.push(em);
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),em);
+    eye.position.set(x,0.6,0.85);scene.add(eye);
+    const rm=new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.5});
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.04,8,30),rm);
+    ring.position.copy(eye.position);scene.add(ring);
+  });
+
+  // orbiting ring
+  const orbitRing=new THREE.Mesh(new THREE.TorusGeometry(2.2,0.03,8,60),new THREE.MeshBasicMaterial({color:0x5a2000,transparent:true,opacity:0.6}));
+  orbitRing.rotation.x=Math.PI*0.4;scene.add(orbitRing);
+
+  for(let i=0;i<8;i++){
+    const ang=(i/8)*Math.PI*2;const len=1+Math.random()*1.5;
+    const pts=[new THREE.Vector3(Math.cos(ang)*0.5,-1+Math.sin(ang)*0.3,0),new THREE.Vector3(Math.cos(ang)*len*2,-1.5+Math.sin(ang)*len,0)];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x4a2000,transparent:true,opacity:0.6})));
+  }
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.012;
+    head.rotation.y=Math.sin(t*0.5)*0.3;
+    body.rotation.y=t*0.1;
+    orbitRing.rotation.z=t*0.4;
+    // eye glow pulse
+    const glow=0.5+Math.abs(Math.sin(t*1.5))*0.5;
+    eyeMats.forEach(m=>{ m.color.setRGB(glow,glow*0.4,glow*0.3); });
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// PROTAGONIST BG — RED SCAN + falling data with GLITCH DISTORT
+// ══════════════════════════════════════════════════════════════
+(function protoScene(){
+  const canvas=document.getElementById('proto-canvas');
+  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x020202,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
+
+  [-4,4].forEach(x=>{
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(0.05,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.15}));
+    m.position.set(x,0,0);scene.add(m);
+  });
+
+  const lines=[];
+  for(let i=0;i<40;i++){
+    const h=Math.random()*3+0.2;
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(0.02,h),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:Math.random()*0.5+0.1}));
+    m.position.set((Math.random()-0.5)*20,Math.random()*20-5,(Math.random()-0.5)*5);
+    m.userData={speed:Math.random()*0.1+0.03};
+    scene.add(m);lines.push(m);
+  }
+
+  // horizontal glitch bars
+  const glitchBars=[];
+  for(let i=0;i<5;i++){
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(30,0.05),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0}));
+    scene.add(m);glitchBars.push(m);
+  }
+
+  let t=0;let glitchInterval=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.01;glitchInterval+=0.01;
+    lines.forEach(l=>{l.position.y-=l.userData.speed;if(l.position.y<-15)l.position.y=15;});
+
+    // occasional glitch bars
+    if(glitchInterval>2+Math.random()*3){
+      glitchInterval=0;
+      glitchBars.forEach(b=>{
+        b.position.y=(Math.random()-0.5)*18;
+        b.position.x=(Math.random()-0.5)*5;
+        b.material.opacity=0.15+Math.random()*0.2;
+        setTimeout(()=>{b.material.opacity=0;},60+Math.random()*80);
+      });
+    }
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// PROTAGONIST PANEL — face with BLOOD DROP animation
+// ══════════════════════════════════════════════════════════════
+(function protoPanel(){
+  const canvas=document.getElementById('proto-panel-canvas');
+  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x050505,1);
+  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=8;
+
+  const face=new THREE.Mesh(new THREE.SphereGeometry(1.4,32,32),new THREE.MeshBasicMaterial({color:0x1e1e1e}));
+  scene.add(face);
+
+  // wound line
+  const wPts=[new THREE.Vector3(-0.4,0.5,1.3),new THREE.Vector3(0.1,0.8,1.35)];
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wPts),new THREE.LineBasicMaterial({color:0xc0001a,linewidth:2})));
+
+  // blood drops
+  const drops=[];
+  for(let i=0;i<6;i++){
+    const drop=new THREE.Mesh(new THREE.SphereGeometry(0.04+Math.random()*0.03,8,8),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0}));
+    drop.position.set(-0.1+Math.random()*0.4,0.5+Math.random()*0.2,1.3);
+    drop.userData={delay:i*0.8,speed:0.015+Math.random()*0.01,active:false};
+    scene.add(drop);drops.push(drop);
+  }
+
+  [-0.45,0.45].forEach(x=>{
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.12,16,16),new THREE.MeshBasicMaterial({color:0x888888}));
+    eye.position.set(x,0.3,1.3);scene.add(eye);
+  });
+
+  [-3.5,3.5].forEach(x=>{
+    const p=new THREE.Mesh(new THREE.BoxGeometry(0.1,5,0.1),new THREE.MeshBasicMaterial({color:0x333333}));
+    p.position.set(x,0,0);scene.add(p);
+    [0.5,-0.5].forEach(y=>{
+      const e=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),new THREE.MeshBasicMaterial({color:0xffffff}));
+      e.position.set(x,y,0.06);scene.add(e);
+    });
+  });
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.008;
+    face.rotation.y=Math.sin(t*0.4)*0.1;
+
+    drops.forEach(d=>{
+      d.userData.delay-=0.008;
+      if(d.userData.delay<0){
+        d.material.opacity=Math.min(0.9,d.material.opacity+0.05);
+        d.position.y-=d.userData.speed;
+        if(d.position.y<-2){
+          d.position.y=0.5+Math.random()*0.2;
+          d.material.opacity=0;
+          d.userData.delay=Math.random()*3;
+        }
+      }
+    });
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// FINALE BG — imploding vortex with RED FLASH
+// ══════════════════════════════════════════════════════════════
+(function finaleScene(){
+  const canvas=document.getElementById('finale-canvas');
+  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
+  canvas.width=W;canvas.height=H;
+  const renderer=makeRenderer(canvas,W,H,false);
+  renderer.setClearColor(0x000000,1);
+  const scene=makeScene();const cam=makeCam(75,W,H);cam.position.z=20;
+
+  const N=2500;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(N*3),col=new Float32Array(N*3);
+  const angles=new Float32Array(N),radii=new Float32Array(N),speeds=new Float32Array(N);
+
+  for(let i=0;i<N;i++){
+    angles[i]=Math.random()*Math.PI*2;
+    radii[i]=Math.random()*15+1;
+    speeds[i]=(Math.random()*0.005+0.002)*(Math.random()<0.5?1:-1);
+    const i3=i*3;
+    pos[i3]=Math.cos(angles[i])*radii[i];
+    pos[i3+1]=(Math.random()-0.5)*10;
+    pos[i3+2]=Math.sin(angles[i])*radii[i];
+    if(Math.random()<0.1){col[i3]=0.75;col[i3+1]=0;col[i3+2]=0.1;}
+    else{const b=Math.random()*0.25;col[i3]=b;col[i3+1]=b;col[i3+2]=b;}
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:0.1,vertexColors:true})));
+
+  // flash plane
+  const flashPlane=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0,side:THREE.DoubleSide}));
+  flashPlane.position.z=5;scene.add(flashPlane);
+
+  let t=0;let flashTimer=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.01;flashTimer+=0.01;
+    const p=geo.attributes.position.array;
+    for(let i=0;i<N;i++){
+      angles[i]+=speeds[i];
+      const i3=i*3;
+      p[i3]=Math.cos(angles[i])*radii[i];
+      p[i3+1]+=Math.sin(t*0.3+i*0.01)*0.005;
+      p[i3+2]=Math.sin(angles[i])*radii[i];
+    }
+    geo.attributes.position.needsUpdate=true;
+    scene.rotation.y=t*0.05;
+
+    // occasional red flash
+    if(flashTimer>8+Math.random()*5){
+      flashTimer=0;
+      flashPlane.material.opacity=0.08;
+      setTimeout(()=>{flashPlane.material.opacity=0;},120);
+    }
+
+    renderer.render(scene,cam);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
