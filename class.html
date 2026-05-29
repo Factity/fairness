@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindu Culture — Sanātana Dharma</title>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Baloo+2:wght@500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --pur:#6B1F7C;--dpur:#3A0950;--pink:#E8478A;--coral:#FF5F52;
+  --org:#FF9A3C;--yel:#FFD166;--grn:#06D6A0;--teal:#2EC4B6;
+  --sky:#5BC0EB;--cream:#FFFBF0;--wh:#fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);overflow-x:hidden;cursor:none}
+
+/* ── CURSOR ── */
+#cur,#cur2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .2s}
+#cur{width:12px;height:12px;background:var(--pink);mix-blend-mode:multiply}
+#cur2{width:36px;height:36px;border:2px solid var(--pink);background:transparent;transition:width .25s,height .25s,border-color .2s,left .08s,top .08s}
+
+/* ── PROGRESS ── */
+#prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--yel),var(--pink),var(--pur));z-index:9998;width:0;transition:width .1s}
+
+/* ── NAV ── */
+nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;gap:2rem;align-items:center;
+  background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);
+  border-radius:999px;padding:.55rem 2rem;
+  border:1.5px solid rgba(255,255,255,0.9);
+  box-shadow:0 8px 32px rgba(0,0,0,0.08)}
+nav a{font-family:'Baloo 2',cursive;font-size:.82rem;font-weight:700;
+  color:var(--dpur);text-decoration:none;letter-spacing:.02em;
+  transition:color .2s}
+nav a:hover{color:var(--pink)}
+
+/* ── PARTICLES ── */
+.pt{position:fixed;pointer-events:none;z-index:1;font-size:18px;
+  animation:ptUp linear infinite;opacity:0}
+@keyframes ptUp{
+  0%{transform:translateY(105vh) rotate(0deg);opacity:0}
+  8%{opacity:.55}88%{opacity:.4}
+  100%{transform:translateY(-8vh) rotate(400deg);opacity:0}}
+
+/* ══════ HERO ══════ */
+#hero{min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:2rem;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#3A0950 0%,#6B1F7C 35%,#E8478A 70%,#FF9A3C 100%)}
+
+/* Spinning mandala rings */
+.mring{position:absolute;border-radius:50%;animation:mSpin linear infinite;left:50%;top:50%}
+.mring:nth-child(1){width:700px;height:700px;margin:-350px 0 0 -350px;
+  border:2px dashed rgba(255,255,255,0.12);animation-duration:60s}
+.mring:nth-child(2){width:520px;height:520px;margin:-260px 0 0 -260px;
+  border:1.5px solid rgba(255,255,255,0.1);animation-duration:40s;animation-direction:reverse}
+.mring:nth-child(3){width:360px;height:360px;margin:-180px 0 0 -180px;
+  border:2px dashed rgba(255,255,255,0.15);animation-duration:25s}
+.mring:nth-child(4){width:200px;height:200px;margin:-100px 0 0 -100px;
+  border:1px solid rgba(255,255,255,0.2);animation-duration:15s;animation-direction:reverse}
+@keyframes mSpin{to{transform:rotate(360deg)}}
+
+/* dot grid drift */
+.hdots{position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.18) 1.5px,transparent 1.5px);
+  background-size:44px 44px;animation:ddrift 10s linear infinite}
+@keyframes ddrift{to{background-position:44px 44px}}
+
+.hero-tag{font-family:'Baloo 2',cursive;font-size:.8rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--yel);
+  position:relative;z-index:2;
+  animation:slideUp .9s .1s cubic-bezier(.34,1.56,.64,1) both}
+
+.hero-title{font-family:'Yatra One',cursive;
+  font-size:clamp(3.5rem,11vw,8rem);color:#fff;line-height:1;
+  position:relative;z-index:2;
+  text-shadow:0 6px 40px rgba(0,0,0,0.35);
+  animation:slideUp 1s .2s cubic-bezier(.34,1.56,.64,1) both}
+
+.hero-sub{font-family:'Baloo 2',cursive;font-size:clamp(.95rem,2.5vw,1.4rem);
+  color:rgba(255,255,255,0.85);margin-top:.8rem;
+  position:relative;z-index:2;max-width:560px;line-height:1.6;
+  animation:slideUp 1s .35s cubic-bezier(.34,1.56,.64,1) both}
+
+.hero-btn{display:inline-block;margin-top:2rem;position:relative;z-index:2;
+  font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;
+  color:#fff;text-decoration:none;
+  padding:.75rem 2.4rem;border-radius:999px;
+  background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.55);
+  transition:transform .25s,background .25s;
+  animation:slideUp 1s .5s cubic-bezier(.34,1.56,.64,1) both}
+.hero-btn:hover{transform:scale(1.07);background:rgba(255,255,255,0.32)}
+
+/* floating temple */
+.hero-temple-wrap{position:relative;z-index:2;margin-top:2.5rem;
+  animation:tFloat 5s ease-in-out infinite;
+  filter:drop-shadow(0 20px 60px rgba(0,0,0,0.4))}
+@keyframes tFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.01)}}
+
+/* flag wave */
+.flag{animation:fWave 1.8s ease-in-out infinite alternate;transform-origin:0 50%}
+.flag:nth-of-type(2){animation-delay:.4s}.flag:nth-of-type(3){animation-delay:.8s}
+@keyframes fWave{from{transform:skewX(0deg) scaleX(1)}to{transform:skewX(14deg) scaleX(.9)}}
+/* star twinkle */
+.twk{animation:twink 2.2s ease-in-out infinite alternate}
+.twk:nth-child(2){animation-delay:.6s}.twk:nth-child(3){animation-delay:1.2s}
+@keyframes twink{from{opacity:.25;transform:scale(.7)}to{opacity:1;transform:scale(1.3)}}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(50px)}
+  to{opacity:1;transform:translateY(0)}}
+
+/* ══════ MARQUEE ══════ */
+.mbar{background:var(--yel);overflow:hidden;white-space:nowrap;
+  border-top:3px solid var(--org);border-bottom:3px solid var(--org);
+  position:relative;z-index:5}
+.mbar-inner{display:inline-block;padding:.7rem 0;
+  animation:mScroll 22s linear infinite;
+  font-family:'Baloo 2',cursive;font-size:1rem;font-weight:700;color:var(--dpur)}
+@keyframes mScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mi{display:inline-block;margin:0 1.8rem}
+.ms{color:var(--pink);margin:0 .3rem}
+
+/* ══════ SECTION BASE ══════ */
+section{padding:7rem 2rem;position:relative;overflow:hidden}
+.inner{max-width:1080px;margin:0 auto}
+.stag{font-family:'Baloo 2',cursive;font-size:.78rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--pink);display:block;margin-bottom:.5rem}
+.stitle{font-family:'Yatra One',cursive;font-size:clamp(2rem,4.5vw,3.2rem);
+  line-height:1.2;margin-bottom:1.4rem;color:var(--dpur)}
+.sbody{font-size:1.05rem;line-height:1.9;color:#4a4a4a;max-width:640px}
+
+/* ══════ SCROLL REVEAL ══════ */
+.rv{opacity:0;transform:translateY(55px);
+  transition:opacity .75s cubic-bezier(.34,1.56,.64,1),transform .75s cubic-bezier(.34,1.56,.64,1)}
+.rv.on{opacity:1;transform:none}
+.rvl{opacity:0;transform:translateX(-70px);
+  transition:opacity .7s cubic-bezier(.34,1.56,.64,1),transform .7s cubic-bezier(.34,1.56,.64,1)}
+.rvl.on{opacity:1;transform:none}
+.rvr{opacity:0;transform:translateX(70px);
+  transition:opacity .7s cubic-bezier(.34,1.56,.64,1),transform .7s cubic-bezier(.34,1.56,.64,1)}
+.rvr.on{opacity:1;transform:none}
+.rvp{opacity:0;transform:scale(.45) rotate(-6deg);
+  transition:opacity .65s cubic-bezier(.34,1.56,.64,1),transform .65s cubic-bezier(.34,1.56,.64,1)}
+.rvp.on{opacity:1;transform:scale(1) rotate(0deg)}
+.d1{transition-delay:.1s}.d2{transition-delay:.22s}.d3{transition-delay:.34s}
+.d4{transition-delay:.46s}.d5{transition-delay:.58s}
+
+/* ══════ INTRO ══════ */
+#intro{background:var(--cream)}
+.intro-split{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:3rem}
+@media(max-width:768px){.intro-split{grid-template-columns:1fr;gap:2.5rem}}
+
+.om-ring-wrap{position:relative;display:flex;align-items:center;justify-content:center;height:340px}
+.om-bg-ring{position:absolute;border-radius:50%;animation:mSpin linear infinite}
+.om-bg-ring:nth-child(1){width:300px;height:300px;border:3px dashed rgba(107,31,124,.2);animation-duration:20s}
+.om-bg-ring:nth-child(2){width:240px;height:240px;border:2px solid rgba(232,71,138,.25);animation-duration:14s;animation-direction:reverse}
+.om-bg-ring:nth-child(3){width:170px;height:170px;border:3px dashed rgba(255,209,102,.5);animation-duration:9s}
+.om-glyph{font-family:'Yatra One',cursive;font-size:9rem;line-height:1;position:relative;z-index:2;
+  background:linear-gradient(135deg,var(--pur),var(--pink),var(--org));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:omPulse 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 24px rgba(232,71,138,.25))}
+@keyframes omPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+/* ══════ FESTIVALS — 3 big cards ══════ */
+#festivals{background:linear-gradient(160deg,#fff8f0 0%,#ffeef7 100%)}
+.fest3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:3rem}
+@media(max-width:800px){.fest3{grid-template-columns:1fr}}
+
+.fcard{border-radius:28px;padding:2.6rem 2rem;cursor:none;position:relative;overflow:hidden;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s}
+.fcard::after{content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,0);transition:background .3s;border-radius:28px}
+.fcard:hover{transform:translateY(-14px) rotate(-1.5deg);box-shadow:0 28px 70px rgba(0,0,0,.18)}
+.fcard:hover::after{background:rgba(255,255,255,.08)}
+
+.fc1{background:linear-gradient(145deg,#FF5F52,#FF9A3C,#FFD166)}
+.fc2{background:linear-gradient(145deg,#6B1F7C,#E8478A)}
+.fc3{background:linear-gradient(145deg,#06D6A0,#5BC0EB)}
+
+.fcard-emoji{font-size:4rem;display:block;margin-bottom:1rem;
+  animation:wigBig 3s ease-in-out infinite}
+.fcard:nth-child(2) .fcard-emoji{animation-delay:.7s}
+.fcard:nth-child(3) .fcard-emoji{animation-delay:1.4s}
+@keyframes wigBig{
+  0%,100%{transform:rotate(0) scale(1)}
+  25%{transform:rotate(-10deg) scale(1.12)}
+  75%{transform:rotate(10deg) scale(1.12)}}
+.fcard h3{font-family:'Yatra One',cursive;font-size:1.7rem;color:#fff;margin-bottom:.5rem;
+  text-shadow:0 2px 12px rgba(0,0,0,.22)}
+.fcard p{font-size:.92rem;color:rgba(255,255,255,.9);line-height:1.7}
+
+/* ══════ RATH YATRA FULL BLEED ══════ */
+#rath{background:linear-gradient(155deg,#3A0950 0%,#6B1F7C 45%,#E8478A 100%);
+  color:#fff;text-align:center;padding:9rem 2rem}
+#rath .stag{color:rgba(255,209,102,.9);justify-content:center;display:block;text-align:center}
+#rath .stitle{color:var(--yel);text-align:center}
+#rath .sbody{color:rgba(255,255,255,.85);margin:0 auto 3rem}
+
+/* temple pulse glow */
+.rath-glow{animation:tFloat 6s ease-in-out infinite;
+  filter:drop-shadow(0 0 40px rgba(255,209,102,.35)) drop-shadow(0 25px 60px rgba(0,0,0,.45))}
+
+.rath-stats{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
+.rs{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:20px;padding:1.4rem 2rem;text-align:center;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),background .3s}
+.rs:hover{transform:scale(1.06);background:rgba(255,255,255,.2)}
+.rs-num{font-family:'Yatra One',cursive;font-size:2.4rem;color:var(--yel);line-height:1}
+.rs-lbl{font-size:.82rem;color:rgba(255,255,255,.75);margin-top:.3rem}
+
+/* firework sparks */
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;
+  animation:sparkOut 2.5s ease-out infinite;pointer-events:none}
+@keyframes sparkOut{
+  0%{transform:translate(0,0) scale(1.2);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+
+/* ══════ PILLARS — horizontal strip ══════ */
+#pillars{background:#fff}
+.pill-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:3.5rem;
+  border-radius:24px;overflow:hidden;border:2px solid rgba(107,31,124,.1)}
+@media(max-width:800px){.pill-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.pill-strip{grid-template-columns:1fr}}
+
+.pitem{padding:2.5rem 1.5rem;text-align:center;cursor:none;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative}
+.pitem:not(:last-child){border-right:2px solid rgba(107,31,124,.08)}
+.pitem:hover{transform:translateY(-8px) scale(1.03);z-index:2}
+
+.pi1{background:linear-gradient(160deg,#fff8e7,#ffe0b0)}
+.pi2{background:linear-gradient(160deg,#ffe8f4,#ffc5dc)}
+.pi3{background:linear-gradient(160deg,#e0fff8,#b0f5e8)}
+.pi4{background:linear-gradient(160deg,#ede0ff,#d0b0f5)}
+
+.picon{font-size:3rem;display:block;margin-bottom:.8rem;
+  animation:iconBounce 2.5s ease-in-out infinite}
+.pitem:nth-child(2) .picon{animation-delay:.4s}
+.pitem:nth-child(3) .picon{animation-delay:.8s}
+.pitem:nth-child(4) .picon{animation-delay:1.2s}
+@keyframes iconBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.pitem h3{font-family:'Yatra One',cursive;font-size:1.2rem;color:var(--dpur);margin-bottom:.4rem}
+.pitem p{font-size:.85rem;color:#666;line-height:1.65}
+
+/* ══════ QUOTE BAND ══════ */
+#qband{padding:5rem 2rem;
+  background:linear-gradient(100deg,var(--teal) 0%,var(--sky) 100%);text-align:center}
+.qtext{font-family:'Yatra One',cursive;font-size:clamp(1.6rem,4vw,2.8rem);
+  color:#fff;line-height:1.4;max-width:800px;margin:0 auto;
+  text-shadow:0 3px 20px rgba(0,0,0,.2)}
+.qsrc{font-family:'Baloo 2',cursive;font-size:1rem;color:rgba(255,255,255,.75);
+  margin-top:1.2rem;letter-spacing:.05em}
+
+/* ══════ DEITIES ORBIT ══════ */
+#gods{background:linear-gradient(160deg,#ffeef7 0%,#f0e8ff 100%)}
+#gods .stitle{color:var(--dpur)}
+
+.orbit-stage{position:relative;width:380px;height:380px;margin:4rem auto 1rem;
+  flex-shrink:0}
+.orbit-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,var(--pur),var(--pink));
+  display:flex;align-items:center;justify-content:center;z-index:3;
+  box-shadow:0 0 0 10px rgba(107,31,124,.1),0 0 0 20px rgba(107,31,124,.06);
+  animation:omPulse 3s ease-in-out infinite}
+.orbit-center span{font-family:'Yatra One',cursive;font-size:2.8rem;color:#fff}
+.orbit-ring1{position:absolute;left:50%;top:50%;width:260px;height:260px;
+  margin:-130px 0 0 -130px;border-radius:50%;
+  border:2px dashed rgba(232,71,138,.3);animation:mSpin 18s linear infinite}
+.orbit-ring2{position:absolute;left:50%;top:50%;width:360px;height:360px;
+  margin:-180px 0 0 -180px;border-radius:50%;
+  border:1.5px solid rgba(107,31,124,.18);animation:mSpin 28s linear infinite reverse}
+.oplanet{position:absolute;width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+  cursor:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.oplanet:hover{transform:scale(1.3)!important}
+.op1{background:linear-gradient(135deg,#FF5F52,#FFD166);top:0;left:50%;margin-left:-29px;margin-top:-29px}
+.op2{background:linear-gradient(135deg,#5BC0EB,#06D6A0);top:50%;right:-29px;margin-top:-29px}
+.op3{background:linear-gradient(135deg,#E8478A,#FF9A3C);bottom:-29px;left:50%;margin-left:-29px}
+.op4{background:linear-gradient(135deg,#6B1F7C,#5BC0EB);top:50%;left:-29px;margin-top:-29px}
+.oplanet2{position:absolute;width:50px;height:50px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+  cursor:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.oplanet2:hover{transform:scale(1.3)!important}
+.op5{background:linear-gradient(135deg,#FFD166,#FF9A3C);top:14%;right:8%;margin-right:-25px}
+.op6{background:linear-gradient(135deg,#06D6A0,#5BC0EB);bottom:14%;right:8%;margin-right:-25px}
+.op7{background:linear-gradient(135deg,#E8478A,#6B1F7C);bottom:14%;left:8%;margin-left:-25px}
+.op8{background:linear-gradient(135deg,#5BC0EB,#E8478A);top:14%;left:8%;margin-left:-25px}
+
+.oplanet .otip,.oplanet2 .otip{
+  position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
+  background:var(--dpur);color:#fff;
+  font-family:'Baloo 2',cursive;font-size:.72rem;font-weight:700;
+  padding:.3rem .75rem;border-radius:999px;white-space:nowrap;
+  opacity:0;transition:opacity .2s;pointer-events:none}
+.oplanet:hover .otip,.oplanet2:hover .otip{opacity:1}
+
+.gods-split{display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
+@media(max-width:800px){.gods-split{grid-template-columns:1fr;}.orbit-stage{width:300px;height:300px}}
+.gods-text p+p{margin-top:1rem}
+
+/* ══════ ARCH FACTS ══════ */
+#arch{background:var(--cream)}
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3rem}
+@media(max-width:768px){.arch-grid{grid-template-columns:1fr}}
+
+.afact{display:flex;gap:1.2rem;align-items:flex-start;
+  background:#fff;border-radius:18px;padding:1.4rem 1.5rem;
+  border-left:5px solid var(--pink);margin-bottom:1.2rem;
+  box-shadow:0 3px 16px rgba(0,0,0,.05);
+  transition:transform .25s,box-shadow .25s}
+.afact:hover{transform:translateX(8px);box-shadow:0 8px 32px rgba(232,71,138,.18)}
+.afnum{font-family:'Yatra One',cursive;font-size:2rem;color:var(--pink);
+  line-height:1;min-width:36px}
+.afact h4{font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:var(--dpur)}
+.afact p{font-size:.85rem;color:#666;margin-top:.25rem;line-height:1.6}
+
+/* ══════ CLOSING ══════ */
+#closing{min-height:80vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:8rem 2rem;
+  background:linear-gradient(135deg,#FF9A3C 0%,#E8478A 45%,#6B1F7C 100%);
+  position:relative;overflow:hidden}
+.closing-mandalas .mring{position:absolute}
+
+.closing-inner{position:relative;z-index:2}
+.cflowers{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.cflowers span{font-size:2.2rem;display:inline-block;
+  animation:flspin 4s ease-in-out infinite}
+.cflowers span:nth-child(2){animation-delay:.6s}
+.cflowers span:nth-child(3){animation-delay:1.2s}
+.cflowers span:nth-child(4){animation-delay:1.8s}
+.cflowers span:nth-child(5){animation-delay:2.4s}
+@keyframes flspin{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.2)}}
+
+.ctitle{font-family:'Yatra One',cursive;font-size:clamp(2.5rem,7vw,5.5rem);
+  color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.3);line-height:1.1}
+.csub{font-family:'Baloo 2',cursive;font-size:1.15rem;color:rgba(255,255,255,.88);
+  max-width:560px;margin:1.2rem auto 0;line-height:1.7}
+.cshanti{font-family:'Yatra One',cursive;font-size:1.8rem;color:var(--yel);margin-top:2rem}
+.cshanti-en{font-size:.85rem;color:rgba(255,255,255,.6);margin-top:.3rem;
+  font-family:'DM Sans',sans-serif}
+
+/* ══════ FOOTER ══════ */
+footer{background:var(--dpur);color:rgba(255,255,255,.6);
+  text-align:center;padding:1.6rem;
+  font-family:'Baloo 2',cursive;font-size:.85rem}
+footer span{color:var(--pink)}
+</style>
+</head>
+<body>
+
+<!-- cursor -->
+<div id="cur"></div>
+<div id="cur2"></div>
+<div id="prog"></div>
+
+<!-- particles -->
+<div class="pt" style="left:4%;animation-duration:14s;animation-delay:0s">🌸</div>
+<div class="pt" style="left:13%;animation-duration:10s;animation-delay:3s">✨</div>
+<div class="pt" style="left:24%;animation-duration:16s;animation-delay:7s">🪔</div>
+<div class="pt" style="left:37%;animation-duration:11s;animation-delay:1s">🌺</div>
+<div class="pt" style="left:52%;animation-duration:13s;animation-delay:5s">🎊</div>
+<div class="pt" style="left:66%;animation-duration:9s;animation-delay:2s">🌸</div>
+<div class="pt" style="left:78%;animation-duration:15s;animation-delay:8s">✨</div>
+<div class="pt" style="left:88%;animation-duration:12s;animation-delay:4s">🪔</div>
+<div class="pt" style="left:96%;animation-duration:10s;animation-delay:6s">🌺</div>
+
+<nav>
+  <a href="#intro">Culture</a>
+  <a href="#festivals">Festivals</a>
+  <a href="#rath">Rath Yatra</a>
+  <a href="#gods">Deities</a>
+  <a href="#closing">Closing</a>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="mring"></div>
+  <div class="mring"></div>
+  <div class="mring"></div>
+  <div class="mring"></div>
+  <div class="hdots"></div>
+
+  <!-- Sparks -->
+  <div class="spark" style="left:20%;top:30%;background:#FFD166;--dx:-60px;--dy:-80px;animation-delay:0s"></div>
+  <div class="spark" style="left:80%;top:25%;background:#FF9A3C;--dx:50px;--dy:-70px;animation-delay:.8s"></div>
+  <div class="spark" style="left:15%;top:60%;background:#E8478A;--dx:-40px;--dy:60px;animation-delay:1.6s"></div>
+  <div class="spark" style="left:85%;top:65%;background:#FFD166;--dx:55px;--dy:65px;animation-delay:.4s"></div>
+  <div class="spark" style="left:50%;top:15%;background:#fff;--dx:0px;--dy:-90px;animation-delay:1.2s"></div>
+  <div class="spark" style="left:40%;top:80%;background:#06D6A0;--dx:-45px;--dy:70px;animation-delay:2s"></div>
+
+  <span class="hero-tag">5,000 Years of Living Tradition</span>
+  <h1 class="hero-title">Hindu Culture</h1>
+  <p class="hero-sub">Where every colour is a prayer, every dance a scripture, every festival a reunion with the divine.</p>
+  <a href="#intro" class="hero-btn">Begin the Journey ↓</a>
+
+  <!-- Animated temple illustration -->
+  <div class="hero-temple-wrap">
+    <svg width="540" height="230" viewBox="0 0 540 230" xmlns="http://www.w3.org/2000/svg">
+      <!-- base shadow -->
+      <ellipse cx="270" cy="225" rx="240" ry="10" fill="rgba(0,0,0,0.2)"/>
+      <!-- side small L -->
+      <rect x="18" y="170" width="54" height="55" rx="3" fill="#FF9A3C"/>
+      <polygon points="45,132 18,170 72,170" fill="#FFD166"/>
+      <ellipse cx="45" cy="129" rx="7" ry="10" fill="#FF9A3C"/>
+      <!-- side med L -->
+      <rect x="95" y="140" width="76" height="85" rx="4" fill="#06D6A0"/>
+      <polygon points="133,95 95,140 171,140" fill="#2EC4B6"/>
+      <ellipse cx="133" cy="92" rx="9" ry="13" fill="#06D6A0"/>
+      <!-- center -->
+      <rect x="198" y="105" width="144" height="120" rx="6" fill="#E8478A"/>
+      <polygon points="270,28 198,105 342,105" fill="#FF5F52"/>
+      <ellipse cx="270" cy="25" rx="13" ry="18" fill="#E8478A"/>
+      <!-- deco bands center -->
+      <rect x="198" y="148" width="144" height="7" rx="2" fill="rgba(255,255,255,.3)"/>
+      <rect x="198" y="182" width="144" height="7" rx="2" fill="rgba(255,255,255,.3)"/>
+      <!-- center arch door -->
+      <path d="M240,225 Q270,195 300,225" fill="rgba(0,0,0,.28)"/>
+      <rect x="243" y="210" width="54" height="15" rx="2" fill="rgba(0,0,0,.22)"/>
+      <!-- om symbol -->
+      <circle cx="270" cy="138" r="16" fill="rgba(255,255,255,.2)"/>
+      <text x="270" y="145" text-anchor="middle" fill="#fff" font-size="17" font-family="serif">ॐ</text>
+      <!-- side med R -->
+      <rect x="369" y="140" width="76" height="85" rx="4" fill="#7B2D8B"/>
+      <polygon points="407,95 369,140 445,140" fill="#5BC0EB"/>
+      <ellipse cx="407" cy="92" rx="9" ry="13" fill="#7B2D8B"/>
+      <!-- side small R -->
+      <rect x="468" y="170" width="54" height="55" rx="3" fill="#FFD166"/>
+      <polygon points="495,132 468,170 522,170" fill="#FF9A3C"/>
+      <ellipse cx="495" cy="129" rx="7" ry="10" fill="#FFD166"/>
+      <!-- base platform -->
+      <rect x="10" y="222" width="520" height="6" rx="3" fill="rgba(255,255,255,.22)"/>
+      <!-- FLAGS -->
+      <line x1="45" y1="119" x2="45" y2="106" stroke="#fff" stroke-width="1.5"/>
+      <polygon class="flag" points="45,106 63,109 45,113" fill="#FFD166"/>
+      <line x1="270" y1="8" x2="270" y2="-8" stroke="#fff" stroke-width="2"/>
+      <polygon class="flag" points="270,-8 296,-3 270,3" fill="#FFD166"/>
+      <line x1="495" y1="119" x2="495" y2="106" stroke="#fff" stroke-width="1.5"/>
+      <polygon class="flag" points="495,106 513,109 495,113" fill="#FFD166"/>
+      <!-- STARS twinkle -->
+      <text class="twk" x="152" y="100" fill="#FFD166" font-size="18" text-anchor="middle">✦</text>
+      <text class="twk" x="388" y="100" fill="#FFD166" font-size="18" text-anchor="middle">✦</text>
+      <text class="twk" x="270" y="62" fill="rgba(255,255,255,.7)" font-size="13" text-anchor="middle">✦</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════ MARQUEE ═══════════════ -->
+<div class="mbar">
+  <div class="mbar-inner">
+    <span class="mi">🌸 Rath Yatra</span><span class="ms">✦</span>
+    <span class="mi">🪔 Diwali</span><span class="ms">✦</span>
+    <span class="mi">🎨 Holi</span><span class="ms">✦</span>
+    <span class="mi">💃 Navratri</span><span class="ms">✦</span>
+    <span class="mi">🕉️ Dharma</span><span class="ms">✦</span>
+    <span class="mi">🐘 Ganesha</span><span class="ms">✦</span>
+    <span class="mi">🏛️ Temples</span><span class="ms">✦</span>
+    <span class="mi">🎵 Ragas</span><span class="ms">✦</span>
+    <span class="mi">✨ Vedic Wisdom</span><span class="ms">✦</span>
+    <span class="mi">🌸 Rath Yatra</span><span class="ms">✦</span>
+    <span class="mi">🪔 Diwali</span><span class="ms">✦</span>
+    <span class="mi">🎨 Holi</span><span class="ms">✦</span>
+    <span class="mi">💃 Navratri</span><span class="ms">✦</span>
+    <span class="mi">🕉️ Dharma</span><span class="ms">✦</span>
+    <span class="mi">🐘 Ganesha</span><span class="ms">✦</span>
+    <span class="mi">🏛️ Temples</span><span class="ms">✦</span>
+    <span class="mi">🎵 Ragas</span><span class="ms">✦</span>
+    <span class="mi">✨ Vedic Wisdom</span><span class="ms">✦</span>
+  </div>
+</div>
+
+<!-- ═══════════════ INTRO ═══════════════ -->
+<section id="intro">
+  <div class="inner">
+    <div class="intro-split">
+      <div>
+        <span class="stag rv">The Oldest Living Civilisation</span>
+        <h2 class="stitle rv d1">Where Every Colour Tells a Story</h2>
+        <p class="sbody rv d2">Hinduism is not merely a religion — it is a vibrant, ever-breathing civilisation born along the banks of the Indus and Saraswati rivers over 5,000 years ago. It gave the world yoga, Ayurveda, zero, and philosophies that continue to shape modern thought.</p>
+        <p class="sbody rv d3" style="margin-top:1rem">With over 1.2 billion adherents it has no single founder, no single text, no single path. It is a joyful plurality — a chorus of a billion voices singing the same eternal song in a thousand different melodies.</p>
+      </div>
+      <div class="rvr d2">
+        <div class="om-ring-wrap">
+          <div class="om-bg-ring"></div>
+          <div class="om-bg-ring"></div>
+          <div class="om-bg-ring"></div>
+          <span class="om-glyph">ॐ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FESTIVALS — 3 CARDS ═══════════════ -->
+<section id="festivals">
+  <div class="inner">
+    <span class="stag rv">Celebrations of Life</span>
+    <h2 class="stitle rv d1">India Celebrates Every Single Day</h2>
+    <p class="sbody rv d2">Over 3,000 festivals a year — roughly 8 every day — each an explosion of colour, music, devotion, and community that brings gods and mortals together.</p>
+
+    <div class="fest3">
+      <div class="fcard fc1 rvp d1">
+        <span class="fcard-emoji">🪔</span>
+        <h3>Diwali</h3>
+        <p>Rows of earthen lamps drive away darkness and welcome Goddess Lakshmi. Cities ignite in fireworks; families exchange sweets and new beginnings.</p>
+      </div>
+      <div class="fcard fc2 rvp d2">
+        <span class="fcard-emoji">🏛️</span>
+        <h3>Rath Yatra</h3>
+        <p>Towering wooden chariots carry Lord Jagannath through Puri's streets. A million devotees pull the ropes together in a single act of love.</p>
+      </div>
+      <div class="fcard fc3 rvp d3">
+        <span class="fcard-emoji">💃</span>
+        <h3>Navratri</h3>
+        <p>Nine nights of dance. Garba and Dandiya Raas fill the air as communities honour Goddess Durga's triumph over the demon Mahishasura.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ RATH YATRA FULL BLEED ═══════════════ -->
+<section id="rath">
+  <!-- sparks -->
+  <div class="spark" style="left:10%;top:20%;background:#FFD166;--dx:-70px;--dy:-90px;animation-delay:0s"></div>
+  <div class="spark" style="left:90%;top:18%;background:#FF9A3C;--dx:60px;--dy:-80px;animation-delay:1s"></div>
+  <div class="spark" style="left:5%;top:70%;background:#fff;--dx:-50px;--dy:80px;animation-delay:.5s"></div>
+  <div class="spark" style="left:95%;top:72%;background:#06D6A0;--dx:60px;--dy:80px;animation-delay:1.5s"></div>
+  <div class="spark" style="left:50%;top:8%;background:#FFD166;--dx:20px;--dy:-100px;animation-delay:2s"></div>
+  <div class="spark" style="left:30%;top:85%;background:#E8478A;--dx:-30px;--dy:90px;animation-delay:.7s"></div>
+  <div class="spark" style="left:70%;top:83%;background:#FFD166;--dx:40px;--dy:90px;animation-delay:1.8s"></div>
+
+  <div class="inner">
+    <span class="stag rv">Spotlight Festival</span>
+    <h2 class="stitle rv d1">Rath Yatra — The Chariot of the Lord</h2>
+    <p class="sbody rv d2">Every year in Puri, Odisha, three towering wooden chariots — Nandighosa, Taladhwaja, and Darpadalana — carry Lord Jagannath, his brother Balabhadra, and sister Subhadra. Built fresh each year from sacred wood, assembled without a single nail, pulled by millions bare-handed.</p>
+
+    <!-- Big Rath Temple SVG -->
+    <div class="rath-glow rv d3" style="max-width:640px;margin:3rem auto 0">
+      <svg width="640" height="340" viewBox="0 0 640 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- ground glow -->
+        <ellipse cx="320" cy="330" rx="280" ry="14" fill="rgba(255,209,102,.18)"/>
+        <!-- far small L -->
+        <rect x="12" y="248" width="62" height="76" rx="4" fill="#FF9A3C"/>
+        <polygon points="43,202 12,248 74,248" fill="#FFD166"/>
+        <ellipse cx="43" cy="198" rx="9" ry="13" fill="#FF9A3C"/>
+        <!-- pillars small L -->
+        <rect x="16" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <rect x="32" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <rect x="48" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <!-- med L -->
+        <rect x="100" y="196" width="94" height="128" rx="5" fill="#06D6A0"/>
+        <polygon points="147,136 100,196 194,196" fill="#2EC4B6"/>
+        <ellipse cx="147" cy="132" rx="12" ry="17" fill="#06D6A0"/>
+        <rect x="100" y="264" width="94" height="8" rx="2" fill="rgba(255,255,255,.25)"/>
+        <path d="M122,324 Q147,300 172,324" fill="rgba(0,0,0,.22)"/>
+        <!-- CENTER -->
+        <rect x="224" y="148" width="192" height="176" rx="8" fill="#E8478A"/>
+        <polygon points="320,44 224,148 416,148" fill="#FF5F52"/>
+        <ellipse cx="320" cy="40" rx="17" ry="24" fill="#E8478A"/>
+        <!-- deco bands -->
+        <rect x="224" y="196" width="192" height="9" rx="3" fill="rgba(255,255,255,.28)"/>
+        <rect x="224" y="240" width="192" height="9" rx="3" fill="rgba(255,255,255,.28)"/>
+        <rect x="224" y="284" width="192" height="9" rx="3" fill="rgba(255,255,255,.28)"/>
+        <!-- center sym -->
+        <circle cx="320" cy="176" r="20" fill="rgba(255,255,255,.22)"/>
+        <text x="320" y="184" text-anchor="middle" fill="#fff" font-size="20" font-family="serif">ॐ</text>
+        <!-- center arch -->
+        <path d="M290,324 Q320,290 350,324" fill="rgba(0,0,0,.32)"/>
+        <rect x="293" y="308" width="54" height="16" rx="3" fill="rgba(0,0,0,.25)"/>
+        <!-- pillars center -->
+        <rect x="228" y="300" width="12" height="24" rx="2" fill="rgba(255,255,255,.2)"/>
+        <rect x="248" y="300" width="12" height="24" rx="2" fill="rgba(255,255,255,.2)"/>
+        <rect x="380" y="300" width="12" height="24" rx="2" fill="rgba(255,255,255,.2)"/>
+        <rect x="396" y="300" width="12" height="24" rx="2" fill="rgba(255,255,255,.2)"/>
+        <!-- med R -->
+        <rect x="446" y="196" width="94" height="128" rx="5" fill="#7B2D8B"/>
+        <polygon points="493,136 446,196 540,196" fill="#5BC0EB"/>
+        <ellipse cx="493" cy="132" rx="12" ry="17" fill="#7B2D8B"/>
+        <rect x="446" y="264" width="94" height="8" rx="2" fill="rgba(255,255,255,.25)"/>
+        <path d="M468,324 Q493,300 518,324" fill="rgba(0,0,0,.22)"/>
+        <!-- far small R -->
+        <rect x="566" y="248" width="62" height="76" rx="4" fill="#FFD166"/>
+        <polygon points="597,202 566,248 628,248" fill="#FF9A3C"/>
+        <ellipse cx="597" cy="198" rx="9" ry="13" fill="#FFD166"/>
+        <rect x="570" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <rect x="586" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <rect x="602" y="294" width="10" height="30" rx="2" fill="rgba(255,255,255,.25)"/>
+        <!-- CROWD SILHOUETTE HANDS -->
+        <g fill="rgba(255,255,255,.18)">
+          <ellipse cx="44" cy="336" rx="12" ry="16"/>
+          <ellipse cx="76" cy="334" rx="11" ry="18"/>
+          <ellipse cx="108" cy="336" rx="12" ry="15"/>
+          <ellipse cx="530" cy="336" rx="12" ry="15"/>
+          <ellipse cx="562" cy="334" rx="11" ry="18"/>
+          <ellipse cx="594" cy="336" rx="12" ry="16"/>
+        </g>
+        <!-- FLAGS -->
+        <line x1="43" y1="184" x2="43" y2="168" stroke="#fff" stroke-width="1.5"/>
+        <polygon class="flag" points="43,168 64,172 43,177" fill="#FFD166"/>
+        <line x1="147" y1="119" x2="147" y2="100" stroke="#fff" stroke-width="1.8"/>
+        <polygon class="flag" points="147,100 172,105 147,111" fill="#FFD166"/>
+        <line x1="320" y1="18" x2="320" y2="-4" stroke="#fff" stroke-width="2.2"/>
+        <polygon class="flag" points="320,-4 354,2 320,9" fill="#FFD166"/>
+        <line x1="493" y1="119" x2="493" y2="100" stroke="#fff" stroke-width="1.8"/>
+        <polygon class="flag" points="493,100 518,105 493,111" fill="#FFD166"/>
+        <line x1="597" y1="184" x2="597" y2="168" stroke="#fff" stroke-width="1.5"/>
+        <polygon class="flag" points="597,168 618,172 597,177" fill="#FFD166"/>
+        <!-- STARS -->
+        <text class="twk" x="175" y="156" fill="#FFD166" font-size="22" text-anchor="middle">✦</text>
+        <text class="twk" x="465" y="156" fill="#FFD166" font-size="22" text-anchor="middle">✦</text>
+        <text class="twk" x="320" y="82" fill="rgba(255,255,255,.75)" font-size="16" text-anchor="middle">✦</text>
+        <text class="twk" x="90" y="220" fill="rgba(255,255,255,.5)" font-size="13" text-anchor="middle">✦</text>
+        <text class="twk" x="550" y="220" fill="rgba(255,255,255,.5)" font-size="13" text-anchor="middle">✦</text>
+      </svg>
+    </div>
+
+    <div class="rath-stats rv d4">
+      <div class="rs rvp d1"><div class="rs-num">1M+</div><div class="rs-lbl">Devotees each year</div></div>
+      <div class="rs rvp d2"><div class="rs-num">2000+</div><div class="rs-lbl">Years of tradition</div></div>
+      <div class="rs rvp d3"><div class="rs-num">45 ft</div><div class="rs-lbl">Tall main chariot</div></div>
+      <div class="rs rvp d4"><div class="rs-num">0 nails</div><div class="rs-lbl">Sacred wood only</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PILLARS ═══════════════ -->
+<section id="pillars">
+  <div class="inner">
+    <span class="stag rv">Philosophy</span>
+    <h2 class="stitle rv d1">Four Pillars That Hold the Universe</h2>
+    <p class="sbody rv d2">Hindu philosophy rests on timeless concepts guiding how one lives, acts, relates, and ultimately transcends the cycle of birth and death.</p>
+    <div class="pill-strip rv d3">
+      <div class="pitem pi1">
+        <span class="picon">⚖️</span>
+        <h3>Dharma</h3>
+        <p>Righteous duty — the moral order governing the cosmos and each individual's role within it.</p>
+      </div>
+      <div class="pitem pi2">
+        <span class="picon">🔄</span>
+        <h3>Karma</h3>
+        <p>Every thought, word, and deed ripples through existence, shaping present and future lives.</p>
+      </div>
+      <div class="pitem pi3">
+        <span class="picon">🕊️</span>
+        <h3>Ahimsa</h3>
+        <p>Non-violence toward all life — the principle that inspired Gandhi and shaped modern civil rights.</p>
+      </div>
+      <div class="pitem pi4">
+        <span class="picon">🌟</span>
+        <h3>Moksha</h3>
+        <p>Liberation — freedom from reincarnation through knowledge, devotion, or selfless action.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ QUOTE BAND ═══════════════ -->
+<section id="qband">
+  <div class="inner">
+    <p class="qtext rv">"The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being."</p>
+    <p class="qsrc rv d1">— Bhagavad Gita, Chapter 2 Verse 20</p>
+  </div>
+</section>
+
+<!-- ═══════════════ DEITIES ORBIT ═══════════════ -->
+<section id="gods">
+  <div class="inner">
+    <div class="gods-split">
+      <div class="gods-text">
+        <span class="stag rvl">The Divine Pantheon</span>
+        <h2 class="stitle rvl d1">330 Million Faces of the One</h2>
+        <p class="sbody rvl d2">Hinduism's rich pantheon isn't polytheism — each deity represents a different quality of the same infinite Brahman, making the divine accessible to every kind of human heart.</p>
+        <p class="sbody rvl d3" style="margin-top:1rem">Hover over the orbiting planets to meet the deities — from Ganesha the remover of obstacles, to Saraswati goddess of music and knowledge, to the cosmic dancer Shiva.</p>
+      </div>
+      <div class="rvr d2">
+        <div class="orbit-stage">
+          <div class="orbit-ring2"></div>
+          <div class="orbit-ring1"></div>
+          <div class="orbit-center"><span>ॐ</span></div>
+          <!-- inner orbit planets -->
+          <div class="oplanet op1"><span>🐘</span><span class="otip">Ganesha</span></div>
+          <div class="oplanet op2"><span>🌸</span><span class="otip">Lakshmi</span></div>
+          <div class="oplanet op3"><span>🦚</span><span class="otip">Krishna</span></div>
+          <div class="oplanet op4"><span>🌙</span><span class="otip">Shiva</span></div>
+          <!-- outer orbit planets -->
+          <div class="oplanet2 op5"><span>🎵</span><span class="otip">Saraswati</span></div>
+          <div class="oplanet2 op6"><span>🔵</span><span class="otip">Vishnu</span></div>
+          <div class="oplanet2 op7"><span>🔱</span><span class="otip">Hanuman</span></div>
+          <div class="oplanet2 op8"><span>🌅</span><span class="otip">Brahma</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ARCHITECTURE ═══════════════ -->
+<section id="arch">
+  <div class="inner">
+    <div class="arch-grid">
+      <div>
+        <span class="stag rv">Sacred Spaces</span>
+        <h2 class="stitle rv d1">Temples — Mountains Made by Human Hands</h2>
+        <p class="sbody rv d2">Hindu temples are built cosmologies. Every element from the towering shikhara to the innermost sanctum maps the structure of the universe itself.</p>
+
+        <!-- castle-inspired SVG panel -->
+        <div class="rv d3" style="margin-top:2rem">
+          <svg width="440" height="200" viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- wall -->
+            <rect x="0" y="40" width="440" height="160" rx="0" fill="#6B1F7C"/>
+            <!-- brick lines -->
+            <g stroke="rgba(255,255,255,.07)" stroke-width="1" fill="none">
+              <line x1="0" y1="60" x2="440" y2="60"/><line x1="0" y1="80" x2="440" y2="80"/>
+              <line x1="0" y1="100" x2="440" y2="100"/><line x1="0" y1="120" x2="440" y2="120"/>
+              <line x1="0" y1="140" x2="440" y2="140"/><line x1="0" y1="160" x2="440" y2="160"/>
+              <line x1="0" y1="180" x2="440" y2="180"/>
+              <line x1="44" y1="40" x2="44" y2="200"/><line x1="88" y1="40" x2="88" y2="200"/>
+              <line x1="132" y1="40" x2="132" y2="200"/><line x1="176" y1="40" x2="176" y2="200"/>
+              <line x1="220" y1="40" x2="220" y2="200"/><line x1="264" y1="40" x2="264" y2="200"/>
+              <line x1="308" y1="40" x2="308" y2="200"/><line x1="352" y1="40" x2="352" y2="200"/>
+              <line x1="396" y1="40" x2="396" y2="200"/>
+            </g>
+            <!-- floor -->
+            <rect x="0" y="185" width="440" height="15" rx="0" fill="#2EC4B6"/>
+            <!-- teal tile lines -->
+            <g stroke="rgba(255,255,255,.15)" stroke-width=".8" fill="none">
+              <line x1="0" y1="193" x2="440" y2="193"/>
+              <line x1="44" y1="185" x2="44" y2="200"/><line x1="88" y1="185" x2="88" y2="200"/>
+              <line x1="132" y1="185" x2="132" y2="200"/><line x1="176" y1="185" x2="176" y2="200"/>
+              <line x1="220" y1="185" x2="220" y2="200"/><line x1="264" y1="185" x2="264" y2="200"/>
+              <line x1="308" y1="185" x2="308" y2="200"/><line x1="352" y1="185" x2="352" y2="200"/>
+              <line x1="396" y1="185" x2="396" y2="200"/>
+            </g>
+            <!-- columns -->
+            <rect x="48" y="40" width="16" height="145" rx="3" fill="#5BC0EB"/>
+            <rect x="140" y="40" width="16" height="145" rx="3" fill="#5BC0EB"/>
+            <rect x="284" y="40" width="16" height="145" rx="3" fill="#5BC0EB"/>
+            <rect x="376" y="40" width="16" height="145" rx="3" fill="#5BC0EB"/>
+            <!-- column caps -->
+            <rect x="42" y="36" width="28" height="8" rx="2" fill="#FFD166"/>
+            <rect x="134" y="36" width="28" height="8" rx="2" fill="#FFD166"/>
+            <rect x="278" y="36" width="28" height="8" rx="2" fill="#FFD166"/>
+            <rect x="370" y="36" width="28" height="8" rx="2" fill="#FFD166"/>
+            <!-- banners -->
+            <rect x="16" y="40" width="26" height="48" rx="2" fill="#E8478A"/>
+            <polygon points="16,88 42,88 29,102" fill="#E8478A"/>
+            <text x="29" y="71" text-anchor="middle" fill="#FFD166" font-size="14">✦</text>
+            <rect x="398" y="40" width="26" height="48" rx="2" fill="#E8478A"/>
+            <polygon points="398,88 424,88 411,102" fill="#E8478A"/>
+            <text x="411" y="71" text-anchor="middle" fill="#FFD166" font-size="14">✦</text>
+            <!-- gothic windows -->
+            <path d="M168,60 Q168,42 184,42 Q200,42 200,60 L200,112 L168,112 Z" fill="#5BC0EB" opacity=".55"/>
+            <path d="M240,60 Q240,42 256,42 Q272,42 272,60 L272,112 L240,112 Z" fill="#5BC0EB" opacity=".55"/>
+            <!-- window pane lines -->
+            <line x1="184" y1="52" x2="184" y2="112" stroke="rgba(255,255,255,.4)" stroke-width=".8"/>
+            <line x1="168" y1="80" x2="200" y2="80" stroke="rgba(255,255,255,.4)" stroke-width=".8"/>
+            <line x1="256" y1="52" x2="256" y2="112" stroke="rgba(255,255,255,.4)" stroke-width=".8"/>
+            <line x1="240" y1="80" x2="272" y2="80" stroke="rgba(255,255,255,.4)" stroke-width=".8"/>
+            <!-- throne steps -->
+            <rect x="134" y="158" width="172" height="12" rx="2" fill="#FFD166"/>
+            <rect x="148" y="146" width="144" height="12" rx="2" fill="#FF9A3C"/>
+            <rect x="162" y="134" width="116" height="12" rx="2" fill="#FFD166"/>
+            <!-- throne seat -->
+            <rect x="168" y="102" width="104" height="34" rx="6" fill="#FF5F52"/>
+            <rect x="165" y="94" width="10" height="40" rx="3" fill="#E8478A"/>
+            <rect x="265" y="94" width="10" height="40" rx="3" fill="#E8478A"/>
+            <path d="M168,94 Q220,74 272,94" fill="#E8478A" stroke="#FFD166" stroke-width="1.5"/>
+            <circle cx="220" cy="76" r="8" fill="#FFD166"/>
+            <text x="220" y="81" text-anchor="middle" fill="#E8478A" font-size="10">✦</text>
+            <!-- crown -->
+            <polygon points="192,94 200,80 210,92 220,72 230,92 240,80 248,94" fill="#FFD166"/>
+            <!-- carpet -->
+            <rect x="206" y="170" width="28" height="30" rx="0" fill="#FF5F52" opacity=".8"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="arch-facts">
+        <div class="afact rvr d1">
+          <div class="afnum">01</div>
+          <div><h4>Vastu Shastra</h4>
+          <p>Ancient Hindu architecture science aligns buildings with cardinal directions and cosmic energies, predating modern feng shui by millennia.</p></div>
+        </div>
+        <div class="afact rvr d2">
+          <div class="afnum">02</div>
+          <div><h4>The Shikhara</h4>
+          <p>The curved tower represents Mount Meru — the cosmic axis connecting earth to heaven, inviting the divine to descend.</p></div>
+        </div>
+        <div class="afact rvr d3">
+          <div class="afnum">03</div>
+          <div><h4>Dravidian Gopurams</h4>
+          <p>South India's towering gateways covered in thousands of painted sculptures are among history's most extraordinary architectural feats.</p></div>
+        </div>
+        <div class="afact rvr d4">
+          <div class="afnum">04</div>
+          <div><h4>Sacred Geometry</h4>
+          <p>Every temple floor plan is a mandala. Proportions follow the Agama texts — unchanged for 2,000 years.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CLOSING ═══════════════ -->
+<section id="closing">
+  <!-- bg rings -->
+  <div class="mring" style="position:absolute;left:50%;top:50%;width:600px;height:600px;margin:-300px 0 0 -300px;border:2px dashed rgba(255,255,255,.1);animation-duration:50s"></div>
+  <div class="mring" style="position:absolute;left:50%;top:50%;width:400px;height:400px;margin:-200px 0 0 -200px;border:1.5px solid rgba(255,255,255,.08);animation-duration:35s;animation-direction:reverse"></div>
+
+  <!-- sparks -->
+  <div class="spark" style="left:20%;top:30%;background:#FFD166;--dx:-80px;--dy:-90px;animation-delay:0s"></div>
+  <div class="spark" style="left:80%;top:28%;background:#fff;--dx:70px;--dy:-80px;animation-delay:.9s"></div>
+  <div class="spark" style="left:12%;top:68%;background:#06D6A0;--dx:-60px;--dy:80px;animation-delay:1.8s"></div>
+  <div class="spark" style="left:88%;top:66%;background:#FFD166;--dx:60px;--dy:80px;animation-delay:.5s"></div>
+  <div class="spark" style="left:50%;top:12%;background:#E8478A;--dx:10px;--dy:-100px;animation-delay:1.3s"></div>
+
+  <div class="closing-inner">
+    <div class="cflowers rv">
+      <span>🌸</span><span>🪔</span><span>🌺</span><span>✨</span><span>🌸</span>
+    </div>
+    <h2 class="ctitle rv d1">Sanātana Dharma</h2>
+    <p class="csub rv d2">The Eternal Way — a culture that does not simply belong to history. It breathes, dances, and renews itself with every sunrise, every lamp lit, every prayer offered, and every new child born into its joyful embrace.</p>
+    <p class="cshanti rv d3">ॐ शान्ति शान्ति शान्ति</p>
+    <p class="cshanti-en rv d4">Om Shanti Shanti Shanti — Peace in body, mind, and spirit</p>
+  </div>
+</section>
+
+<footer>
+  <p>Made with <span>♥</span> in celebration of Hindu Culture &nbsp;·&nbsp; <span>ॐ</span></p>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const c1=document.getElementById('cur'),c2=document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
+  c1.style.left=mx+'px';c1.style.top=my+'px'});
+(function lerp(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;
+  c2.style.left=cx+'px';c2.style.top=cy+'px';requestAnimationFrame(lerp)})();
+document.querySelectorAll('a,button,.fcard,.pitem,.rs,.oplanet,.oplanet2,.afact').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{c1.style.width='8px';c1.style.height='8px';
+    c2.style.width='52px';c2.style.height='52px';c2.style.borderColor='var(--yel)'});
+  el.addEventListener('mouseleave',()=>{c1.style.width='12px';c1.style.height='12px';
+    c2.style.width='36px';c2.style.height='36px';c2.style.borderColor='var(--pink)'})});
+
+/* ── PROGRESS ── */
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  prog.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%'});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.1});
+document.querySelectorAll('.rv,.rvl,.rvr,.rvp').forEach(el=>obs.observe(el));
+
+/* ── ORBIT ANIMATION for planets ── */
+const ring1Speed=16000, ring2Speed=26000;
+const ring1Planets=['.op1','.op2','.op3','.op4'];
+const ring2Planets=['.op5','.op6','.op7','.op8'];
+const r1=130, r2=180;
+
+function animateOrbits(){
+  const t=Date.now();
+  ring1Planets.forEach((sel,i)=>{
+    const el=document.querySelector(sel);
+    if(!el)return;
+    const angle=(t/ring1Speed*Math.PI*2)+(i*Math.PI/2);
+    const x=190+r1*Math.cos(angle)-29;
+    const y=190+r1*Math.sin(angle)-29;
+    el.style.left=x+'px';el.style.top=y+'px';
+    el.style.transform=`rotate(${-t/ring1Speed*360}deg)`;
+  });
+  ring2Planets.forEach((sel,i)=>{
+    const el=document.querySelector(sel);
+    if(!el)return;
+    const angle=(-t/ring2Speed*Math.PI*2)+(i*Math.PI/2)+(Math.PI/4);
+    const x=190+r2*Math.cos(angle)-25;
+    const y=190+r2*Math.sin(angle)-25;
+    el.style.left=x+'px';el.style.top=y+'px';
+    el.style.transform=`rotate(${t/ring2Speed*360}deg)`;
+  });
+  requestAnimationFrame(animateOrbits);
+}
+animateOrbits();
+</script>
+</body>
+</html>

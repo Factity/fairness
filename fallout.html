@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VECTORS OF RUIN — WMD Chronicles</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rubik+Glitch&family=Rajdhani:wght@300;600;700&family=Black+Ops+One&family=Creepster&family=Nosifer&family=Monoton&display=swap" rel="stylesheet">
+<style>
+:root {
+  --nuke-green:#39ff14;--nuke-dark:#050f00;--nuke-glow:#7fff00;--nuke-warn:#ffdd00;--nuke-ember:#ff6b1a;
+  --cyber-blue:#00cfff;--cyber-dark:#030810;--cyber-red:#ff3c3c;--cyber-accent:#7b2fff;--cyber-silver:#a8d8ea;
+  --bio-purple:#9b30ff;--bio-dark:#06000f;--bio-glow:#cc00ff;--bio-sick:#44ff88;--bio-pink:#ff4477;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Rajdhani',sans-serif;background:#000;color:#fff;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--nuke-green),var(--cyber-blue),var(--bio-purple));border-radius:3px}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,#0a2000 0%,transparent 50%),radial-gradient(ellipse at 80% 60%,#050a18 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,#0d0020 0%,transparent 50%);animation:heroBgShift 10s ease-in-out infinite}
+@keyframes heroBgShift{0%,100%{opacity:.8}50%{opacity:1}}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(57,255,20,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(57,255,20,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridPulse 4s ease-in-out infinite}
+@keyframes gridPulse{0%,100%{opacity:.3}50%{opacity:.8}}
+#hero-canvas{position:absolute;inset:0;pointer-events:none;z-index:1}
+.hero-title{font-family:'Rubik Glitch',cursive;font-size:clamp(3rem,8vw,7rem);letter-spacing:.05em;line-height:1;position:relative;z-index:2;animation:heroGlitch 6s infinite}
+.hero-title span:nth-child(1){color:var(--nuke-green);text-shadow:0 0 40px var(--nuke-green),0 0 80px rgba(57,255,20,.4)}
+.hero-title span:nth-child(2){color:#fff}
+.hero-title span:nth-child(3){color:var(--cyber-blue);text-shadow:0 0 40px var(--cyber-blue),0 0 80px rgba(0,207,255,.4)}
+.hero-title span:nth-child(4){color:#fff}
+.hero-title span:nth-child(5){color:var(--bio-purple);text-shadow:0 0 40px var(--bio-purple),0 0 80px rgba(155,48,255,.4)}
+@keyframes heroGlitch{0%,94%,100%{transform:translate(0)}95%{transform:translate(-3px,1px) skewX(1deg);filter:hue-rotate(30deg)}97%{transform:translate(3px,-1px) skewX(-1deg)}99%{transform:translate(-1px,2px)}}
+.hero-sub{font-family:'Share Tech Mono',monospace;font-size:clamp(.7rem,1.5vw,1rem);color:rgba(255,255,255,.5);letter-spacing:.3em;text-transform:uppercase;margin-top:1.5rem;position:relative;z-index:2;overflow:hidden;white-space:nowrap;animation:typeIn 2s steps(40) .5s both}
+@keyframes typeIn{from{width:0}to{width:100%}}
+.hero-dividers{display:flex;gap:2rem;margin-top:3rem;position:relative;z-index:2}
+.hero-div{width:80px;height:3px;border-radius:2px;animation:divPulse 2s ease-in-out infinite}
+.hero-div:nth-child(1){background:var(--nuke-green);box-shadow:0 0 12px var(--nuke-green);animation-delay:0s}
+.hero-div:nth-child(2){background:var(--cyber-blue);box-shadow:0 0 12px var(--cyber-blue);animation-delay:.5s}
+.hero-div:nth-child(3){background:var(--bio-purple);box-shadow:0 0 12px var(--bio-purple);animation-delay:1s}
+@keyframes divPulse{0%,100%{opacity:.5;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.3)}}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);font-family:'Share Tech Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3em;animation:bounce 2s infinite;z-index:2}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ===== NAV ===== */
+.sticky-nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);padding:.8rem 2rem;display:flex;justify-content:center;gap:3rem}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-decoration:none;text-transform:uppercase;transition:all .3s;padding:.3rem .8rem;border-radius:3px}
+.nav-link.nuke{color:var(--nuke-green);border:1px solid rgba(57,255,20,.3)}
+.nav-link.nuke:hover{background:rgba(57,255,20,.15);box-shadow:0 0 15px rgba(57,255,20,.4)}
+.nav-link.cyber{color:var(--cyber-blue);border:1px solid rgba(0,207,255,.3)}
+.nav-link.cyber:hover{background:rgba(0,207,255,.15);box-shadow:0 0 15px rgba(0,207,255,.4)}
+.nav-link.bio{color:var(--bio-purple);border:1px solid rgba(155,48,255,.3)}
+.nav-link.bio:hover{background:rgba(155,48,255,.15);box-shadow:0 0 15px rgba(155,48,255,.4)}
+
+/* ===== SHARED ===== */
+section{position:relative;overflow:hidden}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.5em;text-transform:uppercase;margin-bottom:.5rem;opacity:.6}
+.section-title{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;line-height:1.1;margin-bottom:1rem}
+.article-meta{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.15em;opacity:.5;margin-bottom:2rem}
+.article-body{font-family:'Rajdhani',sans-serif;font-size:1.1rem;line-height:1.8;font-weight:300}
+.article-body p{margin-bottom:1.5rem}
+.pull-quote{border-left:4px solid;padding:1.5rem 2rem;margin:2.5rem 0;font-size:1.3rem;font-weight:600;font-style:italic;border-radius:0 8px 8px 0}
+.story-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin:3rem 0}
+.story-card{border-radius:12px;padding:2rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s,border-color .3s}
+.story-card:hover{transform:translateY(-4px)}
+.story-card-num{font-family:'Orbitron',monospace;font-size:3rem;font-weight:900;opacity:.12;position:absolute;top:1rem;right:1.5rem;line-height:1;transition:opacity .3s}
+.story-card:hover .story-card-num{opacity:.25}
+.story-card h3{font-family:'Orbitron',sans-serif;font-size:1rem;margin-bottom:.8rem;font-weight:700}
+.story-card p{font-size:.95rem;line-height:1.7;opacity:.85}
+.story-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;padding:.2rem .6rem;border-radius:3px;margin-bottom:1rem}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.hazard-tape{height:20px;background:repeating-linear-gradient(-45deg,#ffdd00 0px,#ffdd00 10px,#000 10px,#000 20px);opacity:.4;margin:2rem 0;animation:tapeSlide 2s linear infinite}
+@keyframes tapeSlide{from{background-position:0 0}to{background-position:40px 0}}
+
+/* ===== ☢ NUCLEAR ===== */
+#nuclear{background:var(--nuke-dark);min-height:100vh;padding:6rem 0}
+.nuclear-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(57,255,20,.07) 0%,transparent 60%),radial-gradient(circle at 10% 50%,rgba(127,255,0,.04) 0%,transparent 40%),radial-gradient(circle at 90% 80%,rgba(57,255,20,.04) 0%,transparent 35%)}
+#nuke-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.thermal-shimmer{position:absolute;inset:0;pointer-events:none;opacity:.02;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,180,60,.5) 40px,rgba(255,180,60,.5) 42px);animation:thermalShift 3s ease-in-out infinite;z-index:0}
+@keyframes thermalShift{0%,100%{background-position:0 0}50%{background-position:0 30px}}
+.nuclear-inner{max-width:900px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
+.nuke-symbol{font-size:4rem;line-height:1;margin-bottom:1rem;animation:nukeRotate 20s linear infinite;display:inline-block;filter:drop-shadow(0 0 20px rgba(57,255,20,.6))}
+@keyframes nukeRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+#nuclear .section-label{color:var(--nuke-green)}
+#nuclear .section-title{color:var(--nuke-green);text-shadow:0 0 30px rgba(57,255,20,.4),0 0 60px rgba(57,255,20,.15);font-family:'Black Ops One','Orbitron',sans-serif;letter-spacing:.08em}
+#nuclear .article-body{color:rgba(200,255,180,.85)}
+#nuclear .pull-quote{border-color:var(--nuke-green);background:rgba(57,255,20,.06);color:var(--nuke-glow)}
+#nuclear .story-card{background:rgba(57,255,20,.04);border:1px solid rgba(57,255,20,.2)}
+#nuclear .story-card:hover{border-color:rgba(57,255,20,.6);box-shadow:0 0 40px rgba(57,255,20,.2),inset 0 0 30px rgba(57,255,20,.05)}
+#nuclear .story-card-num{color:var(--nuke-green)}
+#nuclear .story-card h3{color:var(--nuke-green);font-family:'Black Ops One','Orbitron',sans-serif}
+#nuclear .story-card p{color:rgba(200,255,180,.8)}
+#nuclear .story-tag{background:rgba(57,255,20,.15);color:var(--nuke-green);border:1px solid rgba(57,255,20,.3)}
+.nuke-warning-banner{background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.3);border-radius:8px;padding:1rem 1.5rem;margin-bottom:3rem;display:flex;align-items:center;gap:1rem;font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.15em;color:var(--nuke-green);animation:warningFlash 2s ease-in-out infinite}
+@keyframes warningFlash{0%,100%{border-color:rgba(57,255,20,.3)}50%{border-color:rgba(57,255,20,.8);box-shadow:0 0 20px rgba(57,255,20,.2)}}
+.warning-icon{font-size:1.5rem;animation:iconBlink 1s steps(1) infinite}
+@keyframes iconBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ===== ⚡ CYBER ===== */
+#cyber{background:var(--cyber-dark);min-height:100vh;padding:6rem 0}
+.cyber-bg{position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(0,207,255,.05) 0%,transparent 50%),radial-gradient(circle at 20% 70%,rgba(123,47,255,.05) 0%,transparent 45%)}
+#cyber-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hex-grid{position:absolute;inset:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52'%3E%3Cpath d='M30 0l30 17.3v34.6L30 69 0 51.7V17.3z' fill='none' stroke='%2300cfff' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 52px;animation:hexDrift 20s linear infinite}
+@keyframes hexDrift{from{background-position:0 0}to{background-position:60px 52px}}
+.scanlines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,207,255,.012) 3px,rgba(0,207,255,.012) 4px);pointer-events:none}
+.metal-overlay{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.004) 10px,rgba(255,255,255,.004) 11px);pointer-events:none}
+.cyber-inner{max-width:900px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
+#cyber .section-label{color:var(--cyber-blue);font-family:'Monoton','Share Tech Mono',monospace;letter-spacing:.4em}
+#cyber .section-title{color:var(--cyber-blue);text-shadow:0 0 30px rgba(0,207,255,.4),0 0 60px rgba(0,207,255,.15)}
+#cyber .article-body{color:rgba(180,230,255,.85)}
+#cyber .pull-quote{border-color:var(--cyber-blue);background:rgba(0,207,255,.05);color:var(--cyber-blue)}
+#cyber .story-card{background:rgba(0,207,255,.03);border:1px solid rgba(0,207,255,.15)}
+#cyber .story-card:hover{border-color:rgba(0,207,255,.5);box-shadow:0 0 35px rgba(0,207,255,.15),inset 0 0 20px rgba(0,207,255,.04)}
+#cyber .story-card-num{color:var(--cyber-blue)}
+#cyber .story-card h3{color:var(--cyber-blue);font-family:'Share Tech Mono',monospace}
+#cyber .story-card p{color:rgba(180,230,255,.8)}
+#cyber .story-tag{background:rgba(0,207,255,.1);color:var(--cyber-blue);border:1px solid rgba(0,207,255,.3)}
+.glitch-title{position:relative}
+.glitch-title::before,.glitch-title::after{content:attr(data-text);position:absolute;top:0;left:0;font-family:'Orbitron',sans-serif;font-size:inherit;font-weight:900}
+.glitch-title::before{color:var(--cyber-red);clip-path:polygon(0 30%,100% 30%,100% 50%,0 50%);animation:glitchBefore 4s infinite}
+.glitch-title::after{color:var(--cyber-accent);clip-path:polygon(0 55%,100% 55%,100% 75%,0 75%);animation:glitchAfter 4s infinite}
+@keyframes glitchBefore{0%,85%,100%{transform:translate(0)}87%{transform:translate(-4px,0)}89%{transform:translate(4px,0)}91%{transform:translate(0)}}
+@keyframes glitchAfter{0%,88%,100%{transform:translate(0)}90%{transform:translate(4px,0)}92%{transform:translate(-3px,0)}94%{transform:translate(0)}}
+.terminal-box{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:1.5rem;margin-bottom:3rem;font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--cyber-blue);position:relative;overflow:hidden}
+.terminal-box::before{content:'● ● ●';display:block;font-size:.6rem;color:rgba(0,207,255,.4);margin-bottom:.8rem;letter-spacing:.3rem}
+.terminal-line{margin-bottom:.4rem}
+.terminal-prompt{color:var(--cyber-accent)}
+.terminal-cursor{display:inline-block;width:8px;height:14px;background:var(--cyber-blue);animation:blink 1s steps(1) infinite;vertical-align:text-bottom}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.data-bar{height:2px;background:linear-gradient(to right,transparent,var(--cyber-blue),var(--cyber-accent),transparent);margin:2rem 0;position:relative;overflow:hidden}
+.data-bar::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,transparent,white,transparent);animation:dataFlow 2s linear infinite}
+@keyframes dataFlow{to{left:200%}}
+
+/* ===== 🦠 BIOLOGICAL ===== */
+#biological{background:var(--bio-dark);min-height:100vh;padding:6rem 0}
+.bio-bg{position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(155,48,255,.08) 0%,transparent 50%),radial-gradient(circle at 70% 70%,rgba(68,0,255,.06) 0%,transparent 45%),radial-gradient(circle at 50% 50%,rgba(204,0,255,.04) 0%,transparent 60%)}
+#bio-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.bio-inner{max-width:900px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
+#biological .section-label{color:var(--bio-purple);font-family:'Creepster','Share Tech Mono',cursive;letter-spacing:.5em}
+#biological .section-title{color:var(--bio-purple);text-shadow:0 0 30px rgba(155,48,255,.5),0 0 60px rgba(155,48,255,.2);font-family:'Nosifer','Orbitron',cursive;letter-spacing:.04em}
+#biological .article-body{color:rgba(220,190,255,.85)}
+#biological .pull-quote{border-color:var(--bio-purple);background:rgba(155,48,255,.07);color:#cc88ff;font-family:'Creepster','Rajdhani',cursive;letter-spacing:.03em}
+#biological .story-card{background:rgba(155,48,255,.05);border:1px solid rgba(155,48,255,.18)}
+#biological .story-card:hover{border-color:rgba(155,48,255,.5);box-shadow:0 0 40px rgba(155,48,255,.2),inset 0 0 25px rgba(204,0,255,.06)}
+#biological .story-card-num{color:var(--bio-purple)}
+#biological .story-card h3{color:var(--bio-glow);font-family:'Creepster','Orbitron',cursive;letter-spacing:.04em}
+#biological .story-card p{color:rgba(220,190,255,.8)}
+#biological .story-tag{background:rgba(155,48,255,.15);color:var(--bio-glow);border:1px solid rgba(155,48,255,.35);font-family:'Creepster','Share Tech Mono',cursive;letter-spacing:.25em}
+.bio-warning{background:rgba(155,48,255,.07);border:1px solid rgba(155,48,255,.25);border-left:4px solid var(--bio-purple);border-radius:0 8px 8px 0;padding:1rem 1.5rem;margin-bottom:3rem;font-family:'Share Tech Mono',monospace;font-size:.78rem;letter-spacing:.1em;color:rgba(200,150,255,.9);animation:bioWarn 3s ease-in-out infinite}
+@keyframes bioWarn{0%,100%{box-shadow:none}50%{box-shadow:0 0 25px rgba(155,48,255,.2);border-left-color:var(--bio-glow)}}
+.contagion-meter{display:flex;align-items:center;gap:1rem;margin:1rem 0}
+.meter-label{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--bio-purple);letter-spacing:.2em;min-width:100px}
+.meter-bar{flex:1;height:6px;background:rgba(155,48,255,.1);border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;animation:meterAnim 3s ease-in-out infinite alternate}
+@keyframes meterAnim{from{opacity:.7}to{opacity:1;box-shadow:0 0 10px currentColor}}
+
+/* ===== DIVIDERS ===== */
+.theme-divider{height:4px;position:relative;overflow:hidden}
+.theme-divider.nuke-to-cyber{background:linear-gradient(to right,var(--nuke-green),var(--cyber-blue))}
+.theme-divider.cyber-to-bio{background:linear-gradient(to right,var(--cyber-blue),var(--bio-purple))}
+.theme-divider::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent,rgba(255,255,255,.6),transparent);animation:divSpark 3s linear infinite}
+@keyframes divSpark{0%{left:-100%}100%{left:200%}}
+
+/* ===== FOOTER ===== */
+footer{background:#000;border-top:1px solid rgba(255,255,255,.06);padding:4rem 2rem;text-align:center}
+.footer-title{font-family:'Orbitron',sans-serif;font-size:1.2rem;letter-spacing:.3em;color:rgba(255,255,255,.2);margin-bottom:1rem}
+.footer-links{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}
+.footer-link{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.15em;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s}
+.footer-link:hover{color:rgba(255,255,255,.7)}
+
+/* Cursor trail */
+.cursor-trail{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;animation:trailFade .8s ease-out forwards}
+@keyframes trailFade{0%{transform:scale(1);opacity:.8}100%{transform:scale(0);opacity:0}}
+
+@media(max-width:640px){
+  .story-grid{grid-template-columns:1fr}
+  .sticky-nav{gap:1rem;padding:.6rem 1rem}
+  .nav-link{font-size:.6rem;padding:.2rem .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div style="position:relative;z-index:2;text-align:center;">
+    <div class="section-label" style="color:rgba(255,255,255,.4);margin-bottom:1rem;">VECTORS OF RUIN — WMD CHRONICLES</div>
+    <div class="hero-title">
+      <span>NUCLEAR</span><span style="color:rgba(255,255,255,.3);font-size:.5em;"> / </span><span>CYBER</span><span style="color:rgba(255,255,255,.3);font-size:.5em;"> / </span><span>BIOLOGICAL</span>
+    </div>
+    <div class="hero-sub">classified threat assessments &amp; historical chronicles</div>
+    <div class="hero-dividers"><div class="hero-div"></div><div class="hero-div"></div><div class="hero-div"></div></div>
+  </div>
+  <div class="scroll-hint">▼ scroll to enter ▼</div>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#nuclear" class="nav-link nuke">☢ Nuclear</a>
+  <a href="#cyber" class="nav-link cyber">⚡ Cyber</a>
+  <a href="#biological" class="nav-link bio">🦠 Biological</a>
+</nav>
+
+<!-- ===== ☢ NUCLEAR ===== -->
+<section id="nuclear">
+  <div class="nuclear-bg"></div>
+  <div class="thermal-shimmer"></div>
+  <canvas id="nuke-canvas"></canvas>
+  <div class="nuclear-inner">
+    <div class="reveal">
+      <div class="nuke-symbol">☢</div>
+      <div class="section-label">SECTOR 01 — NUCLEAR THREATS</div>
+      <h2 class="section-title">WHEN ATOMS<br>BECOME WEAPONS</h2>
+      <div class="article-meta">CLASSIFICATION: DECLASSIFIED &nbsp;|&nbsp; UPDATED: 2024 &nbsp;|&nbsp; READ TIME: 12 MIN</div>
+    </div>
+    <div class="reveal">
+      <div class="nuke-warning-banner">
+        <span class="warning-icon">⚠</span>
+        <span>GEIGER COUNTER ACTIVE — RADIATION LEVEL: CRITICAL &nbsp;//&nbsp; FALLOUT ZONE: GLOBAL</span>
+      </div>
+    </div>
+    <div class="hazard-tape"></div>
+    <div class="article-body reveal">
+      <p>Nuclear weapons represent the most catastrophic instruments of destruction ever conceived by human minds — devices capable of annihilating entire cities in microseconds, leaving behind poisoned landscapes that remain uninhabitable for generations. From the laboratories of Los Alamos to the silos scattered across the tundra, the nuclear age has defined geopolitical reality since August 1945. Today, approximately 12,500 nuclear warheads exist worldwide, enough to collapse global civilization multiple times over.</p>
+      <div class="pull-quote">"We knew the world would not be the same. A few people laughed, a few people cried. Most people were silent. I remembered the line from the Hindu scripture: Now I am become Death, the destroyer of worlds." — J. Robert Oppenheimer</div>
+      <p>The doctrine of Mutual Assured Destruction (MAD) has served as the uneasy fulcrum of nuclear deterrence — a paradox in which global safety is predicated on the credible threat of total annihilation. Yet the proliferation of nuclear knowledge to non-state actors, unstable regimes, and rogue scientists has gradually eroded confidence in this equilibrium. The Bulletin of the Atomic Scientists' Doomsday Clock currently stands at 90 seconds to midnight — the closest it has ever been in its 77-year history.</p>
+      <p>From above-ground test detonations poisoning Pacific atolls to near-miss incidents in which human error nearly triggered thermonuclear exchanges, the history of nuclear weapons is one of extraordinary power wielded with terrifying fragility.</p>
+    </div>
+    <div class="story-grid">
+      <div class="story-card reveal">
+        <div class="story-card-num">01</div>
+        <span class="story-tag">1945 — USA / JAPAN</span>
+        <h3>THE MANHATTAN PROJECT</h3>
+        <p>In the desert of New Mexico, the most secret undertaking in human history assembled 130,000 workers across 30 facilities. The Trinity detonation on July 16, 1945 unleashed 21 kilotons of TNT equivalent. Three weeks later, "Little Boy" and "Fat Man" erased Hiroshima and Nagasaki — killing 200,000 people and reshaping the global order forever.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">02</div>
+        <span class="story-tag">1986 — USSR / UKRAINE</span>
+        <h3>CHERNOBYL: WHEN THE ATOM BETRAYED ITS MASTERS</h3>
+        <p>At 1:23 AM on April 26, 1986, Reactor No. 4 exploded during a safety test — a catastrophic chain reaction triggered by design flaws and operator error. The resulting radiation release spread cesium-137 across 2.6 million square kilometers of Europe. Pripyat remains frozen in time, nature reclaiming what engineers abandoned.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">03</div>
+        <span class="story-tag">1983 — COLD WAR</span>
+        <h3>STANISLAV PETROV: THE MAN WHO SAVED THE WORLD</h3>
+        <p>On September 26, 1983, Soviet early-warning systems reported five incoming American ICBMs. Lieutenant Colonel Stanislav Petrov had minutes to decide: trigger a retaliatory strike or report a malfunction. Against protocol, he chose not to escalate — correctly deducing the alarms were false. His hesitation prevented nuclear exchange that could have killed hundreds of millions.</p>
+      </div>
+    </div>
+    <div class="article-body reveal">
+      <p>The geopolitical landscape of the 21st century has reintroduced nuclear anxieties many assumed had faded. Russia's tactical nuclear doctrine, North Korea's accelerating warhead program, and growing tensions over Taiwan have reignited debates experts considered theoretical. The terrifying reality: nuclear weapons are loaded, maintained, and aimed right now — twenty-four hours a day.</p>
+    </div>
+  </div>
+</section>
+
+<div class="theme-divider nuke-to-cyber"></div>
+
+<!-- ===== ⚡ CYBER ===== -->
+<section id="cyber">
+  <div class="cyber-bg"></div>
+  <div class="hex-grid"></div>
+  <div class="scanlines"></div>
+  <div class="metal-overlay"></div>
+  <canvas id="cyber-canvas"></canvas>
+  <div class="cyber-inner">
+    <div class="reveal">
+      <div class="section-label">SECTOR 02 — CYBER THREATS</div>
+      <h2 class="section-title glitch-title" data-text="GHOST IN THE MACHINE">GHOST IN THE<br>MACHINE</h2>
+      <div class="article-meta" style="color:rgba(0,207,255,.4)">THREAT LEVEL: SEVERE &nbsp;|&nbsp; VECTOR: DIGITAL INFRASTRUCTURE &nbsp;|&nbsp; STATUS: ACTIVE</div>
+    </div>
+    <div class="reveal">
+      <div class="terminal-box">
+        <div class="terminal-line"><span class="terminal-prompt">root@threatmatrix:~$ </span>scan --target=global_infrastructure --depth=critical</div>
+        <div class="terminal-line" style="color:rgba(255,60,60,.8)">[ALERT] 847 critical vulnerabilities detected in power grid SCADA systems</div>
+        <div class="terminal-line" style="color:rgba(0,207,255,.6)">[INFO] State-sponsored APT groups active: 34 confirmed, 89 suspected</div>
+        <div class="terminal-line" style="color:rgba(255,221,0,.7)">[WARN] Ransomware-as-a-Service markets: 12 active darknet exchanges</div>
+        <div class="terminal-line"><span class="terminal-prompt">root@threatmatrix:~$ </span><span class="terminal-cursor"></span></div>
+      </div>
+    </div>
+    <div class="data-bar"></div>
+    <div class="article-body reveal">
+      <p>In the silicon lattices of global infrastructure — power grids, water systems, financial networks, military command chains — an invisible war is perpetually being waged. Nation-state hackers, criminal syndicates, ideologically motivated collectives, and lone wolves with laptops have collectively transformed cyberspace into the most contested domain in human history.</p>
+      <div class="pull-quote">"The internet was not designed to be secure. It was designed to survive nuclear war. We built a civilization on top of a weapon." — Security researcher, 2019</div>
+      <p>The emergence of AI-augmented malware, autonomous offensive bots, and LLM-generated social engineering scripts has fundamentally altered the threat calculus. The gap between nation-state and individual attacker is narrowing at exponential rate — and the targets are no longer just corporations. Critical medical infrastructure, election systems, and nuclear plant safety controls are all within reach of increasingly accessible attack toolkits.</p>
+    </div>
+    <div class="story-grid">
+      <div class="story-card reveal">
+        <div class="story-card-num">01</div>
+        <span class="story-tag">2010 — IRAN / USA / ISRAEL</span>
+        <h3>STUXNET: THE WORLD'S FIRST DIGITAL WEAPON</h3>
+        <p>Stuxnet was a precision cyberweapon engineered to infiltrate Iran's Natanz uranium enrichment facility and physically destroy centrifuges while reporting normal operation. Spreading via infected USB drives, it exploited four zero-day vulnerabilities. An estimated 1,000 centrifuges were destroyed, marking the beginning of state-sponsored cyber warfare as a recognized conflict domain.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">02</div>
+        <span class="story-tag">2017 — RUSSIA / GLOBAL</span>
+        <h3>NOTPETYA: THE $10 BILLION GHOST</h3>
+        <p>Disguised as ransomware, NotPetya was a pure destruction engine — encrypting master boot records with no decryption mechanism. Deployed against Ukraine via compromised accounting software, it rapidly mutated across global networks. Shipping giant Maersk lost $300M. Merck suffered $870M in losses. It remains the costliest cyberattack in history.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">03</div>
+        <span class="story-tag">2020 — USA</span>
+        <h3>SOLARWINDS: THE SILENT INFILTRATION</h3>
+        <p>For nine months, Russian SVR hackers embedded malicious code inside routine software updates distributed by SolarWinds — a platform monitoring networks across 33,000 clients including most US federal agencies. The SUNBURST backdoor gave attackers access to Treasury, Commerce, Homeland Security, and military networks. It wasn't a smash-and-grab. It was installation of a master key to the American digital state.</p>
+      </div>
+    </div>
+    <div class="article-body reveal">
+      <p>The militarization of cyberspace has outpaced both international law and collective defense frameworks. While NATO's Article 5 has tentatively been extended to cover cyberattacks, thresholds for what constitutes an "act of war" in digital space remain dangerously undefined. AI-driven autonomous weapons systems are being developed that can identify, target, and neutralize threats without human authorization — compressing conflict timelines from hours to milliseconds.</p>
+    </div>
+  </div>
+</section>
+
+<div class="theme-divider cyber-to-bio"></div>
+
+<!-- ===== 🦠 BIOLOGICAL ===== -->
+<section id="biological">
+  <div class="bio-bg"></div>
+  <canvas id="bio-canvas"></canvas>
+  <div class="bio-inner">
+    <div class="reveal">
+      <div class="section-label">SECTOR 03 — BIOLOGICAL THREATS</div>
+      <h2 class="section-title">THE INVISIBLE<br>APOCALYPSE</h2>
+      <div class="article-meta" style="color:rgba(155,48,255,.5)">PATHOGEN CLASS: BSL-4 &nbsp;|&nbsp; TRANSMISSION: AEROSOL / CONTACT / VECTOR &nbsp;|&nbsp; CONTAINMENT: ACTIVE</div>
+    </div>
+    <div class="reveal">
+      <div class="bio-warning">⚠ BIOHAZARD ALERT — GENETIC SEQUENCE DATABASES SHOW 3 NOVEL GAIN-OF-FUNCTION VARIANTS UNCLASSIFIED &nbsp;//&nbsp; DUAL-USE RESEARCH MORATORIUM: UNDER REVIEW</div>
+    </div>
+    <div class="reveal">
+      <div class="contagion-meter">
+        <span class="meter-label">R₀ VALUE</span>
+        <div class="meter-bar"><div class="meter-fill" style="width:82%;background:linear-gradient(to right,var(--bio-blue),var(--bio-purple));height:100%;border-radius:3px"></div></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--bio-purple)">8.2</span>
+      </div>
+      <div class="contagion-meter">
+        <span class="meter-label">LETHALITY CFR</span>
+        <div class="meter-bar"><div class="meter-fill" style="width:60%;background:linear-gradient(to right,var(--bio-purple),var(--bio-glow));height:100%;border-radius:3px"></div></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--bio-glow)">60%</span>
+      </div>
+      <div class="contagion-meter">
+        <span class="meter-label">CONTAINMENT</span>
+        <div class="meter-bar"><div class="meter-fill" style="width:23%;background:linear-gradient(to right,#ff3c3c,#ff8800);height:100%;border-radius:3px"></div></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:#ff3c3c">23%</span>
+      </div>
+    </div>
+    <div class="article-body reveal">
+      <p>Of all weapons of mass destruction, biological agents occupy a uniquely sinister category — they are self-replicating, invisible, and capable of evolving faster than human countermeasures can be developed. The weaponization of pathogens has been practiced since Mongol catapults launched plague-ridden corpses over city walls, but the 20th century transformed bio-warfare into a sophisticated science with terrifying potential.</p>
+      <div class="pull-quote">"A determined state actor with access to modern molecular biology tools could engineer a pathogen against which humanity has zero natural immunity. This is not science fiction. This is the DARPA threat assessment." — Biodefense expert, 2023</div>
+      <p>The dual-use dilemma haunts biological research as no other scientific field: the same laboratory techniques that yield vaccines against pandemic influenza can theoretically be applied to enhance transmissibility or lethality of dangerous pathogens. The 1972 Biological Weapons Convention prohibited bioweapon development, but the treaty lacks any enforcement or verification mechanism.</p>
+      <p>As CRISPR-Cas9 technology becomes accessible to undergraduate students, and as AI systems like AlphaFold can predict protein structures from genetic sequences, the barrier to bioweapon development has never been lower. A single motivated scientist with laboratory access represents a threat vector that no border, no security service, and no treaty has yet reliably neutralized.</p>
+    </div>
+    <div class="story-grid">
+      <div class="story-card reveal">
+        <div class="story-card-num">01</div>
+        <span class="story-tag">1995 — JAPAN / TOKYO</span>
+        <h3>AUM SHINRIKYO: THE DOOMSDAY CULT'S BIOLAB</h3>
+        <p>While remembered for its Tokyo subway sarin attack, Aum Shinrikyo had conducted at least ten failed biological attacks first. The cult employed microbiologists pursuing weaponized botulinum toxin and anthrax. Teams deployed aerosolized agents near the Japanese parliament and US naval bases — failing only due to technical errors. The difference between tragedy and catastrophe was accidental incompetence.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">02</div>
+        <span class="story-tag">1979 — USSR / SVERDLOVSK</span>
+        <h3>BIOPREPARAT: THE SOVIET BIOWEAPONS EMPIRE</h3>
+        <p>The Soviet Union operated Biopreparat — a network of 52 facilities employing 60,000 scientists weaponizing plague, smallpox, anthrax, and Marburg fever. In April 1979, an anthrax leak at Compound 19 in Sverdlovsk killed at least 64 people downwind. Defector Ken Alibek revealed Soviet scientists had weaponized smallpox for ballistic missile delivery — a pathogen against which global vaccination had ceased in 1980.</p>
+      </div>
+      <div class="story-card reveal">
+        <div class="story-card-num">03</div>
+        <span class="story-tag">2001 — USA / ANTHRAX LETTERS</span>
+        <h3>AMERITHRAX: TERROR BY ENVELOPE</h3>
+        <p>Three weeks after September 11, letters containing weapons-grade anthrax spores were mailed to news organizations and two senators. Five people died; 17 were infected. The anthrax was milled to optimal particle size for lung penetration — indicating sophisticated state-level production. The FBI's 7-year investigation pointed to Dr. Bruce Ivins, a government biodefense researcher at Fort Detrick, who died by suicide before charges were filed.</p>
+      </div>
+    </div>
+    <div class="article-body reveal">
+      <p>The convergence of synthetic biology with artificial intelligence has prompted urgent calls for a new international framework governing dual-use biological research. Current biosafety norms were written for an era when dangerous pathogen manipulation required specialized infrastructure. In an age where DNA synthesis costs have fallen 99% in two decades and CRISPR kits are commercially available, the governance frameworks protecting humanity from engineered pandemics are dangerously antiquated.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-title">VECTORS OF RUIN — WMD CHRONICLES</div>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:.2em;margin:1rem 0 2rem">ALL INFORMATION SOURCED FROM DECLASSIFIED RECORDS, ACADEMIC RESEARCH, AND PUBLIC REPORTING</p>
+  <div class="footer-links">
+    <a href="https://splatteredink.com/" class="footer-link" target="_blank">SPLATTERED INK</a>
+    <a href="https://outrider.org/nuclear-weapons/interactive/bomb-blast" class="footer-link" target="_blank">OUTRIDER BOMB BLAST</a>
+    <a href="https://thebulletin.org/" class="footer-link" target="_blank">BULLETIN OF ATOMIC SCIENTISTS</a>
+    <a href="https://www.nti.org/" class="footer-link" target="_blank">NTI THREAT INDEX</a>
+  </div>
+  <div style="margin-top:3rem;font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.1);letter-spacing:.3em">☢ &nbsp; ⚡ &nbsp; 🦠 &nbsp; KNOWLEDGE IS THE ONLY SHIELD &nbsp; 🦠 &nbsp; ⚡ &nbsp; ☢</div>
+</footer>
+
+<script>
+// =============================================
+// CANVAS RENDERING ENGINE
+// =============================================
+
+// --- HERO CANVAS: all three entities floating ---
+(function initHeroCanvas(){
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, entities = [], time = 0;
+
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  // Mini mushroom cloud
+  function drawMiniMushroom(ctx, x, y, scale, alpha, t){
+    ctx.save(); ctx.globalAlpha = alpha;
+    // stem
+    const stemH = 50*scale, stemW = 10*scale;
+    const grad = ctx.createLinearGradient(x, y, x, y-stemH);
+    grad.addColorStop(0,'rgba(255,160,0,.8)'); grad.addColorStop(1,'rgba(57,255,20,.2)');
+    ctx.beginPath(); ctx.moveTo(x-stemW/2,y); ctx.lineTo(x+stemW/2,y);
+    ctx.lineTo(x+stemW*0.7,y-stemH); ctx.lineTo(x-stemW*0.7,y-stemH);
+    ctx.fillStyle=grad; ctx.fill();
+    // cap
+    const puff = 1+0.08*Math.sin(t*2);
+    const capGrad = ctx.createRadialGradient(x,y-stemH-15*scale,0,x,y-stemH,30*scale*puff);
+    capGrad.addColorStop(0,'rgba(255,220,100,.9)'); capGrad.addColorStop(.4,'rgba(57,255,20,.6)'); capGrad.addColorStop(1,'rgba(57,255,20,0)');
+    ctx.beginPath(); ctx.ellipse(x,y-stemH-5*scale,32*scale*puff,22*scale*puff,0,0,Math.PI*2);
+    ctx.fillStyle=capGrad; ctx.fill();
+    // shockwave ring
+    const ringR = (30 + (t%3)*60)*scale;
+    ctx.beginPath(); ctx.arc(x,y,ringR,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(57,255,20,${Math.max(0,.4-(t%3)/3*.4)})`; ctx.lineWidth=1.5*scale; ctx.stroke();
+    ctx.restore();
+  }
+
+  // Mini cyborg head
+  function drawCyborgHead(ctx, x, y, scale, alpha, t){
+    ctx.save(); ctx.globalAlpha = alpha;
+    const scan = (Math.sin(t*3)+1)/2;
+    // skull
+    ctx.beginPath(); ctx.ellipse(x,y,18*scale,20*scale,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(5,15,25,.8)'; ctx.fill();
+    ctx.strokeStyle='rgba(0,207,255,.6)'; ctx.lineWidth=1.5*scale; ctx.stroke();
+    // eyes
+    ctx.shadowColor='#00cfff'; ctx.shadowBlur=8;
+    ctx.fillStyle=`rgba(0,207,255,${0.5+scan*0.5})`;
+    ctx.beginPath(); ctx.ellipse(x-7*scale,y-2*scale,4*scale,3*scale,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+7*scale,y-2*scale,4*scale,3*scale,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    // circuit lines on face
+    ctx.strokeStyle='rgba(0,207,255,.3)'; ctx.lineWidth=.8*scale;
+    ctx.beginPath(); ctx.moveTo(x-18*scale,y); ctx.lineTo(x-10*scale,y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+10*scale,y); ctx.lineTo(x+18*scale,y); ctx.stroke();
+    // scan line
+    const scanY = y-15*scale + scan*30*scale;
+    ctx.beginPath(); ctx.moveTo(x-18*scale,scanY); ctx.lineTo(x+18*scale,scanY);
+    ctx.strokeStyle=`rgba(0,207,255,${scan*.4})`; ctx.lineWidth=2*scale; ctx.stroke();
+    // antenna
+    ctx.strokeStyle='rgba(0,207,255,.5)'; ctx.lineWidth=scale;
+    ctx.beginPath(); ctx.moveTo(x,y-20*scale); ctx.lineTo(x,y-32*scale);
+    ctx.moveTo(x,y-32*scale); ctx.lineTo(x-5*scale,y-28*scale);
+    ctx.moveTo(x,y-32*scale); ctx.lineTo(x+5*scale,y-28*scale); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Mini virus
+  function drawVirus(ctx, x, y, r, alpha, t, color){
+    ctx.save(); ctx.globalAlpha = alpha;
+    const spikes = 8;
+    // body
+    const g = ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,color.replace('1)','.5)')); g.addColorStop(1,color.replace('1)','.05)'));
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle=color.replace('1)','.7)'); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+    // spikes
+    for(let i=0;i<spikes;i++){
+      const a = (i/spikes)*Math.PI*2 + t*.5;
+      const spikeLen = r*0.7 + Math.sin(t*2+i)*r*0.2;
+      ctx.beginPath();
+      ctx.moveTo(x+Math.cos(a)*r, y+Math.sin(a)*r);
+      ctx.lineTo(x+Math.cos(a)*(r+spikeLen), y+Math.sin(a)*(r+spikeLen));
+      ctx.strokeStyle=color.replace('1)','.8)'); ctx.lineWidth=1.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x+Math.cos(a)*(r+spikeLen), y+Math.sin(a)*(r+spikeLen), 2, 0, Math.PI*2);
+      ctx.fillStyle=color; ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Create initial entities
+  for(let i=0;i<6;i++){
+    entities.push({type:'mushroom',x:Math.random()*W,y:H*.3+Math.random()*H*.5,scale:.5+Math.random()*.5,alpha:.08+Math.random()*.12,speed:.3+Math.random()*.3,offset:Math.random()*10});
+    entities.push({type:'cyborg',x:Math.random()*W,y:Math.random()*H,scale:.6+Math.random()*.6,alpha:.07+Math.random()*.1,speed:.2+Math.random()*.3,offset:Math.random()*10});
+    entities.push({type:'virus',x:Math.random()*W,y:Math.random()*H,r:15+Math.random()*25,alpha:.06+Math.random()*.1,speed:.2+Math.random()*.4,offset:Math.random()*10,color:`rgba(${[155,48,255].join(',')},1)`});
+  }
+
+  function animHero(){
+    ctx.clearRect(0,0,W,H);
+    time += .005;
+    entities.forEach(e => {
+      e.y -= e.speed * .2;
+      if(e.y < -100) e.y = H+100;
+      const t = time + e.offset;
+      e.x += Math.sin(t*.3)*0.4;
+      if(e.type==='mushroom') drawMiniMushroom(ctx,e.x,e.y,e.scale,e.alpha,t);
+      else if(e.type==='cyborg') drawCyborgHead(ctx,e.x,e.y,e.scale,e.alpha,t);
+      else if(e.type==='virus') drawVirus(ctx,e.x,e.y,e.r,e.alpha,t,e.color);
+    });
+    requestAnimationFrame(animHero);
+  }
+  animHero();
+})();
+
+
+// =============================================
+// NUCLEAR CANVAS
+// =============================================
+(function initNukeCanvas(){
+  const canvas = document.getElementById('nuke-canvas');
+  const section = document.getElementById('nuclear');
+  const ctx = canvas.getContext('2d');
+  let W, H, t=0, particles=[], blasts=[], cyborgs=[], viruses=[];
+  let lastBlast = 0;
+
+  function resize(){
+    W = canvas.width = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+  }
+  window.addEventListener('resize', resize); resize();
+
+  // Mushroom blast object
+  function spawnBlast(){
+    blasts.push({
+      x: 50 + Math.random()*(W-100), y: H*.8+Math.random()*H*.1,
+      phase:0, maxPhase:300, scale:0.4+Math.random()*.6
+    });
+  }
+  spawnBlast();
+
+  // Fallout particles
+  for(let i=0;i<60;i++){
+    particles.push({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.5, vy:0.3+Math.random()*0.8,
+      r:1+Math.random()*3, life:Math.random(), maxLife:1, decay:.003+Math.random()*.002,
+      color:`rgba(${57+Math.floor(Math.random()*50)},255,20,`
+    });
+  }
+
+  // Cyborgs in nuke section (glowing zombies/irradiated)
+  for(let i=0;i<4;i++){
+    cyborgs.push({
+      x:Math.random()*W, y:H*.3+Math.random()*H*.5,
+      scale:.4+Math.random()*.4, alpha:.06+Math.random()*.06,
+      offset:Math.random()*10, bob:Math.random()*10
+    });
+  }
+
+  // Mini viruses also float through nuclear section
+  for(let i=0;i<5;i++){
+    viruses.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:8+Math.random()*15, alpha:.04+Math.random()*.04,
+      speed:.3+Math.random()*.3, offset:Math.random()*10
+    });
+  }
+
+  function drawFullMushroom(x, y, phase, maxPhase, scale){
+    const prog = phase/maxPhase;
+    const alpha = prog < .1 ? prog*10 : prog > .8 ? (1-prog)*5 : 1;
+    ctx.save(); ctx.globalAlpha = Math.min(alpha, .35);
+
+    // shockwave
+    if(prog < .3){
+      const sw = prog * 3 * 400 * scale;
+      ctx.beginPath(); ctx.arc(x, y, sw, 0, Math.PI*2);
+      ctx.strokeStyle=`rgba(255,200,100,${.5*(1-prog/.3)})`; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y, sw*.7, 0, Math.PI*2);
+      ctx.strokeStyle=`rgba(255,255,255,${.3*(1-prog/.3)})`; ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    const stemH = 200*scale*Math.min(prog*3,1);
+    const capR = 80*scale*Math.min(Math.max((prog-.2)*2,0),1);
+    const wobble = 1+.05*Math.sin(prog*20);
+
+    // fireball base
+    if(prog>.1){
+      const fbGrad = ctx.createRadialGradient(x,y,0,x,y,50*scale*prog);
+      fbGrad.addColorStop(0,'rgba(255,255,200,.8)'); fbGrad.addColorStop(.3,'rgba(255,150,0,.6)'); fbGrad.addColorStop(1,'rgba(255,80,0,0)');
+      ctx.beginPath(); ctx.arc(x,y,50*scale*Math.min(prog*2,1),0,Math.PI*2);
+      ctx.fillStyle=fbGrad; ctx.fill();
+    }
+
+    // stem
+    if(stemH>5){
+      const sg = ctx.createLinearGradient(x-20*scale,y,x+20*scale,y);
+      sg.addColorStop(0,'rgba(255,100,0,.1)'); sg.addColorStop(.5,'rgba(255,200,50,.5)'); sg.addColorStop(1,'rgba(255,100,0,.1)');
+      ctx.beginPath();
+      ctx.moveTo(x-15*scale,y); ctx.quadraticCurveTo(x-10*scale,y-stemH*.5,x-12*scale*wobble,y-stemH);
+      ctx.lineTo(x+12*scale*wobble,y-stemH); ctx.quadraticCurveTo(x+10*scale,y-stemH*.5,x+15*scale,y);
+      ctx.fillStyle=sg; ctx.fill();
+    }
+
+    // cloud cap
+    if(capR>5){
+      const topY = y-stemH;
+      const cg = ctx.createRadialGradient(x,topY-capR*.3,0,x,topY,capR);
+      cg.addColorStop(0,'rgba(255,240,180,.9)'); cg.addColorStop(.3,'rgba(200,160,0,.7)'); cg.addColorStop(.7,'rgba(57,255,20,.3)'); cg.addColorStop(1,'rgba(10,50,0,0)');
+      ctx.beginPath(); ctx.ellipse(x,topY,capR*1.4*wobble,capR*wobble,0,0,Math.PI*2);
+      ctx.fillStyle=cg; ctx.fill();
+      // torus bottom
+      ctx.beginPath(); ctx.ellipse(x,topY+capR*.2,capR*.9*wobble,capR*.25,0,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,150,0,.2)'; ctx.lineWidth=capR*.15; ctx.stroke();
+    }
+
+    // radiation rings
+    for(let i=0;i<4;i++){
+      const rr = (50+i*100)*scale*(prog*.7+.3);
+      const ra = Math.max(0,.15-(prog*.1));
+      ctx.beginPath(); ctx.arc(x,y,rr,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(57,255,20,${ra})`; ctx.lineWidth=1; ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  // Irradiated cyborg (glowing green zombie)
+  function drawRadCyborg(x,y,scale,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const bob = Math.sin(t*.7)*.5;
+    y += bob;
+
+    // glow aura
+    const g = ctx.createRadialGradient(x,y,0,x,y,40*scale);
+    g.addColorStop(0,'rgba(57,255,20,.08)'); g.addColorStop(1,'rgba(57,255,20,0)');
+    ctx.beginPath(); ctx.arc(x,y,40*scale,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+
+    // body
+    ctx.strokeStyle='rgba(57,255,20,.5)'; ctx.lineWidth=1.5*scale;
+    // torso
+    ctx.beginPath(); ctx.rect(x-12*scale,y+5*scale,24*scale,30*scale); ctx.stroke();
+    // head
+    ctx.beginPath(); ctx.ellipse(x,y-5*scale,12*scale,14*scale,0,0,Math.PI*2); ctx.stroke();
+    // cracked skull lines
+    ctx.beginPath(); ctx.moveTo(x-5*scale,y-15*scale); ctx.lineTo(x-2*scale,y-5*scale); ctx.lineTo(x+3*scale,y-8*scale);
+    ctx.strokeStyle='rgba(57,255,20,.3)'; ctx.stroke();
+    // glowing eyes
+    ctx.shadowColor='#39ff14'; ctx.shadowBlur=10;
+    ctx.fillStyle=`rgba(57,255,20,${.6+.4*Math.sin(t*3)})`;
+    ctx.beginPath(); ctx.arc(x-5*scale,y-6*scale,2*scale,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+5*scale,y-6*scale,2*scale,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    // arms
+    ctx.strokeStyle='rgba(57,255,20,.4)'; ctx.lineWidth=scale;
+    ctx.beginPath(); ctx.moveTo(x-12*scale,y+8*scale); ctx.lineTo(x-24*scale,y+20*scale); ctx.lineTo(x-20*scale,y+35*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+12*scale,y+8*scale); ctx.lineTo(x+24*scale,y+20*scale); ctx.lineTo(x+20*scale,y+35*scale); ctx.stroke();
+    // legs
+    ctx.beginPath(); ctx.moveTo(x-6*scale,y+35*scale); ctx.lineTo(x-8*scale,y+60*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+6*scale,y+35*scale); ctx.lineTo(x+8*scale,y+60*scale); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Nuclear virus (green tinted)
+  function drawNukeVirus(x,y,r,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,'rgba(57,255,20,.4)'); g.addColorStop(1,'rgba(57,255,20,.02)');
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(57,255,20,.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+    const sp=8;
+    for(let i=0;i<sp;i++){
+      const a=(i/sp)*Math.PI*2+t*.3;
+      const sl=r*.8+Math.sin(t*1.5+i)*r*.2;
+      ctx.beginPath(); ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+      ctx.lineTo(x+Math.cos(a)*(r+sl),y+Math.sin(a)*(r+sl));
+      ctx.strokeStyle=`rgba(127,255,0,${.5+.3*Math.sin(t+i)})`; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function animNuke(){
+    ctx.clearRect(0,0,W,H);
+    t += .012;
+
+    // Blast sequence
+    blasts.forEach((b,i)=>{
+      b.phase++;
+      if(b.phase >= b.maxPhase){
+        blasts.splice(i,1);
+        setTimeout(()=>spawnBlast(),2000+Math.random()*4000);
+      } else {
+        drawFullMushroom(b.x, b.y, b.phase, b.maxPhase, b.scale);
+      }
+    });
+
+    // Fallout particles
+    particles.forEach(p=>{
+      p.y+=p.vy; p.x+=p.vx+Math.sin(t+p.x*.01)*.3;
+      p.life+=p.decay;
+      if(p.life>p.maxLife){ p.life=0; p.y=0; p.x=Math.random()*W; }
+      const a=Math.sin(p.life*Math.PI)*.8;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color+a+')'; ctx.fill();
+    });
+
+    // Cyborgs
+    cyborgs.forEach(c=>{
+      drawRadCyborg(c.x, c.y, c.scale, c.alpha, t+c.offset);
+    });
+
+    // Viruses
+    viruses.forEach(v=>{
+      v.y-=v.speed*.2;
+      if(v.y<-50) v.y=H+50;
+      v.x+=Math.sin(t*.5+v.offset)*0.5;
+      drawNukeVirus(v.x, v.y, v.r, v.alpha, t+v.offset);
+    });
+
+    requestAnimationFrame(animNuke);
+  }
+  animNuke();
+})();
+
+
+// =============================================
+// CYBER CANVAS
+// =============================================
+(function initCyberCanvas(){
+  const canvas = document.getElementById('cyber-canvas');
+  const section = document.getElementById('cyber');
+  const ctx = canvas.getContext('2d');
+  let W, H, t=0, matrixCols=[], packets=[], cyborgs=[], viruses=[], blasts=[];
+
+  function resize(){
+    W=canvas.width=section.offsetWidth;
+    H=canvas.height=section.offsetHeight;
+    matrixCols=[];
+    for(let i=0;i<Math.floor(W/22);i++) matrixCols.push({x:i*22,y:Math.random()*H,speed:40+Math.random()*80,chars:[]});
+  }
+  window.addEventListener('resize',resize); resize();
+
+  const matrixChars='01アイウエカキクサシスタナニネノ☢⚡◈⬡';
+
+  // Cyborg for cyber section (metallic, blue)
+  function drawMetalCyborg(x,y,scale,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const scan=(Math.sin(t*2)+1)/2;
+    const pulse=Math.sin(t*4);
+
+    // holographic glow
+    const g=ctx.createRadialGradient(x,y,0,x,y,45*scale);
+    g.addColorStop(0,'rgba(0,207,255,.06)'); g.addColorStop(1,'rgba(0,207,255,0)');
+    ctx.beginPath(); ctx.arc(x,y,45*scale,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+
+    // metallic torso
+    ctx.strokeStyle=`rgba(0,207,255,${.5+pulse*.1})`; ctx.lineWidth=1.5*scale;
+    const torsoGrad=ctx.createLinearGradient(x-15*scale,0,x+15*scale,0);
+    torsoGrad.addColorStop(0,'rgba(0,30,50,.4)'); torsoGrad.addColorStop(.5,'rgba(0,100,150,.3)'); torsoGrad.addColorStop(1,'rgba(0,30,50,.4)');
+    ctx.fillStyle=torsoGrad;
+    ctx.beginPath(); ctx.rect(x-14*scale,y+5*scale,28*scale,32*scale); ctx.fill(); ctx.stroke();
+
+    // chest details
+    ctx.strokeStyle='rgba(0,207,255,.3)'; ctx.lineWidth=.8*scale;
+    ctx.beginPath(); ctx.rect(x-6*scale,y+10*scale,12*scale,8*scale); ctx.stroke();
+    ctx.fillStyle=`rgba(0,207,255,${.2+scan*.3})`;
+    ctx.beginPath(); ctx.arc(x,y+14*scale,3*scale,0,Math.PI*2); ctx.fill();
+
+    // hex head
+    const hx=x, hy=y-5*scale, hr=13*scale;
+    const hexPts=[];
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2-Math.PI/6; hexPts.push([hx+Math.cos(a)*hr,hy+Math.sin(a)*hr]);}
+    ctx.beginPath(); ctx.moveTo(hexPts[0][0],hexPts[0][1]);
+    hexPts.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath();
+    ctx.fillStyle='rgba(3,10,20,.7)'; ctx.fill();
+    ctx.strokeStyle=`rgba(0,207,255,${.6+pulse*.2})`; ctx.lineWidth=1.5*scale; ctx.stroke();
+
+    // optical sensors
+    ctx.shadowColor='#00cfff'; ctx.shadowBlur=8;
+    ctx.fillStyle=`rgba(0,207,255,${.6+scan*.4})`;
+    ctx.beginPath(); ctx.ellipse(x-6*scale,hy-1*scale,4*scale,2.5*scale,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+6*scale,hy-1*scale,4*scale,2.5*scale,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+
+    // scan line on visor
+    const sl=hy-10*scale+scan*20*scale;
+    ctx.beginPath(); ctx.moveTo(x-12*scale,sl); ctx.lineTo(x+12*scale,sl);
+    ctx.strokeStyle=`rgba(0,207,255,${scan*.5})`; ctx.lineWidth=2*scale; ctx.stroke();
+
+    // shoulder mounts
+    ctx.strokeStyle='rgba(0,207,255,.4)'; ctx.lineWidth=scale;
+    ctx.beginPath(); ctx.arc(x-20*scale,y+8*scale,6*scale,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x+20*scale,y+8*scale,6*scale,0,Math.PI*2); ctx.stroke();
+
+    // arms with joints
+    ctx.strokeStyle='rgba(0,207,255,.5)'; ctx.lineWidth=2*scale;
+    ctx.beginPath(); ctx.moveTo(x-14*scale,y+10*scale); ctx.lineTo(x-22*scale,y+22*scale); ctx.lineTo(x-20*scale,y+38*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+14*scale,y+10*scale); ctx.lineTo(x+22*scale,y+22*scale); ctx.lineTo(x+20*scale,y+38*scale); ctx.stroke();
+    // joint circles
+    [x-22*scale,x+22*scale].forEach(jx=>{
+      ctx.beginPath(); ctx.arc(jx,y+22*scale,2.5*scale,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,207,255,.6)'; ctx.fill();
+    });
+
+    // circuit trace on body
+    ctx.strokeStyle='rgba(123,47,255,.3)'; ctx.lineWidth=.7*scale;
+    ctx.beginPath(); ctx.moveTo(x-8*scale,y+20*scale); ctx.lineTo(x-14*scale,y+20*scale); ctx.lineTo(x-14*scale,y+30*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+8*scale,y+20*scale); ctx.lineTo(x+14*scale,y+20*scale); ctx.lineTo(x+14*scale,y+30*scale); ctx.stroke();
+
+    // antenna array
+    ctx.strokeStyle='rgba(0,207,255,.4)'; ctx.lineWidth=scale;
+    ctx.beginPath(); ctx.moveTo(x,hy-13*scale); ctx.lineTo(x,hy-28*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,hy-22*scale); ctx.lineTo(x-8*scale,hy-18*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,hy-22*scale); ctx.lineTo(x+8*scale,hy-18*scale); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x,hy-28*scale,2*scale,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,207,255,${.5+pulse*.5})`; ctx.fill();
+
+    ctx.restore();
+  }
+
+  // Cyber virus (blue tinted)
+  function drawCyberVirus(x,y,r,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,'rgba(123,47,255,.5)'); g.addColorStop(.5,'rgba(0,207,255,.2)'); g.addColorStop(1,'rgba(0,207,255,.02)');
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle=`rgba(0,207,255,${.4+.3*Math.sin(t*2)})`; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+    // hexagonal spikes
+    const sp=6;
+    for(let i=0;i<sp;i++){
+      const a=(i/sp)*Math.PI*2+t*.4;
+      const sl=r*.9+Math.sin(t*2+i)*r*.15;
+      ctx.beginPath(); ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+      ctx.lineTo(x+Math.cos(a)*(r+sl),y+Math.sin(a)*(r+sl));
+      ctx.strokeStyle=`rgba(0,207,255,${.6+.3*Math.sin(t+i)})`; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    // inner core hex
+    ctx.save(); ctx.translate(x,y); ctx.rotate(t*.5);
+    ctx.strokeStyle='rgba(123,47,255,.4)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2; if(i===0)ctx.moveTo(Math.cos(a)*r*.4,Math.sin(a)*r*.4); else ctx.lineTo(Math.cos(a)*r*.4,Math.sin(a)*r*.4);}
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+    ctx.restore();
+  }
+
+  // Mini nuke blast for cyber section
+  function drawCyberBlast(x,y,phase,maxPhase,scale){
+    const prog=phase/maxPhase;
+    const alpha=prog<.1?prog*10:prog>.8?(1-prog)*5:1;
+    ctx.save(); ctx.globalAlpha=Math.min(alpha,.2);
+    // digital pixelated explosion
+    for(let i=0;i<8;i++){
+      const a=(i/8)*Math.PI*2;
+      const dist=prog*120*scale;
+      const px=x+Math.cos(a)*dist, py=y+Math.sin(a)*dist;
+      const bsz=(8+Math.random()*8)*scale*(1-prog*.5);
+      ctx.fillStyle=`rgba(0,207,255,${.3*(1-prog)})`;
+      ctx.fillRect(px-bsz/2,py-bsz/2,bsz,bsz);
+    }
+    // Ring
+    ctx.beginPath(); ctx.arc(x,y,prog*150*scale,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,207,255,${.4*(1-prog)})`; ctx.lineWidth=2; ctx.stroke();
+    ctx.restore();
+  }
+
+  // Spawn cyborgs
+  for(let i=0;i<5;i++) cyborgs.push({x:80+Math.random()*(W-160),y:H*.2+Math.random()*H*.6,scale:.45+Math.random()*.35,alpha:.05+Math.random()*.07,offset:Math.random()*10});
+  for(let i=0;i<8;i++) viruses.push({x:Math.random()*W,y:Math.random()*H,r:12+Math.random()*20,alpha:.04+Math.random()*.05,speed:.2+Math.random()*.4,offset:Math.random()*10});
+  blasts.push({x:W*.8,y:H*.3,phase:0,maxPhase:200,scale:.6});
+
+  function animCyber(){
+    ctx.clearRect(0,0,W,H);
+    t+=.012;
+
+    // Matrix rain
+    matrixCols.forEach(col=>{
+      col.y+=col.speed/60;
+      if(col.y>H+100) col.y=-100;
+      const str=matrixChars[Math.floor(t*20+col.x)%matrixChars.length];
+      ctx.font='13px Share Tech Mono,monospace';
+      ctx.fillStyle='rgba(0,207,255,.12)'; ctx.fillText(str,col.x,col.y);
+      ctx.fillStyle='rgba(0,207,255,.06)'; ctx.fillText(str,col.x,col.y-20);
+    });
+
+    // Data packets
+    packets.forEach((p,i)=>{
+      p.prog+=.008;
+      if(p.prog>1){packets.splice(i,1);return;}
+      const x=p.x0+(p.x1-p.x0)*p.prog, y=p.y0+(p.y1-p.y0)*p.prog;
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+      ctx.shadowColor='#00cfff'; ctx.shadowBlur=8;
+      ctx.fillStyle='rgba(0,207,255,.7)'; ctx.fill(); ctx.shadowBlur=0;
+      // trail
+      ctx.beginPath(); ctx.moveTo(p.x0+(p.x1-p.x0)*(p.prog-.15),p.y0+(p.y1-p.y0)*(p.prog-.15));
+      ctx.lineTo(x,y);
+      ctx.strokeStyle='rgba(0,207,255,.15)'; ctx.lineWidth=1; ctx.stroke();
+    });
+    if(Math.random()<.04) packets.push({x0:Math.random()*W,y0:Math.random()*H,x1:Math.random()*W,y1:Math.random()*H,prog:0});
+
+    // Cyborgs
+    cyborgs.forEach(c=>{ drawMetalCyborg(c.x,c.y,c.scale,c.alpha,t+c.offset); });
+
+    // Viruses
+    viruses.forEach(v=>{
+      v.y-=v.speed*.2; v.x+=Math.sin(t*.3+v.offset)*.5;
+      if(v.y<-60) v.y=H+60;
+      drawCyberVirus(v.x,v.y,v.r,v.alpha,t+v.offset);
+    });
+
+    // Blast
+    blasts.forEach((b,i)=>{
+      b.phase++;
+      if(b.phase>=b.maxPhase){ blasts.splice(i,1); setTimeout(()=>blasts.push({x:50+Math.random()*(W-100),y:50+Math.random()*(H-100),phase:0,maxPhase:200,scale:.4+Math.random()*.5}),3000+Math.random()*5000); }
+      else drawCyberBlast(b.x,b.y,b.phase,b.maxPhase,b.scale);
+    });
+
+    requestAnimationFrame(animCyber);
+  }
+  animCyber();
+})();
+
+
+// =============================================
+// BIOLOGICAL CANVAS
+// =============================================
+(function initBioCanvas(){
+  const canvas = document.getElementById('bio-canvas');
+  const section = document.getElementById('biological');
+  const ctx = canvas.getContext('2d');
+  let W, H, t=0, viruses=[], bacteria=[], cyborgs=[], blobs=[], blasts=[], dnaPairs=[];
+
+  function resize(){
+    W=canvas.width=section.offsetWidth;
+    H=canvas.height=section.offsetHeight;
+  }
+  window.addEventListener('resize',resize); resize();
+
+  // Full detailed virus
+  function drawBioVirus(x,y,r,alpha,t,hue){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const g=ctx.createRadialGradient(x,y,r*.1,x,y,r);
+    g.addColorStop(0,`hsla(${hue},100%,70%,.5)`); g.addColorStop(.5,`hsla(${hue},100%,50%,.2)`); g.addColorStop(1,`hsla(${hue},100%,40%,0)`);
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+
+    // outer membrane
+    ctx.strokeStyle=`hsla(${hue},100%,70%,.6)`; ctx.lineWidth=1.5;
+    ctx.setLineDash([4,3]); ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+
+    // spikes (variable length, protein tips)
+    const sp=10+Math.floor(r*.3);
+    for(let i=0;i<sp;i++){
+      const a=(i/sp)*Math.PI*2+t*.3;
+      const slen=r*.6+Math.sin(t*1.8+i*1.3)*r*.25;
+      const tipX=x+Math.cos(a)*(r+slen), tipY=y+Math.sin(a)*(r+slen);
+      ctx.beginPath(); ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+      ctx.lineTo(tipX,tipY);
+      ctx.strokeStyle=`hsla(${hue},80%,60%,.7)`; ctx.lineWidth=1.5; ctx.stroke();
+      // protein tip
+      ctx.beginPath(); ctx.arc(tipX,tipY,2.5,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${hue+30},100%,80%,.9)`; ctx.fill();
+    }
+
+    // inner genome
+    ctx.save(); ctx.translate(x,y); ctx.rotate(t*.4);
+    ctx.strokeStyle=`hsla(${hue+60},100%,60%,.3)`; ctx.lineWidth=1;
+    ctx.beginPath();
+    for(let i=0;i<8;i++){const a=i/8*Math.PI*2; if(i===0)ctx.moveTo(Math.cos(a)*r*.35,Math.sin(a)*r*.35); else ctx.lineTo(Math.cos(a)*r*.35,Math.sin(a)*r*.35);}
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+
+    // nucleus glow
+    ctx.shadowColor=`hsl(${hue},100%,60%)`; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.arc(x,y,r*.18,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${hue},100%,80%,.7)`; ctx.fill(); ctx.shadowBlur=0;
+    ctx.restore();
+  }
+
+  // Bacteria with flagella
+  function drawBacterium(x,y,scale,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    ctx.rotate(.3);
+
+    // cell body
+    const g=ctx.createRadialGradient(x,y,0,x,y,16*scale);
+    g.addColorStop(0,'rgba(155,48,255,.3)'); g.addColorStop(1,'rgba(100,0,200,.05)');
+    ctx.beginPath(); ctx.ellipse(x,y,22*scale,10*scale,Math.sin(t*.3)*.3,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(155,48,255,.5)'; ctx.lineWidth=1.5*scale;
+    ctx.beginPath(); ctx.ellipse(x,y,22*scale,10*scale,Math.sin(t*.3)*.3,0,Math.PI*2); ctx.stroke();
+
+    // flagella
+    ctx.strokeStyle='rgba(204,0,255,.4)'; ctx.lineWidth=scale*.8;
+    for(let f=0;f<3;f++){
+      const offset=f*4*scale;
+      ctx.beginPath(); ctx.moveTo(x+22*scale, y+offset-4*scale);
+      for(let s=0;s<8;s++){
+        const sx=x+22*scale+s*8*scale;
+        const sy=y+offset-4*scale+Math.sin(s*.8+t*3+f)*6*scale;
+        ctx.lineTo(sx,sy);
+      }
+      ctx.stroke();
+    }
+
+    // dividing fission line
+    ctx.strokeStyle='rgba(68,255,136,.3)'; ctx.lineWidth=scale;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(x,y-9*scale); ctx.lineTo(x,y+9*scale); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.restore();
+  }
+
+  // Infected zombie cyborg (purple glow, mutations)
+  function drawMutantCyborg(x,y,scale,alpha,t){
+    ctx.save(); ctx.globalAlpha=alpha;
+    const pulse=Math.sin(t*2.5);
+
+    // bio-aura
+    const ga=ctx.createRadialGradient(x,y,0,x,y,50*scale);
+    ga.addColorStop(0,'rgba(155,48,255,.1)'); ga.addColorStop(.5,'rgba(68,255,136,.04)'); ga.addColorStop(1,'rgba(155,48,255,0)');
+    ctx.beginPath(); ctx.arc(x,y,50*scale,0,Math.PI*2); ctx.fillStyle=ga; ctx.fill();
+
+    // body – organic + mechanical hybrid
+    ctx.strokeStyle=`rgba(155,48,255,${.5+pulse*.1})`; ctx.lineWidth=1.5*scale;
+    // torso with bumps (mutation)
+    ctx.beginPath();
+    ctx.moveTo(x-14*scale,y+5*scale);
+    ctx.quadraticCurveTo(x-20*scale,y+15*scale,x-14*scale,y+37*scale);
+    ctx.lineTo(x+14*scale,y+37*scale);
+    ctx.quadraticCurveTo(x+20*scale,y+15*scale,x+14*scale,y+5*scale);
+    ctx.closePath();
+    ctx.fillStyle='rgba(30,0,50,.6)'; ctx.fill(); ctx.stroke();
+
+    // tumor/mutations on body
+    ctx.fillStyle=`rgba(68,255,136,${.15+pulse*.1})`;
+    ctx.beginPath(); ctx.arc(x-16*scale,y+18*scale,5*scale,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+15*scale,y+25*scale,4*scale,0,Math.PI*2); ctx.fill();
+
+    // elongated cracked skull
+    ctx.strokeStyle=`rgba(204,0,255,${.5+pulse*.1})`; ctx.lineWidth=1.5*scale;
+    ctx.beginPath(); ctx.ellipse(x,y-8*scale,13*scale,16*scale,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(20,0,35,.7)'; ctx.fill(); ctx.stroke();
+
+    // compound eye (insect-like mutation)
+    const eyeColors=['rgba(155,48,255,.8)','rgba(68,255,136,.8)','rgba(204,0,255,.8)'];
+    ctx.shadowColor='#9b30ff'; ctx.shadowBlur=8;
+    for(let i=0;i<3;i++){
+      ctx.fillStyle=eyeColors[i];
+      ctx.beginPath(); ctx.arc(x-7*scale+i*7*scale,y-10*scale,2.5*scale,0,Math.PI*2); ctx.fill();
+    }
+    ctx.shadowBlur=0;
+
+    // tentacle arm left
+    ctx.strokeStyle='rgba(155,48,255,.5)'; ctx.lineWidth=2*scale;
+    ctx.beginPath(); ctx.moveTo(x-14*scale,y+10*scale);
+    for(let i=0;i<5;i++){
+      const tx=x-14*scale-i*6*scale;
+      const ty=y+10*scale+Math.sin(t*1.5+i)*8*scale;
+      ctx.lineTo(tx,ty);
+    }
+    ctx.stroke();
+
+    // mechanical arm right
+    ctx.strokeStyle='rgba(0,207,255,.4)'; ctx.lineWidth=1.5*scale;
+    ctx.beginPath(); ctx.moveTo(x+14*scale,y+10*scale); ctx.lineTo(x+24*scale,y+22*scale); ctx.lineTo(x+22*scale,y+38*scale); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x+24*scale,y+22*scale,2.5*scale,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,207,255,.6)'; ctx.fill();
+
+    // legs
+    ctx.strokeStyle=`rgba(155,48,255,.4)`; ctx.lineWidth=1.5*scale;
+    ctx.beginPath(); ctx.moveTo(x-6*scale,y+37*scale); ctx.quadraticCurveTo(x-12*scale,y+52*scale,x-8*scale,y+62*scale); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+6*scale,y+37*scale); ctx.quadraticCurveTo(x+12*scale,y+52*scale,x+8*scale,y+62*scale); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // Bio-nuke explosion (organic)
+  function drawBioBlast(x,y,phase,maxPhase,scale){
+    const prog=phase/maxPhase;
+    const alpha=prog<.1?prog*10:prog>.8?(1-prog)*5:1;
+    ctx.save(); ctx.globalAlpha=Math.min(alpha,.25);
+
+    // spore cloud rings
+    for(let ring=0;ring<3;ring++){
+      const rr=(20+ring*50)*scale*prog;
+      const rg=ctx.createRadialGradient(x,y,rr*.7,x,y,rr);
+      rg.addColorStop(0,`rgba(155,48,255,0)`); rg.addColorStop(.5,`rgba(155,48,255,${.3*(1-prog)})`); rg.addColorStop(1,'rgba(155,48,255,0)');
+      ctx.beginPath(); ctx.arc(x,y,rr,0,Math.PI*2);
+      ctx.fillStyle=rg; ctx.fill();
+    }
+
+    // floating spore particles
+    for(let i=0;i<12;i++){
+      const a=(i/12)*Math.PI*2;
+      const dist=prog*100*scale;
+      const px=x+Math.cos(a)*dist+Math.sin(prog*5+i)*15;
+      const py=y+Math.sin(a)*dist+Math.cos(prog*5+i)*15;
+      ctx.beginPath(); ctx.arc(px,py,3*scale*(1-prog*.5),0,Math.PI*2);
+      ctx.fillStyle=`rgba(${i%2?204:68},${i%2?0:255},${i%2?255:136},${.6*(1-prog)})`; ctx.fill();
+      // spike
+      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+Math.cos(a)*8*scale,py+Math.sin(a)*8*scale);
+      ctx.strokeStyle=`rgba(155,48,255,${.4*(1-prog)})`; ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  // Initialize
+  for(let i=0;i<20;i++) viruses.push({x:Math.random()*W,y:Math.random()*H,r:10+Math.random()*35,alpha:.05+Math.random()*.1,speed:.15+Math.random()*.35,offset:Math.random()*10,hue:270+Math.random()*90-45});
+  for(let i=0;i<12;i++) bacteria.push({x:Math.random()*W,y:Math.random()*H,scale:.5+Math.random()*.5,alpha:.04+Math.random()*.06,speed:.2+Math.random()*.3,offset:Math.random()*10});
+  for(let i=0;i<5;i++) cyborgs.push({x:80+Math.random()*(W-160),y:H*.15+Math.random()*H*.65,scale:.4+Math.random()*.4,alpha:.05+Math.random()*.07,offset:Math.random()*10});
+  for(let i=0;i<6;i++) blobs.push({x:Math.random()*W,y:Math.random()*H,r:40+Math.random()*80,alpha:.025+Math.random()*.025,speed:.05+Math.random()*.1,offset:Math.random()*10});
+  blasts.push({x:W*.2,y:H*.25,phase:0,maxPhase:250,scale:.5});
+
+  function animBio(){
+    ctx.clearRect(0,0,W,H);
+    t+=.01;
+
+    // Background blobs
+    blobs.forEach(b=>{
+      b.x+=Math.sin(t*.2+b.offset)*.5; b.y+=Math.cos(t*.15+b.offset)*.4;
+      if(b.x<-100)b.x=W+100; if(b.x>W+100)b.x=-100;
+      if(b.y<-100)b.y=H+100; if(b.y>H+100)b.y=-100;
+      const bg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      bg.addColorStop(0,'rgba(155,48,255,.15)'); bg.addColorStop(1,'rgba(155,48,255,0)');
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fillStyle=bg; ctx.fill();
+    });
+
+    // Viruses
+    viruses.forEach(v=>{
+      v.y-=v.speed*.2; v.x+=Math.sin(t*.4+v.offset)*.6;
+      if(v.y<-80) v.y=H+80;
+      drawBioVirus(v.x,v.y,v.r,v.alpha,t+v.offset,v.hue);
+    });
+
+    // Bacteria
+    bacteria.forEach(b=>{
+      b.y-=b.speed*.15; b.x+=Math.cos(t*.5+b.offset)*.4;
+      if(b.y<-50) b.y=H+50;
+      drawBacterium(b.x,b.y,b.scale,b.alpha,t+b.offset);
+    });
+
+    // Cyborgs
+    cyborgs.forEach(c=>drawMutantCyborg(c.x,c.y,c.scale,c.alpha,t+c.offset));
+
+    // Blasts
+    blasts.forEach((b,i)=>{
+      b.phase++;
+      if(b.phase>=b.maxPhase){ blasts.splice(i,1); setTimeout(()=>blasts.push({x:50+Math.random()*(W-100),y:50+Math.random()*(H-100),phase:0,maxPhase:250,scale:.4+Math.random()*.4}),2500+Math.random()*4000); }
+      else drawBioBlast(b.x,b.y,b.phase,b.maxPhase,b.scale);
+    });
+
+    requestAnimationFrame(animBio);
+  }
+  animBio();
+})();
+
+
+// =============================================
+// SCROLL REVEAL
+// =============================================
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// =============================================
+// CURSOR TRAIL
+// =============================================
+document.addEventListener('mousemove',e=>{
+  if(Math.random()>.35) return;
+  const trail=document.createElement('div');
+  trail.className='cursor-trail';
+  trail.style.left=e.clientX+'px'; trail.style.top=e.clientY+'px';
+  trail.style.width=trail.style.height=(2+Math.random()*5)+'px';
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  let color='#ffffff';
+  if(el){ if(el.closest('#nuclear'))color='#39ff14'; else if(el.closest('#cyber'))color='#00cfff'; else if(el.closest('#biological'))color='#9b30ff'; }
+  trail.style.background=color; trail.style.boxShadow=`0 0 ${6+Math.random()*6}px ${color}`;
+  document.body.appendChild(trail);
+  setTimeout(()=>trail.remove(),800);
+});
+
+// =============================================
+// ACTIVE NAV
+// =============================================
+window.addEventListener('scroll',()=>{
+  const sy=window.scrollY;
+  ['nuclear','cyber','biological'].forEach(id=>{
+    const s=document.getElementById(id);
+    const link=document.querySelector('.nav-link.'+{nuclear:'nuke',cyber:'cyber',biological:'bio'}[id]);
+    if(s&&link) link.style.opacity=sy>=s.offsetTop-200&&sy<s.offsetTop+s.offsetHeight?'1':'.5';
+  });
+});
+
+console.log('%c☢ VECTORS OF RUIN ⚡ 🦠','color:#39ff14;font-size:1.5em;font-family:monospace;text-shadow:0 0 10px #39ff14;');
+</script>
+</body>
+</html>   
