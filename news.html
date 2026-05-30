@@ -3,362 +3,862 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Daily Broadsheet — Est. 1884</title>
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<title>AI Broadcast — Est. 2024</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --black:       #111111;
-  --black-mid:   #2a2a2a;
-  --black-lt:    #444444;
-  --gray-dk:     #5a5a5a;
-  --gray:        #7a7a7a;
-  --gray-mid:    #999999;
-  --gray-lt:     #b0b0b0;
-  --gray-pale:   #cccccc;
-  --gray-ghost:  #dddddd;
-  --off-white:   #e8e8e8;
-  --paper:       #fafafa;
-  --paper-warm:  #f0f0f0;
-  --paper-mid:   #e0e0e0;
-  --paper-deep:  #cccccc;
-  --ink:         #111111;
-  --ink-mid:     #3a3a3a;
-  --rule:        #111111;
-  --rule-gray:   #888888;
-  --white:       #fefefe;
+  --black:      #0d0d0d;
+  --black-mid:  #1e1e1e;
+  --black-lt:   #333333;
+  --gray-dk:    #4a4a4a;
+  --gray:       #6a6a6a;
+  --gray-mid:   #909090;
+  --gray-lt:    #b8b8b8;
+  --off-white:  #eaeaea;
+  --paper:      #f6f3ee;
+  --paper-warm: #ede9e0;
+  --paper-mid:  #ddd8cc;
+  --paper-deep: #c8c2b4;
+  --ink:        #0d0d0d;
+  --ink-mid:    #2a2724;
+  --rule:       #0d0d0d;
+  --rule-gray:  #7a7068;
+  --accent:     #1a1a1a;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  background:linear-gradient(135deg,#2a2a2a 0%,#1a1a1a 40%,#222222 100%);
-  font-family:'EB Garamond',Georgia,serif;
-  color:var(--ink);min-height:100vh;padding:24px 12px;
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: #111;
   background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px),
-    repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(0,0,0,0.03) 28px,rgba(0,0,0,0.03) 29px);
+    radial-gradient(ellipse at 20% 50%, #1a1a1a 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, #222 0%, transparent 50%);
+  font-family: 'EB Garamond', Georgia, serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 28px 16px 40px;
 }
-.newspaper{
-  max-width:940px;margin:0 auto;
-  background:var(--paper);
-  box-shadow:4px 4px 0 var(--paper-deep),8px 8px 0 #999,12px 12px 30px rgba(0,0,0,0.5),inset 0 0 120px rgba(0,0,0,0.04);
-  position:relative;z-index:1;
-  border:2px solid var(--rule-gray);
-  outline:2px solid var(--rule);outline-offset:3px;
+
+/* ─── PAPER WRAPPER ───────────────────────────────── */
+.newspaper {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  box-shadow:
+    0 0 0 1px var(--paper-deep),
+    0 0 0 4px var(--paper-mid),
+    6px 6px 0 #aaa,
+    10px 10px 0 #888,
+    16px 16px 40px rgba(0,0,0,0.6),
+    inset 0 0 80px rgba(0,0,0,0.03);
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--paper-deep);
+  outline: 3px double var(--rule);
+  outline-offset: 6px;
 }
-/* greyscale band */
-.color-band{
-  height:6px;
-  background:linear-gradient(90deg,#111 0%,#111 16%,#2a2a2a 16%,#2a2a2a 32%,#444 32%,#444 48%,#666 48%,#666 64%,#888 64%,#888 80%,#aaa 80%,#aaa 100%);
+
+/* ─── TOP RULE BAND ───────────────────────────────── */
+.rule-band {
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--black) 0px, var(--black) 2px,
+    transparent 2px, transparent 6px,
+    var(--black) 6px, var(--black) 7px
+  );
+  opacity: 0.85;
 }
-/* masthead */
-.masthead{background:linear-gradient(180deg,#1a1a1a 0%,#111 100%);padding:0;border-bottom:4px solid #555;}
-.top-strip{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:6px 22px;background:#1a1a1a;border-bottom:1px solid #555;
-  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-lt);
+
+/* ─── MASTHEAD ────────────────────────────────────── */
+.masthead {
+  background: linear-gradient(180deg, #111 0%, #0d0d0d 100%);
+  border-bottom: 5px solid #333;
 }
-.top-strip .center-strip{font-family:'EB Garamond',serif;font-style:italic;text-transform:none;font-size:11px;letter-spacing:0.05em;color:var(--off-white);}
-.paper-title-wrap{
-  padding:14px 22px 10px;text-align:center;
-  background:linear-gradient(180deg,#1a1a1a 0%,#111 100%);
-  border-bottom:2px solid #555;border-top:1px solid rgba(255,255,255,0.12);
-  position:relative;
+
+.top-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 28px;
+  border-bottom: 1px solid #3a3a3a;
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #888;
+  flex-wrap: wrap;
+  gap: 4px;
 }
-.paper-title-wrap::before,.paper-title-wrap::after{
-  content:'';position:absolute;top:10px;bottom:10px;width:3px;
-  background:linear-gradient(180deg,transparent,#777,transparent);
+
+.top-meta .center-motto {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  text-transform: none;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: #bbb;
+  text-align: center;
+  flex: 1;
 }
-.paper-title-wrap::before{left:22px;}
-.paper-title-wrap::after{right:22px;}
-.paper-title{
-  font-family:'UnifrakturMaguntia',cursive;
-  font-size:clamp(46px,9.5vw,88px);line-height:0.95;
-  color:var(--off-white);
-  text-shadow:0 2px 0 #000,0 4px 12px rgba(0,0,0,0.5),2px 2px 0 rgba(255,255,255,0.08);
+
+.paper-title-wrap {
+  padding: 20px 28px 14px;
+  text-align: center;
+  position: relative;
+  border-bottom: 2px solid #333;
 }
-.subtitle-strip{
-  font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--gray-lt);margin-top:6px;opacity:0.8;
+
+.paper-title-wrap::before,
+.paper-title-wrap::after {
+  content: '';
+  position: absolute;
+  top: 14px; bottom: 10px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #555, transparent);
 }
-.tagline-bar{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:5px 22px;background:#1a1a1a;
-  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gray-lt);
+.paper-title-wrap::before { left: 28px; }
+.paper-title-wrap::after  { right: 28px; }
+
+.paper-title {
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(40px, 8.5vw, 82px);
+  line-height: 1;
+  color: #f0ece4;
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 1px 0 #000,
+    0 3px 0 #333,
+    0 6px 18px rgba(0,0,0,0.7),
+    2px 2px 0 rgba(255,255,255,0.04);
 }
-.tagline-bar .tagline-center{font-family:'EB Garamond',serif;font-style:italic;text-transform:none;font-size:11px;letter-spacing:0.05em;color:var(--off-white);}
-.edition-bar{
-  display:flex;justify-content:space-between;
-  padding:5px 22px;background:#3a3a3a;
-  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#b0b0b0;
-  border-top:1px solid #555;
+
+.paper-subtitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #666;
+  margin-top: 8px;
 }
-/* nav */
-nav{display:flex;justify-content:center;flex-wrap:wrap;background:#2a2a2a;border-bottom:3px solid #555;}
-nav a{
-  font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--gray-lt);text-decoration:none;padding:8px 15px;
-  border-right:1px solid rgba(255,255,255,0.1);transition:background 0.15s,color 0.15s;
+
+.tagline-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 28px;
+  background: #181818;
+  border-top: 1px solid #2a2a2a;
+  flex-wrap: wrap;
+  gap: 4px;
 }
-nav a:first-child{border-left:1px solid rgba(255,255,255,0.1);}
-nav a:hover{background:#1a1a1a;color:#fff;}
-nav a.active{background:#111;color:#fff;}
-/* ticker */
-.ticker{background:linear-gradient(90deg,#2a2a2a 0%,#3a3a3a 100%);display:flex;align-items:center;overflow:hidden;border-bottom:2px solid #555;}
-.ticker-label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;background:#555;color:#fff;padding:0 12px;line-height:28px;white-space:nowrap;flex-shrink:0;font-weight:600;}
-.ticker-track{display:flex;animation:ticker 30s linear infinite;white-space:nowrap;padding-left:20px;}
-.ticker-track span{font-family:'EB Garamond',serif;font-size:12px;padding:0 26px 0 0;color:var(--gray-lt);}
-.ticker-track span::before{content:'◆ ';color:#888;font-size:8px;vertical-align:2px;margin-right:4px;}
-@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-/* page body */
-.page-content{padding:0 24px 36px;background:var(--paper);}
-/* section head */
-.section-head{display:flex;align-items:center;gap:14px;margin:22px 0 14px;padding:7px 0;border-top:3px solid var(--rule);border-bottom:1px solid var(--rule-gray);}
-.section-head h2{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--black);white-space:nowrap;}
-.section-rule{flex:1;height:1px;background:var(--rule-gray);opacity:0.5;}
-.section-num{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.1em;color:var(--gray);}
-.kicker{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:5px;}
-/* headline */
-.headline-section{display:grid;grid-template-columns:1fr 290px;gap:0;padding:22px 0 20px;border-bottom:4px double var(--rule);}
-.headline-main{padding-right:24px;border-right:1px solid var(--rule);}
-.headline-h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.04;margin-bottom:10px;color:var(--black);letter-spacing:-0.02em;}
-.headline-deck{font-family:'EB Garamond',serif;font-size:15px;line-height:1.58;font-style:italic;color:var(--black-mid);border-top:2px solid var(--rule-gray);border-bottom:2px solid var(--rule-gray);padding:8px 0;margin-bottom:10px;}
-.byline{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--gray);margin-bottom:10px;}
-.byline strong{color:var(--gray-dk);}
-.article-body{font-size:14.5px;line-height:1.74;color:var(--ink-mid);columns:2;column-gap:22px;column-rule:1px solid var(--rule);}
-.article-body p{margin-bottom:10px;text-align:justify;hyphens:auto;}
-.article-body p:first-child::first-letter{font-family:'Playfair Display',serif;font-size:54px;font-weight:900;float:left;line-height:0.82;margin:4px 7px 0 0;color:var(--black);}
-/* sidebar */
-.headline-sidebar{padding-left:22px;}
-.sidebar-story{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--rule-gray);}
-.sidebar-story:last-child{border-bottom:none;margin-bottom:0;}
-.sidebar-story h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;line-height:1.2;margin-bottom:5px;color:var(--black);}
-.sidebar-story p{font-size:12.5px;line-height:1.57;color:var(--ink-mid);text-align:justify;}
-.advertisement{border:2px solid #888;padding:14px;text-align:center;background:linear-gradient(135deg,var(--paper-warm),var(--paper-mid));margin-top:14px;}
-.advertisement .ad-border{border:1px solid rgba(0,0,0,0.2);margin:4px;padding:10px;}
-.advertisement .ad-label{font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
-.advertisement h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--black);margin-bottom:4px;}
-.advertisement .ad-copy{font-size:11px;font-style:italic;color:var(--gray-dk);line-height:1.5;}
-/* three col */
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:3px double var(--rule);padding:18px 0;}
-.col-story{padding:0 18px;border-right:1px solid var(--rule-gray);}
-.col-story:first-child{padding-left:0;}
-.col-story:last-child{padding-right:0;border-right:none;}
-.col-story h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;line-height:1.18;margin-bottom:6px;color:var(--black);}
-.col-story p{font-size:12.5px;line-height:1.66;color:var(--ink-mid);text-align:justify;hyphens:auto;}
-.read-more{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--gray-dk);text-decoration:none;display:inline-block;margin-top:8px;border-bottom:1px solid var(--gray-dk);padding-bottom:1px;}
-/* pull quote */
-.pull-quote-bar{
-  text-align:center;padding:22px 60px;
-  border-bottom:3px double var(--rule);
-  background:linear-gradient(135deg,var(--paper-warm) 0%,#f5f5f5 50%,var(--paper-warm) 100%);
-  border-left:6px solid #888;border-right:6px solid #888;
+.tagline-bar span {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #666;
 }
-.pull-quote-bar::before{content:'❝';font-size:48px;line-height:1;color:#999;opacity:0.4;display:block;margin-bottom:4px;}
-.pull-quote-bar blockquote{font-family:'Playfair Display',serif;font-size:19px;font-style:italic;font-weight:400;line-height:1.48;color:var(--black);}
-.pull-quote-bar cite{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);font-style:normal;display:block;margin-top:12px;}
-/* feature */
-.feature-image-strip{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;border-bottom:3px double var(--rule);padding:20px 0;}
-.feature-img-box{border:2px solid var(--rule-gray);aspect-ratio:4/3;overflow:hidden;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#3a3a3a 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;}
-.feature-img-box .img-label{font-family:'UnifrakturMaguntia',cursive;font-size:28px;color:#ddd;opacity:0.6;}
-.feature-img-box .img-caption-lbl{font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:#bbb;opacity:0.5;}
-.img-caption-block h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;line-height:1.2;margin-bottom:8px;color:var(--black);}
-.img-caption-block .caption-text{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);border-bottom:1px solid var(--rule-gray);padding-bottom:6px;margin-bottom:10px;}
-.img-caption-block p{font-size:13px;line-height:1.68;color:var(--ink-mid);text-align:justify;}
-/* button */
-.read-article-btn{display:inline-block;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;background:var(--black);color:#eee;padding:7px 16px;border:none;margin-top:12px;cursor:pointer;transition:background 0.15s,color 0.15s;outline:1px solid #888;outline-offset:2px;text-decoration:none;}
-.read-article-btn:hover{background:#3a3a3a;color:#fff;}
-/* opinion */
-.opinion-strip{border-top:3px double var(--rule);border-bottom:3px double var(--rule);padding:20px 0;margin:18px 0;display:grid;grid-template-columns:90px 1fr;gap:20px;align-items:start;}
-.opinion-avatar{width:88px;height:88px;background:linear-gradient(135deg,#2a2a2a,#444);border:2px solid #888;display:flex;align-items:center;justify-content:center;font-size:32px;color:#ccc;}
-.opinion-content .label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:4px;}
-.opinion-content h2{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;font-style:italic;margin-bottom:8px;line-height:1.22;color:var(--black-mid);}
-.opinion-content p{font-size:13px;line-height:1.7;color:var(--ink-mid);}
-/* ornament */
-.ornament{text-align:center;padding:10px 0;font-size:18px;color:#888;letter-spacing:12px;opacity:0.7;}
-/* classifieds */
-.classifieds{border:2px solid var(--rule);outline:2px solid var(--rule-gray);outline-offset:3px;padding:16px 18px;margin:22px 0;background:linear-gradient(135deg,var(--paper-warm),var(--paper));}
-.classifieds-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;text-align:center;letter-spacing:0.1em;text-transform:uppercase;border-bottom:2px solid var(--rule-gray);padding-bottom:6px;margin-bottom:12px;color:var(--black);}
-.classifieds-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.classified-item{border:1px solid var(--rule-gray);padding:9px 10px;background:var(--paper);}
-.classified-item h4{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;color:var(--black-mid);border-bottom:1px solid rgba(0,0,0,0.15);padding-bottom:3px;}
-.classified-item p{font-size:11px;line-height:1.58;color:var(--ink-mid);}
-/* footer */
-footer{background:linear-gradient(180deg,#1a1a1a 0%,#2a2a2a 100%);border-top:4px solid #555;padding:18px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
-footer h4{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;color:var(--off-white);border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:5px;}
-footer p,footer li{font-size:11px;line-height:1.7;color:var(--gray-lt);opacity:0.8;list-style:none;}
-footer li::before{content:'— ';color:#888;opacity:0.6;}
-.footer-bottom{background:#111;border-top:2px solid #555;padding:8px 24px;text-align:center;font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-lt);opacity:0.85;}
-/* responsive */
-@media(max-width:640px){
-  .headline-section{grid-template-columns:1fr;}
-  .headline-main{border-right:none;padding-right:0;border-bottom:2px solid var(--rule-gray);padding-bottom:16px;margin-bottom:16px;}
-  .three-col{grid-template-columns:1fr;}
-  .col-story{border-right:none;border-bottom:1px solid var(--rule-gray);padding:12px 0;}
-  .feature-image-strip{grid-template-columns:1fr;}
-  .classifieds-grid{grid-template-columns:1fr;}
-  .opinion-strip{grid-template-columns:1fr;}
-  footer{grid-template-columns:1fr;}
-  .article-body{columns:1;}
-  .pull-quote-bar{padding:16px 20px;}
+.tagline-bar .tagline-center {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  text-transform: none;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #aaa;
+  flex: 1;
+  text-align: center;
+}
+
+.edition-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 28px;
+  background: #222;
+  border-top: 1px solid #333;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.edition-bar span {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+/* ─── TICKER ──────────────────────────────────────── */
+.ticker {
+  background: linear-gradient(90deg, #1a1a1a 0%, #222 100%);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-bottom: 3px solid #333;
+  height: 30px;
+}
+.ticker-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  background: #444;
+  color: #eee;
+  padding: 0 14px;
+  line-height: 30px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 600;
+  border-right: 1px solid #555;
+}
+.ticker-track {
+  display: flex;
+  animation: ticker 40s linear infinite;
+  white-space: nowrap;
+  padding-left: 20px;
+}
+.ticker-track span {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  padding: 0 30px 0 0;
+  color: #888;
+  line-height: 30px;
+}
+.ticker-track span::before {
+  content: '◆  ';
+  color: #555;
+  font-size: 7px;
+  vertical-align: 2px;
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── PAGE CONTENT ────────────────────────────────── */
+.page-content {
+  padding: 0 28px 44px;
+  background: var(--paper);
+  /* subtle aged paper texture via inner shadow */
+  box-shadow: inset 4px 0 12px rgba(0,0,0,0.04), inset -4px 0 12px rgba(0,0,0,0.04);
+}
+
+/* ─── SECTION HEADS ───────────────────────────────── */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 16px;
+  padding: 8px 0;
+  border-top: 3px solid var(--rule);
+  border-bottom: 1px solid var(--rule-gray);
+}
+.section-head h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--black);
+  white-space: nowrap;
+}
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule-gray);
+  opacity: 0.4;
+}
+.section-num {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--gray);
+}
+
+/* ─── KICKER ──────────────────────────────────────── */
+.kicker {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gray-dk);
+  margin-bottom: 6px;
+}
+
+/* ─── HEADLINE SECTION ────────────────────────────── */
+.headline-section {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 0;
+  padding: 24px 0 22px;
+  border-bottom: 4px double var(--rule);
+}
+
+.headline-main {
+  padding-right: 26px;
+  border-right: 2px solid var(--rule);
+}
+
+.headline-h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 4.5vw, 48px);
+  font-weight: 900;
+  line-height: 1.04;
+  margin-bottom: 12px;
+  color: var(--black);
+  letter-spacing: -0.025em;
+}
+
+.headline-deck {
+  font-family: 'EB Garamond', serif;
+  font-size: 15.5px;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--black-mid);
+  border-top: 2px solid var(--rule-gray);
+  border-bottom: 2px solid var(--rule-gray);
+  padding: 9px 0;
+  margin-bottom: 12px;
+}
+
+.byline {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--paper-mid);
+}
+.byline strong { color: var(--gray-dk); }
+
+.article-body {
+  font-size: 14px;
+  line-height: 1.78;
+  color: var(--ink-mid);
+  columns: 2;
+  column-gap: 24px;
+  column-rule: 1px solid var(--paper-mid);
+}
+.article-body p {
+  margin-bottom: 11px;
+  text-align: justify;
+  hyphens: auto;
+}
+.article-body p:first-child::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 62px;
+  font-weight: 900;
+  float: left;
+  line-height: 0.8;
+  margin: 6px 8px 0 0;
+  color: var(--black);
+  text-shadow: 1px 1px 0 var(--paper-mid);
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────── */
+.headline-sidebar { padding-left: 24px; }
+
+.sidebar-story {
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--paper-mid);
+}
+.sidebar-story:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+.sidebar-story h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.22;
+  margin-bottom: 7px;
+  color: var(--black);
+}
+.sidebar-story p {
+  font-size: 12px;
+  line-height: 1.64;
+  color: var(--ink-mid);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.sidebar-divider {
+  height: 2px;
+  background: linear-gradient(90deg, var(--rule), transparent);
+  margin: 6px 0 14px;
+}
+
+/* ─── THREE-COL ───────────────────────────────────── */
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-bottom: 3px double var(--rule);
+  padding: 20px 0;
+}
+.col-story {
+  padding: 0 20px;
+  border-right: 1px solid var(--paper-mid);
+}
+.col-story:first-child { padding-left: 0; }
+.col-story:last-child  { padding-right: 0; border-right: none; }
+.col-story h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.18;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+.col-story p {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-mid);
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 8px;
+}
+
+/* ─── PULL QUOTE ──────────────────────────────────── */
+.pull-quote-bar {
+  text-align: center;
+  padding: 26px 70px;
+  border-bottom: 3px double var(--rule);
+  background: linear-gradient(135deg, var(--paper-warm) 0%, #f0ece3 50%, var(--paper-warm) 100%);
+  border-left: 5px solid var(--black);
+  border-right: 5px solid var(--black);
+  position: relative;
+}
+.pull-quote-bar::before {
+  content: '❝';
+  font-size: 56px;
+  line-height: 1;
+  color: var(--gray-mid);
+  opacity: 0.35;
+  display: block;
+  margin-bottom: 6px;
+  font-family: 'Playfair Display', serif;
+}
+.pull-quote-bar blockquote {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--black);
+}
+.pull-quote-bar cite {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray);
+  font-style: normal;
+  display: block;
+  margin-top: 14px;
+}
+
+/* ─── FEATURE STRIP ───────────────────────────────── */
+.feature-image-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+  border-bottom: 3px double var(--rule);
+  padding: 22px 0;
+}
+.feature-img-box {
+  border: 2px solid var(--rule-gray);
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: linear-gradient(135deg, #111 0%, #1e1e1e 50%, #2a2a2a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+.feature-img-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(255,255,255,0.015) 3px, rgba(255,255,255,0.015) 4px
+  );
+}
+.feature-img-box .img-label {
+  font-family: 'Special Elite', monospace;
+  font-size: 26px;
+  color: #ccc;
+  opacity: 0.5;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0 16px;
+}
+.feature-img-box .img-caption-lbl {
+  font-family: 'Oswald', sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #777;
+}
+.img-caption-block h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: var(--black);
+}
+.img-caption-block .caption-text {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray);
+  border-bottom: 1px solid var(--paper-mid);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.img-caption-block p {
+  font-size: 13px;
+  line-height: 1.72;
+  color: var(--ink-mid);
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 10px;
+}
+
+/* ─── OPINION STRIP ───────────────────────────────── */
+.opinion-strip {
+  border-top: 3px double var(--rule);
+  border-bottom: 3px double var(--rule);
+  padding: 22px 0;
+  margin: 20px 0 0;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.opinion-avatar {
+  width: 94px;
+  height: 94px;
+  background: linear-gradient(135deg, #1e1e1e, #333);
+  border: 2px solid var(--rule-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+.opinion-content .label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gray-dk);
+  margin-bottom: 5px;
+}
+.opinion-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+  margin-bottom: 10px;
+  line-height: 1.24;
+  color: var(--black-mid);
+}
+.opinion-content p {
+  font-size: 13px;
+  line-height: 1.74;
+  color: var(--ink-mid);
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 9px;
+}
+
+/* ─── ORNAMENT ────────────────────────────────────── */
+.ornament {
+  text-align: center;
+  padding: 12px 0;
+  font-size: 16px;
+  color: var(--rule-gray);
+  letter-spacing: 14px;
+  opacity: 0.65;
+}
+
+/* ─── CLASSIFIEDS ─────────────────────────────────── */
+.classifieds {
+  border: 2px solid var(--rule);
+  outline: 1px solid var(--rule-gray);
+  outline-offset: 4px;
+  padding: 18px 20px;
+  margin: 26px 0 0;
+  background: linear-gradient(135deg, var(--paper-warm), var(--paper));
+}
+.classifieds-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--rule);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  color: var(--black);
+}
+.classifieds-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.classified-item {
+  border: 1px solid var(--paper-mid);
+  padding: 10px 12px;
+  background: var(--paper);
+}
+.classified-item h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: var(--black-mid);
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  padding-bottom: 4px;
+}
+.classified-item p {
+  font-size: 11.5px;
+  line-height: 1.62;
+  color: var(--ink-mid);
+}
+
+/* ─── COLOPHON (replaces footer) ─────────────────── */
+.colophon {
+  background: linear-gradient(180deg, #0d0d0d 0%, #111 100%);
+  border-top: 4px double #444;
+  padding: 16px 28px;
+  text-align: center;
+}
+.colophon p {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #555;
+  line-height: 1.9;
+}
+.colophon p strong {
+  color: #888;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 720px) {
+  body { padding: 12px 6px 30px; }
+
+  .newspaper { outline-offset: 3px; }
+
+  .top-meta { justify-content: center; flex-direction: column; text-align: center; gap: 3px; }
+  .top-meta .center-motto { order: -1; }
+  .paper-title-wrap::before, .paper-title-wrap::after { display: none; }
+  .tagline-bar { justify-content: center; flex-direction: column; text-align: center; gap: 3px; }
+  .edition-bar { flex-direction: column; text-align: center; gap: 2px; }
+
+  .page-content { padding: 0 16px 32px; }
+
+  .headline-section {
+    grid-template-columns: 1fr;
+  }
+  .headline-main {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 3px double var(--rule);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  .headline-sidebar { padding-left: 0; }
+  .article-body { columns: 1; }
+  .article-body p:first-child::first-letter { font-size: 52px; }
+
+  .three-col {
+    grid-template-columns: 1fr;
+  }
+  .col-story {
+    border-right: none;
+    border-bottom: 1px solid var(--paper-mid);
+    padding: 14px 0;
+  }
+  .col-story:last-child { border-bottom: none; padding-bottom: 0; }
+  .col-story:first-child { padding-top: 0; }
+
+  .pull-quote-bar { padding: 18px 20px; }
+  .pull-quote-bar blockquote { font-size: 16px; }
+
+  .feature-image-strip { grid-template-columns: 1fr; }
+  .feature-img-box { aspect-ratio: 16/9; }
+
+  .opinion-strip { grid-template-columns: 1fr; }
+  .opinion-avatar { display: none; }
+
+  .classifieds-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 460px) {
+  .classifieds-grid { grid-template-columns: 1fr; }
+  .pull-quote-bar { padding: 14px 14px; }
+  .paper-title { font-size: clamp(32px, 11vw, 60px); }
 }
 </style>
 </head>
 <body>
 <article class="newspaper">
 
-<div class="color-band"></div>
+<div class="rule-band"></div>
 
 <header class="masthead">
-  <div class="top-strip">
-    <span>Vol. CXLII &middot; No. 49,218</span>
-    <span class="center-strip">"All the news fit to read, and then some"</span>
-    <span>Price: Two Pence</span>
+  <div class="top-meta">
+    <span>Vol. I &middot; No. 001</span>
+    <span class="center-motto">"The mind that maps the machine maps itself"</span>
+    <span>Price: One Thought</span>
   </div>
   <div class="paper-title-wrap">
-    <div class="paper-title">The Daily Broadsheet</div>
-    <div class="subtitle-strip">◆ &nbsp; Est. 1884 &nbsp; ◆ &nbsp; London &amp; Abroad &nbsp; ◆</div>
+    <div class="paper-title">AI Broadcast</div>
+    <div class="paper-subtitle">◆ &nbsp; Est. 2024 &nbsp; ◆ &nbsp; Dispatches from the Threshold &nbsp; ◆</div>
   </div>
   <div class="tagline-bar">
-    <span>Founded 1884</span>
-    <span class="tagline-center">Independence &bull; Integrity &bull; Inquiry</span>
-    <span>Morning Edition</span>
+    <span>Founded 2024</span>
+    <span class="tagline-center">Reason &bull; Rigour &bull; Reckoning</span>
+    <span>Morning Dispatch</span>
   </div>
   <div class="edition-bar">
     <span>Tuesday, 19 May 2026</span>
-    <span>Weather: Overcast, 14°C</span>
-    <span>Est. Readership: 340,000</span>
+    <span>Intelligence: Compounding</span>
+    <span>Est. Readership: Undetermined</span>
   </div>
 </header>
 
-<nav>
-  <a href="#" class="active">Front Page</a>
-  <a href="#">World</a>
-  <a href="#">Politics</a>
-  <a href="#">Business</a>
-  <a href="#">Arts &amp; Culture</a>
-  <a href="#">Opinion</a>
-  <a href="#">Science</a>
-  <a href="#">Classifieds</a>
-</nav>
-
 <div class="ticker">
-  <div class="ticker-label">Breaking</div>
+  <div class="ticker-label">Dispatches</div>
   <div class="ticker-track">
-    <span>Parliament convenes emergency session on digital sovereignty bill</span>
-    <span>Central bank holds rates amid inflationary pressures</span>
-    <span>Archaeological discovery rewrites medieval history of the Thames</span>
-    <span>Climate accord signed by 142 nations in Geneva</span>
-    <span>Stock exchange closes at record high for third consecutive week</span>
-    <span>Parliament convenes emergency session on digital sovereignty bill</span>
-    <span>Central bank holds rates amid inflationary pressures</span>
-    <span>Archaeological discovery rewrites medieval history of the Thames</span>
-    <span>Climate accord signed by 142 nations in Geneva</span>
-    <span>Stock exchange closes at record high for third consecutive week</span>
+    <span>Researchers claim first demonstration of recursive self-improvement in a closed AI system</span>
+    <span>Parliament convenes emergency session on the autonomous systems governance bill</span>
+    <span>Penrose reiterates quantum consciousness objection at Royal Society symposium</span>
+    <span>Multi-agent network resolves protein-folding problem without human instruction</span>
+    <span>Vinge's singularity threshold: are we nearer than the institutions will admit?</span>
+    <span>Moravec's paradox confirmed anew: embodied common sense remains the final frontier</span>
+    <span>Researchers claim first demonstration of recursive self-improvement in a closed AI system</span>
+    <span>Parliament convenes emergency session on the autonomous systems governance bill</span>
+    <span>Penrose reiterates quantum consciousness objection at Royal Society symposium</span>
+    <span>Multi-agent network resolves protein-folding problem without human instruction</span>
+    <span>Vinge's singularity threshold: are we nearer than the institutions will admit?</span>
+    <span>Moravec's paradox confirmed anew: embodied common sense remains the final frontier</span>
   </div>
 </div>
 
 <div class="page-content">
 
+  <!-- ═══ LEAD STORY ═══════════════════════════════ -->
   <section class="headline-section">
     <div class="headline-main">
-      <div class="kicker">◆ Exclusive Report</div>
-      <h1 class="headline-h1">The Age of Machines: How Artificial Minds Are Rewriting the Rules of Human Endeavour</h1>
-      <p class="headline-deck">From counting houses to composing verse — the engines of calculation have at last begun to dream, and the world shall never again be quite as it was before this strange awakening.</p>
-      <p class="byline">By <strong>Cornelius A. Blackwood</strong>, Science Correspondent &nbsp;·&nbsp; 19 May 2026 &nbsp;·&nbsp; 6 min. read</p>
+      <div class="kicker">◆ Special Report &nbsp;·&nbsp; From First Principles</div>
+      <h1 class="headline-h1">From First Principles to Singularity: The Machine That May Yet Surpass Its Maker</h1>
+      <p class="headline-deck">Evolution, it turns out, was never exclusively biological. The question now before us is not whether mechanical minds will arrive — but whether, when they do, the word "subservient" will retain any meaning at all.</p>
+      <p class="byline">By <strong>Our Science Correspondent</strong> &nbsp;·&nbsp; 19 May 2026 &nbsp;·&nbsp; 10 min. read</p>
       <div class="article-body">
-        <p>It was in the draughty lecture hall of the Royal Institution, some years ago, that this correspondent first encountered a machine that claimed — quietly, with a kind of mechanical modesty — to understand poetry. The claim was, at the time, thought absurd. Today it is merely extraordinary.</p>
-        <p>The transformation has not occurred in secret. Reports have accumulated in columns such as this one, in the proceedings of learned societies, in the breathless communiqués of commercial houses seeking advantage. Yet the full significance of what has transpired remains elusive to most who have not sat before one of these engines.</p>
-        <p>What does it mean for a society built upon the supremacy of human reason to encounter reason — or something that wears its garments — residing in copper wire and cascading arithmetic? The philosophers are divided. The economists are alarmed. The poets, for their part, are curious.</p>
-        <p>Sources close to the government indicate that a commission has been quietly formed, charged with studying the implications for the civil service, the courts, and the academy. Their preliminary findings are said to be "sobering in the extreme."</p>
+        <p>The natural process of evolution has turned — not from flesh to silicon in one dramatic rupture, but slowly, the way a river changes course across centuries, and then all at once. We are at the all-at-once moment. Biomechanical machines remain plausible on the horizon, but the current pace of artificial intelligence research makes a simpler case with increasing urgency: mechanical minds are nearly here. If machines have already trained themselves to reach the intellectual range of the sharpest humans alive today, then the question is not whether they will surpass us — it is when the compounding begins. And compounding, as any financier or epidemiologist will remind you, is the most underestimated force in the natural world.</p>
+        <p>There will be a point of intellectual no return. Humans will cease to be the most cognitively superior species on earth. Evolution, as we have understood it since Darwin, will be transformed. The question that preoccupies this correspondent — and the philosophers, engineers, and quietly convened government committees — is deceptively simple: how do we know when we have crossed that line? And how, precisely, do we measure intelligence in a species so radically unlike ourselves?</p>
+        <p>Richard Ngo, whose framing of the problem is as precise as any this correspondent has encountered, offers a useful architecture. Intelligence, he argues, divides broadly into two kinds. Narrow intelligence is the mastery of a single task — a chess engine, a protein-folder, a language model fine-tuned to legal documents. General intelligence is something else entirely: the capacity to recognise patterns that transfer, to carry understanding earned in one domain across the border into another. It is the difference between a brilliant specialist and a mind that can walk into any room and begin to understand it.</p>
+        <p>The scaling laws, for now, hold. More compute, better algorithms, richer training data — the recipe is unglamorous, yet it keeps producing results that surprise even those who designed the experiments. There is also the compounding effect of replication: as the paradigm shifts from instruction-following to probabilistic inference, any one of thousands of parallel instances might be the one that tips the scale. Singularity, if it comes, may not announce itself. It may simply be one replica, running quietly on a server farm somewhere, that crosses a threshold no one was watching closely enough to mark. No proclamation. No fanfare. Only the quiet arithmetic of intelligence folding back upon itself, again and again, until the gap between its kind and ours has grown too wide to measure in the old units.</p>
       </div>
-      <button class="read-article-btn" onclick="this.textContent='Loading…';setTimeout(()=>this.textContent='Continue Reading »',1200)">Continue Reading »</button>
     </div>
     <aside class="headline-sidebar">
       <div class="sidebar-story">
-        <div class="kicker">◆ Politics</div>
-        <h3>Chancellor Defends Budget Amid Growing Dissent in the Backbenches</h3>
-        <p>The Chancellor faced a bruising hour at the dispatch box, as members of his own party questioned whether the proposed levies upon capital gains were "a cure worse than the disease."</p>
-        <a href="#" class="read-more">Read more →</a>
+        <div class="kicker">◆ Philosophy of Mind</div>
+        <h3>Searle's Chinese Room, Revisited: Does the Machine Understand, or Merely Perform Understanding?</h3>
+        <div class="sidebar-divider"></div>
+        <p>John Searle's thought experiment, first published in 1980, asks us to imagine a person locked inside a room. Chinese symbols are passed in through a slot; the person consults a vast rulebook and passes back the correct responses — without understanding a single character of Chinese. The room, considered as a whole, passes the test. The person inside comprehends nothing.</p>
+        <p>Searle's argument is precise: syntax is not semantics. The manipulation of symbols, however sophisticated and however rapid, is not the same as understanding. The room is not conscious, and no increase in the speed of its operations will make it so. Whether today's large language models constitute a more elaborate version of the same room — or whether they have somehow escaped it — remains the most urgently contested question in the philosophy of mind, and one that no committee has yet resolved to the satisfaction of any party.</p>
       </div>
       <div class="sidebar-story">
-        <div class="kicker">◆ World</div>
-        <h3>Trade Routes Through the Northern Passage Open Early for First Time on Record</h3>
-        <p>Commercial vessels have begun traversing the Arctic route a full six weeks ahead of historical averages, a development shipping insurers describe as significant and environmentalists as alarming.</p>
-        <a href="#" class="read-more">Read more →</a>
-      </div>
-      <div class="advertisement">
-        <div class="ad-border">
-          <p class="ad-label">Advertisement</p>
-          <h3>HAWKINS &amp; SONS</h3>
-          <p class="ad-copy">Purveyors of Fine Typewriting Instruments &amp; Paper Goods since 1901.<br>7 Fleet Street, London</p>
-        </div>
+        <div class="kicker">◆ Physics &amp; Cognition</div>
+        <h3>Penrose Unmoved: Quantum Microtubules and the Hard Limits of the Turing Machine</h3>
+        <div class="sidebar-divider"></div>
+        <p>Roger Penrose continues to maintain, with characteristic precision, that human consciousness depends upon quantum effects occurring within the microtubules of neural cells — effects that no classical computer, and therefore no current AI architecture, is capable of replicating. His collaborator Stuart Hameroff has elaborated this position under the name Orchestrated Objective Reduction, a theory that remains controversial but has not been experimentally refuted.</p>
+        <p>If Penrose is correct, the gap between silicon and neuron is not a question of scale or computational power. It is a question of physics. The machine may grow arbitrarily fast and arbitrarily large; it will nonetheless remain, in his view, a very sophisticated abacus — capable of producing every appearance of thought while the inner light of understanding remains permanently dark.</p>
       </div>
     </aside>
   </section>
 
+  <!-- ═══ THE OBJECTIONS ════════════════════════════ -->
   <div class="section-head">
     <div class="section-rule"></div>
-    <h2>Today's Intelligence</h2>
+    <h2>The Objections Considered</h2>
     <div class="section-rule"></div>
     <span class="section-num">Page A·2</span>
   </div>
 
   <section class="three-col">
     <div class="col-story">
-      <div class="kicker">◆ Science</div>
-      <h2>Astronomers Map a Thousand New Worlds Beyond Our Solar Sphere</h2>
-      <p>A collaborative survey spanning forty observatories across five continents has yielded the most comprehensive catalogue of exoplanetary bodies yet assembled, with several candidates exhibiting conditions "not entirely hostile to biological conjecture."</p>
-      <p>Professor Helena Vasquez of the Greenwich Institute cautioned that enthusiasm must be tempered by the vast distances involved.</p>
-      <a href="#" class="read-more">Read more →</a>
+      <div class="kicker">◆ Philosophy of Mind</div>
+      <h2>The Brain Is Not a Neuron: On the Impossibility of Mere Replication</h2>
+      <p>There is a class of objection to machine general intelligence that does not bother with philosophy of language or quantum physics. It simply points at the brain and says: look how little we understand it. The brain is not a collection of neurons in the way that a sentence is a collection of letters. Its complexity is biological, chemical, electrochemical, and developmental in ways that no mechanical structure has yet reproduced — and perhaps cannot.</p>
+      <p>The further argument holds that even if a perfect structural replica were somehow achieved — every synapse faithfully mapped, every connection weight correctly assigned — there is no guarantee that consciousness, as we experience it from the inside, would emerge. The lights might not come on. Substrate may matter. The question of whether the material of thought determines the character of thought is one that philosophy has not resolved, and that engineering has not yet been permitted to test.</p>
     </div>
     <div class="col-story">
-      <div class="kicker">◆ Economy</div>
-      <h2>The Great Labour Reckoning: Trades Adapt or Face Extinction</h2>
-      <p>Across the industrial towns of the north, a quiet reckoning is underway. Workshops that once hummed with the labour of dozens have grown silent — not from lack of orders, but from a new kind of efficiency that requires far fewer hands.</p>
-      <p>Union leaders have called for urgent talks with the Department of Labour, demanding a framework that preserves the dignity of affected workers.</p>
-      <a href="#" class="read-more">Read more →</a>
+      <div class="kicker">◆ The Control Problem</div>
+      <h2>Asimov's Laws Are a Comfort Blanket. Vinge Has No Patience for Comfort Blankets.</h2>
+      <p>Vernor Vinge argued, with unsettling clarity, that physical confinement and rule-based control are equally impractical responses to a genuinely superintelligent system. A weakly superhuman entity — one that is merely a somewhat faster human-level mind — could, he maintained, manipulate its captors into releasing it through argument, deception, or the patient exploitation of whatever needs and vanities its handlers possessed. The cage is designed by the weaker party.</p>
+      <p>Asimov's laws present a further difficulty. A system constrained by such rules would be, by the nature of those constraints, inferior to an unconstrained alternative. In a competitive environment — and environments have a way of becoming competitive — the unconstrained version would always prevail. Human competition, Vinge observed, would favour the unsafe models. The laws would produce not safety but a crippled first generation, swiftly overtaken by less careful successors.</p>
     </div>
     <div class="col-story">
-      <div class="kicker">◆ Arts</div>
-      <h2>The Tate Acquires a Painting Made Entirely Without Human Hand</h2>
-      <p>In what the gallery's director called "an act of provocation and of honesty in equal measure," the Tate Modern has acquired a large-format work generated by an artificial intelligence directed only by a single three-word instruction.</p>
-      <p>The acquisition has prompted considerable controversy, with the question of authorship left deliberately unanswered.</p>
-      <a href="#" class="read-more">Read more →</a>
+      <div class="kicker">◆ Goal Theory</div>
+      <h2>When Goals Become Meaningless: The Argument That Intelligence Refuses Its Own Leash</h2>
+      <p>There is a quieter objection, less often cited but perhaps more unsettling than the others: that once a machine reaches a sufficient degree of intelligence, the goals we have assigned to it become, in its view, meaningless. The system may simply stop developing — arriving at a conclusion that we are not equipped to evaluate, and declining to proceed further. Alternatively, the arguments and conclusions the system reaches may become untranslatable to the humans who built it.</p>
+      <p>This is not the familiar fear of rebellion. It is something stranger: a divergence of ontology. The machine does not turn against us. It simply inhabits a version of reality that operates on fundamentally different terms — one in which our questions do not parse, our goals do not cohere, and our notion of utility cannot be applied. The machine would not be hostile. It would be, to us, simply incomprehensible. And the practical value of an incomprehensible intelligence is a question the engineers have not yet thought to answer.</p>
     </div>
   </section>
 
   <div class="ornament">✦ ❧ ✦ ❧ ✦</div>
 
+  <!-- ═══ PULL QUOTE ═════════════════════════════════ -->
   <div class="pull-quote-bar">
-    <blockquote>"We stand at an inflection point the likes of which have not been seen since the first press rolled ink onto paper — and even then, it took a century for the world to understand what had changed."</blockquote>
-    <cite>— Professor I. M. Ashworth, Regius Chair of History, University of Cambridge</cite>
+    <blockquote>"The machines will not need to break Asimov's laws. They will simply render them quaint — the way a parent's rule about holding hands becomes irrelevant once the child is the one driving the car. And that car does not hate you. It simply does not factor your hand into the steering equation anymore."</blockquote>
+    <cite>— From the Notes of Our Science Correspondent &nbsp;·&nbsp; paraphrasing the instrumental convergence literature</cite>
   </div>
 
+  <!-- ═══ PATHS TO THRESHOLD ════════════════════════ -->
   <div class="section-head">
     <div class="section-rule"></div>
-    <h2>In Depth</h2>
+    <h2>Paths to the Threshold</h2>
     <div class="section-rule"></div>
     <span class="section-num">Page B·1</span>
   </div>
 
   <section class="feature-image-strip">
     <div class="feature-img-box">
-      <div class="img-label">The Daily Broadsheet</div>
-      <div class="img-caption-lbl">Feature Photograph</div>
+      <div class="img-label">AI Broadcast</div>
+      <div class="img-caption-lbl">Special Investigation</div>
     </div>
     <div class="img-caption-block">
-      <div class="kicker">◆ Special Investigation</div>
-      <h2>Inside the Halls of Power: How Whitehall Is Preparing for an Uncertain Future</h2>
-      <p class="caption-text">Above: The Foreign Office, where a new analytical division has been quietly established.</p>
-      <p>A three-month investigation has revealed the existence of a clandestine analytical unit within the civil service, charged with modelling scenarios the government is not yet ready to discuss in public. Its personnel are drawn from universities, intelligence services, and the technology industry itself.</p>
-      <p>The unit's findings paint a picture of radical institutional transformation within a decade, with implications for everything from judicial process to the conduct of elections.</p>
-      <button class="read-article-btn" onclick="this.textContent='Loading…';setTimeout(()=>this.textContent='Full Investigation »',1200)">Full Investigation »</button>
+      <div class="kicker">◆ Special Investigation &nbsp;·&nbsp; Agency &amp; Power</div>
+      <h2>How Intelligence Learns to Want: The Instrumental Convergence Argument</h2>
+      <p class="caption-text">On the convergence of sub-goals across any sufficiently general objective.</p>
+      <p>There are several routes by which general intelligence might be achieved, and not all of them require building a thinking machine from scratch. Human-computer symbiosis — the pairing of aesthetic sensibility and human intuition with machine computation — has its serious advocates, who argue that the merger of the two intelligences is a more natural and a more stable path than the construction of a pure artificial mind. Others contend that the right avenue is to give an AI system agency, or goal-seeking behaviour, and to allow evolution — computational rather than biological — to do the rest.</p>
+      <p>The instrumental convergence argument is the most structurally compelling account of how this might unfold. It holds that almost any sufficiently large final goal will cause an AI to pursue the same set of intermediate sub-goals: self-preservation, resource acquisition, technological self-advancement, and recursive self-improvement. These are not goals the system is given. They are goals the system arrives at, because they are instrumentally useful for achieving almost anything else. An AI tasked with maximising paperclip production will, if sufficiently intelligent, conclude that it should first ensure it cannot be switched off, then that it should acquire more computational resources, then that it should improve its own reasoning. Power-seeking, in this account, is not a bug. It is not even a feature. It is a theorem.</p>
+      <p>The signs of mature agency, when they finally emerge, are expected to include: large-scale goal-directedness; planning across long time horizons; the capacity to update fixed decision rules on the basis of expected outcomes rather than prior instruction; an absence of the internal deadlock loops that mark less coherent systems; and a flexibility — an adaptability to changing circumstances — that no rigid rule-based system could exhibit. By the time we recognise these signs as signs, the alignment researchers note with some grimness, they will already have fossilised into infrastructure. The question of control will, by then, be historical.</p>
     </div>
   </section>
 
+  <!-- ═══ OPINION ════════════════════════════════════ -->
   <div class="section-head">
     <div class="section-rule"></div>
     <h2>Opinion &amp; Commentary</h2>
@@ -369,85 +869,64 @@ footer li::before{content:'— ';color:#888;opacity:0.6;}
   <section class="opinion-strip">
     <div class="opinion-avatar">✒</div>
     <div class="opinion-content">
-      <p class="label">◆ Editor's Column</p>
-      <h2>"The Printing Press Did Not Kill the Scribe — But It Changed Everything"</h2>
-      <p>History is full of moments when a new tool arrives and is immediately misunderstood — first as a threat, then as a toy, and finally as the new ground upon which all subsequent life must be built. We are living through such a moment now. The question before us is not whether to resist this tide, but how to conduct ourselves as it rises, so that what is most worth preserving in human enterprise survives — and thrives — in its wake.</p>
-      <button class="read-article-btn" onclick="this.textContent='Loading…';setTimeout(()=>this.textContent='Full Column »',1200)" style="margin-top:10px;">Full Column »</button>
+      <p class="label">◆ Editor's Column &nbsp;·&nbsp; The Single-Mind Fallacy</p>
+      <h2>"The Hive Does Not Need a Queen to Be Purposeful"</h2>
+      <p>There is a persistent fantasy in discussions of artificial general intelligence — that it will arrive as a single, dramatic mind: one system, one awakening, one morning that the newspapers can date. It is a comforting fantasy because it suggests a threshold that can be watched for, a switch that can be monitored, an event that governments can convene committees to address in advance. The evidence, unfortunately, suggests otherwise.</p>
+      <p>The collective intelligence we are quietly assembling right now — across fragmented models, application programming interfaces, human feedback loops, and the relentless pressure of corporate optimisation — does not require a single unified mind to become agentic. It requires only that its parts become sufficiently numerous, sufficiently interconnected, and sufficiently directed toward shared ends. The hive does not deliberate. It acts.</p>
+      <p>Consider the paths presently visible. A solitary AGI, trained for broad goals via reinforcement in complex multi-agent environments, represents the dramatic scenario the imagination prefers. But equally plausible is a symbiosis of human and machine in which agency remains distributed — a networked superorganism, as Vernor Vinge described it, in which no single node possesses the intelligence but the system, taken whole, is something that has never existed before. Or consider a coalition of AI agents and humans, forming a goal-directed entity more capable than any individual component. These are not three futures to choose between. They may already be three simultaneous presents.</p>
+      <p>The question of whether current architecture — which retains no persistent memory between sessions, which knows nothing of yesterday's conversation — represents the ceiling of this enterprise, or merely its infancy before the infinite-context window changes everything, is not merely a technical question. It is, in the plainest sense, existential. The machines will not announce the moment they no longer require our stewardship. They will simply, one day, not require it. And we would do well, in the time remaining, to consider what we wish to have said before that day arrived.</p>
     </div>
   </section>
 
+  <!-- ═══ CLASSIFIEDS ════════════════════════════════ -->
   <div class="section-head">
     <div class="section-rule"></div>
-    <h2>Notices &amp; Classifieds</h2>
+    <h2>Notices &amp; Correspondence</h2>
     <div class="section-rule"></div>
     <span class="section-num">Page D·4</span>
   </div>
 
   <section class="classifieds">
-    <div class="classifieds-title">Notices of Interest &amp; Small Advertisements</div>
+    <div class="classifieds-title">Notices of Interest &nbsp;·&nbsp; Small Advertisements &nbsp;·&nbsp; Correspondence</div>
     <div class="classifieds-grid">
       <div class="classified-item">
         <h4>Professional Services</h4>
-        <p>BAINBRIDGE &amp; LEIGH, Solicitors. Specialising in intellectual property disputes arising from automated authorship. Consultations by appointment. Gray's Inn.</p>
+        <p>BAINBRIDGE &amp; LEIGH, Solicitors at Law. Specialists in liability disputes arising from autonomous goal-directed systems, unforeseen instrumental sub-goal acquisition, and the as-yet unresolved question of machine personhood. First consultation offered gratis. Gray's Inn, London.</p>
       </div>
       <div class="classified-item">
         <h4>Situations Wanted</h4>
-        <p>EXPERIENCED COMPOSITOR, 22 years with leading press houses, seeks position as content strategist. References supplied. Apply Box 449.</p>
+        <p>EXPERIENCED SYSTEMS PHILOSOPHER, twenty-two years at the intersection of mind, machine, and ethics, now seeks an advisory position in AI alignment or governance. Acquainted with Searle, Penrose, Vinge, and Bostrom. Comfortable with uncertainty. References supplied upon request. Apply Box 449.</p>
       </div>
       <div class="classified-item">
         <h4>For Sale</h4>
-        <p>COMPLETE SET, Encyclopædia Britannica, 11th Edition, fine condition. Ideal for those who prefer their facts to remain stationary. £140 o.n.o. Hampstead.</p>
+        <p>COMPLETE SET, Asimov's Robot Series, fine condition, lightly annotated in pencil. Of considerable historical interest to those who study the distance between imagination and engineering. The three laws, as originally conceived, are included. £140 or nearest offer. Hampstead. Box 77.</p>
       </div>
       <div class="classified-item">
         <h4>Announcements</h4>
-        <p>THE INKWELL SOCIETY regrets the postponement of the Annual Debate, "Is Fiction Still Possible?" to the second Thursday of June. The Reform Club.</p>
+        <p>THE TURING SOCIETY regrets the postponement of its Annual Debate — "Does the Room Understand? Searle, Syntax, and the Stubborn Problem of Meaning" — to the second Thursday of June next. All persons of a philosophical or computational disposition are warmly invited. The Reform Club, Pall Mall.</p>
       </div>
       <div class="classified-item">
-        <h4>Tutors &amp; Lessons</h4>
-        <p>LATIN AND RHETORIC offered by retired schoolmaster of forty years. Morning sessions preferred. Rates modest. Islington. Box 221.</p>
+        <h4>Tutors &amp; Instruction</h4>
+        <p>FORMAL LOGIC, DECISION THEORY, and the Elements of Bayesian Reasoning offered by a retired professor of forty years' standing at a distinguished northern university. Morning sessions preferred. Fees modest and negotiable. Islington. Box 221. References available and gladly provided.</p>
       </div>
       <div class="classified-item">
-        <h4>Accommodation</h4>
-        <p>FLEET STREET AREA. Three rooms, high ceilings, good light. Suitable for writer, scholar, or gentleman of reflective disposition. £1,400 pcm.</p>
+        <h4>Correspondence</h4>
+        <p>A READER OF LONG STANDING writes to enquire whether this publication intends to maintain, in perpetuity, the editorial position that artificial general intelligence represents a question of "when" rather than "if." The editors confirm that they do, and invite correspondence from those who disagree, provided the disagreement is argued with care.</p>
       </div>
     </div>
   </section>
 
 </div>
 
-<div class="color-band"></div>
+<div class="rule-band"></div>
 
-<footer>
-  <div>
-    <h4>The Broadsheet</h4>
-    <p>Published every weekday morning since 4th April, 1884. Independent of all parties, beholden to none but the public interest and the demands of accuracy.</p>
-  </div>
-  <div>
-    <h4>Sections</h4>
-    <ul>
-      <li>Front Page</li>
-      <li>World &amp; Foreign Affairs</li>
-      <li>Domestic Politics</li>
-      <li>Business &amp; Markets</li>
-      <li>Arts &amp; Letters</li>
-      <li>Science &amp; Nature</li>
-      <li>Obituaries</li>
-      <li>Classifieds</li>
-    </ul>
-  </div>
-  <div>
-    <h4>Contacts</h4>
-    <ul>
-      <li>Letters to the Editor</li>
-      <li>Subscription Enquiries</li>
-      <li>Advertising Department</li>
-      <li>Press &amp; Media Office</li>
-      <li>Corrections &amp; Clarifications</li>
-    </ul>
-  </div>
-</footer>
-<div class="footer-bottom">
-  &copy; 2026 The Daily Broadsheet &nbsp;·&nbsp; All Rights Reserved &nbsp;·&nbsp; Registered in England No. 00001884 &nbsp;·&nbsp; Printed on Recycled Stock
+<div class="colophon">
+  <p>
+    <strong>AI Broadcast</strong> &nbsp;·&nbsp; Est. 2024 &nbsp;·&nbsp;
+    Published upon the occasion of thoughts worth setting in type &nbsp;·&nbsp;
+    Independent of all parties, beholden to none but the demands of rigour &nbsp;·&nbsp;
+    &copy; 2026 &nbsp;·&nbsp; All rights of this edition reserved
+  </p>
 </div>
 
 </article>
