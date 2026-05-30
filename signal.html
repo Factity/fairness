@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SIGNAL — The New Shape of War</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --yellow:#F5C518;
+  --red:#C0392B;
+  --orange:#E8620A;
+  --teal:#00C9A7;
+  --blue:#1A6DFF;
+  --purple:#7B2FBE;
+  --pink:#FF2D78;
+  --dark:#070707;
+  --mid:#111;
+  --mid2:#1a1a1a;
+  --gray:#666;
+  --light:#e8e8e0;
+  --mono:'Share Tech Mono',monospace;
+  --cond:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--dark);
+  color:var(--light);
+  font-family:var(--body);
+  overflow-x:hidden;
+  min-height:100vh;
+  width:100%;
+}
+
+/* GRAIN */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9000;
+  opacity:0.18;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* SCANLINE */
+.scanline{
+  position:fixed;top:0;left:0;width:100%;height:3px;
+  background:rgba(245,197,24,0.06);
+  pointer-events:none;z-index:8999;
+  animation:scan 6s linear infinite;
+}
+@keyframes scan{from{top:-3px}to{top:100vh}}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  background:rgba(7,7,7,0.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(245,197,24,0.15);
+}
+.nav-brand{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;color:var(--light);letter-spacing:2px;
+}
+.nav-brand span{color:var(--yellow)}
+.nav-tag{
+  font-family:var(--mono);font-size:9px;
+  color:var(--yellow);letter-spacing:3px;
+  display:none;
+}
+@media(min-width:480px){.nav-tag{display:block}}
+.nav-issue{
+  font-family:var(--mono);font-size:9px;
+  color:var(--gray);letter-spacing:1px;
+}
+
+/* HERO — compact, no black void */
+.hero{
+  position:relative;
+  width:100%;
+  padding-top:52px; /* nav height */
+  overflow:hidden;
+  background:#050203;
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.hero-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:block;
+}
+.hero-content{
+  position:relative;z-index:10;
+  padding:20px 16px 20px;
+}
+.issue-tag{
+  font-family:var(--mono);font-size:9px;
+  color:var(--teal);letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:10px;
+  animation:fadeUp .5s .2s both;
+}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,14vw,96px);
+  line-height:.88;letter-spacing:-1px;
+  color:var(--light);margin-bottom:6px;
+  animation:fadeUp .7s .4s both;
+}
+.hero-title .y{color:var(--yellow)}
+.hero-title .r{color:var(--red)}
+.hero-title .t{color:var(--teal)}
+.hero-sub{
+  font-family:var(--cond);font-size:clamp(12px,3vw,16px);
+  font-weight:300;color:var(--gray);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:16px;
+  animation:fadeUp .7s .6s both;
+}
+.hero-meta{
+  display:flex;align-items:center;gap:16px;
+  animation:fadeUp .5s .8s both;
+}
+.hero-byline{font-family:var(--mono);font-size:9px;color:var(--gray);letter-spacing:1px}
+.hero-bar{width:30px;height:1px;background:var(--yellow)}
+.scroll-hint{
+  font-family:var(--mono);font-size:9px;color:var(--yellow);
+  letter-spacing:3px;animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHARACTER WRAP — LDR animated soldiers/figures */
+.char-strip{
+  position:absolute;bottom:0;left:0;width:100%;
+  display:flex;align-items:flex-end;gap:0;
+  pointer-events:none;z-index:5;
+  height:clamp(80px,20vw,140px);
+}
+
+/* TICKER */
+.ticker-wrap{
+  width:100%;overflow:hidden;
+  background:var(--yellow);padding:7px 0;
+}
+.ticker{
+  display:flex;white-space:nowrap;
+  animation:tick 28s linear infinite;
+}
+.ticker span{
+  font-family:var(--mono);font-size:10px;
+  color:#000;letter-spacing:.5px;padding:0 32px;
+}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ARTICLE */
+.article{
+  max-width:680px;margin:0 auto;
+  padding:0 16px;
+}
+@media(min-width:720px){.article{padding:0 32px}}
+
+/* SECTION */
+.sec{padding:48px 0 0;border-top:1px solid #1c1c1c}
+.sec:first-child{border-top:none}
+.sec-num{
+  font-family:var(--mono);font-size:9px;
+  color:var(--teal);letter-spacing:4px;margin-bottom:10px;
+}
+.sec-head{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(32px,8vw,58px);
+  line-height:.92;color:var(--light);margin-bottom:18px;
+}
+.sec-head .y{color:var(--yellow)}
+.sec-head .r{color:var(--red)}
+.sec-head .o{color:var(--orange)}
+.sec-head .t{color:var(--teal)}
+.sec-head .b{color:var(--blue)}
+.sec-head .p{color:var(--purple)}
+.sec-head .pk{color:var(--pink)}
+
+.lead{
+  font-family:var(--cond);font-size:clamp(15px,4vw,19px);
+  font-weight:300;line-height:1.55;color:#999;margin-bottom:20px;
+}
+.body{
+  font-family:var(--body);font-size:14px;
+  font-weight:300;line-height:1.8;color:#666;margin-bottom:18px;
+}
+.hl{background:var(--yellow);color:#000;padding:0 3px;font-weight:600}
+.hl-r{background:var(--red);color:#fff;padding:0 3px;font-weight:600}
+.hl-t{background:var(--teal);color:#000;padding:0 3px;font-weight:600}
+.hl-b{background:var(--blue);color:#fff;padding:0 3px;font-weight:600}
+
+/* PULL QUOTE */
+.pq{
+  border-left:3px solid var(--orange);
+  padding:16px 0 16px 24px;margin:36px 0;
+}
+.pq p{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(20px,5vw,34px);
+  line-height:1.05;color:var(--light);
+}
+.pq cite{
+  display:block;font-family:var(--mono);font-size:9px;
+  color:var(--orange);letter-spacing:2px;margin-top:10px;font-style:normal;
+}
+
+/* VIS SEP */
+.vsep{
+  width:100%;height:1px;margin:40px 0;
+  background:linear-gradient(90deg,var(--yellow) 0%,var(--orange) 40%,var(--red) 80%,transparent 100%);
+}
+
+/* STAT GRID */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:#1a1a1a;margin:32px 0;
+}
+.stat-cell{background:var(--dark);padding:20px 14px}
+.stat-num{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,9vw,52px);
+  line-height:1;
+}
+.stat-unit{font-family:var(--mono);font-size:8px;color:var(--gray);letter-spacing:2px;margin-top:3px}
+.stat-label{font-family:var(--body);font-size:11px;color:#444;margin-top:6px;line-height:1.4}
+.c-y{color:var(--yellow)}.c-r{color:var(--red)}.c-t{color:var(--teal)}
+.c-o{color:var(--orange)}.c-b{color:var(--blue)}.c-p{color:var(--purple)}.c-pk{color:var(--pink)}
+
+/* ANIMATION PANEL */
+.anim-panel{
+  width:calc(100% + 32px);margin-left:-16px;
+  position:relative;overflow:hidden;
+  background:#020202;
+}
+@media(min-width:720px){
+  .anim-panel{width:calc(100% + 64px);margin-left:-32px}
+}
+.anim-panel canvas{display:block;width:100%}
+.anim-cap{
+  padding:10px 16px;font-family:var(--mono);font-size:8px;
+  color:var(--gray);letter-spacing:2px;
+  background:#050505;border-top:1px solid #111;
+}
+@media(min-width:720px){.anim-cap{padding:10px 32px}}
+
+/* CHARACTER ANIMATION PANEL */
+.char-panel{
+  width:calc(100% + 32px);margin-left:-16px;
+  height:clamp(160px,35vw,260px);
+  position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#050305 0%,#0a0408 60%,#0d0206 100%);
+}
+@media(min-width:720px){
+  .char-panel{width:calc(100% + 64px);margin-left:-32px}
+}
+.char-panel canvas{display:block;width:100%;height:100%}
+
+/* CHAPTER CARD */
+.chap-card{
+  background:var(--mid);
+  border:1px solid #202020;
+  border-left:3px solid var(--blue);
+  padding:24px 20px;margin:32px 0;
+  position:relative;overflow:hidden;
+}
+.chap-card.r{border-left-color:var(--red)}
+.chap-card.o{border-left-color:var(--orange)}
+.chap-card.t{border-left-color:var(--teal)}
+.chap-card.p{border-left-color:var(--purple)}
+.chap-card.pk{border-left-color:var(--pink)}
+.chap-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:3px;
+  margin-bottom:12px;
+}
+.chap-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(22px,5vw,30px);color:var(--light);
+  margin-bottom:12px;line-height:1;
+}
+.chap-body{
+  font-family:var(--body);font-size:13px;color:#555;line-height:1.7;
+}
+/* diagonal hatch */
+.hatch{
+  background-image:repeating-linear-gradient(
+    45deg,transparent,transparent 4px,
+    rgba(255,255,255,.012) 4px,rgba(255,255,255,.012) 5px
+  );
+}
+
+/* TIMELINE */
+.timeline{margin:32px 0;position:relative}
+.timeline::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:1px;background:#1e1e1e;
+}
+.tl-item{padding:0 0 32px 24px;position:relative}
+.tl-item::before{
+  content:'';position:absolute;left:-3px;top:7px;
+  width:7px;height:7px;
+}
+.tl-item:nth-child(1)::before{background:var(--yellow)}
+.tl-item:nth-child(2)::before{background:var(--orange)}
+.tl-item:nth-child(3)::before{background:var(--red)}
+.tl-item:nth-child(4)::before{background:var(--purple)}
+.tl-item:nth-child(5)::before{background:var(--teal)}
+.tl-year{font-family:var(--mono);font-size:9px;letter-spacing:2px;margin-bottom:6px}
+.tl-title{
+  font-family:var(--cond);font-size:clamp(14px,3.5vw,18px);
+  font-weight:600;color:var(--light);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;
+}
+.tl-text{font-family:var(--body);font-size:12px;color:#444;line-height:1.6}
+
+/* DIV LINE */
+.divline{
+  display:flex;align-items:center;gap:12px;margin:40px 0 28px;
+}
+.divline-l{flex:1;height:1px;background:#161616}
+.divline-d{width:5px;height:5px}
+
+/* FOOTER */
+footer{
+  border-top:1px solid #141414;
+  margin-top:60px;padding:28px 16px;
+}
+@media(min-width:720px){footer{padding:28px 32px}}
+.foot-inner{
+  max-width:680px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:16px;
+}
+.foot-brand{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--light);
+}
+.foot-brand span{color:var(--yellow)}
+.foot-sub{font-family:var(--mono);font-size:8px;color:#2a2a2a;margin-top:4px;letter-spacing:2px}
+.foot-info{text-align:right}
+.foot-line{font-family:var(--mono);font-size:8px;color:#2e2e2e;letter-spacing:2px;margin-bottom:4px}
+
+/* COLOR SWATCH ROW */
+.palette{
+  display:flex;gap:6px;margin:24px 0;flex-wrap:wrap;
+}
+.swatch{
+  flex:1;min-width:36px;height:32px;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:7px;letter-spacing:.5px;
+  font-weight:700;
+}
+
+/* RESPONSIVE TWEAKS */
+@media(max-width:400px){
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .stat-cell:last-child{grid-column:span 2}
+}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">SIGNAL <span>//</span></div>
+  <div class="nav-tag">AI · POLICY · GEOPOLITICS</div>
+  <div class="nav-issue">ISSUE 07</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+
+  <!-- CHARACTER STRIP -->
+  <canvas id="charStrip" style="position:absolute;bottom:0;left:0;width:100%;height:clamp(80px,18vw,130px);z-index:6;pointer-events:none;"></canvas>
+
+  <div class="hero-content">
+    <div class="issue-tag">// SIGNAL — ISSUE 07 — MAY 30 2026</div>
+    <h1 class="hero-title">
+      THE <span class="y">NEW</span><br>
+      <span class="r">SHAPE</span><br>
+      OF <span class="t">WAR</span>
+    </h1>
+    <p class="hero-sub">How artificial intelligence is redrawing the lines of global power</p>
+    <div class="hero-meta">
+      <span class="hero-byline">MAY 30 — JUNE 5, 2026</span>
+      <div class="hero-bar"></div>
+      <span class="scroll-hint">▼ SCROLL</span>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>AI DEFENSE SPENDING UP 340% ◆ AUTONOMOUS DRONES IN 12 CONFLICT ZONES ◆ G7: NO AI WEAPONS TREATY ◆ SILICON CURTAIN DEEPENS ◆ H100 EMBARGO EXTENDED ◆ CHINA AI MILITARY: $47B ◆ EU AI ACT CONTESTED ◆ LETHAL AUTONOMOUS SYSTEMS — NO BINDING LAW ◆</span>
+    <span>AI DEFENSE SPENDING UP 340% ◆ AUTONOMOUS DRONES IN 12 CONFLICT ZONES ◆ G7: NO AI WEAPONS TREATY ◆ SILICON CURTAIN DEEPENS ◆ H100 EMBARGO EXTENDED ◆ CHINA AI MILITARY: $47B ◆ EU AI ACT CONTESTED ◆ LETHAL AUTONOMOUS SYSTEMS — NO BINDING LAW ◆</span>
+  </div>
+</div>
+
+<!-- ARTICLE -->
+<main class="article">
+
+  <!-- S1 -->
+  <div class="sec">
+    <div class="sec-num">// 01 — INTRODUCTION</div>
+    <h2 class="sec-head">THE <span class="y">INTELLIGENCE</span><br>ARMS RACE</h2>
+    <p class="lead">The battlefield is no longer defined by soldiers, tanks, or missiles. It is defined by data pipelines, inference latency, and the geopolitics of silicon.</p>
+    <p class="body">For the first time in modern history, the most consequential military technology is being developed not in government labs but in corporate headquarters. The implications for global power, international law, and human survival are profound — and <span class="hl">deeply underexplored</span>.</p>
+    <p class="body">Autonomous systems are already making targeting decisions with human oversight measured in milliseconds. AI-driven logistics are reshaping supply chains in <span class="hl-r">active conflict zones</span>. And the policy frameworks designed to govern these tools are a generation behind the technology.</p>
+  </div>
+
+  <!-- DRONE SWARM PANEL -->
+  <div class="anim-panel" style="height:clamp(180px,40vw,300px);margin-top:32px;">
+    <canvas id="droneCanvas" style="width:100%;height:100%;display:block;"></canvas>
+  </div>
+  <div class="anim-cap">FIG.01 — SWARM INTELLIGENCE: AUTONOMOUS DRONE COORDINATION — CLICK TO REDIRECT</div>
+
+  <!-- CHARACTER ANIMATION 1: Soldier march -->
+  <div class="char-panel" style="margin-top:0;">
+    <canvas id="soldierCanvas"></canvas>
+  </div>
+  <div class="anim-cap" style="margin-bottom:32px;">FIG.02 — HUMAN VS MACHINE: THE CHANGING FACE OF MODERN WARFARE</div>
+
+  <div class="pq">
+    <p>"We have built weapons that can learn. The question is whether our laws can keep pace."</p>
+    <cite>— FORMER NSA DIRECTOR, 2025</cite>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-cell">
+      <div class="stat-num c-y">340</div>
+      <div class="stat-unit">% INCREASE</div>
+      <div class="stat-label">AI defense procurement 2022–26</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num c-r">12</div>
+      <div class="stat-unit">CONFLICT ZONES</div>
+      <div class="stat-label">Active autonomous deployment</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num c-t">0</div>
+      <div class="stat-unit">TREATIES</div>
+      <div class="stat-label">Binding international AI weapons law</div>
+    </div>
+  </div>
+
+  <div class="vsep"></div>
+
+  <!-- S2 -->
+  <div class="sec-num">// 02 — THE SILICON CURTAIN</div>
+  <h2 class="sec-head">CHIPS, <span class="o">CHOKEPOINTS</span><br>& COLD LOGIC</h2>
+  <p class="lead">Control the chip, control the model. Control the model, control the war.</p>
+  <p class="body">The US CHIPS Act and its successive export restrictions on advanced semiconductors represent perhaps the most consequential act of economic statecraft in decades. By denying access to NVIDIA's H100 and A100 architectures, Washington has erected what analysts now call the <span class="hl-b">Silicon Curtain</span> — a technological boundary as significant as the Iron Curtain was ideologically.</p>
+
+  <div class="chap-card r hatch">
+    <div class="chap-label c-r">// POLICY BRIEF</div>
+    <div class="chap-title">THE WASSENAAR PROBLEM</div>
+    <div class="chap-body">The Wassenaar Arrangement was never designed for software. It categorizes by hardware: missiles, lasers, sensors. But the most dangerous military AI is a 70 billion parameter model running on commercially available cloud infrastructure. It has no weight class, no serial number, no point of interdiction. The regime is structurally blind to the actual threat.</div>
+  </div>
+
+  <!-- CIRCUIT / GLOBE PANEL -->
+  <div class="anim-panel" style="height:clamp(180px,40vw,300px);">
+    <canvas id="circuitCanvas" style="width:100%;height:100%;display:block;"></canvas>
+  </div>
+  <div class="anim-cap">FIG.03 — GLOBAL AI COMPUTE CONCENTRATION: NODE DENSITY BY REGION — 2026</div>
+
+  <!-- CHARACTER ANIMATION 2: Figures with drones -->
+  <div class="char-panel" style="margin-top:0;">
+    <canvas id="droneCharCanvas"></canvas>
+  </div>
+  <div class="anim-cap" style="margin-bottom:32px;">FIG.04 — OPERATOR + SWARM: AI PILOT COORDINATION CONCEPT</div>
+
+  <div class="vsep"></div>
+
+  <!-- S3 TIMELINE -->
+  <div class="divline">
+    <div class="divline-l"></div>
+    <div class="divline-d" style="background:var(--yellow)"></div>
+    <div class="divline-l"></div>
+  </div>
+  <div class="sec-num">// 03 — CHRONOLOGY</div>
+  <h2 class="sec-head">FROM <span class="p">DARPA</span><br>TO DEPLOYMENT</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year c-y">2017</div>
+      <div class="tl-title">China announces AI supremacy doctrine</div>
+      <div class="tl-text">Beijing's "New Generation AI Development Plan" sets 2030 as target for global AI leadership. Military applications explicitly included.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year c-o">2020</div>
+      <div class="tl-title">Nagorno-Karabakh: first drone war</div>
+      <div class="tl-text">Azerbaijan deploys Bayraktar TB2 drones with AI-assisted targeting. Conventional armored columns rendered tactically obsolete in 44 days.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year c-r">2022</div>
+      <div class="tl-title">CHIPS Act & Export Controls</div>
+      <div class="tl-text">US restricts advanced semiconductor exports. The Silicon Curtain descends. China accelerates domestic chip development under SMIC.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year c-p">2024</div>
+      <div class="tl-title">First AI-attributed targeting error</div>
+      <div class="tl-text">UN Special Committee documents autonomous system strike on civilian infrastructure. Accountability gap immediately apparent. No state claims responsibility.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year c-t">2026</div>
+      <div class="tl-title">Policy vacuum declared</div>
+      <div class="tl-text">G7 AI Safety Summit collapses on Article 36 equivalent for autonomous weapons. Military AI operates in a legal no-man's land.</div>
+    </div>
+  </div>
+
+  <div class="vsep"></div>
+
+  <!-- S4 GOVERNANCE -->
+  <div class="sec-num">// 04 — THE GOVERNANCE GAP</div>
+  <h2 class="sec-head">WHO <span class="pk">GOVERNS</span><br>THE MACHINE?</h2>
+  <p class="lead">International humanitarian law was written for humans. The Geneva Conventions assume a soldier who can distinguish combatant from civilian. Autonomous systems cannot be court-martialed.</p>
+  <p class="body">The fundamental problem of AI weapons governance is attribution. When an autonomous system commits a war crime, accountability dissolves across developers, deployers, commanders, and algorithms. No existing legal framework can allocate responsibility across that chain. The result is not impunity — it is <span class="hl-r">structural impunity</span>, baked into the architecture.</p>
+
+  <!-- GAP ANALYSIS PANEL -->
+  <div class="anim-panel" style="height:clamp(200px,45vw,320px);">
+    <canvas id="gapCanvas" style="width:100%;height:100%;display:block;"></canvas>
+  </div>
+  <div class="anim-cap">FIG.05 — POLICY COVERAGE vs THREAT LEVEL — LIVE GAP ANALYSIS</div>
+
+  <!-- CHARACTER ANIMATION 3: Ghost/reaper figure -->
+  <div class="char-panel" style="margin-top:0;background:linear-gradient(180deg,#030507 0%,#060a0f 60%,#080d14 100%);">
+    <canvas id="ghostCanvas"></canvas>
+  </div>
+  <div class="anim-cap" style="margin-bottom:32px;">FIG.06 — THE ACCOUNTABILITY VOID: LEGAL PERSONHOOD AND AUTONOMOUS SYSTEMS</div>
+
+  <div class="pq" style="border-left-color:var(--pink)">
+    <p>"The algorithm doesn't know what mercy is. That's the entire problem."</p>
+    <cite style="color:var(--pink)">— ICRC LEGAL DIVISION, 2025</cite>
+  </div>
+
+  <div class="chap-card t hatch">
+    <div class="chap-label c-t">// THREE GOVERNANCE MODELS</div>
+    <div class="chap-title">PROHIBIT · REGULATE · SOVEREIGNTY</div>
+    <div class="chap-body">Three frameworks compete: the <strong style="color:var(--teal)">Prohibitionist</strong> approach (ICRC, Austria) seeks an outright ban on lethal autonomous systems. The <strong style="color:var(--yellow)">Regulatory</strong> approach (EU, Canada) seeks binding transparency standards. The <strong style="color:var(--red)">Sovereignty</strong> approach (US, China, Russia, Israel) treats AI weapons doctrine as beyond international scrutiny. None has achieved consensus. All are already obsolete.</div>
+  </div>
+
+  <div class="chap-card pk hatch">
+    <div class="chap-label c-pk">// SIGNAL EDITORIAL</div>
+    <div class="chap-title">THE SHAPE OF WHAT COMES NEXT</div>
+    <div class="chap-body">The machine has already changed the shape of war. The question before us is not whether to allow it, but whether civilization can develop the institutional capacity to govern what it has already unleashed. History does not offer optimism — but it offers the example of the nuclear age: imperfect, costly, and occasionally terrifying. Yet somehow, so far, sufficient.</div>
+  </div>
+
+  <!-- COLOR PALETTE DISPLAY -->
+  <div class="sec-num" style="margin-top:40px">// SIGNAL VISUAL SYSTEM — PALETTE</div>
+  <div class="palette">
+    <div class="swatch" style="background:var(--yellow);color:#000">SIGNAL</div>
+    <div class="swatch" style="background:var(--orange);color:#fff">THREAT</div>
+    <div class="swatch" style="background:var(--red);color:#fff">DANGER</div>
+    <div class="swatch" style="background:var(--pink);color:#fff">POLICY</div>
+    <div class="swatch" style="background:var(--purple);color:#fff">INTEL</div>
+    <div class="swatch" style="background:var(--blue);color:#fff">DATA</div>
+    <div class="swatch" style="background:var(--teal);color:#000">CYBER</div>
+    <div class="swatch" style="background:#1a1a1a;color:#444;border:1px solid #2a2a2a">VOID</div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="foot-brand">SIGNAL <span>//</span></div>
+      <div class="foot-sub">AI · POLICY · GEOPOLITICS · WARFARE</div>
+    </div>
+    <div class="foot-info">
+      <div class="foot-line">ISSUE 07 — MAY 30, 2026</div>
+      <div class="foot-line">LOVE DEATH + ROBOTS AESTHETIC</div>
+      <div class="foot-line">AI-POWERED TEMPLATE</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// UTILITY
+// ─────────────────────────────────────────────
+function resize(canvas){
+  canvas.width = canvas.offsetWidth * Math.min(window.devicePixelRatio||1,2);
+  canvas.height = canvas.offsetHeight * Math.min(window.devicePixelRatio||1,2);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(Math.min(window.devicePixelRatio||1,2),Math.min(window.devicePixelRatio||1,2));
+  return ctx;
+}
+const W=(c)=>c.offsetWidth, H=(c)=>c.offsetHeight;
+
+// ─────────────────────────────────────────────
+// HERO BACKGROUND — particle web
+// ─────────────────────────────────────────────
+const hc = document.getElementById('heroCanvas');
+let hCtx;
+const COLORS=['#F5C518','#E8620A','#C0392B','#00C9A7','#1A6DFF','#7B2FBE'];
+const hp=[];
+function initHero(){
+  hCtx=resize(hc);
+  hp.length=0;
+  const n=Math.min(120,Math.floor(W(hc)*H(hc)/4000));
+  for(let i=0;i<n;i++) hp.push({
+    x:Math.random()*W(hc),y:Math.random()*H(hc),
+    vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.4,
+    s:Math.random()*1.5+.5,
+    col:COLORS[Math.floor(Math.random()*COLORS.length)],
+    a:Math.random()*.5+.1,
+    type:Math.random()>.75?'d':'p'
+  });
+}
+function drawMiniDrone(ctx,x,y,sz,a,col){
+  ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=col;ctx.lineWidth=.8;
+  ctx.beginPath();ctx.moveTo(x-sz,y-sz);ctx.lineTo(x+sz,y+sz);
+  ctx.moveTo(x+sz,y-sz);ctx.lineTo(x-sz,y+sz);ctx.stroke();
+  ctx.beginPath();
+  [[x-sz,y-sz],[x+sz,y-sz],[x-sz,y+sz],[x+sz,y+sz]].forEach(([cx,cy])=>{
+    ctx.moveTo(cx+sz*.5,cy);ctx.arc(cx,cy,sz*.5,0,Math.PI*2);
+  });
+  ctx.strokeStyle=col.replace(')',',0.3)').replace('rgb','rgba');
+  ctx.lineWidth=.5;ctx.stroke();ctx.restore();
+}
+let ht=0;
+function animHero(){
+  if(!hCtx){requestAnimationFrame(animHero);return;}
+  hCtx.clearRect(0,0,W(hc),H(hc));
+  // bg gradient
+  const g=hCtx.createRadialGradient(W(hc)*.25,H(hc)*.3,0,W(hc)*.5,H(hc)*.5,W(hc));
+  g.addColorStop(0,'#1a0800');g.addColorStop(.5,'#050208');g.addColorStop(1,'#020104');
+  hCtx.fillStyle=g;hCtx.fillRect(0,0,W(hc),H(hc));
+  ht+=.008;
+  hp.forEach((p,i)=>{
+    p.x+=p.vx+Math.sin(ht+i*.1)*.15;
+    p.y+=p.vy+Math.cos(ht*.7+i*.13)*.1;
+    if(p.x<0)p.x=W(hc);if(p.x>W(hc))p.x=0;
+    if(p.y<0)p.y=H(hc);if(p.y>H(hc))p.y=0;
+    const al=p.a*(0.5+0.5*Math.sin(ht*.6+i));
+    if(p.type==='d'){drawMiniDrone(hCtx,p.x,p.y,p.s*3,al,p.col);}
+    else{
+      hCtx.beginPath();hCtx.arc(p.x,p.y,p.s*.4,0,Math.PI*2);
+      hCtx.fillStyle=p.col;hCtx.globalAlpha=al*.5;hCtx.fill();hCtx.globalAlpha=1;
+    }
+    // connections
+    for(let j=i+1;j<hp.length;j++){
+      const q=hp[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<70){
+        hCtx.beginPath();hCtx.moveTo(p.x,p.y);hCtx.lineTo(q.x,q.y);
+        hCtx.strokeStyle=p.col;hCtx.globalAlpha=(1-d/70)*.06;hCtx.lineWidth=.5;hCtx.stroke();hCtx.globalAlpha=1;
+      }
+    }
+  });
+  requestAnimationFrame(animHero);
+}
+initHero();window.addEventListener('resize',initHero);animHero();
+
+// ─────────────────────────────────────────────
+// HERO CHAR STRIP — soldiers silhouette march
+// ─────────────────────────────────────────────
+const cs = document.getElementById('charStrip');
+let csCtx;
+function initCharStrip(){csCtx=resize(cs);}
+initCharStrip();
+window.addEventListener('resize',initCharStrip);
+
+function drawSoldier(ctx,x,y,h,t,col,alpha){
+  ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle=col;ctx.strokeStyle=col;
+  const u=h/10; // unit
+  // legs walk
+  const lk=Math.sin(t)*0.4;
+  // body
+  ctx.beginPath();
+  ctx.rect(x-u*1.2,y-h*.55,u*2.4,h*.35); // torso
+  ctx.fill();
+  // head
+  ctx.beginPath();ctx.arc(x,y-h*.65,u*1.2,0,Math.PI*2);ctx.fill();
+  // helmet bump
+  ctx.beginPath();ctx.ellipse(x,y-h*.78,u*1.4,u*.7,0,Math.PI,0);ctx.fill();
+  // legs
+  ctx.lineWidth=u*1.8;ctx.lineCap='round';
+  // left leg
+  ctx.beginPath();ctx.moveTo(x-u*.6,y-h*.2);
+  ctx.lineTo(x-u*.6+Math.sin(lk)*u*1.5,y+h*.15);
+  ctx.lineTo(x-u*.6+Math.sin(lk)*u*1.5+Math.sin(-lk)*u*1.2,y+h*.35);ctx.stroke();
+  // right leg
+  ctx.beginPath();ctx.moveTo(x+u*.6,y-h*.2);
+  ctx.lineTo(x+u*.6+Math.sin(-lk)*u*1.5,y+h*.15);
+  ctx.lineTo(x+u*.6+Math.sin(-lk)*u*1.5+Math.sin(lk)*u*1.2,y+h*.35);ctx.stroke();
+  // arms
+  ctx.lineWidth=u*1.3;
+  ctx.beginPath();ctx.moveTo(x-u*1.2,y-h*.5);
+  ctx.lineTo(x-u*2.2,y-h*.35+Math.sin(-lk)*u*1.5);ctx.stroke();
+  // gun arm
+  ctx.beginPath();ctx.moveTo(x+u*1.2,y-h*.5);
+  ctx.lineTo(x+u*3,y-h*.4);ctx.stroke();
+  // gun barrel
+  ctx.lineWidth=u*.8;
+  ctx.beginPath();ctx.moveTo(x+u*2.8,y-h*.42);ctx.lineTo(x+u*4.5,y-h*.42);ctx.stroke();
+  ctx.restore();
+}
+
+function drawDroneChar(ctx,x,y,sz,t,col,alpha){
+  ctx.save();ctx.globalAlpha=alpha;
+  const hover=Math.sin(t*1.5)*sz*.15;
+  ctx.strokeStyle=col;ctx.fillStyle=col;
+  ctx.lineWidth=sz*.08;
+  // arms
+  ctx.beginPath();
+  ctx.moveTo(x-sz,y+hover-sz);ctx.lineTo(x+sz,y+hover+sz);
+  ctx.moveTo(x+sz,y+hover-sz);ctx.lineTo(x-sz,y+hover+sz);ctx.stroke();
+  // rotors
+  [[x-sz,y+hover-sz],[x+sz,y+hover-sz],[x-sz,y+hover+sz],[x+sz,y+hover+sz]].forEach(([cx,cy])=>{
+    ctx.save();ctx.strokeStyle=col;ctx.globalAlpha=alpha*.7;ctx.lineWidth=sz*.06;
+    ctx.beginPath();ctx.ellipse(cx,cy,sz*.7,sz*.2,t*3,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+    ctx.beginPath();ctx.arc(cx,cy,sz*.18,0,Math.PI*2);ctx.fill();
+  });
+  // body
+  ctx.beginPath();ctx.arc(x,y+hover,sz*.35,0,Math.PI*2);ctx.fill();
+  // camera eye
+  ctx.fillStyle='#070707';ctx.beginPath();ctx.arc(x,y+hover+sz*.15,sz*.15,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+let cst=0;
+const SOLDIERS=[];
+function initSoldiers(){
+  SOLDIERS.length=0;
+  const n=Math.max(5,Math.floor(W(cs)/55));
+  for(let i=0;i<n;i++){
+    SOLDIERS.push({
+      x:Math.random()*W(cs)*1.5-W(cs)*.25,
+      spd:.4+Math.random()*.4,
+      h:H(cs)*.72+Math.random()*H(cs)*.1,
+      phase:Math.random()*Math.PI*2,
+      col:Math.random()>.5?'#1a1a1a':'#222',
+      alpha:.7+Math.random()*.3
+    });
+  }
+}
+initSoldiers();
+window.addEventListener('resize',()=>{initCharStrip();initSoldiers();});
+
+function animCharStrip(){
+  if(!csCtx){requestAnimationFrame(animCharStrip);return;}
+  const w=W(cs),h=H(cs);
+  csCtx.clearRect(0,0,w,h);
+  // ground
+  const gg=csCtx.createLinearGradient(0,h*.55,0,h);
+  gg.addColorStop(0,'rgba(0,0,0,0)');gg.addColorStop(1,'rgba(0,0,0,.85)');
+  csCtx.fillStyle=gg;csCtx.fillRect(0,h*.4,w,h*.6);
+  cst+=.016;
+  SOLDIERS.forEach(s=>{
+    s.x+=s.spd;if(s.x>w+60)s.x=-60;
+    const ht=s.h;const ground=h*.78;
+    drawSoldier(csCtx,s.x,ground,ht,cst+s.phase,s.col,s.alpha);
+  });
+  // fog at top
+  const fg=csCtx.createLinearGradient(0,0,0,h*.45);
+  fg.addColorStop(0,'rgba(5,2,3,1)');fg.addColorStop(1,'rgba(5,2,3,0)');
+  csCtx.fillStyle=fg;csCtx.fillRect(0,0,w,h*.5);
+  requestAnimationFrame(animCharStrip);
+}
+animCharStrip();
+
+// ─────────────────────────────────────────────
+// DRONE SWARM PANEL — Fig 01
+// ─────────────────────────────────────────────
+const dc=document.getElementById('droneCanvas');
+let dCtx;const swarm=[];let swarmCX,swarmCY;
+function initDrone(){
+  dCtx=resize(dc);
+  swarmCX=W(dc)*.5;swarmCY=H(dc)*.5;
+  swarm.length=0;
+  const n=Math.min(100,Math.floor(W(dc)*H(dc)/2500));
+  for(let i=0;i<n;i++) swarm.push({
+    x:swarmCX+(Math.random()-.5)*200,y:swarmCY+(Math.random()-.5)*150,
+    vx:0,vy:0,tx:0,ty:0,
+    sz:Math.random()*5+3,ph:Math.random()*Math.PI*2,
+    spd:.003+Math.random()*.006,
+    col:COLORS[Math.floor(Math.random()*3)] // yellow/orange/red range
+  });
+}
+initDrone();window.addEventListener('resize',initDrone);
+document.getElementById('dronePanel')?.addEventListener('click',e=>{
+  const r=dc.getBoundingClientRect();
+  swarmCX=e.clientX-r.left;swarmCY=e.clientY-r.top;
+});
+dc.parentElement.addEventListener('click',e=>{
+  const r=dc.getBoundingClientRect();
+  swarmCX=e.clientX-r.left;swarmCY=e.clientY-r.top;
+});
+let dt=0;
+function animDrone(){
+  if(!dCtx){requestAnimationFrame(animDrone);return;}
+  const w=W(dc),h=H(dc);
+  dCtx.clearRect(0,0,w,h);dCtx.fillStyle='#030202';dCtx.fillRect(0,0,w,h);
+  dt+=.01;
+  swarm.forEach((d,i)=>{
+    const t2=dt*d.spd+d.ph;
+    const r=50+40*Math.sin(dt*.15+i*.4);
+    d.tx=swarmCX+Math.cos(t2+i*.45)*r+Math.sin(dt*.25+i)*.55*r;
+    d.ty=swarmCY+Math.sin(t2+i*.35)*r*.55+Math.cos(dt*.18+i*.6)*.4*r;
+    d.vx+=(d.tx-d.x)*.045;d.vy+=(d.ty-d.y)*.045;
+    d.vx*=.86;d.vy*=.86;d.x+=d.vx;d.y+=d.vy;
+    const spd2=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
+    const al=.2+.6*Math.min(spd2/3,1);
+    drawMiniDrone(dCtx,d.x,d.y,d.sz,al,d.col);
+    // links
+    const next=swarm[(i+5)%swarm.length];
+    const dx2=d.x-next.x,dy2=d.y-next.y,dist=Math.sqrt(dx2*dx2+dy2*dy2);
+    if(dist<55){
+      dCtx.beginPath();dCtx.moveTo(d.x,d.y);dCtx.lineTo(next.x,next.y);
+      dCtx.strokeStyle=`rgba(245,197,24,${(1-dist/55)*.12})`;dCtx.lineWidth=.5;dCtx.stroke();
+    }
+  });
+  // reticle
+  dCtx.save();dCtx.globalAlpha=.25;dCtx.strokeStyle='#F5C518';dCtx.lineWidth=1;
+  dCtx.setLineDash([4,8]);
+  dCtx.beginPath();dCtx.arc(swarmCX,swarmCY,25+8*Math.sin(dt*2),0,Math.PI*2);dCtx.stroke();
+  dCtx.setLineDash([]);
+  dCtx.beginPath();
+  dCtx.moveTo(swarmCX-45,swarmCY);dCtx.lineTo(swarmCX-18,swarmCY);
+  dCtx.moveTo(swarmCX+18,swarmCY);dCtx.lineTo(swarmCX+45,swarmCY);
+  dCtx.moveTo(swarmCX,swarmCY-45);dCtx.lineTo(swarmCX,swarmCY-18);
+  dCtx.moveTo(swarmCX,swarmCY+18);dCtx.lineTo(swarmCX,swarmCY+45);
+  dCtx.stroke();dCtx.restore();
+  requestAnimationFrame(animDrone);
+}
+animDrone();
+
+// ─────────────────────────────────────────────
+// SOLDIER PANEL — Fig 02  (LDR marching scene)
+// ─────────────────────────────────────────────
+const sc=document.getElementById('soldierCanvas');
+let sCtx;const soldiers2=[];
+function initSoldierPanel(){
+  sCtx=resize(sc);soldiers2.length=0;
+  const n=Math.max(6,Math.floor(W(sc)/60));
+  for(let i=0;i<n;i++) soldiers2.push({
+    x:(i/n)*W(sc)*1.2-W(sc)*.1,
+    spd:.5+Math.random()*.3,
+    h:H(sc)*.55+Math.random()*H(sc)*.1,
+    ph:i*.3+Math.random()*.5,
+    layer:Math.floor(Math.random()*3),
+  });
+}
+initSoldierPanel();window.addEventListener('resize',initSoldierPanel);
+
+const LAYER_COLS=['#2a2a2a','#1e1e1e','#131313'];
+const LAYER_Y=[.75,.82,.88];
+const LAYER_SCALE=[1,.85,.7];
+let st2=0;
+
+function animSoldierPanel(){
+  if(!sCtx){requestAnimationFrame(animSoldierPanel);return;}
+  const w=W(sc),h=H(sc);
+  sCtx.clearRect(0,0,w,h);
+  // background glow
+  const bg=sCtx.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,'#030305');bg.addColorStop(.6,'#060308');bg.addColorStop(1,'#0a0205');
+  sCtx.fillStyle=bg;sCtx.fillRect(0,0,w,h);
+  // distant explosions / light pulses
+  for(let i=0;i<3;i++){
+    const ex=w*(0.2+i*0.3);const ey=h*0.4;
+    const pulse=Math.max(0,Math.sin(st2*1.2+i*2.1));
+    if(pulse>.6){
+      const eg=sCtx.createRadialGradient(ex,ey,0,ex,ey,h*.25*pulse);
+      eg.addColorStop(0,`rgba(232,98,10,${pulse*.3})`);
+      eg.addColorStop(.4,`rgba(192,57,43,${pulse*.1})`);
+      eg.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle=eg;sCtx.fillRect(0,0,w,h);
+    }
+  }
+  // ground layers
+  for(let layer=2;layer>=0;layer--){
+    const ground=h*LAYER_Y[layer];
+    sCtx.fillStyle=LAYER_COLS[layer];
+    sCtx.fillRect(0,ground+2,w,h);
+    // soldiers on this layer
+    soldiers2.filter(s=>s.layer===layer).forEach(s=>{
+      s.x+=s.spd*LAYER_SCALE[layer];
+      if(s.x>w+80)s.x=-80;
+      const ht=s.h*LAYER_SCALE[layer];
+      const al=0.5+0.3*LAYER_SCALE[layer];
+      drawSoldier(sCtx,s.x,ground,ht,st2+s.ph,'#0d0d0d',al);
+    });
+  }
+  // atmospheric haze
+  const haze=sCtx.createLinearGradient(0,0,w,0);
+  haze.addColorStop(0,'rgba(3,3,5,.5)');haze.addColorStop(.2,'rgba(0,0,0,0)');
+  haze.addColorStop(.8,'rgba(0,0,0,0)');haze.addColorStop(1,'rgba(3,3,5,.5)');
+  sCtx.fillStyle=haze;sCtx.fillRect(0,0,w,h);
+  st2+=.012;
+  requestAnimationFrame(animSoldierPanel);
+}
+animSoldierPanel();
+
+// ─────────────────────────────────────────────
+// CIRCUIT/GLOBE PANEL — Fig 03
+// ─────────────────────────────────────────────
+const cc=document.getElementById('circuitCanvas');
+let cCtx2;
+const nodes=[
+  {x:.1,y:.35,label:'US WEST',sz:16,col:'#F5C518'},
+  {x:.2,y:.55,label:'US EAST',sz:13,col:'#F5C518'},
+  {x:.34,y:.32,label:'EU',sz:11,col:'#1A6DFF'},
+  {x:.4,y:.42,label:'UK',sz:8,col:'#7B2FBE'},
+  {x:.67,y:.28,label:'CHINA',sz:15,col:'#C0392B'},
+  {x:.73,y:.48,label:'JP/KR',sz:9,col:'#00C9A7'},
+  {x:.58,y:.55,label:'INDIA',sz:8,col:'#E8620A'},
+  {x:.43,y:.65,label:'GULF',sz:7,col:'#E8620A'},
+  {x:.27,y:.68,label:'AFRICA',sz:5,col:'#333'},
+  {x:.52,y:.18,label:'RU',sz:10,col:'#C0392B'},
+  {x:.15,y:.7,label:'LATAM',sz:6,col:'#333'},
+];
+const edges=[[0,1],[0,2],[0,5],[1,2],[2,3],[2,4],[2,6],[3,4],[4,5],[4,6],[4,9],[5,6],[0,4],[1,4],[6,7],[7,3],[9,3],[0,9]];
+const pulses=edges.map(()=>({t:Math.random(),spd:.003+Math.random()*.005}));
+function initCircuit(){cCtx2=resize(cc);}
+initCircuit();window.addEventListener('resize',initCircuit);
+let ct2=0;
+function animCircuit(){
+  if(!cCtx2){requestAnimationFrame(animCircuit);return;}
+  const w=W(cc),h=H(cc);
+  cCtx2.clearRect(0,0,w,h);cCtx2.fillStyle='#030303';cCtx2.fillRect(0,0,w,h);
+  ct2+=.015;
+  edges.forEach((e,i)=>{
+    const a=nodes[e[0]],b=nodes[e[1]];
+    const ax=a.x*w,ay=a.y*h,bx=b.x*w,by=b.y*h;
+    const isCN=a.col==='#C0392B'||b.col==='#C0392B';
+    const isUS=a.col==='#F5C518'||b.col==='#F5C518';
+    cCtx2.beginPath();cCtx2.moveTo(ax,ay);cCtx2.lineTo(bx,by);
+    cCtx2.strokeStyle=isCN?'rgba(192,57,43,.18)':isUS?'rgba(245,197,24,.13)':'rgba(80,80,80,.08)';
+    cCtx2.lineWidth=.8;cCtx2.stroke();
+    const p=pulses[i];p.t+=p.spd;if(p.t>1)p.t=0;
+    const px=ax+(bx-ax)*p.t,py=ay+(by-ay)*p.t;
+    cCtx2.beginPath();cCtx2.arc(px,py,2,0,Math.PI*2);
+    cCtx2.fillStyle=isCN?'rgba(192,57,43,.9)':isUS?'rgba(245,197,24,.9)':'rgba(0,201,167,.8)';
+    cCtx2.fill();
+  });
+  nodes.forEach((n,i)=>{
+    const x=n.x*w,y=n.y*h;
+    const pulse=.5+.5*Math.sin(ct2+i*.9);
+    cCtx2.beginPath();cCtx2.arc(x,y,n.sz+4+pulse*3,0,Math.PI*2);
+    cCtx2.fillStyle=n.col+'18';cCtx2.fill();
+    cCtx2.beginPath();cCtx2.arc(x,y,n.sz,0,Math.PI*2);
+    cCtx2.fillStyle=n.col+'dd';cCtx2.fill();
+    cCtx2.strokeStyle='rgba(255,255,255,.08)';cCtx2.lineWidth=.5;cCtx2.stroke();
+    cCtx2.fillStyle='#777';
+    const fs=Math.max(7,Math.min(9,n.sz*.7));
+    cCtx2.font=`${fs}px 'Share Tech Mono',monospace`;
+    cCtx2.textAlign='center';cCtx2.fillText(n.label,x,y+n.sz+10);
+  });
+  // legend
+  cCtx2.font="8px 'Share Tech Mono',monospace";cCtx2.textAlign='left';
+  cCtx2.fillStyle='#F5C518';cCtx2.fillText('● US/ALLIED',12,h-22);
+  cCtx2.fillStyle='#C0392B';cCtx2.fillText('● CHINA/RU',12,h-10);
+  cCtx2.fillStyle='#00C9A7';cCtx2.fillText('● NEUTRAL',W(cc)*.5,h-10);
+  requestAnimationFrame(animCircuit);
+}
+animCircuit();
+
+// ─────────────────────────────────────────────
+// DRONE CHAR PANEL — Fig 04 (operator + swarms)
+// ─────────────────────────────────────────────
+const dcc=document.getElementById('droneCharCanvas');
+let dcCtx;const miniDrones=[];
+function initDroneChar(){
+  dcCtx=resize(dcc);miniDrones.length=0;
+  const n=Math.min(30,Math.max(15,Math.floor(W(dcc)/25)));
+  for(let i=0;i<n;i++) miniDrones.push({
+    ox:Math.random()*W(dcc),oy:Math.random()*H(dcc)*.6+H(dcc)*.05,
+    ph:Math.random()*Math.PI*2,r:Math.random()*50+20,
+    spd:.008+Math.random()*.015,
+    sz:Math.random()*6+4,
+    col:COLORS[Math.floor(Math.random()*COLORS.length)]
+  });
+}
+initDroneChar();window.addEventListener('resize',initDroneChar);
+let dct=0;
+function animDroneChar(){
+  if(!dcCtx){requestAnimationFrame(animDroneChar);return;}
+  const w=W(dcc),h=H(dcc);
+  dcCtx.clearRect(0,0,w,h);
+  const bg2=dcCtx.createLinearGradient(0,0,0,h);
+  bg2.addColorStop(0,'#050204');bg2.addColorStop(1,'#0a0408');
+  dcCtx.fillStyle=bg2;dcCtx.fillRect(0,0,w,h);
+  dct+=.012;
+  // operator figures on ground
+  const ground=h*.82;
+  const nOps=Math.max(2,Math.floor(w/180));
+  for(let i=0;i<nOps;i++){
+    const ox=w*(i+1)/(nOps+1);
+    // operator has tablet/device (arms out)
+    dcCtx.save();dcCtx.fillStyle='#1a1a1a';dcCtx.strokeStyle='#1a1a1a';
+    const oh=h*.4;const ou=oh/10;
+    dcCtx.fillRect(ox-ou*1.2,ground-oh*.55,ou*2.4,oh*.35);
+    dcCtx.beginPath();dcCtx.arc(ox,ground-oh*.65,ou*1.2,0,Math.PI*2);dcCtx.fill();
+    dcCtx.beginPath();dcCtx.ellipse(ox,ground-oh*.78,ou*1.4,ou*.7,0,Math.PI,0);dcCtx.fill();
+    // arms with tablet
+    dcCtx.lineWidth=ou*1.5;dcCtx.lineCap='round';
+    dcCtx.beginPath();dcCtx.moveTo(ox-ou*1.2,ground-oh*.5);dcCtx.lineTo(ox-ou*3,ground-oh*.4);dcCtx.stroke();
+    dcCtx.beginPath();dcCtx.moveTo(ox+ou*1.2,ground-oh*.5);dcCtx.lineTo(ox+ou*3,ground-oh*.4);dcCtx.stroke();
+    // tablet glow
+    const tg=dcCtx.createRadialGradient(ox,ground-oh*.4,0,ox,ground-oh*.4,ou*4);
+    tg.addColorStop(0,'rgba(0,201,167,.4)');tg.addColorStop(1,'rgba(0,0,0,0)');
+    dcCtx.fillStyle=tg;dcCtx.beginPath();dcCtx.arc(ox,ground-oh*.4,ou*4,0,Math.PI*2);dcCtx.fill();
+    dcCtx.fillStyle='#0d2420';dcCtx.strokeStyle='#00C9A7';dcCtx.lineWidth=.5;
+    dcCtx.fillRect(ox-ou*2.5,ground-oh*.52,ou*5,ou*2.5);dcCtx.strokeRect(ox-ou*2.5,ground-oh*.52,ou*5,ou*2.5);
+    // legs static
+    dcCtx.strokeStyle='#1a1a1a';dcCtx.lineWidth=ou*1.8;
+    dcCtx.beginPath();dcCtx.moveTo(ox-ou*.6,ground-oh*.2);dcCtx.lineTo(ox-ou*.6,ground+oh*.15);dcCtx.lineTo(ox-ou*.6,ground+oh*.35);dcCtx.stroke();
+    dcCtx.beginPath();dcCtx.moveTo(ox+ou*.6,ground-oh*.2);dcCtx.lineTo(ox+ou*.6,ground+oh*.15);dcCtx.lineTo(ox+ou*.6,ground+oh*.35);dcCtx.stroke();
+    dcCtx.restore();
+    // signal lines from tablet to drones
+    miniDrones.filter((_,mi)=>mi%nOps===i).forEach(md=>{
+      const dx2=md.ox+Math.cos(md.ph+dct*md.spd*100)*md.r;
+      const dy2=md.oy+Math.sin(md.ph+dct*md.spd*100)*md.r;
+      dcCtx.beginPath();dcCtx.moveTo(ox,ground-oh*.4);dcCtx.lineTo(dx2,dy2);
+      dcCtx.strokeStyle='rgba(0,201,167,.06)';dcCtx.lineWidth=.5;dcCtx.setLineDash([3,8]);dcCtx.stroke();dcCtx.setLineDash([]);
+    });
+  }
+  // drones
+  miniDrones.forEach(md=>{
+    const x=md.ox+Math.cos(md.ph+dct*md.spd*100)*md.r;
+    const y=md.oy+Math.sin(md.ph+dct*md.spd*100)*md.r;
+    drawDroneChar(dcCtx,x,y,md.sz,dct,md.col,.8);
+  });
+  // ground
+  const fg2=dcCtx.createLinearGradient(0,ground,0,h);
+  fg2.addColorStop(0,'rgba(0,0,0,0)');fg2.addColorStop(1,'rgba(5,2,4,.9)');
+  dcCtx.fillStyle=fg2;dcCtx.fillRect(0,ground,w,h-ground);
+  requestAnimationFrame(animDroneChar);
+}
+animDroneChar();
+
+// ─────────────────────────────────────────────
+// GAP ANALYSIS PANEL — Fig 05
+// ─────────────────────────────────────────────
+const gc=document.getElementById('gapCanvas');
+let gCtx;
+const DOMAINS=['Autonomous Weapons','AI Surveillance','Deepfake Warfare','Cyber-AI Ops','Supply Chain AI','Nuclear AI Risk'];
+const COVERAGE=[.08,.22,.12,.28,.18,.04];
+const THREAT=[.92,.76,.82,.84,.62,.96];
+const DCOLS=['#F5C518','#E8620A','#FF2D78','#1A6DFF','#7B2FBE','#C0392B'];
+function initGap(){gCtx=resize(gc);}
+initGap();window.addEventListener('resize',initGap);
+let gt=0;
+function animGap(){
+  if(!gCtx){requestAnimationFrame(animGap);return;}
+  const w=W(gc),h=H(gc);
+  gCtx.clearRect(0,0,w,h);gCtx.fillStyle='#030303';gCtx.fillRect(0,0,w,h);
+  gt+=.01;
+  const lw=Math.min(w*.3,150);
+  const barH=Math.min((h-55)/DOMAINS.length-6,30);
+  const startX=lw+14,startY=36,maxW=w-startX-60;
+  gCtx.font=`bold 8px 'Share Tech Mono',monospace`;
+  gCtx.fillStyle='#00C9A7';gCtx.textAlign='left';
+  gCtx.fillText('// POLICY COVERAGE (▓) vs THREAT LEVEL (░) — LIVE',10,18);
+  DOMAINS.forEach((dom,i)=>{
+    const y=startY+i*(barH+7);
+    const cov=COVERAGE[i],thr=THREAT[i];
+    const col=DCOLS[i];
+    const pulse=.5+.5*Math.sin(gt+i);
+    // threat bar
+    gCtx.fillStyle=col+'22';gCtx.fillRect(startX,y,thr*maxW,barH);
+    gCtx.fillStyle=col+(Math.floor(pulse*40+40).toString(16));
+    gCtx.fillRect(startX+thr*maxW-2,y,2,barH);
+    // coverage
+    gCtx.fillStyle=col+'cc';gCtx.fillRect(startX,y+barH*.2,cov*maxW,barH*.6);
+    // gap label
+    const gap=Math.round((thr-cov)*100);
+    gCtx.fillStyle=col;gCtx.font=`bold 8px 'Share Tech Mono',monospace`;gCtx.textAlign='left';
+    gCtx.fillText(`GAP:${gap}%`,startX+thr*maxW+5,y+barH*.65);
+    // domain
+    gCtx.fillStyle='#555';gCtx.font=`${Math.min(9,barH*.35)}px 'Share Tech Mono',monospace`;gCtx.textAlign='right';
+    gCtx.fillText(dom.toUpperCase(),lw+5,y+barH*.65);
+  });
+  gCtx.font="8px 'Share Tech Mono',monospace";gCtx.textAlign='left';
+  gCtx.fillStyle='#F5C518';gCtx.fillText('▓ POLICY',10,h-14);
+  gCtx.fillStyle='#C0392B';gCtx.fillText('░ THREAT',10,h-4);
+  requestAnimationFrame(animGap);
+}
+animGap();
+
+// ─────────────────────────────────────────────
+// GHOST / REAPER PANEL — Fig 06 (LD+R style)
+// ─────────────────────────────────────────────
+const ghc=document.getElementById('ghostCanvas');
+let ghCtx;
+function initGhost(){ghCtx=resize(ghc);}
+initGhost();window.addEventListener('resize',initGhost);
+
+function drawReaper(ctx,x,y,h,t){
+  const u=h/12;
+  ctx.save();
+  // robe/cloak — flowing
+  const sway=Math.sin(t*.8)*u*.8;
+  ctx.fillStyle='rgba(15,5,20,0.9)';
+  ctx.beginPath();
+  ctx.moveTo(x-u*3+sway,y+h*.35);
+  ctx.quadraticCurveTo(x-u*4+sway,y,x-u*1.5,y-h*.2);
+  ctx.lineTo(x+u*1.5,y-h*.2);
+  ctx.quadraticCurveTo(x+u*4-sway,y,x+u*3-sway,y+h*.35);
+  ctx.closePath();ctx.fill();
+  // hood
+  ctx.beginPath();ctx.arc(x,y-h*.28,u*2.2,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x,y-h*.22,u*2.6,u*1.4,0,Math.PI,0);ctx.fill();
+  // glowing eyes
+  const eyeGlow=.4+.4*Math.sin(t*2);
+  ctx.fillStyle=`rgba(192,57,43,${eyeGlow})`;
+  ctx.beginPath();ctx.ellipse(x-u*.7,y-h*.28,u*.4,u*.25,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x+u*.7,y-h*.28,u*.4,u*.25,0,0,Math.PI*2);ctx.fill();
+  // scythe
+  ctx.strokeStyle='rgba(80,80,90,0.8)';ctx.lineWidth=u*.35;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x+u*1.5,y-h*.15);ctx.lineTo(x+u*5,y-h*.5);ctx.stroke();
+  // blade
+  ctx.strokeStyle=`rgba(180,190,200,0.6)`;ctx.lineWidth=u*.2;
+  ctx.beginPath();ctx.arc(x+u*5,y-h*.6,u*2.5,-Math.PI*.1,Math.PI*.6,true);ctx.stroke();
+  // glowing outline
+  const grd=ctx.createRadialGradient(x,y-h*.1,0,x,y-h*.1,h*.3);
+  grd.addColorStop(0,'rgba(123,47,190,0.08)');grd.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y-h*.1,h*.3,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function drawLawBook(ctx,x,y,w2,h2,t){
+  ctx.save();
+  ctx.fillStyle='#1a0f00';ctx.strokeStyle='#3d2800';ctx.lineWidth=1;
+  ctx.fillRect(x,y,w2,h2);ctx.strokeRect(x,y,w2,h2);
+  // cover text
+  ctx.fillStyle='rgba(245,197,24,.3)';
+  ctx.font=`bold ${h2*.15}px 'Bebas Neue',sans-serif`;ctx.textAlign='center';
+  ctx.fillText('INTERNATIONAL',x+w2*.5,y+h2*.3);
+  ctx.fillText('HUMANITARIAN',x+w2*.5,y+h2*.5);
+  ctx.fillText('LAW',x+w2*.5,y+h2*.7);
+  // crack
+  ctx.strokeStyle=`rgba(192,57,43,${.4+.3*Math.sin(t)})`;ctx.lineWidth=.8;
+  ctx.beginPath();ctx.moveTo(x+w2*.3,y);ctx.lineTo(x+w2*.45,y+h2*.6);ctx.lineTo(x+w2*.6,y+h2);ctx.stroke();
+  ctx.restore();
+}
+
+let ght=0;
+function animGhost(){
+  if(!ghCtx){requestAnimationFrame(animGhost);return;}
+  const w=W(ghc),h=H(ghc);
+  ghCtx.clearRect(0,0,w,h);
+  const bg3=ghCtx.createLinearGradient(0,0,0,h);
+  bg3.addColorStop(0,'#020105');bg3.addColorStop(.7,'#05020a');bg3.addColorStop(1,'#080310');
+  ghCtx.fillStyle=bg3;ghCtx.fillRect(0,0,w,h);
+  ght+=.013;
+  // moon / halo
+  const moonX=w*.15,moonY=h*.2;
+  const mg=ghCtx.createRadialGradient(moonX,moonY,0,moonX,moonY,h*.25);
+  mg.addColorStop(0,'rgba(123,47,190,.12)');mg.addColorStop(1,'rgba(0,0,0,0)');
+  ghCtx.fillStyle=mg;ghCtx.fillRect(0,0,w,h);
+  ghCtx.fillStyle='rgba(180,150,220,.12)';ghCtx.beginPath();ghCtx.arc(moonX,moonY,h*.06,0,Math.PI*2);ghCtx.fill();
+  // floating text fragments (glitch legal text)
+  const frags=['Art.36','IHL','LOAC','§4.2','AWS','LAWS','N/A'];
+  frags.forEach((f,i)=>{
+    const fx=w*(.1+i*.12+.03*Math.sin(ght*0.7+i));
+    const fy=h*(.15+.05*Math.cos(ght*0.5+i*1.3));
+    const fa=.1+.1*Math.sin(ght+i);
+    ghCtx.fillStyle=`rgba(123,47,190,${fa})`;
+    ghCtx.font=`${8+i%3}px 'Share Tech Mono',monospace`;ghCtx.textAlign='left';
+    ghCtx.fillText(f,fx,fy);
+  });
+  // multiple reapers at different scales/positions
+  const nRep=Math.max(1,Math.floor(w/200));
+  for(let i=0;i<nRep;i++){
+    const rx=w*(i+1)/(nRep+1);
+    const rh=h*(.6+i*.05);
+    const ground=h*.85;
+    drawReaper(ghCtx,rx,ground,rh,ght+i*1.5);
+  }
+  // law books scattered on ground
+  const nbk=Math.max(2,Math.floor(w/140));
+  for(let i=0;i<nbk;i++){
+    const bx=w*(i/(nbk))+w*.05;const by=h*.83;
+    const bw=Math.min(55,w*.1),bh=bw*.65;
+    drawLawBook(ghCtx,bx,by,bw,bh,ght+i);
+  }
+  // ground
+  const gg2=ghCtx.createLinearGradient(0,h*.75,0,h);
+  gg2.addColorStop(0,'rgba(0,0,0,0)');gg2.addColorStop(1,'rgba(5,2,10,.95)');
+  ghCtx.fillStyle=gg2;ghCtx.fillRect(0,h*.75,w,h*.25);
+  // fog wisp
+  const fw=ghCtx.createLinearGradient(0,0,w,0);
+  fw.addColorStop(0,'rgba(7,4,14,.6)');fw.addColorStop(.15,'rgba(0,0,0,0)');
+  fw.addColorStop(.85,'rgba(0,0,0,0)');fw.addColorStop(1,'rgba(7,4,14,.6)');
+  ghCtx.fillStyle=fw;ghCtx.fillRect(0,0,w,h);
+  requestAnimationFrame(animGhost);
+}
+animGhost();
+
+// ─────────────────────────────────────────────
+// OBSERVE & RESIZE all panels on window resize
+// ─────────────────────────────────────────────
+const panels=[
+  {canvas:dc,init:initDrone},
+  {canvas:sc,init:initSoldierPanel},
+  {canvas:cc,init:initCircuit},
+  {canvas:dcc,init:initDroneChar},
+  {canvas:gc,init:initGap},
+  {canvas:ghc,init:initGhost},
+];
+const ro=new ResizeObserver(()=>{
+  panels.forEach(p=>{if(p.canvas.offsetWidth>0)p.init();});
+});
+panels.forEach(p=>ro.observe(p.canvas.parentElement||p.canvas));
+</script>
+</body>
+</html>
