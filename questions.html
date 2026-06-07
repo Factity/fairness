@@ -24,29 +24,36 @@
             color: var(--white);
             font-family: 'Cormorant Garamond', Georgia, serif;
             overflow-x: hidden;
-            cursor: none;
             line-height: 1.6;
         }
 
-        /* ── CURSOR ── */
-        #cursor {
-            position: fixed; width: 12px; height: 12px;
-            background: var(--red); border-radius: 50%;
-            pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
-            mix-blend-mode: difference;
+        /* ── CURSOR — desktop only ── */
+        #cursor, #cursor-trail {
+            display: none;
         }
-        #cursor-trail {
-            position: fixed; width: 40px; height: 40px;
-            border: 1px solid rgba(192,0,26,0.4); border-radius: 50%;
-            pointer-events: none; z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: all 0.18s ease;
+        @media (pointer: fine) {
+            body { cursor: none; }
+            #cursor {
+                display: block;
+                position: fixed; width: 12px; height: 12px;
+                background: var(--red); border-radius: 50%;
+                pointer-events: none; z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: width 0.2s, height 0.2s;
+                mix-blend-mode: difference;
+            }
+            #cursor-trail {
+                display: block;
+                position: fixed; width: 40px; height: 40px;
+                border: 1px solid rgba(192,0,26,0.4); border-radius: 50%;
+                pointer-events: none; z-index: 9998;
+                transform: translate(-50%, -50%);
+                transition: all 0.18s ease;
+            }
+            body:has(a:hover) #cursor,
+            body:has(button:hover) #cursor,
+            body:has(.character-card:hover) #cursor { width: 24px; height: 24px; }
         }
-        body:has(a:hover) #cursor,
-        body:has(button:hover) #cursor,
-        body:has(.character-card:hover) #cursor { width: 24px; height: 24px; }
 
         /* ── OVERLAYS ── */
         #scanlines {
@@ -85,6 +92,7 @@
             background: none; border: 1px solid rgba(192,0,26,0.4); color: var(--white);
             font-size: 1.5rem; cursor: pointer; padding: 0.3rem 0.7rem; border-radius: 2px;
             font-family: 'Share Tech Mono', monospace; transition: all 0.3s; line-height: 1;
+            touch-action: manipulation;
         }
         #hamburger:hover { border-color: var(--red); color: var(--red); }
         #mobile-menu {
@@ -98,6 +106,7 @@
             letter-spacing: 0.2em; color: var(--grey-light); text-decoration: none;
             padding: 0.7rem 1.5rem; transition: all 0.3s;
             border-left: 2px solid transparent; text-transform: uppercase; display: block;
+            touch-action: manipulation;
         }
         #mobile-menu a:hover, #mobile-menu a.active {
             color: var(--red); border-left-color: var(--red);
@@ -184,10 +193,20 @@
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 40px rgba(192,0,26,0.15);
         }
-        .character-card canvas {
-            width: 100% !important; height: 160px !important;
-            background: #000; border-radius: 3px; margin-bottom: 0.8rem;
+        /* Canvas container — fixed height, full width */
+        .card-canvas-wrap {
+            width: 100%;
+            height: 160px;
+            background: #000;
+            border-radius: 3px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .card-canvas-wrap canvas {
             display: block;
+            width: 100% !important;
+            height: 100% !important;
         }
         .character-card h3 {
             font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
@@ -250,6 +269,7 @@
             text-align: left; width: 100%; padding: 0.6rem 0;
             display: flex; align-items: flex-start; gap: 0.8rem;
             transition: color 0.3s; line-height: 1.5;
+            touch-action: manipulation;
         }
         .qa-toggle:hover { color: var(--red); }
         .qa-toggle .qa-icon {
@@ -387,6 +407,7 @@
             font-size: 1.1rem; line-height: 1;
             transition: all 0.25s; margin-left: 1rem; margin-top: 0.2rem;
             font-family: 'Share Tech Mono', monospace;
+            touch-action: manipulation;
         }
         #modal-close:hover {
             border-color: var(--red); color: var(--red);
@@ -397,6 +418,7 @@
             flex: 1;
             scrollbar-width: thin;
             scrollbar-color: var(--red-dim) transparent;
+            -webkit-overflow-scrolling: touch;
         }
         #modal-body::-webkit-scrollbar { width: 4px; }
         #modal-body::-webkit-scrollbar-track { background: transparent; }
@@ -415,6 +437,7 @@
             text-align: left; width: 100%; padding: 0.75rem 0;
             display: flex; align-items: flex-start; gap: 0.7rem;
             transition: color 0.25s; line-height: 1.45;
+            touch-action: manipulation;
         }
         .modal-qa-toggle:hover { color: var(--red); }
         .modal-qa-icon {
@@ -454,12 +477,13 @@
             #sidebar-nav { display: none; }
             #mobile-nav { display: block; }
             #hero, section, #visual-index { margin-left: 0; }
-            #hero { padding: 5vw 5vw 8vw; min-height: 90vh; }
+            #hero { padding: 5vw 5vw 8vw; padding-top: calc(60px + 5vw); min-height: 90vh; }
             .section-inner { padding: 6vh 5vw; }
             .hero-title { font-size: clamp(2.5rem, 10vw, 6rem); }
             .stats-row { gap: 1rem; }
         }
         @media (max-width: 600px) {
+            #hero { padding-top: calc(56px + 4vw); }
             #modal-header { padding: 1.2rem 1.2rem 0.8rem; }
             #modal-body { padding: 1rem 1.2rem 1.5rem; }
             #modal-footer { padding: 0.6rem 1.2rem; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
@@ -473,6 +497,11 @@
             .pull-quote { font-size: 1rem; padding-left: 1rem; margin: 2rem 0; }
             .qa-block { padding-left: 0.8rem; margin: 1.2rem 0; }
             .qa-answer { padding-left: 1.2rem; }
+            .cards-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+            .character-card { padding: 0.75rem; }
+            .character-card h3 { font-size: 0.55rem; }
+            .character-card p { font-size: 0.7rem; }
+            .card-canvas-wrap { height: 120px; }
         }
     </style>
 </head>
@@ -993,19 +1022,22 @@
 
 <script>
 // ──────────────────────────────────────────────────────
-// CURSOR
+// CURSOR — desktop (pointer: fine) only
 // ──────────────────────────────────────────────────────
-const cursor = document.getElementById('cursor');
-const cursorTrail = document.getElementById('cursor-trail');
-let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-});
-setInterval(() => {
-    tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
-    cursorTrail.style.left = tx + 'px'; cursorTrail.style.top = ty + 'px';
-}, 16);
+const isPointerFine = window.matchMedia('(pointer: fine)').matches;
+if (isPointerFine) {
+    const cursor = document.getElementById('cursor');
+    const cursorTrail = document.getElementById('cursor-trail');
+    let mx = 0, my = 0, tx = 0, ty = 0;
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    });
+    setInterval(() => {
+        tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
+        cursorTrail.style.left = tx + 'px'; cursorTrail.style.top = ty + 'px';
+    }, 16);
+}
 
 // ──────────────────────────────────────────────────────
 // MOBILE MENU
@@ -1121,483 +1153,510 @@ cardDefs.forEach(c => {
     el.className = 'character-card';
     el.dataset.chapterId = c.id;
     el.style.cursor = 'pointer';
-    el.innerHTML = `<canvas id="${c.id}-canvas"></canvas><h3>${c.title}</h3><p>${c.desc}</p>`;
+    // Use a wrapper div for the canvas so we can measure it reliably
+    el.innerHTML = `
+        <div class="card-canvas-wrap" id="${c.id}-wrap">
+            <canvas id="${c.id}-canvas"></canvas>
+        </div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+    `;
     grid.appendChild(el);
 });
 
-function makeScene(id, camZ = 5) {
-    const canvas = document.getElementById(id);
-    if (!canvas) return null;
-    const w = canvas.parentElement.clientWidth - 32 || 260;
-    const h = 160;
+// Wait for layout to settle before initialising Three.js scenes
+// Uses requestAnimationFrame + a small delay to ensure canvases are painted
+function makeScene(id, camZ) {
+    const wrap = document.getElementById(id + '-wrap');
+    const canvas = document.getElementById(id + '-canvas');
+    if (!wrap || !canvas) return null;
+
+    const w = wrap.clientWidth || 260;
+    const h = wrap.clientHeight || 160;
+
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(w, h);
     renderer.setClearColor(0x000000, 0);
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
     camera.position.z = camZ;
+
+    // Handle resize
+    const ro = new ResizeObserver(() => {
+        const nw = wrap.clientWidth;
+        const nh = wrap.clientHeight;
+        if (nw > 0 && nh > 0) {
+            renderer.setSize(nw, nh);
+            camera.aspect = nw / nh;
+            camera.updateProjectionMatrix();
+        }
+    });
+    ro.observe(wrap);
+
     return { renderer, scene, camera };
 }
 
-// 1. Fundamentals — nested wireframe cubes
-(function() {
-    const s = makeScene('fundamentals-canvas', 6);
-    if (!s) return;
-    const mat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xc0001a });
-    const outer = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), mat);
-    const inner = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2),
-        new THREE.MeshBasicMaterial({ wireframe: true, color: 0x660010 }));
-    s.scene.add(outer, inner);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.008;
-        outer.rotation.x = t; outer.rotation.y = t * 1.3;
-        inner.rotation.x = -t * 0.7; inner.rotation.y = t;
-        s.renderer.render(s.scene, s.camera);
+function initScenes() {
+    // 1. Fundamentals — nested wireframe cubes
+    (function() {
+        const s = makeScene('fundamentals', 6);
+        if (!s) return;
+        const mat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xc0001a });
+        const outer = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), mat);
+        const inner = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2),
+            new THREE.MeshBasicMaterial({ wireframe: true, color: 0x660010 }));
+        s.scene.add(outer, inner);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.008;
+            outer.rotation.x = t; outer.rotation.y = t * 1.3;
+            inner.rotation.x = -t * 0.7; inner.rotation.y = t;
+            s.renderer.render(s.scene, s.camera);
+        })();
     })();
-})();
 
-// 2. Ethics — oscillating balance beam with weighted spheres
-(function() {
-    const s = makeScene('ethics-canvas', 5);
-    if (!s) return;
-    const pivot = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.05, 0.12, 0.4, 8),
-        new THREE.MeshBasicMaterial({ color: 0x888888 })
-    );
-    pivot.position.y = -0.5;
-    const beam = new THREE.Mesh(
-        new THREE.BoxGeometry(3, 0.08, 0.08),
-        new THREE.MeshBasicMaterial({ color: 0xaaaaaa })
-    );
-    beam.position.y = 0.3;
-    const leftSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(0.35, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
-    );
-    const rightSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(0.28, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
-    );
-    s.scene.add(pivot, beam, leftSphere, rightSphere);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.025;
-        beam.rotation.z = Math.sin(t) * 0.25;
-        const angle = beam.rotation.z;
-        leftSphere.position.set(-1.4 * Math.cos(angle), 0.3 - 1.4 * Math.sin(angle) - 0.4, 0);
-        rightSphere.position.set(1.4 * Math.cos(angle), 0.3 + 1.4 * Math.sin(angle) - 0.4, 0);
-        leftSphere.rotation.y += 0.02;
-        rightSphere.rotation.y -= 0.02;
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 3. Catastrophic — cracking icosphere
-(function() {
-    const s = makeScene('catastrophic-canvas', 5);
-    if (!s) return;
-    const geo = new THREE.IcosahedronGeometry(1.5, 1);
-    const outer = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true }));
-    const inner = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(0.8, 0),
-        new THREE.MeshBasicMaterial({ color: 0x330008, wireframe: true })
-    );
-    s.scene.add(outer, inner);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.01;
-        outer.rotation.y += 0.012;
-        outer.rotation.x = Math.sin(t * 0.7) * 0.3;
-        inner.rotation.y -= 0.008;
-        inner.rotation.x += 0.006;
-        const pulse = 1 + Math.sin(t * 2) * 0.04;
-        outer.scale.setScalar(pulse);
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 4. Agents — orbiting particle swarm
-(function() {
-    const s = makeScene('agents-canvas', 7);
-    if (!s) return;
-    const count = 30;
-    const agents = [];
-    for (let i = 0; i < count; i++) {
-        const m = new THREE.Mesh(
-            new THREE.SphereGeometry(0.06, 6, 6),
-            new THREE.MeshBasicMaterial({ color: 0xc0001a })
+    // 2. Ethics — oscillating balance beam with weighted spheres
+    (function() {
+        const s = makeScene('ethics', 5);
+        if (!s) return;
+        const pivot = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.05, 0.12, 0.4, 8),
+            new THREE.MeshBasicMaterial({ color: 0x888888 })
         );
-        const angle = (i / count) * Math.PI * 2;
-        const radius = 1.2 + (i % 3) * 0.5;
-        const yOff = (Math.random() - 0.5) * 1.5;
-        agents.push({ mesh: m, angle, radius, speed: 0.008 + Math.random() * 0.015, yOff });
-        s.scene.add(m);
-    }
-    // Central core
-    const core = new THREE.Mesh(
-        new THREE.SphereGeometry(0.3, 12, 12),
-        new THREE.MeshBasicMaterial({ color: 0x440010, wireframe: true })
-    );
-    s.scene.add(core);
-    (function a() {
-        requestAnimationFrame(a);
-        agents.forEach(ag => {
-            ag.angle += ag.speed;
-            ag.mesh.position.set(
-                Math.cos(ag.angle) * ag.radius,
-                ag.yOff + Math.sin(ag.angle * 0.5) * 0.3,
-                Math.sin(ag.angle) * ag.radius
+        pivot.position.y = -0.5;
+        const beam = new THREE.Mesh(
+            new THREE.BoxGeometry(3, 0.08, 0.08),
+            new THREE.MeshBasicMaterial({ color: 0xaaaaaa })
+        );
+        beam.position.y = 0.3;
+        const leftSphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.35, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
+        );
+        const rightSphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.28, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+        );
+        s.scene.add(pivot, beam, leftSphere, rightSphere);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.025;
+            beam.rotation.z = Math.sin(t) * 0.25;
+            const angle = beam.rotation.z;
+            leftSphere.position.set(-1.4 * Math.cos(angle), 0.3 - 1.4 * Math.sin(angle) - 0.4, 0);
+            rightSphere.position.set(1.4 * Math.cos(angle), 0.3 + 1.4 * Math.sin(angle) - 0.4, 0);
+            leftSphere.rotation.y += 0.02;
+            rightSphere.rotation.y -= 0.02;
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 3. Catastrophic — cracking icosphere
+    (function() {
+        const s = makeScene('catastrophic', 5);
+        if (!s) return;
+        const geo = new THREE.IcosahedronGeometry(1.5, 1);
+        const outer = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true }));
+        const inner = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(0.8, 0),
+            new THREE.MeshBasicMaterial({ color: 0x330008, wireframe: true })
+        );
+        s.scene.add(outer, inner);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.01;
+            outer.rotation.y += 0.012;
+            outer.rotation.x = Math.sin(t * 0.7) * 0.3;
+            inner.rotation.y -= 0.008;
+            inner.rotation.x += 0.006;
+            const pulse = 1 + Math.sin(t * 2) * 0.04;
+            outer.scale.setScalar(pulse);
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 4. Agents — orbiting particle swarm
+    (function() {
+        const s = makeScene('agents', 7);
+        if (!s) return;
+        const count = 30;
+        const agents = [];
+        for (let i = 0; i < count; i++) {
+            const m = new THREE.Mesh(
+                new THREE.SphereGeometry(0.06, 6, 6),
+                new THREE.MeshBasicMaterial({ color: 0xc0001a })
             );
-        });
-        core.rotation.y += 0.02;
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 5. Persuasion — concentric rings (echo chamber)
-(function() {
-    const s = makeScene('persuasion-canvas', 6);
-    if (!s) return;
-    const rings = [];
-    for (let i = 0; i < 5; i++) {
-        const r = new THREE.Mesh(
-            new THREE.TorusGeometry(0.4 + i * 0.35, 0.03, 8, 40),
-            new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xc0001a : 0x440010 })
+            const angle = (i / count) * Math.PI * 2;
+            const radius = 1.2 + (i % 3) * 0.5;
+            const yOff = (Math.random() - 0.5) * 1.5;
+            agents.push({ mesh: m, angle, radius, speed: 0.008 + Math.random() * 0.015, yOff });
+            s.scene.add(m);
+        }
+        const core = new THREE.Mesh(
+            new THREE.SphereGeometry(0.3, 12, 12),
+            new THREE.MeshBasicMaterial({ color: 0x440010, wireframe: true })
         );
-        r.rotation.x = Math.PI / 2 + (i * 0.15);
-        rings.push(r);
-        s.scene.add(r);
-    }
-    const center = new THREE.Mesh(
-        new THREE.SphereGeometry(0.18, 12, 12),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-    );
-    s.scene.add(center);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.012;
-        rings.forEach((r, i) => {
-            r.rotation.z = t * (0.3 + i * 0.1) * (i % 2 === 0 ? 1 : -1);
-            r.rotation.x = Math.PI / 2 + Math.sin(t * 0.5 + i) * 0.2;
-            const sc = 1 + Math.sin(t * 1.5 + i) * 0.04;
-            r.scale.setScalar(sc);
-        });
-        center.scale.setScalar(1 + Math.sin(t * 3) * 0.1);
-        s.renderer.render(s.scene, s.camera);
+        s.scene.add(core);
+        (function a() {
+            requestAnimationFrame(a);
+            agents.forEach(ag => {
+                ag.angle += ag.speed;
+                ag.mesh.position.set(
+                    Math.cos(ag.angle) * ag.radius,
+                    ag.yOff + Math.sin(ag.angle * 0.5) * 0.3,
+                    Math.sin(ag.angle) * ag.radius
+                );
+            });
+            core.rotation.y += 0.02;
+            s.renderer.render(s.scene, s.camera);
+        })();
     })();
-})();
 
-// 6. Arms Race — two opposing pyramids converging
-(function() {
-    const s = makeScene('arms-race-canvas', 7);
-    if (!s) return;
-    const matRed = new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true });
-    const matWhite = new THREE.MeshBasicMaterial({ color: 0x888888, wireframe: true });
-    const pA = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matRed);
-    const pB = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matWhite);
-    pA.position.x = -1.5; pB.position.x = 1.5;
-    pA.rotation.z = Math.PI / 2; pB.rotation.z = -Math.PI / 2;
-    s.scene.add(pA, pB);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.015;
-        const dist = 1.5 + Math.abs(Math.sin(t)) * 0.8;
-        pA.position.x = -dist; pB.position.x = dist;
-        pA.rotation.y += 0.02; pB.rotation.y -= 0.02;
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 7. Governance — three rising pillars
-(function() {
-    const s = makeScene('governance-canvas', 7);
-    if (!s) return;
-    const pillars = [];
-    const positions = [-1.2, 0, 1.2];
-    const heights = [1.8, 2.5, 1.5];
-    positions.forEach((x, i) => {
-        const p = new THREE.Mesh(
-            new THREE.BoxGeometry(0.4, heights[i], 0.4),
-            new THREE.MeshBasicMaterial({ color: i === 1 ? 0xc0001a : 0x444444, wireframe: true })
-        );
-        p.position.set(x, heights[i] / 2 - 1.2, 0);
-        pillars.push({ mesh: p, targetY: heights[i] / 2 - 1.2 });
-        s.scene.add(p);
-    });
-    // Capstone
-    const cap = new THREE.Mesh(
-        new THREE.BoxGeometry(3, 0.12, 0.5),
-        new THREE.MeshBasicMaterial({ color: 0xc0001a })
-    );
-    cap.position.y = 1.1;
-    s.scene.add(cap);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.01;
-        pillars.forEach((p, i) => {
-            p.mesh.rotation.y += 0.005 * (i % 2 === 0 ? 1 : -1);
-            p.mesh.position.y = p.targetY + Math.sin(t + i * 1.2) * 0.05;
-        });
-        cap.position.y = 1.1 + Math.sin(t * 0.8) * 0.05;
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 8. Corporate — stacked tower of boxes
-(function() {
-    const s = makeScene('corporate-canvas', 7);
-    if (!s) return;
-    const floors = [];
-    for (let i = 0; i < 6; i++) {
-        const w = 1.8 - i * 0.2;
-        const f = new THREE.Mesh(
-            new THREE.BoxGeometry(w, 0.3, w),
-            new THREE.MeshBasicMaterial({
-                color: i === 0 ? 0xc0001a : (i % 2 === 0 ? 0x444444 : 0x222222),
-                wireframe: true
-            })
-        );
-        f.position.y = i * 0.38 - 1;
-        floors.push(f);
-        s.scene.add(f);
-    }
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.008;
-        floors.forEach((f, i) => {
-            f.rotation.y = t * 0.3 * (i % 2 === 0 ? 1 : -1) + i * 0.1;
-            f.position.y = (i * 0.38 - 1) + Math.sin(t + i * 0.5) * 0.02;
-        });
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 9. Economics — exponential spiral curve
-(function() {
-    const s = makeScene('economics-canvas', 7);
-    if (!s) return;
-    const points = [];
-    for (let i = 0; i < 80; i++) {
-        const t = i / 79;
-        points.push(new THREE.Vector3(
-            (t - 0.5) * 4,
-            Math.pow(t * 2.5, 2) - 1.2,
-            0
-        ));
-    }
-    const curve = new THREE.CatmullRomCurve3(points);
-    const geo = new THREE.TubeGeometry(curve, 60, 0.04, 6, false);
-    const line = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a }));
-    s.scene.add(line);
-    // Rising dots
-    const dots = [];
-    for (let i = 0; i < 8; i++) {
-        const d = new THREE.Mesh(
-            new THREE.SphereGeometry(0.07, 6, 6),
+    // 5. Persuasion — concentric rings (echo chamber)
+    (function() {
+        const s = makeScene('persuasion', 6);
+        if (!s) return;
+        const rings = [];
+        for (let i = 0; i < 5; i++) {
+            const r = new THREE.Mesh(
+                new THREE.TorusGeometry(0.4 + i * 0.35, 0.03, 8, 40),
+                new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xc0001a : 0x440010 })
+            );
+            r.rotation.x = Math.PI / 2 + (i * 0.15);
+            rings.push(r);
+            s.scene.add(r);
+        }
+        const center = new THREE.Mesh(
+            new THREE.SphereGeometry(0.18, 12, 12),
             new THREE.MeshBasicMaterial({ color: 0xffffff })
         );
-        dots.push({ mesh: d, progress: i / 8 });
-        s.scene.add(d);
-    }
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.005;
-        dots.forEach((d, i) => {
-            const prog = ((d.progress + t * 0.1) % 1);
-            const pt = curve.getPoint(prog);
-            d.mesh.position.copy(pt);
+        s.scene.add(center);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.012;
+            rings.forEach((r, i) => {
+                r.rotation.z = t * (0.3 + i * 0.1) * (i % 2 === 0 ? 1 : -1);
+                r.rotation.x = Math.PI / 2 + Math.sin(t * 0.5 + i) * 0.2;
+                const sc = 1 + Math.sin(t * 1.5 + i) * 0.04;
+                r.scale.setScalar(sc);
+            });
+            center.scale.setScalar(1 + Math.sin(t * 3) * 0.1);
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 6. Arms Race — two opposing pyramids converging
+    (function() {
+        const s = makeScene('arms-race', 7);
+        if (!s) return;
+        const matRed = new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true });
+        const matWhite = new THREE.MeshBasicMaterial({ color: 0x888888, wireframe: true });
+        const pA = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matRed);
+        const pB = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matWhite);
+        pA.position.x = -1.5; pB.position.x = 1.5;
+        pA.rotation.z = Math.PI / 2; pB.rotation.z = -Math.PI / 2;
+        s.scene.add(pA, pB);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.015;
+            const dist = 1.5 + Math.abs(Math.sin(t)) * 0.8;
+            pA.position.x = -dist; pB.position.x = dist;
+            pA.rotation.y += 0.02; pB.rotation.y -= 0.02;
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 7. Governance — three rising pillars
+    (function() {
+        const s = makeScene('governance', 7);
+        if (!s) return;
+        const pillars = [];
+        const positions = [-1.2, 0, 1.2];
+        const heights = [1.8, 2.5, 1.5];
+        positions.forEach((x, i) => {
+            const p = new THREE.Mesh(
+                new THREE.BoxGeometry(0.4, heights[i], 0.4),
+                new THREE.MeshBasicMaterial({ color: i === 1 ? 0xc0001a : 0x444444, wireframe: true })
+            );
+            p.position.set(x, heights[i] / 2 - 1.2, 0);
+            pillars.push({ mesh: p, targetY: heights[i] / 2 - 1.2 });
+            s.scene.add(p);
         });
-        line.rotation.y = Math.sin(t * 0.5) * 0.15;
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 10. Interpretability — wireframe lens / magnifying structure
-(function() {
-    const s = makeScene('interpretability-canvas', 6);
-    if (!s) return;
-    // Outer ring
-    const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(1.3, 0.08, 8, 40),
-        new THREE.MeshBasicMaterial({ color: 0xc0001a })
-    );
-    // Inner grid
-    const gridLines = new THREE.Group();
-    for (let i = -3; i <= 3; i++) {
-        const hGeo = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(-1.2, i * 0.35, 0),
-            new THREE.Vector3(1.2, i * 0.35, 0)
-        ]);
-        const vGeo = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(i * 0.35, -1.2, 0),
-            new THREE.Vector3(i * 0.35, 1.2, 0)
-        ]);
-        const mat = new THREE.LineBasicMaterial({ color: 0x330008 });
-        gridLines.add(new THREE.Line(hGeo, mat));
-        gridLines.add(new THREE.Line(vGeo, mat));
-    }
-    // Center highlight
-    const center = new THREE.Mesh(
-        new THREE.SphereGeometry(0.2, 12, 12),
-        new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
-    );
-    s.scene.add(ring, gridLines, center);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.01;
-        ring.rotation.z = t * 0.3;
-        gridLines.rotation.z = Math.sin(t * 0.4) * 0.05;
-        center.scale.setScalar(1 + Math.sin(t * 2) * 0.15);
-        s.renderer.render(s.scene, s.camera);
-    })();
-})();
-
-// 11. Red Teaming — probing spikes
-(function() {
-    const s = makeScene('red-teaming-canvas', 6);
-    if (!s) return;
-    // Target sphere
-    const target = new THREE.Mesh(
-        new THREE.SphereGeometry(0.9, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true })
-    );
-    s.scene.add(target);
-    // Attack vectors
-    const spikes = [];
-    for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2;
-        const spike = new THREE.Mesh(
-            new THREE.ConeGeometry(0.06, 0.5, 4),
+        const cap = new THREE.Mesh(
+            new THREE.BoxGeometry(3, 0.12, 0.5),
             new THREE.MeshBasicMaterial({ color: 0xc0001a })
         );
-        spike.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, 0);
-        spike.lookAt(0, 0, 0);
-        spike.rotateX(Math.PI / 2);
-        spikes.push({ mesh: spike, angle, baseRadius: 1.8 });
-        s.scene.add(spike);
-    }
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.02;
-        spikes.forEach((sp, i) => {
-            const radius = sp.baseRadius - Math.abs(Math.sin(t * 1.5 + i * 0.8)) * 0.6;
-            sp.mesh.position.set(Math.cos(sp.angle) * radius, Math.sin(sp.angle) * radius, 0);
-        });
-        target.rotation.y += 0.01;
-        target.rotation.x += 0.005;
-        s.renderer.render(s.scene, s.camera);
+        cap.position.y = 1.1;
+        s.scene.add(cap);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.01;
+            pillars.forEach((p, i) => {
+                p.mesh.rotation.y += 0.005 * (i % 2 === 0 ? 1 : -1);
+                p.mesh.position.y = p.targetY + Math.sin(t + i * 1.2) * 0.05;
+            });
+            cap.position.y = 1.1 + Math.sin(t * 0.8) * 0.05;
+            s.renderer.render(s.scene, s.camera);
+        })();
     })();
-})();
 
-// 12. Swarm — many small nodes with connecting lines
-(function() {
-    const s = makeScene('swarm-canvas', 8);
-    if (!s) return;
-    const nodeCount = 20;
-    const nodes = [];
-    for (let i = 0; i < nodeCount; i++) {
-        const mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(0.08, 5, 5),
-            new THREE.MeshBasicMaterial({ color: i % 3 === 0 ? 0xc0001a : 0x555555 })
+    // 8. Corporate — stacked tower of boxes
+    (function() {
+        const s = makeScene('corporate', 7);
+        if (!s) return;
+        const floors = [];
+        for (let i = 0; i < 6; i++) {
+            const w = 1.8 - i * 0.2;
+            const f = new THREE.Mesh(
+                new THREE.BoxGeometry(w, 0.3, w),
+                new THREE.MeshBasicMaterial({
+                    color: i === 0 ? 0xc0001a : (i % 2 === 0 ? 0x444444 : 0x222222),
+                    wireframe: true
+                })
+            );
+            f.position.y = i * 0.38 - 1;
+            floors.push(f);
+            s.scene.add(f);
+        }
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.008;
+            floors.forEach((f, i) => {
+                f.rotation.y = t * 0.3 * (i % 2 === 0 ? 1 : -1) + i * 0.1;
+                f.position.y = (i * 0.38 - 1) + Math.sin(t + i * 0.5) * 0.02;
+            });
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 9. Economics — exponential spiral curve
+    (function() {
+        const s = makeScene('economics', 7);
+        if (!s) return;
+        const points = [];
+        for (let i = 0; i < 80; i++) {
+            const t = i / 79;
+            points.push(new THREE.Vector3(
+                (t - 0.5) * 4,
+                Math.pow(t * 2.5, 2) - 1.2,
+                0
+            ));
+        }
+        const curve = new THREE.CatmullRomCurve3(points);
+        const geo = new THREE.TubeGeometry(curve, 60, 0.04, 6, false);
+        const line = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a }));
+        s.scene.add(line);
+        const dots = [];
+        for (let i = 0; i < 8; i++) {
+            const d = new THREE.Mesh(
+                new THREE.SphereGeometry(0.07, 6, 6),
+                new THREE.MeshBasicMaterial({ color: 0xffffff })
+            );
+            dots.push({ mesh: d, progress: i / 8 });
+            s.scene.add(d);
+        }
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.005;
+            dots.forEach((d) => {
+                const prog = ((d.progress + t * 0.1) % 1);
+                const pt = curve.getPoint(prog);
+                d.mesh.position.copy(pt);
+            });
+            line.rotation.y = Math.sin(t * 0.5) * 0.15;
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 10. Interpretability — wireframe lens
+    (function() {
+        const s = makeScene('interpretability', 6);
+        if (!s) return;
+        const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(1.3, 0.08, 8, 40),
+            new THREE.MeshBasicMaterial({ color: 0xc0001a })
         );
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.random() * Math.PI;
-        const r = 1 + Math.random() * 1.5;
-        nodes.push({
-            mesh,
-            vx: (Math.random() - 0.5) * 0.015,
-            vy: (Math.random() - 0.5) * 0.015,
-            vz: (Math.random() - 0.5) * 0.015,
-        });
-        mesh.position.set(
-            r * Math.sin(phi) * Math.cos(theta),
-            r * Math.sin(phi) * Math.sin(theta),
-            r * Math.cos(phi)
+        const gridLines = new THREE.Group();
+        for (let i = -3; i <= 3; i++) {
+            const hGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-1.2, i * 0.35, 0),
+                new THREE.Vector3(1.2, i * 0.35, 0)
+            ]);
+            const vGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(i * 0.35, -1.2, 0),
+                new THREE.Vector3(i * 0.35, 1.2, 0)
+            ]);
+            const mat = new THREE.LineBasicMaterial({ color: 0x330008 });
+            gridLines.add(new THREE.Line(hGeo, mat));
+            gridLines.add(new THREE.Line(vGeo, mat));
+        }
+        const center = new THREE.Mesh(
+            new THREE.SphereGeometry(0.2, 12, 12),
+            new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
         );
-        s.scene.add(mesh);
-    }
-    // Connection lines
-    const lineMat = new THREE.LineBasicMaterial({ color: 0x440010, transparent: true, opacity: 0.4 });
-    const lineGroup = new THREE.Group();
-    s.scene.add(lineGroup);
-    (function a() {
-        requestAnimationFrame(a);
-        nodes.forEach(n => {
-            n.mesh.position.x += n.vx;
-            n.mesh.position.y += n.vy;
-            n.mesh.position.z += n.vz;
-            if (Math.abs(n.mesh.position.x) > 2.5) n.vx *= -1;
-            if (Math.abs(n.mesh.position.y) > 2.5) n.vy *= -1;
-            if (Math.abs(n.mesh.position.z) > 2.5) n.vz *= -1;
-        });
-        // Update connection lines
-        while (lineGroup.children.length) lineGroup.remove(lineGroup.children[0]);
+        s.scene.add(ring, gridLines, center);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.01;
+            ring.rotation.z = t * 0.3;
+            gridLines.rotation.z = Math.sin(t * 0.4) * 0.05;
+            center.scale.setScalar(1 + Math.sin(t * 2) * 0.15);
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 11. Red Teaming — probing spikes
+    (function() {
+        const s = makeScene('red-teaming', 6);
+        if (!s) return;
+        const target = new THREE.Mesh(
+            new THREE.SphereGeometry(0.9, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true })
+        );
+        s.scene.add(target);
+        const spikes = [];
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const spike = new THREE.Mesh(
+                new THREE.ConeGeometry(0.06, 0.5, 4),
+                new THREE.MeshBasicMaterial({ color: 0xc0001a })
+            );
+            spike.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, 0);
+            spike.lookAt(0, 0, 0);
+            spike.rotateX(Math.PI / 2);
+            spikes.push({ mesh: spike, angle, baseRadius: 1.8 });
+            s.scene.add(spike);
+        }
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.02;
+            spikes.forEach((sp, i) => {
+                const radius = sp.baseRadius - Math.abs(Math.sin(t * 1.5 + i * 0.8)) * 0.6;
+                sp.mesh.position.set(Math.cos(sp.angle) * radius, Math.sin(sp.angle) * radius, 0);
+            });
+            target.rotation.y += 0.01;
+            target.rotation.x += 0.005;
+            s.renderer.render(s.scene, s.camera);
+        })();
+    })();
+
+    // 12. Swarm — many small nodes with connecting lines
+    (function() {
+        const s = makeScene('swarm', 8);
+        if (!s) return;
+        const nodeCount = 20;
+        const nodes = [];
         for (let i = 0; i < nodeCount; i++) {
-            for (let j = i + 1; j < nodeCount; j++) {
-                const dist = nodes[i].mesh.position.distanceTo(nodes[j].mesh.position);
-                if (dist < 1.5) {
-                    const geo = new THREE.BufferGeometry().setFromPoints([
-                        nodes[i].mesh.position.clone(),
-                        nodes[j].mesh.position.clone()
-                    ]);
-                    lineGroup.add(new THREE.Line(geo, lineMat));
+            const mesh = new THREE.Mesh(
+                new THREE.SphereGeometry(0.08, 5, 5),
+                new THREE.MeshBasicMaterial({ color: i % 3 === 0 ? 0xc0001a : 0x555555 })
+            );
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.random() * Math.PI;
+            const r = 1 + Math.random() * 1.5;
+            nodes.push({
+                mesh,
+                vx: (Math.random() - 0.5) * 0.015,
+                vy: (Math.random() - 0.5) * 0.015,
+                vz: (Math.random() - 0.5) * 0.015,
+            });
+            mesh.position.set(
+                r * Math.sin(phi) * Math.cos(theta),
+                r * Math.sin(phi) * Math.sin(theta),
+                r * Math.cos(phi)
+            );
+            s.scene.add(mesh);
+        }
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x440010, transparent: true, opacity: 0.4 });
+        const lineGroup = new THREE.Group();
+        s.scene.add(lineGroup);
+        (function a() {
+            requestAnimationFrame(a);
+            nodes.forEach(n => {
+                n.mesh.position.x += n.vx;
+                n.mesh.position.y += n.vy;
+                n.mesh.position.z += n.vz;
+                if (Math.abs(n.mesh.position.x) > 2.5) n.vx *= -1;
+                if (Math.abs(n.mesh.position.y) > 2.5) n.vy *= -1;
+                if (Math.abs(n.mesh.position.z) > 2.5) n.vz *= -1;
+            });
+            while (lineGroup.children.length) lineGroup.remove(lineGroup.children[0]);
+            for (let i = 0; i < nodeCount; i++) {
+                for (let j = i + 1; j < nodeCount; j++) {
+                    const dist = nodes[i].mesh.position.distanceTo(nodes[j].mesh.position);
+                    if (dist < 1.5) {
+                        const geo = new THREE.BufferGeometry().setFromPoints([
+                            nodes[i].mesh.position.clone(),
+                            nodes[j].mesh.position.clone()
+                        ]);
+                        lineGroup.add(new THREE.Line(geo, lineMat));
+                    }
                 }
             }
-        }
-        s.renderer.render(s.scene, s.camera);
+            s.renderer.render(s.scene, s.camera);
+        })();
     })();
-})();
 
-// 13. Safety Engineering — interlocking gear mechanism
-(function() {
-    const s = makeScene('safety-engineering-canvas', 6);
-    if (!s) return;
-    function makeGear(teeth, radius, color) {
-        const shape = new THREE.Shape();
-        for (let i = 0; i < teeth; i++) {
-            const a1 = (i / teeth) * Math.PI * 2;
-            const a2 = ((i + 0.4) / teeth) * Math.PI * 2;
-            const a3 = ((i + 0.6) / teeth) * Math.PI * 2;
-            const a4 = ((i + 1) / teeth) * Math.PI * 2;
-            if (i === 0) shape.moveTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
-            else shape.lineTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
-            shape.lineTo(Math.cos(a2) * (radius + 0.2), Math.sin(a2) * (radius + 0.2));
-            shape.lineTo(Math.cos(a3) * (radius + 0.2), Math.sin(a3) * (radius + 0.2));
-            shape.lineTo(Math.cos(a4) * radius, Math.sin(a4) * radius);
+    // 13. Safety Engineering — interlocking gear mechanism
+    (function() {
+        const s = makeScene('safety-engineering', 6);
+        if (!s) return;
+        function makeGear(teeth, radius, color) {
+            const shape = new THREE.Shape();
+            for (let i = 0; i < teeth; i++) {
+                const a1 = (i / teeth) * Math.PI * 2;
+                const a2 = ((i + 0.4) / teeth) * Math.PI * 2;
+                const a3 = ((i + 0.6) / teeth) * Math.PI * 2;
+                const a4 = ((i + 1) / teeth) * Math.PI * 2;
+                if (i === 0) shape.moveTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
+                else shape.lineTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
+                shape.lineTo(Math.cos(a2) * (radius + 0.2), Math.sin(a2) * (radius + 0.2));
+                shape.lineTo(Math.cos(a3) * (radius + 0.2), Math.sin(a3) * (radius + 0.2));
+                shape.lineTo(Math.cos(a4) * radius, Math.sin(a4) * radius);
+            }
+            shape.closePath();
+            const geo = new THREE.ShapeGeometry(shape);
+            return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, wireframe: true }));
         }
-        shape.closePath();
-        const geo = new THREE.ShapeGeometry(shape);
-        return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, wireframe: true }));
-    }
-    const g1 = makeGear(10, 1.0, 0xc0001a);
-    const g2 = makeGear(7, 0.7, 0x888888);
-    const g3 = makeGear(6, 0.6, 0x555555);
-    g1.position.set(0, 0, 0);
-    g2.position.set(1.65, 0.5, 0);
-    g3.position.set(-1.55, -0.4, 0);
-    s.scene.add(g1, g2, g3);
-    let t = 0;
-    (function a() {
-        requestAnimationFrame(a);
-        t += 0.01;
-        g1.rotation.z = t;
-        g2.rotation.z = -t * (10 / 7);
-        g3.rotation.z = -t * (10 / 6);
-        s.renderer.render(s.scene, s.camera);
+        const g1 = makeGear(10, 1.0, 0xc0001a);
+        const g2 = makeGear(7, 0.7, 0x888888);
+        const g3 = makeGear(6, 0.6, 0x555555);
+        g1.position.set(0, 0, 0);
+        g2.position.set(1.65, 0.5, 0);
+        g3.position.set(-1.55, -0.4, 0);
+        s.scene.add(g1, g2, g3);
+        let t = 0;
+        (function a() {
+            requestAnimationFrame(a);
+            t += 0.01;
+            g1.rotation.z = t;
+            g2.rotation.z = -t * (10 / 7);
+            g3.rotation.z = -t * (10 / 6);
+            s.renderer.render(s.scene, s.camera);
+        })();
     })();
-})();
+}
+
+// Delay scene init until after layout is painted
+// Double rAF ensures the DOM has been fully laid out and rendered
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        // Small timeout as extra insurance on slow mobile browsers
+        setTimeout(initScenes, 50);
+    });
+});
 
 // ──────────────────────────────────────────────────────
 // MODAL SYSTEM
@@ -1614,7 +1673,6 @@ function openModal(chapterId) {
     const section = document.getElementById(chapterId);
     if (!section) return;
 
-    // Pull chapter label & title from section
     const label = section.querySelector('.chapter-label');
     const titleEl = section.querySelector('.section-title');
     const dataLineEl = section.querySelector('.data-line');
@@ -1622,7 +1680,6 @@ function openModal(chapterId) {
     modalChapterLabel.textContent = label ? label.textContent.trim() : '';
     modalTitle.innerHTML = titleEl ? titleEl.innerHTML : chapterId;
 
-    // Set scroll link
     modalScrollLink.href = '#' + chapterId;
     modalScrollLink.onclick = (e) => {
         e.preventDefault();
@@ -1632,19 +1689,16 @@ function openModal(chapterId) {
         }, 320);
     };
 
-    // Set data line
     modalDataLine.textContent = dataLineEl ? dataLineEl.textContent.trim() : '';
 
-    // Build Q&A from section
     const qaBlocks = section.querySelectorAll('.qa-block');
     modalBody.innerHTML = '';
 
-    qaBlocks.forEach((block, i) => {
+    qaBlocks.forEach((block) => {
         const qText = block.querySelector('.qa-toggle');
         const aText = block.querySelector('.qa-answer');
         if (!qText || !aText) return;
 
-        // Strip the icon span text from question
         const questionText = Array.from(qText.childNodes)
             .filter(n => n.nodeType === Node.TEXT_NODE)
             .map(n => n.textContent.trim())
@@ -1660,7 +1714,6 @@ function openModal(chapterId) {
         `;
         modalBody.appendChild(div);
 
-        // Accordion logic for modal items
         const btn = div.querySelector('.modal-qa-toggle');
         const ans = div.querySelector('.modal-qa-answer');
         btn.addEventListener('click', () => {
@@ -1677,18 +1730,13 @@ function openModal(chapterId) {
         });
     });
 
-    // If no QA blocks, show a fallback
     if (qaBlocks.length === 0) {
         modalBody.innerHTML = '<p style="color:rgba(232,228,220,0.5);font-style:italic;padding:1rem 0;">No Q&A entries found for this chapter.</p>';
     }
 
-    // Reset scroll
     modalBody.scrollTop = 0;
-
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-
-    // Focus close button for accessibility
     setTimeout(() => modalClose.focus(), 350);
 }
 
@@ -1697,20 +1745,14 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-// Close button
 modalClose.addEventListener('click', closeModal);
-
-// Click outside modal box
 overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeModal();
 });
-
-// Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
 });
 
-// Card clicks → open modal
 document.querySelectorAll('.character-card').forEach(card => {
     card.addEventListener('click', () => {
         const id = card.dataset.chapterId;
@@ -1718,7 +1760,7 @@ document.querySelectorAll('.character-card').forEach(card => {
     });
 });
 
-console.log('%cAI Safety Field Guide — Fully Integrated', 'color:#c0001a;font-size:16px;font-family:monospace');
+console.log('%cAI Safety Field Guide — Mobile Fixed', 'color:#c0001a;font-size:16px;font-family:monospace');
 </script>
 </body>
 </html>
