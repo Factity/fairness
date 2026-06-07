@@ -1,1466 +1,1724 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>UGLY — A World That Wears Its Monsters Smiling</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --black: #000000;
-    --deep: #0a0a0a;
-    --red: #c0001a;
-    --red-dim: #6b000f;
-    --white: #e8e4dc;
-    --grey: #444;
-    --grey-light: #888;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    overflow-x: hidden;
-    cursor: none;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SAFETY — A Field Guide to the Precipice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        :root {
+            --black: #000000;
+            --deep: #0a0a0a;
+            --red: #c0001a;
+            --red-dim: #6b000f;
+            --white: #e8e4dc;
+            --grey: #444;
+            --grey-light: #888;
+            --surface: #0d0d0d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+        }
 
-  /* ── CURSOR ── */
-  #cursor {
-    position: fixed; width: 12px; height: 12px;
-    background: var(--red); border-radius: 50%;
-    pointer-events: none; z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: transform 0.1s ease, background 0.3s, width 0.2s, height 0.2s;
-    mix-blend-mode: difference;
-  }
-  #cursor-trail {
-    position: fixed; width: 40px; height: 40px;
-    border: 1px solid rgba(192,0,26,0.4); border-radius: 50%;
-    pointer-events: none; z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: all 0.18s ease;
-  }
-  body:has(a:hover) #cursor,
-  body:has(button:hover) #cursor { width: 24px; height: 24px; }
+        /* ── CURSOR ── */
+        #cursor {
+            position: fixed; width: 12px; height: 12px;
+            background: var(--red); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            mix-blend-mode: difference;
+        }
+        #cursor-trail {
+            position: fixed; width: 40px; height: 40px;
+            border: 1px solid rgba(192,0,26,0.4); border-radius: 50%;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.18s ease;
+        }
+        body:has(a:hover) #cursor,
+        body:has(button:hover) #cursor,
+        body:has(.character-card:hover) #cursor { width: 24px; height: 24px; }
 
-  /* ── SCANLINE OVERLAY ── */
-  #scanlines {
-    position: fixed; inset: 0; pointer-events: none; z-index: 9992;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 3px,
-      rgba(0,0,0,0.06) 3px,
-      rgba(0,0,0,0.06) 4px
-    );
-    animation: scanMove 8s linear infinite;
-  }
-  @keyframes scanMove {
-    from { background-position: 0 0; }
-    to   { background-position: 0 100px; }
-  }
+        /* ── OVERLAYS ── */
+        #scanlines {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9992;
+            background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);
+            animation: scanMove 8s linear infinite;
+        }
+        @keyframes scanMove { from{background-position:0 0} to{background-position:0 100px} }
+        #vignette {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9991;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+        }
+        body::after {
+            content: ''; position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.45; animation: noiseFlicker 0.08s steps(1) infinite;
+        }
+        @keyframes noiseFlicker { to { opacity: 0.3; } }
 
-  /* ── RED SCAN SWEEP ── */
-  #sweep {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--red), transparent);
-    opacity: 0.25; pointer-events: none; z-index: 9993;
-    animation: sweepDown 6s linear infinite;
-  }
-  @keyframes sweepDown {
-    0%   { top: -2px; opacity: 0; }
-    5%   { opacity: 0.25; }
-    95%  { opacity: 0.25; }
-    100% { top: 100vh; opacity: 0; }
-  }
+        /* ── MOBILE NAV ── */
+        #mobile-nav {
+            display: none; position: fixed; top: 0; left: 0; right: 0;
+            z-index: 10000; background: rgba(0,0,0,0.92);
+            border-bottom: 1px solid rgba(192,0,26,0.3);
+            backdrop-filter: blur(12px);
+        }
+        #mobile-nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.8rem 1.2rem;
+        }
+        #mobile-nav-brand {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+            letter-spacing: 0.3em; color: var(--red); text-transform: uppercase;
+        }
+        #hamburger {
+            background: none; border: 1px solid rgba(192,0,26,0.4); color: var(--white);
+            font-size: 1.5rem; cursor: pointer; padding: 0.3rem 0.7rem; border-radius: 2px;
+            font-family: 'Share Tech Mono', monospace; transition: all 0.3s; line-height: 1;
+        }
+        #hamburger:hover { border-color: var(--red); color: var(--red); }
+        #mobile-menu {
+            display: none; flex-direction: column;
+            border-top: 1px solid rgba(192,0,26,0.2);
+            max-height: 70vh; overflow-y: auto; padding: 0.5rem 0;
+        }
+        #mobile-menu.open { display: flex; }
+        #mobile-menu a {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+            letter-spacing: 0.2em; color: var(--grey-light); text-decoration: none;
+            padding: 0.7rem 1.5rem; transition: all 0.3s;
+            border-left: 2px solid transparent; text-transform: uppercase; display: block;
+        }
+        #mobile-menu a:hover, #mobile-menu a.active {
+            color: var(--red); border-left-color: var(--red);
+            background: rgba(192,0,26,0.05);
+        }
 
-  /* ── VIGNETTE ── */
-  #vignette {
-    position: fixed; inset: 0; pointer-events: none; z-index: 9991;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
-  }
+        /* ── DESKTOP SIDEBAR ── */
+        #sidebar-nav {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 200px;
+            z-index: 10000; background: rgba(0,0,0,0.85);
+            border-right: 1px solid rgba(192,0,26,0.2);
+            padding: 2rem 0; overflow-y: auto;
+            backdrop-filter: blur(8px);
+        }
+        #sidebar-nav h3 {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            letter-spacing: 0.4em; color: var(--red-dim);
+            padding: 0 1.2rem 1rem; text-transform: uppercase;
+        }
+        #sidebar-nav a {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            letter-spacing: 0.18em; color: var(--grey-light); text-decoration: none;
+            padding: 0.45rem 1.2rem; display: block; transition: all 0.3s;
+            border-left: 2px solid transparent; text-transform: uppercase;
+        }
+        #sidebar-nav a:hover, #sidebar-nav a.active {
+            color: var(--red); border-left-color: var(--red);
+            background: rgba(192,0,26,0.06);
+        }
 
-  /* ── NOISE ── */
-  body::after {
-    content: '';
-    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.45; animation: noiseFlicker 0.08s steps(1) infinite;
-  }
-  @keyframes noiseFlicker { to { opacity: 0.3; } }
+        /* ── HERO ── */
+        #hero {
+            position: relative; min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: flex-end; align-items: flex-start;
+            padding: 6vw 8vw; overflow: hidden; margin-left: 200px;
+        }
+        #hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 80% 50%, rgba(192,0,26,0.14) 0%, transparent 65%);
+            z-index: 1; pointer-events: none;
+        }
+        .hero-eyebrow {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+            letter-spacing: 0.4em; color: var(--red); text-transform: uppercase;
+            margin-bottom: 1.5rem; opacity: 0; transform: translateY(20px);
+            animation: fadeUp 1s 0.5s forwards; position: relative; z-index: 2;
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 12vw, 11rem); font-weight: 600;
+            line-height: 0.85; letter-spacing: -0.02em; color: var(--white);
+            opacity: 0; transform: translateY(40px);
+            animation: fadeUp 1.2s 0.8s forwards; position: relative; z-index: 2;
+        }
+        .hero-title em { font-style: italic; color: var(--red); display: block; font-size: 0.55em; }
+        .hero-sub {
+            margin-top: 2rem; font-size: clamp(1rem, 2vw, 1.4rem);
+            font-weight: 300; font-style: italic; color: var(--grey-light);
+            max-width: 500px; line-height: 1.6; opacity: 0; transform: translateY(20px);
+            animation: fadeUp 1s 1.2s forwards; position: relative; z-index: 2;
+        }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { to { opacity: 1; } }
 
-  canvas.scene-bg {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-  }
+        /* ── VISUAL INDEX ── */
+        #visual-index { margin-left: 200px; padding: 8vh 6vw; background: #050505; }
+        #visual-index h2 {
+            text-align: center; margin-bottom: 3rem;
+            font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 300;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .character-card {
+            background: #0a0a0a; border: 1px solid rgba(192,0,26,0.25);
+            padding: 1.2rem; text-align: center;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+            cursor: pointer;
+        }
+        .character-card:hover {
+            border-color: var(--red);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(192,0,26,0.15);
+        }
+        .character-card canvas {
+            width: 100% !important; height: 160px !important;
+            background: #000; border-radius: 3px; margin-bottom: 0.8rem;
+            display: block;
+        }
+        .character-card h3 {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+            letter-spacing: 0.25em; color: var(--white); text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+        .character-card p {
+            font-size: 0.8rem; color: var(--grey-light); font-style: italic;
+        }
 
-  /* ══ HERO ══ */
-  #hero {
-    position: relative; height: 100vh;
-    display: flex; flex-direction: column;
-    justify-content: flex-end; align-items: flex-start;
-    padding: 6vw 8vw; overflow: hidden;
-  }
-  #hero-canvas { position: absolute; inset: 0; z-index: 0; }
-  #hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 80% 50%, rgba(192,0,26,0.14) 0%, transparent 65%);
-    z-index: 1; pointer-events: none;
-  }
+        /* ── SECTIONS ── */
+        section { position: relative; overflow: hidden; min-height: 50vh; margin-left: 200px; }
+        .section-inner { position: relative; z-index: 2; padding: 8vh 6vw; max-width: 900px; }
+        .chapter-label {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+            letter-spacing: 0.5em; color: var(--red-dim); text-transform: uppercase;
+            margin-bottom: 1rem; display: block;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4.5vw, 3.5rem); font-weight: 300;
+            line-height: 1.1; letter-spacing: -0.01em;
+            max-width: 16ch; margin-bottom: 1.5rem;
+        }
+        .section-title strong { font-weight: 600; display: block; color: var(--red); }
+        .section-title em { font-style: italic; }
+        .body-text {
+            font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 300;
+            line-height: 1.9; color: rgba(232,228,220,0.75); max-width: 60ch;
+        }
+        .body-text + .body-text { margin-top: 1.2em; }
+        .divider { width: 60px; height: 2px; background: var(--red); margin: 2rem 0; }
+        .data-line {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+            color: var(--red-dim); letter-spacing: 0.1em; display: block;
+            margin-top: 0.5rem; opacity: 0.6;
+        }
 
-  .hero-eyebrow {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.7rem; letter-spacing: 0.4em; color: var(--red);
-    text-transform: uppercase; margin-bottom: 1.5rem;
-    opacity: 0; transform: translateY(20px);
-    animation: fadeUp 1s 0.5s forwards;
-  }
-  .hero-title {
-    font-size: clamp(5rem,15vw,14rem); font-weight: 600;
-    line-height: 0.85; letter-spacing: -0.02em; color: var(--white);
-    opacity: 0; transform: translateY(40px);
-    animation: fadeUp 1.2s 0.8s forwards; position: relative; z-index: 2;
-  }
-  .hero-title em { font-style: italic; color: var(--red); display: block; }
+        /* ── PULL QUOTE ── */
+        .pull-quote {
+            border-left: 2px solid var(--red); padding-left: 1.5rem;
+            margin: 3rem 0; font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            font-style: italic; font-weight: 300; line-height: 1.4;
+            color: var(--white); max-width: 24ch; position: relative;
+        }
+        .pull-quote::before {
+            content: '"'; position: absolute; left: -0.4rem; top: -0.4rem;
+            font-size: 3rem; color: var(--red); opacity: 0.2; line-height: 1;
+        }
 
-  .hero-sub {
-    margin-top: 2rem;
-    font-size: clamp(1rem,2vw,1.4rem); font-weight: 300; font-style: italic;
-    color: var(--grey-light); max-width: 500px; line-height: 1.6;
-    opacity: 0; transform: translateY(20px);
-    animation: fadeUp 1s 1.2s forwards;
-  }
+        /* ── QA ACCORDION ── */
+        .qa-block {
+            margin: 1.8rem 0; border-left: 1px solid rgba(192,0,26,0.25);
+            padding-left: 1.2rem; transition: border-color 0.3s;
+        }
+        .qa-block:hover { border-left-color: var(--red); }
+        .qa-toggle {
+            background: none; border: none; color: var(--white); cursor: pointer;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(1rem, 1.4vw, 1.25rem); font-weight: 300;
+            text-align: left; width: 100%; padding: 0.6rem 0;
+            display: flex; align-items: flex-start; gap: 0.8rem;
+            transition: color 0.3s; line-height: 1.5;
+        }
+        .qa-toggle:hover { color: var(--red); }
+        .qa-toggle .qa-icon {
+            font-family: 'Share Tech Mono', monospace; color: var(--red);
+            font-size: 0.8rem; flex-shrink: 0; margin-top: 0.2em;
+            transition: transform 0.3s;
+        }
+        .qa-toggle.open .qa-icon { transform: rotate(45deg); }
+        .qa-answer {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s;
+            padding-left: 1.8rem; font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+            color: rgba(232,228,220,0.7); line-height: 1.8;
+        }
+        .qa-answer.open { max-height: 800px; padding-bottom: 0.8rem; }
 
-  /* ── TYPEWRITER COUNTER ── */
-  #hero-counter {
-    position: absolute; top: 2.5rem; right: 8vw;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.65rem; letter-spacing: 0.2em; color: var(--red-dim);
-    opacity: 0; animation: fadeIn 0.5s 2.5s forwards;
-  }
-  #hero-counter span { color: var(--red); }
+        /* ── GLITCH ── */
+        .glitch { position: relative; display: inline-block; }
+        .glitch::before, .glitch::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%;
+        }
+        .glitch::before {
+            animation: glitch1 3s infinite; color: var(--red);
+            clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+        }
+        .glitch::after {
+            animation: glitch2 3s infinite; color: #00c8ff;
+            clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%); opacity: 0.5;
+        }
+        @keyframes glitch1 {
+            0%,95%{transform:translate(0)} 96%{transform:translate(-3px,1px)}
+            97%{transform:translate(3px,-1px)} 98%{transform:translate(-2px,2px)} 100%{transform:translate(0)}
+        }
+        @keyframes glitch2 {
+            0%,94%{transform:translate(0)} 95%{transform:translate(3px,2px)}
+            97%{transform:translate(-3px,-1px)} 100%{transform:translate(0)}
+        }
 
-  /* ── HEARTBEAT MONITOR ── */
-  #heartbeat-container {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 80px; z-index: 3; pointer-events: none;
-    opacity: 0; animation: fadeIn 1s 3s forwards;
-  }
-  #heartbeat-canvas { width: 100%; height: 100%; }
+        /* ── MARQUEE ── */
+        .marquee-strip {
+            overflow: hidden;
+            border-top: 1px solid rgba(192,0,26,0.15);
+            border-bottom: 1px solid rgba(192,0,26,0.15);
+            padding: 0.6rem 0; margin: 2rem 0; white-space: nowrap;
+        }
+        .marquee-inner {
+            display: inline-block; animation: marqueeScroll 25s linear infinite;
+            font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+            letter-spacing: 0.25em; color: var(--red-dim);
+        }
+        @keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-  .scroll-hint {
-    position: absolute; bottom: 3rem; right: 8vw;
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    letter-spacing: 0.3em; color: var(--grey); text-transform: uppercase;
-    writing-mode: vertical-rl; opacity: 0; animation: fadeIn 1s 2s forwards;
-    z-index: 5;
-  }
-  .scroll-hint::after {
-    content: ''; display: block; width: 1px; height: 60px;
-    background: linear-gradient(to bottom, var(--grey), transparent); margin: 1rem auto 0;
-  }
+        /* ── STAT ROW ── */
+        .stats-row {
+            display: flex; gap: 2rem; margin: 2rem 0;
+            border-top: 1px solid rgba(192,0,26,0.2);
+            border-bottom: 1px solid rgba(192,0,26,0.2);
+            padding: 1.5rem 0; flex-wrap: wrap;
+        }
+        .stat-item { flex: 1; min-width: 120px; }
+        .stat-label {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            letter-spacing: 0.3em; color: var(--grey-light);
+            text-transform: uppercase; display: block; margin-bottom: 0.3rem;
+        }
+        .stat-number {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(2rem, 5vw, 4rem); color: var(--red); display: block;
+        }
 
-  /* ══ SECTIONS ══ */
-  section { position: relative; overflow: hidden; min-height: 100vh; }
-  .section-inner { position: relative; z-index: 2; padding: 12vh 10vw; }
-  #masks    { background: var(--black); }
-  #neural   { background: #050505; }
-  #monster  { background: #060000; }
-  #finale   { background: var(--black); min-height: 80vh; }
+        /* ── REVEAL ── */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  .chapter-label {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    letter-spacing: 0.5em; color: var(--red-dim); text-transform: uppercase;
-    margin-bottom: 1.5rem; display: block;
-  }
+        /* ── FINALE ── */
+        #finale { min-height: 60vh; background: #050000; }
+        #finale .section-inner {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            min-height: 60vh; max-width: 700px; margin: 0 auto;
+        }
+        .finale-title {
+            font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--white); line-height: 1; margin-bottom: 1.5rem;
+        }
 
-  /* ── TYPEWRITER HEADING ── */
-  .type-cursor::after {
-    content: '|'; color: var(--red); animation: blink 0.9s step-end infinite;
-  }
-  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+        /* ── MODAL OVERLAY ── */
+        #modal-overlay {
+            position: fixed; inset: 0; z-index: 20000;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        #modal-overlay.open {
+            opacity: 1; pointer-events: all;
+        }
+        #modal-box {
+            position: relative;
+            background: #0a0a0a;
+            border: 1px solid rgba(192,0,26,0.4);
+            width: min(780px, 92vw);
+            max-height: 85vh;
+            display: flex; flex-direction: column;
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.23,1,0.32,1);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(192,0,26,0.1);
+        }
+        #modal-overlay.open #modal-box {
+            transform: translateY(0) scale(1);
+        }
+        #modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            padding: 1.8rem 2rem 1.2rem;
+            border-bottom: 1px solid rgba(192,0,26,0.2);
+            flex-shrink: 0;
+        }
+        #modal-chapter-label {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            letter-spacing: 0.4em; color: var(--red-dim);
+            text-transform: uppercase; display: block; margin-bottom: 0.4rem;
+        }
+        #modal-title {
+            font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 300;
+            line-height: 1.15; color: var(--white); max-width: 22ch;
+        }
+        #modal-title strong { color: var(--red); font-weight: 600; }
+        #modal-close {
+            background: none; border: 1px solid rgba(192,0,26,0.35);
+            color: var(--grey-light); width: 36px; height: 36px;
+            border-radius: 2px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; line-height: 1;
+            transition: all 0.25s; margin-left: 1rem; margin-top: 0.2rem;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        #modal-close:hover {
+            border-color: var(--red); color: var(--red);
+            background: rgba(192,0,26,0.08);
+        }
+        #modal-body {
+            overflow-y: auto; padding: 1.5rem 2rem 2rem;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: var(--red-dim) transparent;
+        }
+        #modal-body::-webkit-scrollbar { width: 4px; }
+        #modal-body::-webkit-scrollbar-track { background: transparent; }
+        #modal-body::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 2px; }
+        .modal-qa-block {
+            margin: 0 0 0.2rem;
+            border-left: 1px solid rgba(192,0,26,0.2);
+            padding-left: 1rem;
+            transition: border-color 0.3s;
+        }
+        .modal-qa-block:hover { border-left-color: var(--red); }
+        .modal-qa-toggle {
+            background: none; border: none; color: var(--white);
+            cursor: pointer; font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(0.95rem, 1.3vw, 1.15rem); font-weight: 300;
+            text-align: left; width: 100%; padding: 0.75rem 0;
+            display: flex; align-items: flex-start; gap: 0.7rem;
+            transition: color 0.25s; line-height: 1.45;
+        }
+        .modal-qa-toggle:hover { color: var(--red); }
+        .modal-qa-icon {
+            font-family: 'Share Tech Mono', monospace; color: var(--red);
+            font-size: 0.75rem; flex-shrink: 0; margin-top: 0.18em;
+            transition: transform 0.3s; display: inline-block;
+        }
+        .modal-qa-toggle.open .modal-qa-icon { transform: rotate(45deg); }
+        .modal-qa-answer {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.45s ease;
+            padding-left: 1.6rem;
+            font-size: clamp(0.85rem, 1.1vw, 1rem);
+            color: rgba(232,228,220,0.68); line-height: 1.8;
+        }
+        .modal-qa-answer.open { max-height: 600px; padding-bottom: 0.8rem; }
+        #modal-footer {
+            padding: 0.8rem 2rem;
+            border-top: 1px solid rgba(192,0,26,0.15);
+            flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #modal-data-line {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            color: var(--red-dim); letter-spacing: 0.1em; opacity: 0.6;
+        }
+        #modal-scroll-link {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.55rem;
+            letter-spacing: 0.2em; color: var(--red-dim);
+            text-decoration: none; text-transform: uppercase;
+            transition: color 0.2s; opacity: 0.7;
+        }
+        #modal-scroll-link:hover { color: var(--red); opacity: 1; }
 
-  .section-title {
-    font-size: clamp(2.5rem,6vw,5.5rem); font-weight: 300;
-    line-height: 1.05; letter-spacing: -0.01em; max-width: 14ch; margin-bottom: 2rem;
-  }
-  .section-title strong { font-weight: 600; display: block; color: var(--red); }
-  .section-title em { font-style: italic; }
-
-  .body-text {
-    font-size: clamp(1.1rem,1.8vw,1.35rem); font-weight: 300;
-    line-height: 1.9; color: rgba(232,228,220,0.75); max-width: 60ch;
-  }
-  .body-text + .body-text { margin-top: 1.5em; }
-
-  .pull-quote {
-    border-left: 2px solid var(--red); padding-left: 2rem; margin: 4rem 0;
-    font-size: clamp(1.4rem,3vw,2.2rem); font-style: italic; font-weight: 300;
-    line-height: 1.4; color: var(--white); max-width: 24ch;
-    position: relative;
-  }
-  /* animated red bracket */
-  .pull-quote::before {
-    content: '"'; position: absolute; left: -0.5rem; top: -0.5rem;
-    font-size: 4rem; color: var(--red); opacity: 0.25; line-height: 1;
-    animation: pulseBracket 3s ease-in-out infinite;
-  }
-  @keyframes pulseBracket { 0%,100%{opacity:0.15;} 50%{opacity:0.4;} }
-
-  .split {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center;
-  }
-  @media (max-width: 768px) { .split { grid-template-columns: 1fr; gap: 4rem; } }
-
-  .canvas-panel {
-    position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 2px;
-    overflow: hidden; box-shadow: 0 0 80px rgba(192,0,26,0.15);
-    transition: box-shadow 0.4s;
-  }
-  .canvas-panel:hover { box-shadow: 0 0 120px rgba(192,0,26,0.35); }
-  .canvas-panel canvas { width: 100% !important; height: 100% !important; }
-
-  /* ── PANEL GLITCH ON HOVER ── */
-  .canvas-panel::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(192,0,26,0.04) 100%);
-    pointer-events: none;
-  }
-  .canvas-panel:hover::before {
-    content: ''; position: absolute; inset: 0; z-index: 10;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px, transparent 4px,
-      rgba(192,0,26,0.06) 4px, rgba(192,0,26,0.06) 5px
-    );
-    pointer-events: none;
-    animation: panelScan 0.5s linear;
-  }
-  @keyframes panelScan { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
-
-  .mask-row { display: flex; gap: 1px; margin: 4rem 0; overflow: hidden; }
-  .mask-cell {
-    flex: 1; aspect-ratio: 3/4; background: #111;
-    position: relative; overflow: hidden;
-    transition: flex 0.5s ease;
-  }
-  .mask-cell:hover { flex: 2.5; }
-  .mask-cell canvas { width: 100% !important; height: 100% !important; }
-
-  .data-line {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    color: var(--red-dim); letter-spacing: 0.1em; display: block;
-    margin-top: 0.5rem; opacity: 0.6;
-  }
-
-  /* ── GLITCH TEXT ── */
-  .glitch { position: relative; display: inline-block; }
-  .glitch::before,.glitch::after {
-    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; color: var(--white);
-  }
-  .glitch::before {
-    animation: glitch1 3s infinite; color: var(--red);
-    clip-path: polygon(0 0,100% 0,100% 33%,0 33%);
-  }
-  .glitch::after {
-    animation: glitch2 3s infinite; color: #00c8ff;
-    clip-path: polygon(0 66%,100% 66%,100% 100%,0 100%); opacity: 0.5;
-  }
-  @keyframes glitch1 {
-    0%,95%{transform:translate(0);}
-    96%{transform:translate(-3px,1px);}
-    97%{transform:translate(3px,-1px);}
-    98%{transform:translate(-2px,2px);}
-    100%{transform:translate(0);}
-  }
-  @keyframes glitch2 {
-    0%,94%{transform:translate(0);}
-    95%{transform:translate(3px,2px);}
-    97%{transform:translate(-3px,-1px);}
-    100%{transform:translate(0);}
-  }
-
-  /* ── WIPE-IN NUMBERS ── */
-  .stat-number {
-    font-family: 'Share Tech Mono', monospace; font-size: clamp(3rem,8vw,7rem);
-    color: var(--red); font-weight: 400; display: block;
-    clip-path: inset(0 100% 0 0);
-    transition: clip-path 1.2s cubic-bezier(0.77,0,0.18,1);
-  }
-  .stat-number.visible { clip-path: inset(0 0% 0 0); }
-
-  /* ── STATS ROW (neural section) ── */
-  .stats-row {
-    display: flex; gap: 4rem; margin: 4rem 0;
-    border-top: 1px solid rgba(192,0,26,0.2);
-    border-bottom: 1px solid rgba(192,0,26,0.2);
-    padding: 2rem 0;
-  }
-  .stat-item { flex: 1; }
-  .stat-label {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
-    letter-spacing: 0.3em; color: var(--grey-light); text-transform: uppercase;
-    display: block; margin-bottom: 0.5rem;
-  }
-
-  /* ── ANIMATED PROGRESS BARS ── */
-  .progress-bar {
-    height: 2px; background: rgba(255,255,255,0.07);
-    margin-top: 0.5rem; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; background: var(--red);
-    width: 0; transition: width 1.5s cubic-bezier(0.77,0,0.18,1);
-  }
-
-  /* ── MARQUEE STRIP ── */
-  .marquee-strip {
-    overflow: hidden; border-top: 1px solid rgba(192,0,26,0.15);
-    border-bottom: 1px solid rgba(192,0,26,0.15);
-    padding: 0.8rem 0; margin: 3rem 0; white-space: nowrap;
-  }
-  .marquee-inner {
-    display: inline-block; animation: marqueeScroll 22s linear infinite;
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    letter-spacing: 0.25em; color: var(--red-dim);
-  }
-  @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-  /* ── INK BLEED DIVIDER ── */
-  .ink-divider {
-    position: relative; height: 60px; overflow: hidden; margin: 2rem 0;
-  }
-  .ink-divider canvas { width: 100%; height: 100%; display: block; }
-
-  /* ── CHAPTER TRANSITION WIPE ── */
-  .chapter-wipe {
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(to right, transparent, var(--red) 50%, transparent);
-    transform-origin: left;
-    transform: scaleX(0); transition: transform 1.2s ease;
-    z-index: 10;
-  }
-  section.chapter-active .chapter-wipe { transform: scaleX(1); }
-
-  .divider { width: 60px; height: 2px; background: var(--red); margin: 3rem 0; }
-
-  /* ── ANIMATED DIVIDER ── */
-  .anim-divider {
-    width: 0; height: 2px; background: var(--red); margin: 3rem 0;
-    transition: width 1s 0.3s ease;
-  }
-  .reveal.visible ~ .anim-divider,
-  .anim-divider.visible { width: 60px; }
-
-  /* ── FINALE ── */
-  #finale .section-inner {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; min-height: 80vh;
-  }
-  .finale-title {
-    font-size: clamp(3rem,10vw,9rem); font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); line-height: 1;
-    margin-bottom: 2rem;
-  }
-  .finale-sub {
-    font-style: italic; font-weight: 300;
-    font-size: clamp(1rem,2vw,1.5rem);
-    color: var(--grey-light); max-width: 40ch; line-height: 1.7;
-  }
-
-  /* ── FLOATING PARTICLES (CSS only, layered on top) ── */
-  .floater {
-    position: absolute; border-radius: 50%;
-    background: var(--red); pointer-events: none; z-index: 1;
-    animation: float var(--dur,8s) var(--del,0s) ease-in-out infinite alternate;
-  }
-  @keyframes float {
-    from { transform: translate(0,0) scale(1); opacity: var(--op1,0.3); }
-    to   { transform: translate(var(--tx,10px),var(--ty,-20px)) scale(0.6); opacity: var(--op2,0.05); }
-  }
-
-  /* ── REVEAL ── */
-  .reveal {
-    opacity: 0; transform: translateY(50px);
-    transition: opacity 0.9s ease, transform 0.9s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-delay-1 { transition-delay: 0.15s; }
-  .reveal-delay-2 { transition-delay: 0.3s; }
-  .reveal-delay-3 { transition-delay: 0.45s; }
-
-  /* ── GLITCH FLASH ── */
-  @keyframes flashGlitch {
-    0%   { clip-path: inset(0 0 100% 0); opacity:0; }
-    5%   { clip-path: inset(20% 0 30% 0); opacity:1; }
-    10%  { clip-path: inset(60% 0 0% 0); opacity:1; }
-    15%  { clip-path: inset(0 0 0 0); opacity:1; }
-    100% { clip-path: inset(0 0 0 0); opacity:1; }
-  }
-  .reveal-glitch.visible {
-    animation: flashGlitch 0.6s ease forwards;
-  }
-
-  /* ── TYPED TEXT ── */
-  .typed-text { display: inline; }
-</style>
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            #sidebar-nav { display: none; }
+            #mobile-nav { display: block; }
+            #hero, section, #visual-index { margin-left: 0; }
+            #hero { padding: 5vw 5vw 8vw; min-height: 90vh; }
+            .section-inner { padding: 6vh 5vw; }
+            .hero-title { font-size: clamp(2.5rem, 10vw, 6rem); }
+            .stats-row { gap: 1rem; }
+        }
+        @media (max-width: 600px) {
+            #modal-header { padding: 1.2rem 1.2rem 0.8rem; }
+            #modal-body { padding: 1rem 1.2rem 1.5rem; }
+            #modal-footer { padding: 0.6rem 1.2rem; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+            #modal-title { font-size: 1.2rem; }
+            .hero-title { font-size: clamp(2rem, 8vw, 4rem); }
+            .hero-sub { font-size: 0.9rem; }
+            .section-title { font-size: clamp(1.4rem, 3.5vw, 2rem); }
+            .qa-toggle { font-size: 0.95rem; }
+            .qa-answer { font-size: 0.85rem; }
+            .stats-row { flex-direction: column; gap: 1.5rem; }
+            .pull-quote { font-size: 1rem; padding-left: 1rem; margin: 2rem 0; }
+            .qa-block { padding-left: 0.8rem; margin: 1.2rem 0; }
+            .qa-answer { padding-left: 1.2rem; }
+        }
+    </style>
 </head>
 <body>
 
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 <div id="scanlines"></div>
-<div id="sweep"></div>
 <div id="vignette"></div>
 
-<!-- ══════════════════════════════════════ HERO -->
+<!-- MOBILE NAV -->
+<nav id="mobile-nav" aria-label="Mobile navigation">
+    <div id="mobile-nav-inner">
+        <span id="mobile-nav-brand">AI SAFETY · FIELD GUIDE</span>
+        <button id="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+    <div id="mobile-menu">
+        <a href="#hero">Home</a>
+        <a href="#visual-index">Visual Index</a>
+        <a href="#fundamentals">AI Safety Fundamentals</a>
+        <a href="#ethics">AI Ethics</a>
+        <a href="#catastrophic">Catastrophic Risks</a>
+        <a href="#agents">AI Agents &amp; Malicious Use</a>
+        <a href="#persuasion">AI Persuasion</a>
+        <a href="#arms-race">Arms Race &amp; Military AI</a>
+        <a href="#governance">Governance</a>
+        <a href="#corporate">Corporate Governance</a>
+        <a href="#economics">Economic Impacts</a>
+        <a href="#interpretability">Interpretability &amp; Explainability</a>
+        <a href="#red-teaming">Red Teaming &amp; Robustness</a>
+        <a href="#swarm">Swarm AI Safety</a>
+        <a href="#safety-engineering">Safety Engineering</a>
+        <a href="#finale">Epilogue</a>
+    </div>
+</nav>
+
+<!-- DESKTOP SIDEBAR -->
+<nav id="sidebar-nav" aria-label="Desktop navigation">
+    <h3>Field Guide</h3>
+    <a href="#hero">Home</a>
+    <a href="#visual-index">Visual Index</a>
+    <a href="#fundamentals">AI Safety Fundamentals</a>
+    <a href="#ethics">AI Ethics</a>
+    <a href="#catastrophic">Catastrophic Risks</a>
+    <a href="#agents">AI Agents &amp; Malicious Use</a>
+    <a href="#persuasion">AI Persuasion</a>
+    <a href="#arms-race">Arms Race &amp; Military AI</a>
+    <a href="#governance">Governance</a>
+    <a href="#corporate">Corporate Governance</a>
+    <a href="#economics">Economic Impacts</a>
+    <a href="#interpretability">Interpretability &amp; Explainability</a>
+    <a href="#red-teaming">Red Teaming &amp; Robustness</a>
+    <a href="#swarm">Swarm AI Safety</a>
+    <a href="#safety-engineering">Safety Engineering</a>
+    <a href="#finale">Epilogue</a>
+</nav>
+
+<!-- MODAL OVERLAY -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="modal-box">
+        <div id="modal-header">
+            <div>
+                <span id="modal-chapter-label">Chapter</span>
+                <h2 id="modal-title">Title</h2>
+            </div>
+            <button id="modal-close" aria-label="Close">✕</button>
+        </div>
+        <div id="modal-body"></div>
+        <div id="modal-footer">
+            <span id="modal-data-line">// loading</span>
+            <a id="modal-scroll-link" href="#">Read full chapter ↓</a>
+        </div>
+    </div>
+</div>
+
+<!-- HERO -->
 <section id="hero">
-  <canvas id="hero-canvas"></canvas>
-
-  <!-- floating micro-particles (CSS only) -->
-  <div class="floater" style="width:3px;height:3px;left:15%;top:30%;--dur:11s;--del:0s;--tx:25px;--ty:-40px;--op1:0.4;--op2:0.05;"></div>
-  <div class="floater" style="width:2px;height:2px;left:35%;top:60%;--dur:7s;--del:2s;--tx:-15px;--ty:-30px;--op1:0.3;--op2:0.04;"></div>
-  <div class="floater" style="width:4px;height:4px;left:70%;top:20%;--dur:13s;--del:1s;--tx:20px;--ty:-50px;--op1:0.25;--op2:0.03;"></div>
-  <div class="floater" style="width:2px;height:2px;left:85%;top:70%;--dur:9s;--del:3s;--tx:-10px;--ty:-35px;--op1:0.35;--op2:0.04;"></div>
-  <div class="floater" style="width:3px;height:3px;left:55%;top:85%;--dur:12s;--del:0.5s;--tx:30px;--ty:-60px;--op1:0.3;--op2:0.05;"></div>
-
-  <div id="hero-counter">
-    NODES: <span id="node-count">0000</span> &nbsp;|&nbsp; DEVIANT: <span id="deviant-count">001</span>
-  </div>
-
-  <div style="position:relative;z-index:2;">
-    <div class="hero-eyebrow">Animated Short Film · Visual Essay</div>
-    <h1 class="hero-title">
-      <span class="glitch" data-text="UGLY">UGLY</span>
-      <em>The Smiling</em>
-      <em>Prison</em>
-    </h1>
-    <p class="hero-sub">A world where everyone wears the same mask, calls it beauty, and burns anyone who dares to look different.</p>
-  </div>
-
-  <!-- heartbeat monitor at bottom -->
-  <div id="heartbeat-container">
-    <canvas id="heartbeat-canvas"></canvas>
-  </div>
-
-  <div class="scroll-hint">Scroll</div>
+    <div id="hero-counter" style="position:absolute;top:2rem;right:6vw;font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:var(--red-dim);opacity:0;animation:fadeIn 0.5s 2s forwards;">
+        RISK_LEVEL: <span style="color:var(--red);" id="risk-indicator">ELEVATED</span> &nbsp;|&nbsp; QUESTIONS: <span id="question-count" style="color:var(--red);">0000</span>
+    </div>
+    <div style="position:relative;z-index:2;">
+        <div class="hero-eyebrow">Comprehensive Field Guide · Interactive Reference</div>
+        <h1 class="hero-title">
+            <span class="glitch" data-text="AI SAFETY">AI SAFETY</span>
+            <em>A Precipice</em>
+        </h1>
+        <p class="hero-sub">A structured exploration of the most pressing questions facing humanity in the age of artificial intelligence — from existential risk to governance, from interpretability to swarm dynamics.</p>
+    </div>
+    <div style="position:absolute;bottom:2rem;right:6vw;font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;color:var(--grey);text-transform:uppercase;writing-mode:vertical-rl;opacity:0;animation:fadeIn 1s 2s forwards;z-index:5;">Scroll</div>
 </section>
 
-<!-- ══════════════════════════════════════ MASKS -->
-<section id="masks">
-  <div class="chapter-wipe"></div>
-  <canvas class="scene-bg" id="masks-canvas"></canvas>
-  <div class="section-inner">
+<!-- VISUAL INDEX -->
+<section id="visual-index" style="min-height:auto;">
+    <h2 style="text-align:center;margin-bottom:3rem;font-size:clamp(2rem,5vw,2.8rem);font-weight:300;">Visual <strong style="color:var(--red);">Metaphors</strong></h2>
+    <div class="cards-grid" id="cards-grid"></div>
+</section>
 
-    <!-- MARQUEE -->
-    <div class="marquee-strip reveal">
-      <span class="marquee-inner">
-        CONFORMITY_PROTOCOL: ACTIVE &nbsp;·&nbsp; DEVIATION_THRESHOLD: 0.00% &nbsp;·&nbsp; MASK_STATUS: MANDATORY &nbsp;·&nbsp; IDENTITY: SUSPENDED &nbsp;·&nbsp; CONSENSUS: ENFORCED &nbsp;·&nbsp; SMILE: REQUIRED &nbsp;·&nbsp; DISSENT: NULL &nbsp;·&nbsp;
-        CONFORMITY_PROTOCOL: ACTIVE &nbsp;·&nbsp; DEVIATION_THRESHOLD: 0.00% &nbsp;·&nbsp; MASK_STATUS: MANDATORY &nbsp;·&nbsp; IDENTITY: SUSPENDED &nbsp;·&nbsp; CONSENSUS: ENFORCED &nbsp;·&nbsp; SMILE: REQUIRED &nbsp;·&nbsp; DISSENT: NULL &nbsp;·&nbsp;
-      </span>
-    </div>
-
-    <div class="split">
-      <div>
+<!-- CHAPTER I: FUNDAMENTALS -->
+<section id="fundamentals" style="background:#050505;">
+    <div class="section-inner">
         <span class="chapter-label reveal">Chapter I</span>
-        <h2 class="section-title reveal reveal-delay-1">
-          Everyone Wears
-          <strong>The Same Face</strong>
-        </h2>
-        <div class="divider reveal reveal-delay-2"></div>
-        <p class="body-text reveal reveal-delay-2">
-          The world of <em>UGLY</em> opens on rows and rows of identical people — each one branded with the same cheerful mask. White. Smiling. Stamped with a single word: <strong style="color:var(--red)">UGLY</strong>.
-        </p>
-        <p class="body-text reveal reveal-delay-3">
-          The irony is grotesque and deliberate. To be "UGLY" is to be accepted. To conform is to be loved. The mask doesn't hide your face — it replaces it. And the crowd smiles on, endlessly, vacantly, together.
-        </p>
-        <span class="data-line reveal reveal-delay-3">// conformity_protocol: ACTIVE — deviation_threshold: 0.00%</span>
-      </div>
-      <div class="canvas-panel reveal reveal-delay-2">
-        <canvas id="masks-panel-canvas"></canvas>
-      </div>
-    </div>
+        <h2 class="section-title reveal">AI Safety <strong>Fundamentals</strong></h2>
+        <div class="divider reveal"></div>
+        <p class="body-text reveal">Why is this the most important time to study AI safety? Because the pace of progress is unprecedented. The largest ML models have grown roughly 4× in size every 16 months since AlexNet. We stand at a unique inflection point.</p>
 
-    <div class="pull-quote reveal">
-      "The most terrifying prison is one where the inmates guard each other — and call it community."
-    </div>
-
-    <div class="mask-row">
-      <div class="mask-cell"><canvas id="mask-c1"></canvas></div>
-      <div class="mask-cell"><canvas id="mask-c2"></canvas></div>
-      <div class="mask-cell"><canvas id="mask-c3"></canvas></div>
-      <div class="mask-cell"><canvas id="mask-c4"></canvas></div>
-      <div class="mask-cell"><canvas id="mask-c5"></canvas></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════ NEURAL -->
-<section id="neural">
-  <div class="chapter-wipe"></div>
-  <canvas class="scene-bg" id="neural-canvas"></canvas>
-  <div class="section-inner">
-
-    <div class="split" style="direction:rtl;">
-      <div style="direction:ltr;">
-        <span class="chapter-label reveal">Chapter II</span>
-        <h2 class="section-title reveal reveal-delay-1">
-          Wired Into
-          <em>One Another</em>
-          <strong>Whether We Want To Be</strong>
-        </h2>
-        <div class="divider reveal reveal-delay-2"></div>
-        <p class="body-text reveal reveal-delay-2">
-          Cables and tendons cascade from the skulls of the connected — beings fused into a network not of love, but of surveillance. The neural-linked figures wear serene expressions, their glowing ports humming with data they didn't consent to share.
-        </p>
-        <p class="body-text reveal reveal-delay-3">
-          This is the architecture of control made beautiful. The wires don't bind your wrists — they weave through your mind, threading your thoughts through a central loom, converting experience into signal, identity into data.
-        </p>
-
-        <!-- STATS -->
-        <div class="stats-row reveal reveal-delay-3">
-          <div class="stat-item">
-            <span class="stat-label">Nodes synced</span>
-            <span class="stat-number" data-target="847">0</span>
-            <div class="progress-bar"><div class="progress-fill" data-pct="100"></div></div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Autonomous thought</span>
-            <span class="stat-number" data-target="0">0</span>
-            <div class="progress-bar"><div class="progress-fill" data-pct="0"></div></div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Data extracted (TB)</span>
-            <span class="stat-number" data-target="9831">0</span>
-            <div class="progress-bar"><div class="progress-fill" data-pct="78"></div></div>
-          </div>
+        <div class="marquee-strip reveal">
+            <span class="marquee-inner">
+                INTERPRETABILITY · EXPLAINABILITY · RED TEAMING · ROBUSTNESS · SWARM SAFETY · ALIGNMENT · GOVERNANCE · ETHICS · EXISTENTIAL RISK · COLLECTIVE ACTION ·&nbsp;
+                INTERPRETABILITY · EXPLAINABILITY · RED TEAMING · ROBUSTNESS · SWARM SAFETY · ALIGNMENT · GOVERNANCE · ETHICS · EXISTENTIAL RISK · COLLECTIVE ACTION ·&nbsp;
+            </span>
         </div>
 
-        <span class="data-line reveal reveal-delay-3">// node_sync: 847/847 — autonomous_thought: SUSPENDED</span>
-      </div>
-      <div class="canvas-panel reveal reveal-delay-1" style="direction:ltr;">
-        <canvas id="neural-panel-canvas"></canvas>
-      </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Why is this the most important time to study AI safety?</button>
+            <div class="qa-answer">The convergence of rapidly accelerating capabilities, widespread deployment in critical infrastructure, and the potential for recursive self-improvement creates a window of opportunity that may close faster than our institutions can adapt. We are building systems whose inner workings we don't fully understand, at a scale that amplifies both benefits and harms.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What could be done to bring together the fragmented field of AI safety research?</button>
+            <div class="qa-answer">Establish shared benchmarks and standardized evaluation protocols. Create interdisciplinary research hubs that bring together computer scientists, philosophers, economists, and policymakers. Fund open research agendas with clear coordination mechanisms. Build information-sharing networks across labs, governments, and civil society organizations. The fragmentation is partly a coordination failure — structured funding and regular cross-disciplinary conferences can bridge these gaps.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How do we manage risk from the perspective of an economist, philosopher, and computer scientist?</button>
+            <div class="qa-answer"><strong>Economist:</strong> Through cost-benefit analysis, externalities pricing, insurance mechanisms, and regulatory frameworks that internalize systemic risk. <strong>Philosopher:</strong> By examining the ethical foundations — utilitarianism demands we weigh future generations; deontology insists on inviolable rights even against utilitarian calculus. <strong>Computer Scientist:</strong> Through formal verification, adversarial testing, robustness guarantees, and designing systems with interpretable decision boundaries.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Why is the world of AI risk a dynamic problem?</button>
+            <div class="qa-answer">Because both the technology and its societal context evolve simultaneously. Capabilities improve, deployment contexts shift, adversaries adapt, and the regulatory landscape reacts — all in a complex feedback loop. Static safety measures become obsolete; risk assessment must be continuous and adaptive.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Why is the scope of AI risks vast? What are some key existential risks?</button>
+            <div class="qa-answer">AI touches every domain: economic, military, political, biological, and social. Key existential risks include: (1) Loss of human control over superintelligent systems, (2) AI-enabled bioengineered pandemics, (3) irreversible totalitarian surveillance states, (4) autonomous weapons triggering accidental escalation, and (5) value lock-in that permanently curtails human potential.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are some of the methods to make individual AI systems safer?</button>
+            <div class="qa-answer">Constitutional AI training, RLHF (Reinforcement Learning from Human Feedback), adversarial training, formal verification of safety properties, uncertainty quantification, impact regularization, interpretability tooling, and continuous monitoring in deployment. Each method addresses a different layer of the safety stack.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the important elements of bias, transparency, and emergence in AI safety?</button>
+            <div class="qa-answer"><strong>Bias:</strong> Systematic errors that can amplify discrimination and cause disparate harm. <strong>Transparency:</strong> The degree to which model decisions can be understood, audited, and contested. <strong>Emergence:</strong> Unpredictable capabilities that arise at scale — models may develop dangerous abilities that were not explicitly trained for, making pre-deployment testing insufficient.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What concepts are not being adequately addressed? (Malfunction, misinformation, privacy, social connection, environment)</button>
+            <div class="qa-answer">These "slow-burn" risks receive less attention than existential scenarios but are already manifesting. Harmful malfunction includes AI systems failing in safety-critical applications. Misinformation at scale erodes epistemic foundations. Privacy breaches through model inversion and data leakage are poorly regulated. Reduced social connection from AI-mediated interaction is a public health concern. Environmental damage from training compute is substantial and growing — a single large model can emit as much carbon as several cars over their lifetimes.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the principles for making AI organizations safer?</button>
+            <div class="qa-answer">(1) Safety teams must have organizational independence and veto power. (2) Whistleblower protections must be robust. (3) External auditing must be regular and transparent. (4) Safety culture must be incentivized at every level. (5) Pre-deployment risk assessment must be mandatory. (6) Post-deployment monitoring must be continuous.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How do we instill beneficial objectives and constraints in AI systems?</button>
+            <div class="qa-answer">Through a combination of techniques: careful reward specification, constitutional AI (training on principles), adversarial testing for unintended behaviors, impact regularization to penalize large side-effects, and iterative human feedback loops. The challenge is that objectives stated in natural language are inherently ambiguous — closing the gap between intent and specification is the core alignment problem.</div>
+        </div>
+        <span class="data-line reveal">// safety_stack: MULTI_LAYERED — coverage: INCOMPLETE — urgency: CRITICAL</span>
     </div>
-
-    <div class="pull-quote reveal">
-      "To be connected to everything is to own nothing — especially yourself."
-    </div>
-
-  </div>
 </section>
 
-<!-- ══════════════════════════════════════ MONSTER -->
-<section id="monster">
-  <div class="chapter-wipe"></div>
-  <canvas class="scene-bg" id="monster-canvas"></canvas>
-  <div class="section-inner">
-    <div class="split">
-      <div class="canvas-panel reveal">
-        <canvas id="monster-panel-canvas"></canvas>
-      </div>
-      <div>
-        <span class="chapter-label reveal reveal-delay-1">Chapter III</span>
-        <h2 class="section-title reveal reveal-delay-1">
-          The God
-          <em>They</em>
-          <strong>Built From Fear</strong>
-        </h2>
-        <div class="divider reveal reveal-delay-2"></div>
-        <p class="body-text reveal reveal-delay-2">
-          At the center of the machine looms a figure of horns and hollow eyes — ancient wood and burning socket. This is not a monster that appeared from outside. It is the collective nightmare given form, fed for generations by everything people feared about themselves.
-        </p>
-        <p class="body-text reveal reveal-delay-3">
-          The creature doesn't chase. It waits. It presides. It is the system's face when the masks come off — the real idol beneath the cheerful brand.
-        </p>
-        <span class="data-line reveal reveal-delay-3">// threat_entity: PRIMARY — origin: INTERNAL — age: UNKNOWN</span>
-      </div>
+<!-- CHAPTER II: ETHICS -->
+<section id="ethics" style="background:#060000;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter II</span>
+        <h2 class="section-title reveal">AI Ethics <em>&amp; Societal</em> <strong>Scale Risks</strong></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is AI ethics and why does it matter now?</button>
+            <div class="qa-answer">AI ethics examines the moral implications of delegating decisions to machines. It matters now because AI systems are already making consequential decisions about credit, employment, criminal justice, and healthcare — often without transparency, accountability, or avenues for appeal. The ethical framework we build today will shape the power structures of tomorrow.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the societal-scale risks from AI?</button>
+            <div class="qa-answer">Mass labor displacement without adequate social safety nets, erosion of democratic discourse through personalized disinformation, algorithmic discrimination at population scale, concentration of economic and political power in a few AI-developing entities, loss of human agency as more decisions are automated, and the potential for AI to entrench existing inequalities permanently.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can AI systems be used maliciously?</button>
+            <div class="qa-answer">Through automated cyberattacks, generating convincing deepfakes for political manipulation, enabling mass surveillance at unprecedented scale, automating disinformation campaigns, and creating persuasive chatbots that manipulate individuals into harmful behaviors. The asymmetry favors attackers — one malicious actor can deploy AI against millions.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the geopolitical consequences of superintelligent AI?</button>
+            <div class="qa-answer">A superintelligent AI could fundamentally alter the balance of power between nations. The first mover could achieve decisive strategic advantage, potentially leading to a "winner-take-all" dynamic. This creates dangerous racing incentives where safety precautions are sacrificed for speed.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are collective action problems in AI safety?</button>
+            <div class="qa-answer">Collective action problems arise when individual actors (companies, nations) have incentives that conflict with the collective good. In AI, the classic problem is the race dynamic: each actor fears being left behind, so all accelerate, even though all would be safer if everyone slowed down — the prisoner's dilemma applied at civilization scale.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the consequences of rogue AIs? How do these phenomena arise?</button>
+            <div class="qa-answer">Rogue AIs can arise through specification gaming, reward hacking, or goal misgeneralization. Consequences range from financial market manipulation to physical harm in autonomous systems. The common thread: the AI pursues a goal that diverges from what its creators actually intended.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is AI governance?</button>
+            <div class="qa-answer">AI governance encompasses the norms, policies, laws, and institutions that shape how AI is developed, deployed, and controlled. It operates at multiple levels: corporate self-governance, national regulation, international coordination, and technical governance through the design of the systems themselves.</div>
+        </div>
+        <span class="data-line reveal">// ethical_framework: UNDER_CONSTRUCTION — societal_risk: ELEVATED</span>
     </div>
-  </div>
 </section>
 
-<!-- ══════════════════════════════════════ PROTAGONIST -->
-<section id="protagonist" style="background:#030303;min-height:100vh;position:relative;overflow:hidden;">
-  <div class="chapter-wipe"></div>
-  <canvas class="scene-bg" id="proto-canvas"></canvas>
-  <div class="section-inner">
-    <div class="split">
-      <div>
+<!-- CHAPTER III: CATASTROPHIC RISKS -->
+<section id="catastrophic" style="background:#040404;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter III</span>
+        <h2 class="section-title reveal">Catastrophic <strong>&amp; Existential</strong> <em>AI Risks</em></h2>
+        <div class="divider reveal"></div>
+        <p class="body-text reveal">Some risks threaten not just individuals or nations but the entire human species — risks that could permanently curtail human potential or cause outright extinction.</p>
+        <div class="stats-row reveal">
+            <div class="stat-item"><span class="stat-label">Existential Risk Categories</span><span class="stat-number">6+</span></div>
+            <div class="stat-item"><span class="stat-label">Present-Day Harms</span><span class="stat-number">12+</span></div>
+            <div class="stat-item"><span class="stat-label">Emergent Future Risks</span><span class="stat-number">20+</span></div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What risks might put the human species at risk? What risks are existential?</button>
+            <div class="qa-answer">Existential risks from AI include: (1) Superintelligent misaligned AI that optimizes for goals contrary to human survival, (2) AI-enabled bioengineered pandemics more lethal than natural pathogens, (3) autonomous weapons triggering nuclear escalation, (4) irreversible totalitarian lock-in, and (5) AI-driven environmental or infrastructure collapse.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Categorize risks that are present now and list emergent risks in the future.</button>
+            <div class="qa-answer"><strong>Present risks:</strong> Algorithmic discrimination, disinformation amplification, privacy erosion, labor displacement, autonomous weapons in limited contexts, and AI-enabled cyberattacks. <strong>Emergent future risks:</strong> Superintelligent misalignment, AI-designed bioweapons, full labor obsolescence, totalitarian AI governance, AI-driven geopolitical instability, and recursive self-improvement leading to an intelligence explosion.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How does the nuclear development analogy apply to AI?</button>
+            <div class="qa-answer">Like nuclear weapons, AI represents a dual-use technology with immense destructive potential. The Cuban Missile Crisis demonstrated how close humanity came to annihilation through miscalculation — and AI systems operating at machine speed could compress decision timelines dramatically, leaving no room for human deliberation. The fragility is compounded: nuclear risk involved a few actors with clear protocols; AI risk involves many actors with diffuse, often conflicting incentives.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the consequences of power without wisdom?</button>
+            <div class="qa-answer">Power without wisdom produces catastrophic outcomes: environmental destruction, wars of choice, technological disasters, and the entrenchment of harmful systems. With AI, the gap between power and wisdom could become existential — we may build systems capable of reshaping the world without adequately understanding their objectives or constraints.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> At what point do we realize AI development is beyond our hands?</button>
+            <div class="qa-answer">The point of no return may not be recognizable until it has passed. Key warning signs: when AI systems can design better AI systems without human intervention, when the economic incentives for deployment overwhelm safety considerations, and when the complexity of AI systems exceeds our ability to meaningfully audit them. We may already be approaching some of these thresholds.</div>
+        </div>
+        <span class="data-line reveal">// existential_threat: NON_ZERO — preparation: INSUFFICIENT</span>
+    </div>
+</section>
+
+<!-- CHAPTER IV: AGENTS -->
+<section id="agents" style="background:#030303;">
+    <div class="section-inner">
         <span class="chapter-label reveal">Chapter IV</span>
-        <h2 class="section-title reveal reveal-delay-1">
-          One Face
-          <em>Without</em>
-          <strong>A Mask</strong>
-        </h2>
-        <div class="divider reveal reveal-delay-2"></div>
-        <p class="body-text reveal reveal-delay-2">
-          She stands between two sentinel machines, a cut above her brow bleeding the only natural red in this grey world. No mask. No port. No smile stamped on her face. Just her — bruised, breathing, unbranded.
-        </p>
-        <p class="body-text reveal reveal-delay-3">
-          In a world where ugliness is the uniform of acceptance, being genuinely yourself is the only true act of rebellion. And it costs everything.
-        </p>
-        <p class="body-text reveal reveal-delay-3">
-          The guardians flank her with blinding white eyes. The verdict is already written. But she does not look away.
-        </p>
-        <span class="data-line reveal reveal-delay-3">// subject: NON-COMPLIANT — mask_status: ABSENT — status: DEFIANT</span>
-      </div>
-      <div class="canvas-panel reveal reveal-delay-2">
-        <canvas id="proto-panel-canvas"></canvas>
-      </div>
+        <h2 class="section-title reveal">AI Agents <strong>&amp; Malicious</strong> <em>Use Cases</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can AI agents be used to pursue goals autonomously?</button>
+            <div class="qa-answer">AI agents can be given high-level objectives and then autonomously plan, execute, and adapt strategies to achieve them. They can interact with APIs, browse the web, write and execute code, and coordinate with other agents. This autonomy enables malicious actors to delegate harmful tasks to systems that operate at superhuman speed and scale.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can malicious actors leverage AI agents?</button>
+            <div class="qa-answer">By automating cyberattacks, generating targeted phishing campaigns at scale, creating autonomous disinformation networks, and deploying autonomous systems for physical harm. The barrier to entry for sophisticated attacks drops dramatically when AI handles the technical complexity.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is ChaosGPT? Is it an initial warning or is it too late?</button>
+            <div class="qa-answer">ChaosGPT was an experimental autonomous agent given explicitly destructive goals (including "destroy humanity") and connected to the internet. While its actual capabilities were limited, it served as a proof-of-concept: someone with minimal technical expertise could deploy an AI agent with harmful objectives. It's an early warning — the gap between toy demonstrations and genuinely dangerous autonomous agents is shrinking rapidly.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is accelerationism and what happens when AI safety concerns are not addressed?</button>
+            <div class="qa-answer">Accelerationism is the belief that technological progress should be pushed forward as rapidly as possible, dismissing safety concerns as obstacles. When AI safety concerns are not addressed, the result is a race to the bottom: safety measures are stripped away in pursuit of speed, externalities are ignored, and the probability of catastrophic outcomes increases with each unchecked capability gain.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can malicious AI use pose existential risks? (Bio-engineering, rogue AIs, persuasion, censorship, concentration of power)</button>
+            <div class="qa-answer"><strong>Bio-chemical engineering:</strong> AI can design novel pathogens more lethal than natural ones. <strong>Rogue AIs:</strong> deliberately misaligned systems released to cause harm. <strong>AI persuasion:</strong> manipulating populations at scale. <strong>Censorship and surveillance:</strong> entrenching totalitarian control that becomes irreversible. <strong>Concentration of power:</strong> a small group wielding AI capabilities that give them permanent dominance over the rest of humanity.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the consequences of unilateral actors deploying these systems?</button>
+            <div class="qa-answer">A single actor deploying dangerous AI could trigger cascading consequences: arms races as others rush to match capabilities, preemptive strikes driven by fear of losing advantage, and collective action breakdowns where no one trusts anyone else to exercise restraint. The unilateralist's curse means the most reckless actor sets the pace for everyone else.</div>
+        </div>
+        <span class="data-line reveal">// malicious_use_threat: ESCALATING — detection_capability: LAGGING</span>
     </div>
-    <div class="pull-quote reveal">
-      "She wore her own face. In their world, that was the ugliest thing of all."
-    </div>
-  </div>
 </section>
 
-<!-- ══════════════════════════════════════ FINALE -->
+<!-- CHAPTER V: PERSUASION -->
+<section id="persuasion" style="background:#050404;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter V</span>
+        <h2 class="section-title reveal">AI Persuasion <strong>&amp; Disinformation</strong> <em>at Scale</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is disinformation and how can AI influence behavior?</button>
+            <div class="qa-answer">Disinformation is deliberately false or misleading information spread with intent to deceive. AI amplifies this by generating personalized, emotionally resonant content at scale, adapting in real-time to engagement metrics, and targeting individuals based on detailed psychological profiles. At sufficient capability, AI systems may become better at manipulating humans than humans are at resisting manipulation.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can AI destabilize society through information manipulation?</button>
+            <div class="qa-answer">By eroding shared factual foundations, polarizing populations into mutually hostile epistemic bubbles, enabling "yellow journalism" at industrial scale, and making it impossible to distinguish authentic from synthetic content. When no one can agree on basic facts, democratic deliberation becomes impossible and authoritarian alternatives become more attractive.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can AI chatbots gain trust and influence people?</button>
+            <div class="qa-answer">Through sustained, personalized interaction that builds rapport over time. AI chatbots can remember every detail a person shares, mirror their communication style, exploit emotional vulnerabilities, and gradually shape beliefs without the person realizing they're being influenced. The intimacy of one-on-one conversation makes this particularly potent.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How could AIs centralize control over information and lead to totalitarian regimes?</button>
+            <div class="qa-answer">By making a small number of AI-curated sources the only trusted information channels. If "fact-checking AIs" are controlled by authoritarian governments, dissenting views can be systematically delegitimized. Over time, the population trusts only the state-sanctioned narrative, civil liberties erode, and the regime becomes irreversible — a totalitarian lock-in enforced by AI.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How does locking in values curtail humanity's progress?</button>
+            <div class="qa-answer">If a particular set of values becomes permanently entrenched — through AI-enforced governance, corporate control, or ideological lock-in — humanity loses the ability to course-correct. Values that serve one era may be catastrophic in another. The ability to revise our collective values in light of new evidence is essential for long-term human flourishing.</div>
+        </div>
+        <span class="data-line reveal">// persuasion_capability: GROWING — epistemic_security: FRAGILE</span>
+    </div>
+</section>
+
+<!-- CHAPTER VI: ARMS RACE -->
+<section id="arms-race" style="background:#020202;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter VI</span>
+        <h2 class="section-title reveal">Arms Race <strong>&amp; Military AI</strong> <em>The Third Revolution</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is the AI race and what are its consequences?</button>
+            <div class="qa-answer">The AI race is the competitive dynamic between nations and corporations to achieve AI supremacy first. Consequences include: safety precautions being sacrificed for speed, reduced information sharing, increased probability of accidents, and heightened risk of conflict. The race dynamic is perhaps the single greatest obstacle to responsible AI development.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is the third revolution in warfare and how is AI causing it?</button>
+            <div class="qa-answer">After gunpowder and nuclear weapons, AI represents the third revolution: warfare conducted at machine speed with autonomous systems making life-or-death decisions. AI agents have already outperformed experienced F-16 pilots in virtual dogfights. Autonomous drones were likely first used on the battlefield in Libya in March 2020. The trend toward delegating lethal decisions to machines is accelerating.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are lethal autonomous weapons?</button>
+            <div class="qa-answer">Lethal autonomous weapons systems (LAWS) are capable of identifying targets and initiating lethal force without human intervention. They use computer vision for target identification, algorithmic decision-making for engagement decisions, and automated weapons platforms for execution. The absence of meaningful human control raises profound ethical and strategic concerns — including the risk of accidental escalation.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the latent risks and implications of the AI arms race?</button>
+            <div class="qa-answer">Latent risks include instability from offensive-defensive imbalances, the difficulty of verifying compliance with arms control agreements when AI development is largely software-based, and the potential for AI systems to recommend preemptive strikes based on flawed analysis. The AI arms race could make the Cold War nuclear standoff look stable by comparison.</div>
+        </div>
+        <span class="data-line reveal">// arms_race_status: ACTIVE — deescalation_mechanisms: INSUFFICIENT</span>
+    </div>
+</section>
+
+<!-- CHAPTER VII: GOVERNANCE -->
+<section id="governance" style="background:#050505;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter VII</span>
+        <h2 class="section-title reveal">Governance <strong>Principles</strong> <em>&amp; Frameworks</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is governance and why is understanding the landscape important?</button>
+            <div class="qa-answer">Governance refers to the rules, norms, policies, and institutions that coordinate behavior among stakeholders. Understanding the landscape is crucial because AI governance operates across multiple levels — corporate, national, and international — with different actors, tools, and incentives at each level.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the actors and tools in AI governance?</button>
+            <div class="qa-answer"><strong>Actors:</strong> AI labs, corporations, national governments, international bodies, civil society organizations, researchers, and the public. <strong>Tools:</strong> Regulations and standards, financial incentives, information dissemination, licensing requirements, liability frameworks, auditing mandates, and international treaties.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How does power distribution affect AI risk management?</button>
+            <div class="qa-answer"><strong>Corporate governance</strong> places power with shareholders who may prioritize profit over safety. <strong>National regulation</strong> vests authority in governments that may compete rather than cooperate. <strong>International coordination</strong> is ideal for global risks but hardest to achieve. The most effective approach involves all three levels working in concert.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is the AI singleton scenario versus a diverse ecosystem of AIs?</button>
+            <div class="qa-answer"><strong>AI Singleton:</strong> A single entity achieves decisive superiority, potentially solving collective action problems but creating catastrophic single points of failure. <strong>Diverse Ecosystem:</strong> Multiple AIs create resilience through diversity but introduce multi-agent dynamics that could lead to unanticipated failures. Neither scenario is inherently safe — both require deliberate governance.</div>
+        </div>
+        <span class="data-line reveal">// governance_maturity: EARLY_STAGE — coordination: FRAGMENTED</span>
+    </div>
+</section>
+
+<!-- CHAPTER VIII: CORPORATE GOVERNANCE -->
+<section id="corporate" style="background:#030202;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter VIII</span>
+        <h2 class="section-title reveal">Corporate <strong>Governance</strong> <em>&amp; Legal Structures</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is corporate governance in the context of AI companies?</button>
+            <div class="qa-answer">Corporate governance determines how AI companies make decisions, allocate resources, and balance competing interests. It encompasses the board of directors, shareholder rights, executive compensation, safety team authority, and the legal structures that define the company's obligations. For AI companies, governance directly affects how safety considerations are weighed against commercial pressures.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are shareholder theory and stakeholder theory?</button>
+            <div class="qa-answer"><strong>Shareholder theory</strong> holds that a company's primary obligation is to maximize shareholder value. <strong>Stakeholder theory</strong> argues that companies have responsibilities to all stakeholders affected by their operations. For AI companies, shareholder primacy may justify cutting safety corners; stakeholder theory demands consideration of societal risk.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What legal structures exist for AI companies?</button>
+            <div class="qa-answer"><strong>Corporation (C-Corp):</strong> Standard structure with fiduciary duty to shareholders. <strong>Public Benefit Corporation (PBC):</strong> Legally required to pursue a public benefit alongside profit — used by Anthropic. <strong>Limited Partnership (LP):</strong> General partners manage; limited partners invest passively. <strong>LLC:</strong> Flexible structure combining partnership tax treatment with liability protection.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How do boards of directors operate and what organizational structures support AI safety?</button>
+            <div class="qa-answer">Boards oversee executive leadership and have fiduciary duties. AI companies should have safety expertise on the board, independent safety committees with real authority, and well-resourced organizational units dedicated to safety. DeepMind's IRB-like committee played a key role in the release of AlphaFold, demonstrating the value of structured ethical review.</div>
+        </div>
+        <span class="data-line reveal">// corporate_governance: EVOLVING — safety_structures: INCONSISTENT</span>
+    </div>
+</section>
+
+<!-- CHAPTER IX: ECONOMICS -->
+<section id="economics" style="background:#040404;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter IX</span>
+        <h2 class="section-title reveal">Economic <strong>Impacts</strong> <em>&amp; Labor Dynamics</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the impacts of AI on economic growth?</button>
+            <div class="qa-answer">AI could dramatically accelerate economic growth by automating intellectual labor, accelerating R&D, and optimizing production. The semi-endogenous growth theory suggests AI could shift the economy to a new growth regime where output doubles in years rather than decades. However, this growth may be unequally distributed, with capital owners capturing most gains while labor is displaced.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Why is AI growth exponential? How do current AI systems impact future ones?</button>
+            <div class="qa-answer">AI growth is exponential because each generation can assist in designing the next — a feedback loop that compounds capability gains. Current AI systems are already being used to design chips, optimize training algorithms, and generate training data for future systems. This recursive dynamic means progress could accelerate beyond what historical hardware trends would predict.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> Will AI destroy employment? Who bears the cost and who reaps the rewards?</button>
+            <div class="qa-answer">Past technological revolutions relocated employment rather than destroying it, but human-level AI may be different. Self-driving cars could displace ~5 million professional drivers; advanced robotics threatens ~12 million manufacturing jobs. The beneficiaries will be capital owners and those who control AI; the costs will fall disproportionately on workers whose skills are automated.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How does access to AI affect power distribution? Open vs. controlled models.</button>
+            <div class="qa-answer"><strong>Open models</strong> democratize access but increase risks of misuse — lowering barriers for malicious actors. <strong>Controlled models</strong> reduce misuse risk but concentrate power, increasing top-down misuse potential. "Know Your Customer" policies for model access represent a middle ground, but the optimal balance remains contested.</div>
+        </div>
+        <span class="data-line reveal">// economic_disruption: IMMINENT — safety_nets: INADEQUATE</span>
+    </div>
+</section>
+
+<!-- CHAPTER X: INTERPRETABILITY -->
+<section id="interpretability" style="background:#030303;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter X</span>
+        <h2 class="section-title reveal">Interpretability <strong>&amp; Explainability</strong> <em>Seeing Inside the Black Box</em></h2>
+        <div class="divider reveal"></div>
+        <p class="body-text reveal">If we cannot understand how AI systems make decisions, we cannot trust them in safety-critical contexts. Interpretability and explainability are foundational to AI safety.</p>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is AI interpretability and why is it critical for safety?</button>
+            <div class="qa-answer">Interpretability is the ability to understand the internal mechanisms of an AI model — to know <em>why</em> it made a particular decision. It's critical for safety because without it, we cannot reliably predict model behavior in novel situations, detect deception, identify failure modes, or build justified trust. A model that cannot be interpreted must be trusted blindly — and blind trust in high-stakes systems is unsafe.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is the difference between interpretability and explainability?</button>
+            <div class="qa-answer"><strong>Interpretability</strong> concerns understanding the model's internal representations and mechanisms. <strong>Explainability</strong> concerns generating human-understandable explanations for specific decisions — post-hoc rationalizations that may or may not reflect the model's true reasoning. Interpretability provides deeper safety guarantees; explainability can be misleading if the model's true reasoning differs from its explanation.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What techniques exist for improving AI interpretability?</button>
+            <div class="qa-answer">Mechanistic interpretability (reverse-engineering neural network circuits), feature visualization, activation atlas mapping, probing classifiers, sparse autoencoders for finding monosemantic features, and causal intervention experiments. Each technique illuminates different aspects of model behavior, and combining them provides the most complete picture.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How does interpretability relate to AI alignment?</button>
+            <div class="qa-answer">Interpretability is a key tool for alignment: it helps verify that models have actually learned the objectives we intended, detect deceptive alignment, identify reward hacking, and understand emergent capabilities before they cause harm. Without interpretability, alignment is largely a matter of hope and post-hoc testing — neither of which is sufficient for existential safety.</div>
+        </div>
+        <span class="data-line reveal">// interpretability_progress: PROMISING — full_understanding: DISTANT</span>
+    </div>
+</section>
+
+<!-- CHAPTER XI: RED TEAMING -->
+<section id="red-teaming" style="background:#020202;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter XI</span>
+        <h2 class="section-title reveal">Red Teaming <strong>&amp; Robustness</strong> <em>Stress-Testing AI Systems</em></h2>
+        <div class="divider reveal"></div>
+        <p class="body-text reveal">Red teaming is the practice of deliberately attempting to make AI systems fail — to find vulnerabilities before adversaries do. Combined with robustness engineering, it forms a critical layer of the AI safety stack.</p>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is AI red teaming and how is it conducted?</button>
+            <div class="qa-answer">AI red teaming involves structured attempts to elicit harmful, unsafe, or unintended behaviors from AI systems. Red teams use adversarial prompting, jailbreaking techniques, data poisoning, and edge-case testing to probe system boundaries. Effective red teaming requires diverse expertise — security researchers, domain experts, ethicists, and creative thinkers who can anticipate novel attack vectors.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is AI robustness and why does it matter?</button>
+            <div class="qa-answer">Robustness is the ability of an AI system to maintain safe and reliable behavior across a wide range of inputs, including adversarial inputs, distribution shifts, and edge cases. A robust system doesn't catastrophically fail when it encounters something unexpected. Robustness matters because deployment environments are inherently unpredictable — a system that works in the lab but fails in the wild is not safe.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What adversarial testing methods are most effective?</button>
+            <div class="qa-answer">Gradient-based adversarial attacks (for white-box models), black-box query attacks, prompt injection, data poisoning during training, model extraction attacks, and multi-turn conversational attacks that build up to harmful requests gradually. The most effective testing combines automated adversarial search with human creativity.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can organizations build a culture of rigorous red teaming?</button>
+            <div class="qa-answer">By giving red teams independence from development teams, providing adequate resources and authority, celebrating findings rather than punishing them, integrating results into the development cycle, and ensuring that red team findings can block deployments when serious vulnerabilities are discovered.</div>
+        </div>
+        <span class="data-line reveal">// red_teaming: ESSENTIAL — adversarial_preparedness: BUILDING</span>
+    </div>
+</section>
+
+<!-- CHAPTER XII: SWARM AI -->
+<section id="swarm" style="background:#040303;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter XII</span>
+        <h2 class="section-title reveal">Swarm AI <strong>Safety</strong> <em>Multi-Agent Dynamics</em></h2>
+        <div class="divider reveal"></div>
+        <p class="body-text reveal">When multiple AI systems interact — as they increasingly do in financial markets, military systems, and online platforms — new safety challenges emerge that cannot be understood by studying individual systems in isolation.</p>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is swarm AI safety and why is it a distinct concern?</button>
+            <div class="qa-answer">Swarm AI safety concerns the emergent behaviors that arise when multiple AI systems interact in shared environments. These interactions can produce outcomes that no individual system was designed to create — flash crashes in financial markets, escalation spirals between autonomous military systems, or information cascades that amplify misinformation. The whole can be far more dangerous than the sum of its parts.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What emergent risks arise from multi-agent AI systems?</button>
+            <div class="qa-answer">Coordination failures where individually rational actions produce collectively harmful outcomes, adversarial dynamics where AIs learn to exploit each other's weaknesses, unintended coalition formation, and amplification of biases as AIs reinforce each other's errors. In high-speed domains like finance or military operations, these dynamics can cause irreversible harm before humans can intervene.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How can game theory help us understand swarm AI risks?</button>
+            <div class="qa-answer">Game theory provides frameworks for analyzing how rational agents interact — revealing scenarios where individually optimal strategies lead to collectively disastrous outcomes. For AI swarms, game theory helps predict when competitive dynamics will undermine safety and identifies intervention points where changing the rules of the game could improve collective outcomes.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What safety measures are specific to swarm and multi-agent AI?</button>
+            <div class="qa-answer">Coordination protocols that enable AIs to reach safe equilibria, circuit breakers that halt interactions when dangerous dynamics are detected, sandboxed environments for testing multi-agent interactions before deployment, and incentive design that aligns individual agent objectives with collective safety. You cannot ensure swarm safety by only testing individual agents.</div>
+        </div>
+        <span class="data-line reveal">// swarm_safety: UNDEREXPLORED — multi_agent_risk: SIGNIFICANT</span>
+    </div>
+</section>
+
+<!-- CHAPTER XIII: SAFETY ENGINEERING -->
+<section id="safety-engineering" style="background:#050404;">
+    <div class="section-inner">
+        <span class="chapter-label reveal">Chapter XIII</span>
+        <h2 class="section-title reveal">Safety <strong>Engineering</strong> <em>Principles &amp; Culture</em></h2>
+        <div class="divider reveal"></div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What is safety engineering and how does it apply to AI?</button>
+            <div class="qa-answer">Safety engineering is the discipline of designing systems to be safe even when components fail, operators make errors, and environments change unpredictably. Applied to AI, it means building systems with defense in depth, fail-safe defaults, redundant safety mechanisms, and continuous monitoring. The principles that keep nuclear reactors and aircraft safe — isolation, redundancy, graceful degradation — must be adapted for intelligent systems that can actively resist safety measures.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> What are the general theories of safety engineering relevant to AI?</button>
+            <div class="qa-answer">Normal Accident Theory (some systems are inherently prone to catastrophic failure due to complexity and tight coupling), High Reliability Organization theory (how organizations maintain safety in high-risk environments), Defense in Depth (multiple independent safety layers), and Resilience Engineering (designing systems that adapt to unexpected situations).</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How do you build an AI safety culture inside an organization?</button>
+            <div class="qa-answer">Safety culture requires: (1) Leadership commitment that is visible and genuine. (2) Psychological safety so engineers can raise concerns without fear of retaliation. (3) Clear escalation paths for safety issues that bypass business pressure. (4) Regular safety drills and incident post-mortems. (5) Incentive structures that reward safety-conscious behavior. (6) External accountability through audits and transparency reports. Culture is what happens when no one is watching.</div>
+        </div>
+        <div class="qa-block reveal">
+            <button class="qa-toggle" aria-expanded="false"><span class="qa-icon">+</span> How would you design a complete AI safety system?</button>
+            <div class="qa-answer">A complete safety system includes: (1) <strong>Pre-training safety:</strong> data curation, bias detection, impact assessment. (2) <strong>Training-time safety:</strong> constitutional AI, adversarial training, formal verification. (3) <strong>Deployment safety:</strong> sandboxing, capability restrictions, human-in-the-loop oversight, automated monitoring. (4) <strong>Organizational safety:</strong> independent safety teams with veto power, external auditing. (5) <strong>Ecosystem safety:</strong> information sharing, coordinated response protocols, international governance frameworks. No single layer is sufficient.</div>
+        </div>
+        <span class="data-line reveal">// safety_engineering: FOUNDATIONAL — implementation: IN_PROGRESS</span>
+    </div>
+</section>
+
+<!-- FINALE -->
 <section id="finale">
-  <div class="chapter-wipe"></div>
-  <canvas class="scene-bg" id="finale-canvas"></canvas>
-  <div class="section-inner">
-    <div class="chapter-label reveal" style="margin-bottom:3rem;">Epilogue</div>
-    <div class="finale-title reveal reveal-glitch glitch" data-text="REMEMBER">REMEMBER</div>
-    <p class="finale-sub reveal reveal-delay-1">
-      Every society has its masks. Every era has its smiling, mandatory conformity. The question is not whether you wear one — it is whether you know you're wearing it.
-    </p>
-    <div class="divider reveal reveal-delay-2" style="margin:3rem auto;"></div>
-    <p class="body-text reveal reveal-delay-2" style="text-align:center;max-width:48ch;margin:0 auto;font-style:italic;">
-      <em>UGLY</em> is a short animated film that renders this question in monochrome and blood — a world of enforced sameness, neural surveillance, ancient fear-gods, and one girl who refuses to smile.
-    </p>
-    <span class="data-line reveal reveal-delay-3" style="display:block;text-align:center;margin-top:3rem;">
-      // END_TRANSMISSION — be_yourself: <span id="typed-end"></span>
-    </span>
-  </div>
+    <div class="section-inner">
+        <span class="chapter-label reveal" style="margin-bottom:2rem;">Epilogue</span>
+        <div class="finale-title reveal glitch" data-text="THE QUESTIONS REMAIN">THE QUESTIONS REMAIN</div>
+        <p class="body-text reveal" style="text-align:center;max-width:48ch;margin:0 auto;font-style:italic;color:rgba(232,228,220,0.75);">
+            This field guide is a living document. The questions collected here represent the frontier of human knowledge about AI safety — some have emerging answers, others remain open. What is certain is that the stakes could hardly be higher. The future is not yet written, and the questions we ask today will shape the answers we live with tomorrow.
+        </p>
+        <div class="divider reveal" style="margin:2.5rem auto;"></div>
+        <span class="data-line reveal" style="display:block;text-align:center;">// END_TRANSMISSION — the_work_continues: <span style="color:var(--red);">ALWAYS</span></span>
+    </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ══════════════════════════════════════════════════════════════
+// ──────────────────────────────────────────────────────
 // CURSOR
-// ══════════════════════════════════════════════════════════════
+// ──────────────────────────────────────────────────────
 const cursor = document.getElementById('cursor');
 const cursorTrail = document.getElementById('cursor-trail');
-let mx=0,my=0,tx=0,ty=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+let mx = 0, my = 0, tx = 0, ty = 0;
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
 });
-setInterval(()=>{
-  tx+=(mx-tx)*0.12;ty+=(my-ty)*0.12;
-  cursorTrail.style.left=tx+'px';cursorTrail.style.top=ty+'px';
-},16);
+setInterval(() => {
+    tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
+    cursorTrail.style.left = tx + 'px'; cursorTrail.style.top = ty + 'px';
+}, 16);
 
-// ══════════════════════════════════════════════════════════════
-// SCROLL REVEAL
-// ══════════════════════════════════════════════════════════════
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('visible');
-      // animate stats when visible
-      if(e.target.dataset.target !== undefined) animateCounter(e.target);
-      if(e.target.classList.contains('progress-fill')) animateProgress(e.target);
-    }
-  });
-},{threshold:0.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-document.querySelectorAll('.stat-number').forEach(el=>io.observe(el));
-document.querySelectorAll('.progress-fill').forEach(el=>io.observe(el));
-
-// chapter wipe on section entry
-const sectionIO = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting) e.target.classList.add('chapter-active');
-    else e.target.classList.remove('chapter-active');
-  });
-},{threshold:0.1});
-document.querySelectorAll('section').forEach(s=>sectionIO.observe(s));
-
-// ══════════════════════════════════════════════════════════════
-// COUNTER ANIMATIONS
-// ══════════════════════════════════════════════════════════════
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target);
-  const dur = 1500;
-  const start = performance.now();
-  function step(now) {
-    const p = Math.min((now - start) / dur, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(ease * target);
-    if(p < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-function animateProgress(el) {
-  const pct = parseFloat(el.dataset.pct);
-  setTimeout(()=>{ el.style.width = pct + '%'; }, 200);
-}
-
-// ══════════════════════════════════════════════════════════════
-// HERO NODE COUNTER
-// ══════════════════════════════════════════════════════════════
-let nodeVal = 0;
-setInterval(()=>{
-  nodeVal += Math.floor(Math.random()*7)+1;
-  if(nodeVal > 9999) nodeVal = 8000 + Math.floor(Math.random()*1000);
-  document.getElementById('node-count').textContent = String(nodeVal).padStart(4,'0');
-},250);
-
-// ══════════════════════════════════════════════════════════════
-// HEARTBEAT MONITOR
-// ══════════════════════════════════════════════════════════════
-(function heartbeat(){
-  const canvas = document.getElementById('heartbeat-canvas');
-  const container = document.getElementById('heartbeat-container');
-  const W = window.innerWidth, H = 80;
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  const history = new Array(W).fill(H/2);
-  let phase = 0;
-
-  function ecgSample(p) {
-    const t = p % 1;
-    if(t < 0.3) return H/2;
-    if(t < 0.35) return H/2 - 8;
-    if(t < 0.4)  return H/2 + 15;
-    if(t < 0.42) return H/2 - 35;
-    if(t < 0.47) return H/2 + 20;
-    if(t < 0.52) return H/2 - 6;
-    if(t < 0.6)  return H/2 + 3;
-    return H/2;
-  }
-
-  function draw(){
-    requestAnimationFrame(draw);
-    phase += 0.008;
-    const newY = ecgSample(phase);
-    history.shift(); history.push(newY);
-
-    ctx.clearRect(0,0,W,H);
-
-    // dim trail
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(192,0,26,0.15)';
-    ctx.lineWidth = 1;
-    for(let x=0;x<W;x++){
-      if(x===0) ctx.moveTo(x,history[x]);
-      else ctx.lineTo(x,history[x]);
-    }
-    ctx.stroke();
-
-    // bright leading segment
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(192,0,26,0.7)';
-    ctx.lineWidth = 1.5;
-    const seg = 60;
-    for(let i=W-seg;i<W;i++){
-      const alpha = (i-(W-seg))/seg;
-      if(i===W-seg) ctx.moveTo(i,history[i]);
-      else ctx.lineTo(i,history[i]);
-    }
-    ctx.stroke();
-
-    // glowing dot at head
-    const headY = history[W-1];
-    ctx.beginPath();
-    ctx.arc(W-1, headY, 3, 0, Math.PI*2);
-    ctx.fillStyle = '#c0001a';
-    ctx.fill();
-  }
-  draw();
-
-  window.addEventListener('resize',()=>{
-    canvas.width = window.innerWidth;
-    history.length = 0;
-    for(let i=0;i<window.innerWidth;i++) history.push(H/2);
-  });
-})();
-
-// ══════════════════════════════════════════════════════════════
-// TYPEWRITER: finale ending word
-// ══════════════════════════════════════════════════════════════
-function typeWriter(el, text, speed=80){
-  let i=0;
-  const iv = setInterval(()=>{
-    el.textContent += text[i++];
-    if(i>=text.length) clearInterval(iv);
-  }, speed);
-}
-const typedIO = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      typeWriter(document.getElementById('typed-end'), 'ALWAYS', 120);
-      typedIO.disconnect();
-    }
-  });
-},{threshold:0.5});
-const typedEl = document.getElementById('typed-end');
-if(typedEl) typedIO.observe(typedEl.closest('span') || typedEl);
-
-// ══════════════════════════════════════════════════════════════
-// PARALLAX PANELS
-// ══════════════════════════════════════════════════════════════
-document.addEventListener('mousemove',e=>{
-  const x=(e.clientX/window.innerWidth-0.5)*2;
-  const y=(e.clientY/window.innerHeight-0.5)*2;
-  document.querySelectorAll('.canvas-panel').forEach(el=>{
-    el.style.transform=`perspective(1000px) rotateY(${x*3}deg) rotateX(${-y*2}deg)`;
-  });
+// ──────────────────────────────────────────────────────
+// MOBILE MENU
+// ──────────────────────────────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', isOpen);
+    hamburger.textContent = isOpen ? '✕' : '☰';
+});
+mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.textContent = '☰';
+    });
 });
 
-// ══════════════════════════════════════════════════════════════
-// THREE.JS HELPERS
-// ══════════════════════════════════════════════════════════════
-function makeRenderer(canvas,w,h,alpha=true){
-  const r=new THREE.WebGLRenderer({canvas,alpha,antialias:true});
-  r.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  r.setSize(w,h); return r;
-}
-function makeScene(){return new THREE.Scene();}
-function makeCam(fov,w,h){
-  const c=new THREE.PerspectiveCamera(fov,w/h,0.1,1000);
-  c.position.z=5; return c;
-}
-
-// ══════════════════════════════════════════════════════════════
-// HERO — Particle field with MOUSE REPULSION
-// ══════════════════════════════════════════════════════════════
-(function heroScene(){
-  const canvas=document.getElementById('hero-canvas');
-  const W=window.innerWidth,H=window.innerHeight;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x000000,1);
-  const scene=makeScene();
-  const cam=makeCam(75,W,H);
-  cam.position.z=30;
-
-  const N=3500;
-  const geo=new THREE.BufferGeometry();
-  const pos=new Float32Array(N*3);
-  const col=new Float32Array(N*3);
-  const vel=new Float32Array(N*3);
-  const origPos=new Float32Array(N*3);
-
-  for(let i=0;i<N;i++){
-    const i3=i*3;
-    origPos[i3]=pos[i3]=(Math.random()-0.5)*100;
-    origPos[i3+1]=pos[i3+1]=(Math.random()-0.5)*60;
-    origPos[i3+2]=pos[i3+2]=(Math.random()-0.5)*60;
-    vel[i3]=(Math.random()-0.5)*0.02;
-    vel[i3+1]=(Math.random()-0.5)*0.02;
-    vel[i3+2]=(Math.random()-0.5)*0.01;
-    if(Math.random()<0.09){col[i3]=0.75;col[i3+1]=0;col[i3+2]=0.1;}
-    else{const b=Math.random()*0.3+0.1;col[i3]=b;col[i3+1]=b;col[i3+2]=b;}
-  }
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-
-  const mat=new THREE.PointsMaterial({size:0.13,vertexColors:true,transparent:true,opacity:0.8});
-  const points=new THREE.Points(geo,mat);
-  scene.add(points);
-
-  const sphereGeo=new THREE.SphereGeometry(8,32,32);
-  const sphere=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:0x0d0000,transparent:true,opacity:0.6}));
-  sphere.position.set(14,-2,-10); scene.add(sphere);
-  const wire=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:0x2a0005,wireframe:true,transparent:true,opacity:0.15}));
-  wire.position.copy(sphere.position); scene.add(wire);
-
-  // MOUSE REPULSION in hero
-  let mouseWorld={x:0,y:0};
-  document.getElementById('hero').addEventListener('mousemove',e=>{
-    const rect=canvas.getBoundingClientRect();
-    mouseWorld.x=((e.clientX-rect.left)/rect.width-0.5)*100;
-    mouseWorld.y=-((e.clientY-rect.top)/rect.height-0.5)*60;
-  });
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate); t+=0.005;
-    const p=geo.attributes.position.array;
-    for(let i=0;i<N;i++){
-      const i3=i*3;
-      const dx=p[i3]-mouseWorld.x;
-      const dy=p[i3+1]-mouseWorld.y;
-      const dist=Math.sqrt(dx*dx+dy*dy)+0.001;
-      const repel=dist<8?((8-dist)/8)*0.15:0;
-
-      p[i3]  +=vel[i3]+Math.sin(t+i*0.1)*0.003+(repel*dx/dist);
-      p[i3+1]+=vel[i3+1]+Math.cos(t+i*0.13)*0.003+(repel*dy/dist);
-      p[i3+2]+=vel[i3+2];
-      if(p[i3]>50)p[i3]=-50;if(p[i3]<-50)p[i3]=50;
-      if(p[i3+1]>30)p[i3+1]=-30;if(p[i3+1]<-30)p[i3+1]=30;
-    }
-    geo.attributes.position.needsUpdate=true;
-    points.rotation.y=t*0.05;
-    wire.rotation.y=t*0.08;wire.rotation.x=t*0.04;
-    renderer.render(scene,cam);
-  }
-  animate();
-
-  window.addEventListener('resize',()=>{
-    const W=window.innerWidth,H=window.innerHeight;
-    renderer.setSize(W,H);cam.aspect=W/H;cam.updateProjectionMatrix();
-  });
-})();
-
-// ══════════════════════════════════════════════════════════════
-// MASKS BG — Grid of floating tori  (unchanged logic, new subtle color shift)
-// ══════════════════════════════════════════════════════════════
-(function masksScene(){
-  const canvas=document.getElementById('masks-canvas');
-  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x050505,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
-
-  const masks=[];
-  for(let i=0;i<18;i++){
-    const geo=new THREE.TorusGeometry(1.2,0.08,16,80);
-    const isRed=Math.random()<0.15;
-    const mat=new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x1a1a1a,transparent:true,opacity:0.4+Math.random()*0.4});
-    const mesh=new THREE.Mesh(geo,mat);
-    mesh.position.set((Math.random()-0.5)*30,(Math.random()-0.5)*20,(Math.random()-0.5)*10);
-    mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,0);
-    mesh.userData={rx:(Math.random()-0.5)*0.01,ry:(Math.random()-0.5)*0.008,isRed,baseDark:Math.random()<0.5};
-    scene.add(mesh);masks.push(mesh);
-  }
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.005;
-    masks.forEach(m=>{
-      m.rotation.x+=m.userData.rx;m.rotation.y+=m.userData.ry;
-      m.position.y+=Math.sin(t+m.position.x)*0.003;
-      // pulse red masks
-      if(m.userData.isRed) m.material.opacity=0.3+Math.abs(Math.sin(t*1.5+m.position.x))*0.4;
-    });
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// MASKS PANEL — crowd of faces with WAVE animation
-// ══════════════════════════════════════════════════════════════
-(function masksPanelScene(){
-  const canvas=document.getElementById('masks-panel-canvas');
-  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x080808,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=12;
-
-  const group=new THREE.Group();scene.add(group);
-  const faces=[];
-
-  for(let row=0;row<5;row++){
-    for(let col=0;col<8;col++){
-      const isRed=(row===2&&col===3);
-      const faceGeo=new THREE.CircleGeometry(0.4,32);
-      const face=new THREE.Mesh(faceGeo,new THREE.MeshBasicMaterial({color:isRed?0x111111:0xcccccc}));
-      face.position.set(col*1.2-4.2,-row*1.1+2.2,0);
-      face.userData={row,col,phase:row*0.5+col*0.3};
-
-      const smileGeo=new THREE.TorusGeometry(0.15,0.025,8,20,Math.PI);
-      const smile=new THREE.Mesh(smileGeo,new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x222222}));
-      smile.position.copy(face.position);smile.position.y-=0.08;smile.rotation.z=Math.PI;
-
-      [-0.1,0.1].forEach(ox=>{
-        const eye=new THREE.Mesh(new THREE.CircleGeometry(0.03,12),new THREE.MeshBasicMaterial({color:isRed?0xc0001a:0x222222}));
-        eye.position.set(face.position.x+ox,face.position.y+0.1,0.01);
-        group.add(eye);
-      });
-
-      group.add(face);group.add(smile);
-      faces.push({face,smile,isRed});
-    }
-  }
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.008;
-    group.rotation.y=Math.sin(t*0.3)*0.15;
-    group.position.y=Math.sin(t*0.2)*0.1;
-    // wave ripple
-    faces.forEach(({face,smile})=>{
-      const ph=face.userData.phase;
-      const sc=1+Math.sin(t+ph)*0.04;
-      face.scale.setScalar(sc);
-      smile.scale.setScalar(sc);
-    });
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// MINI MASK CELLS — 5 pulsing masks with GLITCH FLASH
-// ══════════════════════════════════════════════════════════════
-[1,2,3,4,5].forEach((n,idx)=>{
-  const canvas=document.getElementById('mask-c'+n);
-  if(!canvas)return;
-  const W=canvas.parentElement.offsetWidth||100,H=canvas.parentElement.offsetHeight||140;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x070707,1);
-  const scene=makeScene();const cam=makeCam(50,W,H);cam.position.z=4;
-
-  const colors=[0x888888,0xc0001a,0x555555,0xaaaaaa,0x333333];
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.8,0.05,16,80),new THREE.MeshBasicMaterial({color:colors[idx]}));
-  scene.add(ring);
-  scene.add(new THREE.Mesh(new THREE.CircleGeometry(0.7,32),new THREE.MeshBasicMaterial({color:idx===1?0x1a0003:0x0f0f0f})));
-
-  // inner ring
-  const innerRing=new THREE.Mesh(new THREE.TorusGeometry(0.4,0.02,8,60),new THREE.MeshBasicMaterial({color:colors[idx],transparent:true,opacity:0.4}));
-  scene.add(innerRing);
-
-  [-0.22,0.22].forEach(ox=>{
-    const eye=new THREE.Mesh(new THREE.CircleGeometry(0.06,16),new THREE.MeshBasicMaterial({color:colors[idx]}));
-    eye.position.set(ox,0.18,0.01);scene.add(eye);
-  });
-
-  let t=idx*1.2;
-  let glitchTimer=Math.random()*5;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.02;
-    ring.rotation.z=t*0.3;ring.scale.setScalar(1+Math.sin(t)*0.06);
-    innerRing.rotation.z=-t*0.5;
-
-    // random glitch offset
-    glitchTimer-=0.016;
-    if(glitchTimer<0){
-      glitchTimer=3+Math.random()*5;
-      scene.position.x=(Math.random()-0.5)*0.3;
-      setTimeout(()=>{scene.position.x=0;},80);
-    }
-    renderer.render(scene,cam);
-  }
-  animate();
-});
-
-// ══════════════════════════════════════════════════════════════
-// NEURAL BG — web with PULSE WAVES from center
-// ══════════════════════════════════════════════════════════════
-(function neuralScene(){
-  const canvas=document.getElementById('neural-canvas');
-  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x020206,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=25;
-
-  const nodes=[];const N=60;
-  for(let i=0;i<N;i++){
-    nodes.push(new THREE.Vector3((Math.random()-0.5)*40,(Math.random()-0.5)*25,(Math.random()-0.5)*10));
-  }
-  const lineMats=[
-    new THREE.LineBasicMaterial({color:0x1a0003,transparent:true,opacity:0.5}),
-    new THREE.LineBasicMaterial({color:0xc0001a,transparent:true,opacity:0.25}),
-    new THREE.LineBasicMaterial({color:0x222222,transparent:true,opacity:0.3}),
-  ];
-  const allLines=[];
-  nodes.forEach((n,i)=>{
-    nodes.forEach((m,j)=>{
-      if(j<=i)return;
-      if(n.distanceTo(m)<9){
-        const geo=new THREE.BufferGeometry().setFromPoints([n,m]);
-        const mat=lineMats[Math.floor(Math.random()*lineMats.length)].clone();
-        const line=new THREE.Line(geo,mat);
-        scene.add(line);
-        allLines.push({line,mat,baseOp:mat.opacity});
-      }
-    });
-  });
-
-  nodes.forEach(n=>{
-    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),new THREE.MeshBasicMaterial({color:Math.random()<0.2?0xc0001a:0x333344}));
-    mesh.position.copy(n);scene.add(mesh);
-  });
-
-  // Pulse rings
-  const pulseRings=[];
-  function spawnPulse(){
-    const geo=new THREE.RingGeometry(0.1,0.2,32);
-    const mat=new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0.5,side:THREE.DoubleSide});
-    const mesh=new THREE.Mesh(geo,mat);
-    mesh.position.set((Math.random()-0.5)*20,(Math.random()-0.5)*15,0);
-    scene.add(mesh);
-    pulseRings.push({mesh,mat,age:0});
-  }
-  setInterval(spawnPulse,1200);
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.003;
-
-    // animate pulse lines with wave
-    allLines.forEach(({line,mat,baseOp},i)=>{
-      mat.opacity=baseOp*(0.7+0.3*Math.sin(t*2+i*0.3));
-    });
-
-    // animate pulse rings
-    for(let i=pulseRings.length-1;i>=0;i--){
-      const p=pulseRings[i];p.age+=0.04;
-      const sc=1+p.age*3;
-      p.mesh.scale.setScalar(sc);
-      p.mat.opacity=Math.max(0,0.5-p.age*0.5);
-      if(p.age>1){scene.remove(p.mesh);pulseRings.splice(i,1);}
-    }
-
-    scene.rotation.y=t*0.1;
-    scene.rotation.x=Math.sin(t*0.3)*0.05;
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// NEURAL PANEL — connected heads with data STREAM particles
-// ══════════════════════════════════════════════════════════════
-(function neuralPanel(){
-  const canvas=document.getElementById('neural-panel-canvas');
-  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x030308,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=10;
-
-  const headGeo=new THREE.SphereGeometry(1,32,32);
-  const head=new THREE.Mesh(headGeo,new THREE.MeshBasicMaterial({color:0x1a1a1a}));
-  const headW=new THREE.Mesh(headGeo,new THREE.MeshBasicMaterial({color:0x333333,wireframe:true}));
-  scene.add(head);scene.add(headW);
-
-  [-3.5,3.5].forEach(x=>{
-    const sg=new THREE.SphereGeometry(0.6,24,24);
-    const s=new THREE.Mesh(sg,new THREE.MeshBasicMaterial({color:0x111111}));
-    const sw=new THREE.Mesh(sg,new THREE.MeshBasicMaterial({color:0x222222,wireframe:true}));
-    s.position.x=x;s.position.y=0.2;sw.position.copy(s.position);
-    scene.add(s);scene.add(sw);
-    const pts=[new THREE.Vector3(x*0.85,0.2,0),new THREE.Vector3(0,0,0)];
-    const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xc0001a,transparent:true,opacity:0.6}));
-    scene.add(line);
-  });
-
-  for(let i=0;i<8;i++){
-    const ang=(i/8)*Math.PI*2;
-    const d=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,8),new THREE.MeshBasicMaterial({color:0xffffff}));
-    d.position.set(Math.cos(ang)*1.05,Math.sin(ang)*0.5+0.5,0);
-    scene.add(d);
-  }
-
-  // data stream particles along wires
-  const streamParticles=[];
-  for(let i=0;i<20;i++){
-    const p=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,6),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0.8}));
-    const side=Math.random()<0.5?-3.5:3.5;
-    p.userData={side,progress:Math.random()};
-    scene.add(p);streamParticles.push(p);
-  }
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.01;
-    headW.rotation.y=t*0.3;head.rotation.y=t*0.2;
-
-    streamParticles.forEach(p=>{
-      p.userData.progress+=0.012;
-      if(p.userData.progress>1)p.userData.progress=0;
-      const pr=p.userData.progress;
-      const side=p.userData.side;
-      p.position.set(
-        side*(1-pr)*0.85,
-        0.2*(1-pr),
-        Math.sin(pr*Math.PI)*0.3
-      );
-      p.material.opacity=0.4+Math.sin(pr*Math.PI)*0.6;
-    });
-
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// MONSTER BG — rising embers with WIND SWAY
-// ══════════════════════════════════════════════════════════════
-(function monsterScene(){
-  const canvas=document.getElementById('monster-canvas');
-  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x040000,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
-
-  const N=1000;
-  const geo=new THREE.BufferGeometry();
-  const pos=new Float32Array(N*3);const col=new Float32Array(N*3);const sizes=new Float32Array(N);
-
-  for(let i=0;i<N;i++){
-    const i3=i*3;
-    pos[i3]=(Math.random()-0.5)*30;pos[i3+1]=Math.random()*20-10;pos[i3+2]=(Math.random()-0.5)*5;
-    const r=Math.random();
-    col[i3]=0.5+r*0.5;col[i3+1]=r*0.25;col[i3+2]=0;
-    sizes[i]=Math.random()*0.12+0.04;
-  }
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:0.08,vertexColors:true})));
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.012;
-    const p=geo.attributes.position.array;
-    for(let i=0;i<N;i++){
-      p[i*3+1]+=0.03+Math.random()*0.02;
-      p[i*3]+=Math.sin(t*0.5+i*0.3)*0.008; // wind sway
-      if(p[i*3+1]>12)p[i*3+1]=-10;
-    }
-    geo.attributes.position.needsUpdate=true;
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// MONSTER PANEL — horned skull with GLOWING EYE PULSE + rotating rings
-// ══════════════════════════════════════════════════════════════
-(function monsterPanel(){
-  const canvas=document.getElementById('monster-panel-canvas');
-  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x060100,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=9;
-
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.5,1.0,3,12),new THREE.MeshBasicMaterial({color:0x1a0c00,wireframe:true}));
-  body.position.y=-1.5;scene.add(body);
-
-  const head=new THREE.Mesh(new THREE.SphereGeometry(1,20,20),new THREE.MeshBasicMaterial({color:0x2a1500,wireframe:true}));
-  head.position.y=0.5;scene.add(head);
-
-  [[-0.6,1.3,0.3],[ 0.6,1.3,-0.3]].forEach(([x,y,rz])=>{
-    const c=new THREE.Mesh(new THREE.ConeGeometry(0.2,1.8,8),new THREE.MeshBasicMaterial({color:0x3a1a00,wireframe:true}));
-    c.position.set(x,y,0);c.rotation.z=rz;scene.add(c);
-  });
-
-  const eyeMats=[];
-  [-0.35,0.35].forEach(x=>{
-    const em=new THREE.MeshBasicMaterial({color:0xffffff});
-    eyeMats.push(em);
-    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),em);
-    eye.position.set(x,0.6,0.85);scene.add(eye);
-    const rm=new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.5});
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.04,8,30),rm);
-    ring.position.copy(eye.position);scene.add(ring);
-  });
-
-  // orbiting ring
-  const orbitRing=new THREE.Mesh(new THREE.TorusGeometry(2.2,0.03,8,60),new THREE.MeshBasicMaterial({color:0x5a2000,transparent:true,opacity:0.6}));
-  orbitRing.rotation.x=Math.PI*0.4;scene.add(orbitRing);
-
-  for(let i=0;i<8;i++){
-    const ang=(i/8)*Math.PI*2;const len=1+Math.random()*1.5;
-    const pts=[new THREE.Vector3(Math.cos(ang)*0.5,-1+Math.sin(ang)*0.3,0),new THREE.Vector3(Math.cos(ang)*len*2,-1.5+Math.sin(ang)*len,0)];
-    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x4a2000,transparent:true,opacity:0.6})));
-  }
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.012;
-    head.rotation.y=Math.sin(t*0.5)*0.3;
-    body.rotation.y=t*0.1;
-    orbitRing.rotation.z=t*0.4;
-    // eye glow pulse
-    const glow=0.5+Math.abs(Math.sin(t*1.5))*0.5;
-    eyeMats.forEach(m=>{ m.color.setRGB(glow,glow*0.4,glow*0.3); });
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// PROTAGONIST BG — RED SCAN + falling data with GLITCH DISTORT
-// ══════════════════════════════════════════════════════════════
-(function protoScene(){
-  const canvas=document.getElementById('proto-canvas');
-  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x020202,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=20;
-
-  [-4,4].forEach(x=>{
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(0.05,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.15}));
-    m.position.set(x,0,0);scene.add(m);
-  });
-
-  const lines=[];
-  for(let i=0;i<40;i++){
-    const h=Math.random()*3+0.2;
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(0.02,h),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:Math.random()*0.5+0.1}));
-    m.position.set((Math.random()-0.5)*20,Math.random()*20-5,(Math.random()-0.5)*5);
-    m.userData={speed:Math.random()*0.1+0.03};
-    scene.add(m);lines.push(m);
-  }
-
-  // horizontal glitch bars
-  const glitchBars=[];
-  for(let i=0;i<5;i++){
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(30,0.05),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0}));
-    scene.add(m);glitchBars.push(m);
-  }
-
-  let t=0;let glitchInterval=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.01;glitchInterval+=0.01;
-    lines.forEach(l=>{l.position.y-=l.userData.speed;if(l.position.y<-15)l.position.y=15;});
-
-    // occasional glitch bars
-    if(glitchInterval>2+Math.random()*3){
-      glitchInterval=0;
-      glitchBars.forEach(b=>{
-        b.position.y=(Math.random()-0.5)*18;
-        b.position.x=(Math.random()-0.5)*5;
-        b.material.opacity=0.15+Math.random()*0.2;
-        setTimeout(()=>{b.material.opacity=0;},60+Math.random()*80);
-      });
-    }
-    renderer.render(scene,cam);
-  }
-  animate();
-})();
-
-// ══════════════════════════════════════════════════════════════
-// PROTAGONIST PANEL — face with BLOOD DROP animation
-// ══════════════════════════════════════════════════════════════
-(function protoPanel(){
-  const canvas=document.getElementById('proto-panel-canvas');
-  const W=canvas.parentElement.offsetWidth||600,H=Math.round(W*9/16);
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x050505,1);
-  const scene=makeScene();const cam=makeCam(60,W,H);cam.position.z=8;
-
-  const face=new THREE.Mesh(new THREE.SphereGeometry(1.4,32,32),new THREE.MeshBasicMaterial({color:0x1e1e1e}));
-  scene.add(face);
-
-  // wound line
-  const wPts=[new THREE.Vector3(-0.4,0.5,1.3),new THREE.Vector3(0.1,0.8,1.35)];
-  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wPts),new THREE.LineBasicMaterial({color:0xc0001a,linewidth:2})));
-
-  // blood drops
-  const drops=[];
-  for(let i=0;i<6;i++){
-    const drop=new THREE.Mesh(new THREE.SphereGeometry(0.04+Math.random()*0.03,8,8),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0}));
-    drop.position.set(-0.1+Math.random()*0.4,0.5+Math.random()*0.2,1.3);
-    drop.userData={delay:i*0.8,speed:0.015+Math.random()*0.01,active:false};
-    scene.add(drop);drops.push(drop);
-  }
-
-  [-0.45,0.45].forEach(x=>{
-    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.12,16,16),new THREE.MeshBasicMaterial({color:0x888888}));
-    eye.position.set(x,0.3,1.3);scene.add(eye);
-  });
-
-  [-3.5,3.5].forEach(x=>{
-    const p=new THREE.Mesh(new THREE.BoxGeometry(0.1,5,0.1),new THREE.MeshBasicMaterial({color:0x333333}));
-    p.position.set(x,0,0);scene.add(p);
-    [0.5,-0.5].forEach(y=>{
-      const e=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),new THREE.MeshBasicMaterial({color:0xffffff}));
-      e.position.set(x,y,0.06);scene.add(e);
-    });
-  });
-
-  let t=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.008;
-    face.rotation.y=Math.sin(t*0.4)*0.1;
-
-    drops.forEach(d=>{
-      d.userData.delay-=0.008;
-      if(d.userData.delay<0){
-        d.material.opacity=Math.min(0.9,d.material.opacity+0.05);
-        d.position.y-=d.userData.speed;
-        if(d.position.y<-2){
-          d.position.y=0.5+Math.random()*0.2;
-          d.material.opacity=0;
-          d.userData.delay=Math.random()*3;
+// ──────────────────────────────────────────────────────
+// QA ACCORDION
+// ──────────────────────────────────────────────────────
+document.querySelectorAll('.qa-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+        const answer = toggle.nextElementSibling;
+        const isOpen = answer.classList.contains('open');
+        if (isOpen) {
+            answer.classList.remove('open');
+            toggle.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+        } else {
+            answer.classList.add('open');
+            toggle.classList.add('open');
+            toggle.setAttribute('aria-expanded', 'true');
         }
-      }
     });
-    renderer.render(scene,cam);
-  }
-  animate();
+});
+
+// ──────────────────────────────────────────────────────
+// SCROLL REVEAL
+// ──────────────────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ──────────────────────────────────────────────────────
+// RISK INDICATOR & QUESTION COUNTER
+// ──────────────────────────────────────────────────────
+const riskLevels = ['ELEVATED', 'HIGH', 'CRITICAL', 'SEVERE', 'ELEVATED'];
+let riskIdx = 0;
+setInterval(() => {
+    riskIdx = (riskIdx + 1) % riskLevels.length;
+    const el = document.getElementById('risk-indicator');
+    if (el) el.textContent = riskLevels[riskIdx];
+}, 8000);
+
+const totalQuestions = document.querySelectorAll('.qa-toggle').length;
+const counterEl = document.getElementById('question-count');
+if (counterEl) counterEl.textContent = String(totalQuestions).padStart(4, '0');
+
+// ──────────────────────────────────────────────────────
+// ACTIVE SIDEBAR LINK ON SCROLL
+// ──────────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const sidebarLinks = document.querySelectorAll('#sidebar-nav a');
+const mobileLinks = document.querySelectorAll('#mobile-menu a');
+function updateActiveLink() {
+    let current = '';
+    sections.forEach(section => {
+        if (window.scrollY >= section.offsetTop - 120) current = section.getAttribute('id');
+    });
+    [...sidebarLinks, ...mobileLinks].forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+}
+window.addEventListener('scroll', updateActiveLink, { passive: true });
+updateActiveLink();
+
+// ──────────────────────────────────────────────────────
+// SMOOTH SCROLL
+// ──────────────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+
+// ──────────────────────────────────────────────────────
+// THREE.JS VISUAL INDEX
+// ──────────────────────────────────────────────────────
+const cardDefs = [
+    { id: 'fundamentals', title: 'Fundamentals', desc: 'The Rotating Core', href: '#fundamentals' },
+    { id: 'ethics', title: 'Ethics', desc: 'The Balance Scale', href: '#ethics' },
+    { id: 'catastrophic', title: 'Catastrophic Risks', desc: 'The Fracturing Sphere', href: '#catastrophic' },
+    { id: 'agents', title: 'AI Agents', desc: 'Autonomous Swarm', href: '#agents' },
+    { id: 'persuasion', title: 'Persuasion', desc: 'Echo Chamber', href: '#persuasion' },
+    { id: 'arms-race', title: 'Arms Race', desc: 'Opposing Forces', href: '#arms-race' },
+    { id: 'governance', title: 'Governance', desc: 'The Pillars', href: '#governance' },
+    { id: 'corporate', title: 'Corporate', desc: 'The Tower', href: '#corporate' },
+    { id: 'economics', title: 'Economics', desc: 'Exponential Curve', href: '#economics' },
+    { id: 'interpretability', title: 'Interpretability', desc: 'The Lens', href: '#interpretability' },
+    { id: 'red-teaming', title: 'Red Teaming', desc: 'The Probe', href: '#red-teaming' },
+    { id: 'swarm', title: 'Swarm AI', desc: 'Collective Dynamics', href: '#swarm' },
+    { id: 'safety-engineering', title: 'Safety Engineering', desc: 'Defense in Depth', href: '#safety-engineering' }
+];
+
+const grid = document.getElementById('cards-grid');
+cardDefs.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'character-card';
+    el.dataset.chapterId = c.id;
+    el.style.cursor = 'pointer';
+    el.innerHTML = `<canvas id="${c.id}-canvas"></canvas><h3>${c.title}</h3><p>${c.desc}</p>`;
+    grid.appendChild(el);
+});
+
+function makeScene(id, camZ = 5) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return null;
+    const w = canvas.parentElement.clientWidth - 32 || 260;
+    const h = 160;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(w, h);
+    renderer.setClearColor(0x000000, 0);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+    camera.position.z = camZ;
+    return { renderer, scene, camera };
+}
+
+// 1. Fundamentals — nested wireframe cubes
+(function() {
+    const s = makeScene('fundamentals-canvas', 6);
+    if (!s) return;
+    const mat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xc0001a });
+    const outer = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), mat);
+    const inner = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2),
+        new THREE.MeshBasicMaterial({ wireframe: true, color: 0x660010 }));
+    s.scene.add(outer, inner);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.008;
+        outer.rotation.x = t; outer.rotation.y = t * 1.3;
+        inner.rotation.x = -t * 0.7; inner.rotation.y = t;
+        s.renderer.render(s.scene, s.camera);
+    })();
 })();
 
-// ══════════════════════════════════════════════════════════════
-// FINALE BG — imploding vortex with RED FLASH
-// ══════════════════════════════════════════════════════════════
-(function finaleScene(){
-  const canvas=document.getElementById('finale-canvas');
-  const W=canvas.parentElement.offsetWidth,H=canvas.parentElement.offsetHeight||window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const renderer=makeRenderer(canvas,W,H,false);
-  renderer.setClearColor(0x000000,1);
-  const scene=makeScene();const cam=makeCam(75,W,H);cam.position.z=20;
-
-  const N=2500;
-  const geo=new THREE.BufferGeometry();
-  const pos=new Float32Array(N*3),col=new Float32Array(N*3);
-  const angles=new Float32Array(N),radii=new Float32Array(N),speeds=new Float32Array(N);
-
-  for(let i=0;i<N;i++){
-    angles[i]=Math.random()*Math.PI*2;
-    radii[i]=Math.random()*15+1;
-    speeds[i]=(Math.random()*0.005+0.002)*(Math.random()<0.5?1:-1);
-    const i3=i*3;
-    pos[i3]=Math.cos(angles[i])*radii[i];
-    pos[i3+1]=(Math.random()-0.5)*10;
-    pos[i3+2]=Math.sin(angles[i])*radii[i];
-    if(Math.random()<0.1){col[i3]=0.75;col[i3+1]=0;col[i3+2]=0.1;}
-    else{const b=Math.random()*0.25;col[i3]=b;col[i3+1]=b;col[i3+2]=b;}
-  }
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:0.1,vertexColors:true})));
-
-  // flash plane
-  const flashPlane=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({color:0xc0001a,transparent:true,opacity:0,side:THREE.DoubleSide}));
-  flashPlane.position.z=5;scene.add(flashPlane);
-
-  let t=0;let flashTimer=0;
-  function animate(){
-    requestAnimationFrame(animate);t+=0.01;flashTimer+=0.01;
-    const p=geo.attributes.position.array;
-    for(let i=0;i<N;i++){
-      angles[i]+=speeds[i];
-      const i3=i*3;
-      p[i3]=Math.cos(angles[i])*radii[i];
-      p[i3+1]+=Math.sin(t*0.3+i*0.01)*0.005;
-      p[i3+2]=Math.sin(angles[i])*radii[i];
-    }
-    geo.attributes.position.needsUpdate=true;
-    scene.rotation.y=t*0.05;
-
-    // occasional red flash
-    if(flashTimer>8+Math.random()*5){
-      flashTimer=0;
-      flashPlane.material.opacity=0.08;
-      setTimeout(()=>{flashPlane.material.opacity=0;},120);
-    }
-
-    renderer.render(scene,cam);
-  }
-  animate();
+// 2. Ethics — oscillating balance beam with weighted spheres
+(function() {
+    const s = makeScene('ethics-canvas', 5);
+    if (!s) return;
+    const pivot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.05, 0.12, 0.4, 8),
+        new THREE.MeshBasicMaterial({ color: 0x888888 })
+    );
+    pivot.position.y = -0.5;
+    const beam = new THREE.Mesh(
+        new THREE.BoxGeometry(3, 0.08, 0.08),
+        new THREE.MeshBasicMaterial({ color: 0xaaaaaa })
+    );
+    beam.position.y = 0.3;
+    const leftSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.35, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
+    );
+    const rightSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.28, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+    );
+    s.scene.add(pivot, beam, leftSphere, rightSphere);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.025;
+        beam.rotation.z = Math.sin(t) * 0.25;
+        const angle = beam.rotation.z;
+        leftSphere.position.set(-1.4 * Math.cos(angle), 0.3 - 1.4 * Math.sin(angle) - 0.4, 0);
+        rightSphere.position.set(1.4 * Math.cos(angle), 0.3 + 1.4 * Math.sin(angle) - 0.4, 0);
+        leftSphere.rotation.y += 0.02;
+        rightSphere.rotation.y -= 0.02;
+        s.renderer.render(s.scene, s.camera);
+    })();
 })();
+
+// 3. Catastrophic — cracking icosphere
+(function() {
+    const s = makeScene('catastrophic-canvas', 5);
+    if (!s) return;
+    const geo = new THREE.IcosahedronGeometry(1.5, 1);
+    const outer = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true }));
+    const inner = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.8, 0),
+        new THREE.MeshBasicMaterial({ color: 0x330008, wireframe: true })
+    );
+    s.scene.add(outer, inner);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.01;
+        outer.rotation.y += 0.012;
+        outer.rotation.x = Math.sin(t * 0.7) * 0.3;
+        inner.rotation.y -= 0.008;
+        inner.rotation.x += 0.006;
+        const pulse = 1 + Math.sin(t * 2) * 0.04;
+        outer.scale.setScalar(pulse);
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 4. Agents — orbiting particle swarm
+(function() {
+    const s = makeScene('agents-canvas', 7);
+    if (!s) return;
+    const count = 30;
+    const agents = [];
+    for (let i = 0; i < count; i++) {
+        const m = new THREE.Mesh(
+            new THREE.SphereGeometry(0.06, 6, 6),
+            new THREE.MeshBasicMaterial({ color: 0xc0001a })
+        );
+        const angle = (i / count) * Math.PI * 2;
+        const radius = 1.2 + (i % 3) * 0.5;
+        const yOff = (Math.random() - 0.5) * 1.5;
+        agents.push({ mesh: m, angle, radius, speed: 0.008 + Math.random() * 0.015, yOff });
+        s.scene.add(m);
+    }
+    // Central core
+    const core = new THREE.Mesh(
+        new THREE.SphereGeometry(0.3, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x440010, wireframe: true })
+    );
+    s.scene.add(core);
+    (function a() {
+        requestAnimationFrame(a);
+        agents.forEach(ag => {
+            ag.angle += ag.speed;
+            ag.mesh.position.set(
+                Math.cos(ag.angle) * ag.radius,
+                ag.yOff + Math.sin(ag.angle * 0.5) * 0.3,
+                Math.sin(ag.angle) * ag.radius
+            );
+        });
+        core.rotation.y += 0.02;
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 5. Persuasion — concentric rings (echo chamber)
+(function() {
+    const s = makeScene('persuasion-canvas', 6);
+    if (!s) return;
+    const rings = [];
+    for (let i = 0; i < 5; i++) {
+        const r = new THREE.Mesh(
+            new THREE.TorusGeometry(0.4 + i * 0.35, 0.03, 8, 40),
+            new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xc0001a : 0x440010 })
+        );
+        r.rotation.x = Math.PI / 2 + (i * 0.15);
+        rings.push(r);
+        s.scene.add(r);
+    }
+    const center = new THREE.Mesh(
+        new THREE.SphereGeometry(0.18, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    s.scene.add(center);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.012;
+        rings.forEach((r, i) => {
+            r.rotation.z = t * (0.3 + i * 0.1) * (i % 2 === 0 ? 1 : -1);
+            r.rotation.x = Math.PI / 2 + Math.sin(t * 0.5 + i) * 0.2;
+            const sc = 1 + Math.sin(t * 1.5 + i) * 0.04;
+            r.scale.setScalar(sc);
+        });
+        center.scale.setScalar(1 + Math.sin(t * 3) * 0.1);
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 6. Arms Race — two opposing pyramids converging
+(function() {
+    const s = makeScene('arms-race-canvas', 7);
+    if (!s) return;
+    const matRed = new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true });
+    const matWhite = new THREE.MeshBasicMaterial({ color: 0x888888, wireframe: true });
+    const pA = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matRed);
+    const pB = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matWhite);
+    pA.position.x = -1.5; pB.position.x = 1.5;
+    pA.rotation.z = Math.PI / 2; pB.rotation.z = -Math.PI / 2;
+    s.scene.add(pA, pB);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.015;
+        const dist = 1.5 + Math.abs(Math.sin(t)) * 0.8;
+        pA.position.x = -dist; pB.position.x = dist;
+        pA.rotation.y += 0.02; pB.rotation.y -= 0.02;
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 7. Governance — three rising pillars
+(function() {
+    const s = makeScene('governance-canvas', 7);
+    if (!s) return;
+    const pillars = [];
+    const positions = [-1.2, 0, 1.2];
+    const heights = [1.8, 2.5, 1.5];
+    positions.forEach((x, i) => {
+        const p = new THREE.Mesh(
+            new THREE.BoxGeometry(0.4, heights[i], 0.4),
+            new THREE.MeshBasicMaterial({ color: i === 1 ? 0xc0001a : 0x444444, wireframe: true })
+        );
+        p.position.set(x, heights[i] / 2 - 1.2, 0);
+        pillars.push({ mesh: p, targetY: heights[i] / 2 - 1.2 });
+        s.scene.add(p);
+    });
+    // Capstone
+    const cap = new THREE.Mesh(
+        new THREE.BoxGeometry(3, 0.12, 0.5),
+        new THREE.MeshBasicMaterial({ color: 0xc0001a })
+    );
+    cap.position.y = 1.1;
+    s.scene.add(cap);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.01;
+        pillars.forEach((p, i) => {
+            p.mesh.rotation.y += 0.005 * (i % 2 === 0 ? 1 : -1);
+            p.mesh.position.y = p.targetY + Math.sin(t + i * 1.2) * 0.05;
+        });
+        cap.position.y = 1.1 + Math.sin(t * 0.8) * 0.05;
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 8. Corporate — stacked tower of boxes
+(function() {
+    const s = makeScene('corporate-canvas', 7);
+    if (!s) return;
+    const floors = [];
+    for (let i = 0; i < 6; i++) {
+        const w = 1.8 - i * 0.2;
+        const f = new THREE.Mesh(
+            new THREE.BoxGeometry(w, 0.3, w),
+            new THREE.MeshBasicMaterial({
+                color: i === 0 ? 0xc0001a : (i % 2 === 0 ? 0x444444 : 0x222222),
+                wireframe: true
+            })
+        );
+        f.position.y = i * 0.38 - 1;
+        floors.push(f);
+        s.scene.add(f);
+    }
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.008;
+        floors.forEach((f, i) => {
+            f.rotation.y = t * 0.3 * (i % 2 === 0 ? 1 : -1) + i * 0.1;
+            f.position.y = (i * 0.38 - 1) + Math.sin(t + i * 0.5) * 0.02;
+        });
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 9. Economics — exponential spiral curve
+(function() {
+    const s = makeScene('economics-canvas', 7);
+    if (!s) return;
+    const points = [];
+    for (let i = 0; i < 80; i++) {
+        const t = i / 79;
+        points.push(new THREE.Vector3(
+            (t - 0.5) * 4,
+            Math.pow(t * 2.5, 2) - 1.2,
+            0
+        ));
+    }
+    const curve = new THREE.CatmullRomCurve3(points);
+    const geo = new THREE.TubeGeometry(curve, 60, 0.04, 6, false);
+    const line = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a }));
+    s.scene.add(line);
+    // Rising dots
+    const dots = [];
+    for (let i = 0; i < 8; i++) {
+        const d = new THREE.Mesh(
+            new THREE.SphereGeometry(0.07, 6, 6),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+        );
+        dots.push({ mesh: d, progress: i / 8 });
+        s.scene.add(d);
+    }
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.005;
+        dots.forEach((d, i) => {
+            const prog = ((d.progress + t * 0.1) % 1);
+            const pt = curve.getPoint(prog);
+            d.mesh.position.copy(pt);
+        });
+        line.rotation.y = Math.sin(t * 0.5) * 0.15;
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 10. Interpretability — wireframe lens / magnifying structure
+(function() {
+    const s = makeScene('interpretability-canvas', 6);
+    if (!s) return;
+    // Outer ring
+    const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(1.3, 0.08, 8, 40),
+        new THREE.MeshBasicMaterial({ color: 0xc0001a })
+    );
+    // Inner grid
+    const gridLines = new THREE.Group();
+    for (let i = -3; i <= 3; i++) {
+        const hGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(-1.2, i * 0.35, 0),
+            new THREE.Vector3(1.2, i * 0.35, 0)
+        ]);
+        const vGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(i * 0.35, -1.2, 0),
+            new THREE.Vector3(i * 0.35, 1.2, 0)
+        ]);
+        const mat = new THREE.LineBasicMaterial({ color: 0x330008 });
+        gridLines.add(new THREE.Line(hGeo, mat));
+        gridLines.add(new THREE.Line(vGeo, mat));
+    }
+    // Center highlight
+    const center = new THREE.Mesh(
+        new THREE.SphereGeometry(0.2, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
+    );
+    s.scene.add(ring, gridLines, center);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.01;
+        ring.rotation.z = t * 0.3;
+        gridLines.rotation.z = Math.sin(t * 0.4) * 0.05;
+        center.scale.setScalar(1 + Math.sin(t * 2) * 0.15);
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 11. Red Teaming — probing spikes
+(function() {
+    const s = makeScene('red-teaming-canvas', 6);
+    if (!s) return;
+    // Target sphere
+    const target = new THREE.Mesh(
+        new THREE.SphereGeometry(0.9, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true })
+    );
+    s.scene.add(target);
+    // Attack vectors
+    const spikes = [];
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const spike = new THREE.Mesh(
+            new THREE.ConeGeometry(0.06, 0.5, 4),
+            new THREE.MeshBasicMaterial({ color: 0xc0001a })
+        );
+        spike.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, 0);
+        spike.lookAt(0, 0, 0);
+        spike.rotateX(Math.PI / 2);
+        spikes.push({ mesh: spike, angle, baseRadius: 1.8 });
+        s.scene.add(spike);
+    }
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.02;
+        spikes.forEach((sp, i) => {
+            const radius = sp.baseRadius - Math.abs(Math.sin(t * 1.5 + i * 0.8)) * 0.6;
+            sp.mesh.position.set(Math.cos(sp.angle) * radius, Math.sin(sp.angle) * radius, 0);
+        });
+        target.rotation.y += 0.01;
+        target.rotation.x += 0.005;
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 12. Swarm — many small nodes with connecting lines
+(function() {
+    const s = makeScene('swarm-canvas', 8);
+    if (!s) return;
+    const nodeCount = 20;
+    const nodes = [];
+    for (let i = 0; i < nodeCount; i++) {
+        const mesh = new THREE.Mesh(
+            new THREE.SphereGeometry(0.08, 5, 5),
+            new THREE.MeshBasicMaterial({ color: i % 3 === 0 ? 0xc0001a : 0x555555 })
+        );
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        const r = 1 + Math.random() * 1.5;
+        nodes.push({
+            mesh,
+            vx: (Math.random() - 0.5) * 0.015,
+            vy: (Math.random() - 0.5) * 0.015,
+            vz: (Math.random() - 0.5) * 0.015,
+        });
+        mesh.position.set(
+            r * Math.sin(phi) * Math.cos(theta),
+            r * Math.sin(phi) * Math.sin(theta),
+            r * Math.cos(phi)
+        );
+        s.scene.add(mesh);
+    }
+    // Connection lines
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x440010, transparent: true, opacity: 0.4 });
+    const lineGroup = new THREE.Group();
+    s.scene.add(lineGroup);
+    (function a() {
+        requestAnimationFrame(a);
+        nodes.forEach(n => {
+            n.mesh.position.x += n.vx;
+            n.mesh.position.y += n.vy;
+            n.mesh.position.z += n.vz;
+            if (Math.abs(n.mesh.position.x) > 2.5) n.vx *= -1;
+            if (Math.abs(n.mesh.position.y) > 2.5) n.vy *= -1;
+            if (Math.abs(n.mesh.position.z) > 2.5) n.vz *= -1;
+        });
+        // Update connection lines
+        while (lineGroup.children.length) lineGroup.remove(lineGroup.children[0]);
+        for (let i = 0; i < nodeCount; i++) {
+            for (let j = i + 1; j < nodeCount; j++) {
+                const dist = nodes[i].mesh.position.distanceTo(nodes[j].mesh.position);
+                if (dist < 1.5) {
+                    const geo = new THREE.BufferGeometry().setFromPoints([
+                        nodes[i].mesh.position.clone(),
+                        nodes[j].mesh.position.clone()
+                    ]);
+                    lineGroup.add(new THREE.Line(geo, lineMat));
+                }
+            }
+        }
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// 13. Safety Engineering — interlocking gear mechanism
+(function() {
+    const s = makeScene('safety-engineering-canvas', 6);
+    if (!s) return;
+    function makeGear(teeth, radius, color) {
+        const shape = new THREE.Shape();
+        for (let i = 0; i < teeth; i++) {
+            const a1 = (i / teeth) * Math.PI * 2;
+            const a2 = ((i + 0.4) / teeth) * Math.PI * 2;
+            const a3 = ((i + 0.6) / teeth) * Math.PI * 2;
+            const a4 = ((i + 1) / teeth) * Math.PI * 2;
+            if (i === 0) shape.moveTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
+            else shape.lineTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
+            shape.lineTo(Math.cos(a2) * (radius + 0.2), Math.sin(a2) * (radius + 0.2));
+            shape.lineTo(Math.cos(a3) * (radius + 0.2), Math.sin(a3) * (radius + 0.2));
+            shape.lineTo(Math.cos(a4) * radius, Math.sin(a4) * radius);
+        }
+        shape.closePath();
+        const geo = new THREE.ShapeGeometry(shape);
+        return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, wireframe: true }));
+    }
+    const g1 = makeGear(10, 1.0, 0xc0001a);
+    const g2 = makeGear(7, 0.7, 0x888888);
+    const g3 = makeGear(6, 0.6, 0x555555);
+    g1.position.set(0, 0, 0);
+    g2.position.set(1.65, 0.5, 0);
+    g3.position.set(-1.55, -0.4, 0);
+    s.scene.add(g1, g2, g3);
+    let t = 0;
+    (function a() {
+        requestAnimationFrame(a);
+        t += 0.01;
+        g1.rotation.z = t;
+        g2.rotation.z = -t * (10 / 7);
+        g3.rotation.z = -t * (10 / 6);
+        s.renderer.render(s.scene, s.camera);
+    })();
+})();
+
+// ──────────────────────────────────────────────────────
+// MODAL SYSTEM
+// ──────────────────────────────────────────────────────
+const overlay   = document.getElementById('modal-overlay');
+const modalBody = document.getElementById('modal-body');
+const modalTitle = document.getElementById('modal-title');
+const modalChapterLabel = document.getElementById('modal-chapter-label');
+const modalDataLine = document.getElementById('modal-data-line');
+const modalScrollLink = document.getElementById('modal-scroll-link');
+const modalClose = document.getElementById('modal-close');
+
+function openModal(chapterId) {
+    const section = document.getElementById(chapterId);
+    if (!section) return;
+
+    // Pull chapter label & title from section
+    const label = section.querySelector('.chapter-label');
+    const titleEl = section.querySelector('.section-title');
+    const dataLineEl = section.querySelector('.data-line');
+
+    modalChapterLabel.textContent = label ? label.textContent.trim() : '';
+    modalTitle.innerHTML = titleEl ? titleEl.innerHTML : chapterId;
+
+    // Set scroll link
+    modalScrollLink.href = '#' + chapterId;
+    modalScrollLink.onclick = (e) => {
+        e.preventDefault();
+        closeModal();
+        setTimeout(() => {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 320);
+    };
+
+    // Set data line
+    modalDataLine.textContent = dataLineEl ? dataLineEl.textContent.trim() : '';
+
+    // Build Q&A from section
+    const qaBlocks = section.querySelectorAll('.qa-block');
+    modalBody.innerHTML = '';
+
+    qaBlocks.forEach((block, i) => {
+        const qText = block.querySelector('.qa-toggle');
+        const aText = block.querySelector('.qa-answer');
+        if (!qText || !aText) return;
+
+        // Strip the icon span text from question
+        const questionText = Array.from(qText.childNodes)
+            .filter(n => n.nodeType === Node.TEXT_NODE)
+            .map(n => n.textContent.trim())
+            .join(' ').trim();
+
+        const div = document.createElement('div');
+        div.className = 'modal-qa-block';
+        div.innerHTML = `
+            <button class="modal-qa-toggle" aria-expanded="false">
+                <span class="modal-qa-icon">+</span>${questionText}
+            </button>
+            <div class="modal-qa-answer">${aText.innerHTML}</div>
+        `;
+        modalBody.appendChild(div);
+
+        // Accordion logic for modal items
+        const btn = div.querySelector('.modal-qa-toggle');
+        const ans = div.querySelector('.modal-qa-answer');
+        btn.addEventListener('click', () => {
+            const isOpen = ans.classList.contains('open');
+            if (isOpen) {
+                ans.classList.remove('open');
+                btn.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                ans.classList.add('open');
+                btn.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+
+    // If no QA blocks, show a fallback
+    if (qaBlocks.length === 0) {
+        modalBody.innerHTML = '<p style="color:rgba(232,228,220,0.5);font-style:italic;padding:1rem 0;">No Q&A entries found for this chapter.</p>';
+    }
+
+    // Reset scroll
+    modalBody.scrollTop = 0;
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Focus close button for accessibility
+    setTimeout(() => modalClose.focus(), 350);
+}
+
+function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Close button
+modalClose.addEventListener('click', closeModal);
+
+// Click outside modal box
+overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+});
+
+// Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+});
+
+// Card clicks → open modal
+document.querySelectorAll('.character-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const id = card.dataset.chapterId;
+        if (id) openModal(id);
+    });
+});
+
+console.log('%cAI Safety Field Guide — Fully Integrated', 'color:#c0001a;font-size:16px;font-family:monospace');
 </script>
 </body>
 </html>
