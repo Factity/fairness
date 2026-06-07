@@ -203,10 +203,11 @@
             overflow: hidden;
             position: relative;
         }
+        /* Let Three.js control canvas pixel size — no CSS override */
         .card-canvas-wrap canvas {
             display: block;
-            width: 100% !important;
-            height: 100% !important;
+            position: absolute;
+            top: 0; left: 0;
         }
         .character-card h3 {
             font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
@@ -1166,36 +1167,83 @@ cardDefs.forEach(c => {
 
 // Wait for layout to settle before initialising Three.js scenes
 // Uses requestAnimationFrame + a small delay to ensure canvases are painted
+// Track pending inits for canvases that were zero-size on first attempt
+const pendingScenes = [];
+
 function makeScene(id, camZ) {
     const wrap = document.getElementById(id + '-wrap');
     const canvas = document.getElementById(id + '-canvas');
     if (!wrap || !canvas) return null;
 
-    const w = wrap.clientWidth || 260;
-    const h = wrap.clientHeight || 160;
+    let w = wrap.getBoundingClientRect().width;
+    let h = wrap.getBoundingClientRect().height;
 
+    // If still zero (off-screen or not laid out), use sensible defaults
+    // and mark for re-calibration on first visible frame
+    const needsResize = w < 2 || h < 2;
+    if (needsResize) { w = 260; h = 160; }
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(w, h);
+    renderer.setPixelRatio(dpr);
+    // updateStyle:false — Three.js sets canvas buffer size, CSS positions it in wrap
+    renderer.setSize(w, h, false);
+    // Manually set CSS size to fill the wrapper
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
     renderer.setClearColor(0x000000, 0);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
     camera.position.z = camZ;
 
-    // Handle resize
-    const ro = new ResizeObserver(() => {
-        const nw = wrap.clientWidth;
-        const nh = wrap.clientHeight;
-        if (nw > 0 && nh > 0) {
-            renderer.setSize(nw, nh);
-            camera.aspect = nw / nh;
-            camera.updateProjectionMatrix();
+    const s = { renderer, scene, camera, wrap, canvas };
+
+    // ResizeObserver keeps it correct on rotation/resize
+    const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+            const nw = entry.contentRect.width;
+            const nh = entry.contentRect.height;
+            if (nw > 2 && nh > 2) {
+                renderer.setSize(nw, nh, false);
+                canvas.style.width  = nw + 'px';
+                canvas.style.height = nh + 'px';
+                camera.aspect = nw / nh;
+                camera.updateProjectionMatrix();
+            }
         }
     });
     ro.observe(wrap);
 
-    return { renderer, scene, camera };
+    if (needsResize) pendingScenes.push(s);
+    return s;
+}
+
+// After everything is initialised, use IntersectionObserver to
+// force a resize correction the moment a card scrolls into view
+function watchPendingScenes() {
+    if (!pendingScenes.length) return;
+    const io2 = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const ps = pendingScenes.find(s => s.wrap === entry.target);
+            if (!ps) return;
+            const nw = ps.wrap.getBoundingClientRect().width;
+            const nh = ps.wrap.getBoundingClientRect().height;
+            if (nw > 2 && nh > 2) {
+                ps.renderer.setSize(nw, nh, false);
+                ps.canvas.style.width  = nw + 'px';
+                ps.canvas.style.height = nh + 'px';
+                ps.camera.aspect = nw / nh;
+                ps.camera.updateProjectionMatrix();
+                // Remove from pending
+                const idx = pendingScenes.indexOf(ps);
+                if (idx > -1) pendingScenes.splice(idx, 1);
+                io2.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    pendingScenes.forEach(s => io2.observe(s.wrap));
 }
 
 function initScenes() {
@@ -1649,12 +1697,15 @@ function initScenes() {
     })();
 }
 
-// Delay scene init until after layout is painted
-// Double rAF ensures the DOM has been fully laid out and rendered
+// Delay scene init until after layout is painted.
+// Double rAF + timeout ensures DOM is fully laid out even on slow mobile.
 requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-        // Small timeout as extra insurance on slow mobile browsers
-        setTimeout(initScenes, 50);
+        setTimeout(() => {
+            initScenes();
+            // Set up IntersectionObserver rescue for any canvases still zero-sized
+            watchPendingScenes();
+        }, 100);
     });
 });
 
