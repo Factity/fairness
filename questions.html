@@ -505,6 +505,51 @@
             .character-card p { font-size: 0.7rem; }
             .card-canvas-wrap { height: 120px; }
         }
+
+
+
+
+
+
+/* SUPPORT SECTION */
+.support-block {
+  background: rgba(22,32,22,0.7); border: 1px solid rgba(200,150,42,0.18);
+  border-radius: 16px; padding: 2.5rem 2rem; margin: 2rem 0; text-align: center;
+}
+.support-block h3 {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic;
+  color: var(--cream); margin-bottom: 0.5rem;
+}
+.support-block p { font-size: 15px; color: var(--muted); margin-bottom: 2rem; }
+.support-inner { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+.bmc-btn {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  background: #FFDD00; color: #000; padding: 0.85rem 1.75rem; border-radius: 40px;
+  text-decoration: none; font-weight: 700; font-size: 1rem;
+  box-shadow: 0 4px 16px rgba(255,221,0,0.25);
+  transition: transform 0.25s, box-shadow 0.25s;
+  font-family: 'Crimson Text', serif;
+}
+.bmc-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 24px rgba(255,221,0,0.35); }
+.qr-wrap { text-align: center; }
+.qr-wrap img { width: 120px; height: auto; border-radius: 12px; border: 2px solid rgba(200,150,42,0.3); display: block; }
+.qr-wrap p { font-size: 12px; color: var(--muted); margin-top: 8px; margin-bottom: 0; letter-spacing: 0.06em; }
+
+/* BLOCKQUOTE */
+blockquote {
+  border-left: 3px solid var(--gold); margin: 2.5rem 0; padding: 1.25rem 1.75rem;
+  background: rgba(200,150,42,0.06); border-radius: 0 8px 8px 0;
+  transition: background 0.4s, border-left-color 0.4s;
+}
+blockquote:hover { background: rgba(200,150,42,0.13); border-left-color: var(--gold-light); }
+blockquote p    { font-size: 20px; font-style: italic; color: var(--gold-light); margin-bottom: 0.5rem; }
+blockquote cite { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -1021,6 +1066,24 @@
         <span class="data-line reveal" style="display:block;text-align:center;">// END_TRANSMISSION — the_work_continues: <span style="color:var(--red);">ALWAYS</span></span>
     </div>
 </section>
+
+  <!-- SUPPORT -->
+  <section class="section reveal" id="support">
+    
+    <div class="support-block">
+      <h3>Every contribution is deeply appreciated</h3>
+      <p>Click the button or scan the QR code — whichever is easier.</p>
+      <div class="support-inner">
+        <a class="bmc-btn" href="https://buymeacoffee.com/mukullight" target="_blank" rel="noopener">
+          ☕ Click here to contribute
+        </a>
+        <div class="qr-wrap">
+          <img src="./qr-code (2).png" alt="QR code — scan to support on Buy Me a Coffee">
+          <p>Scan to support</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
 <script>
 // ──────────────────────────────────────────────────────
