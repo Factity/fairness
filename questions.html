@@ -1133,32 +1133,34 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // ──────────────────────────────────────────────────────
 // THREE.JS VISUAL INDEX
 // ──────────────────────────────────────────────────────
+
+// ── THREE.JS VISUAL INDEX — single renderer, canvas-copy approach ──────────
 const cardDefs = [
-    { id: 'fundamentals', title: 'Fundamentals', desc: 'The Rotating Core', href: '#fundamentals' },
-    { id: 'ethics', title: 'Ethics', desc: 'The Balance Scale', href: '#ethics' },
-    { id: 'catastrophic', title: 'Catastrophic Risks', desc: 'The Fracturing Sphere', href: '#catastrophic' },
-    { id: 'agents', title: 'AI Agents', desc: 'Autonomous Swarm', href: '#agents' },
-    { id: 'persuasion', title: 'Persuasion', desc: 'Echo Chamber', href: '#persuasion' },
-    { id: 'arms-race', title: 'Arms Race', desc: 'Opposing Forces', href: '#arms-race' },
-    { id: 'governance', title: 'Governance', desc: 'The Pillars', href: '#governance' },
-    { id: 'corporate', title: 'Corporate', desc: 'The Tower', href: '#corporate' },
-    { id: 'economics', title: 'Economics', desc: 'Exponential Curve', href: '#economics' },
-    { id: 'interpretability', title: 'Interpretability', desc: 'The Lens', href: '#interpretability' },
-    { id: 'red-teaming', title: 'Red Teaming', desc: 'The Probe', href: '#red-teaming' },
-    { id: 'swarm', title: 'Swarm AI', desc: 'Collective Dynamics', href: '#swarm' },
-    { id: 'safety-engineering', title: 'Safety Engineering', desc: 'Defense in Depth', href: '#safety-engineering' }
+    { id: 'fundamentals',       title: 'Fundamentals',        desc: 'The Rotating Core'     },
+    { id: 'ethics',             title: 'Ethics',              desc: 'The Balance Scale'     },
+    { id: 'catastrophic',       title: 'Catastrophic Risks',  desc: 'The Fracturing Sphere' },
+    { id: 'agents',             title: 'AI Agents',           desc: 'Autonomous Swarm'      },
+    { id: 'persuasion',         title: 'Persuasion',          desc: 'Echo Chamber'          },
+    { id: 'arms-race',          title: 'Arms Race',           desc: 'Opposing Forces'       },
+    { id: 'governance',         title: 'Governance',          desc: 'The Pillars'           },
+    { id: 'corporate',          title: 'Corporate',           desc: 'The Tower'             },
+    { id: 'economics',          title: 'Economics',           desc: 'Exponential Curve'     },
+    { id: 'interpretability',   title: 'Interpretability',    desc: 'The Lens'              },
+    { id: 'red-teaming',        title: 'Red Teaming',         desc: 'The Probe'             },
+    { id: 'swarm',              title: 'Swarm AI',            desc: 'Collective Dynamics'   },
+    { id: 'safety-engineering', title: 'Safety Engineering',  desc: 'Defense in Depth'      }
 ];
 
+// Build card HTML — each card gets a 2D canvas (not WebGL) for display
 const grid = document.getElementById('cards-grid');
 cardDefs.forEach(c => {
     const el = document.createElement('div');
     el.className = 'character-card';
     el.dataset.chapterId = c.id;
     el.style.cursor = 'pointer';
-    // Use a wrapper div for the canvas so we can measure it reliably
     el.innerHTML = `
         <div class="card-canvas-wrap" id="${c.id}-wrap">
-            <canvas id="${c.id}-canvas"></canvas>
+            <canvas id="${c.id}-canvas" style="display:block;width:100%;height:100%;"></canvas>
         </div>
         <h3>${c.title}</h3>
         <p>${c.desc}</p>
@@ -1166,550 +1168,366 @@ cardDefs.forEach(c => {
     grid.appendChild(el);
 });
 
-// Wait for layout to settle before initialising Three.js scenes
-// Uses requestAnimationFrame + a small delay to ensure canvases are painted
-// Track pending inits for canvases that were zero-size on first attempt
-const pendingScenes = [];
+// ── SINGLE shared offscreen WebGL renderer ──────────────────────────────────
+// One WebGL context total — renders each scene into the offscreen canvas,
+// then copies the pixels into each card's 2D canvas via drawImage.
+// This works on Android where the WebGL context limit (often 8) would
+// silently kill most of 13 separate renderers.
 
-function makeScene(id, camZ) {
-    const wrap = document.getElementById(id + '-wrap');
-    const canvas = document.getElementById(id + '-canvas');
-    if (!wrap || !canvas) return null;
+const CARD_W = 260;
+const CARD_H = 160;
+const dpr    = Math.min(window.devicePixelRatio || 1, 2);
 
-    let w = wrap.getBoundingClientRect().width;
-    let h = wrap.getBoundingClientRect().height;
+const offscreen = document.createElement('canvas');
+offscreen.width  = Math.round(CARD_W * dpr);
+offscreen.height = Math.round(CARD_H * dpr);
 
-    // If still zero (off-screen or not laid out), use sensible defaults
-    // and mark for re-calibration on first visible frame
-    const needsResize = w < 2 || h < 2;
-    if (needsResize) { w = 260; h = 160; }
+const renderer = new THREE.WebGLRenderer({
+    canvas: offscreen,
+    antialias: true,
+    alpha: true,
+    preserveDrawingBuffer: true   // required for toDataURL / drawImage copy
+});
+renderer.setPixelRatio(dpr);
+renderer.setSize(CARD_W, CARD_H, false);
+renderer.setClearColor(0x000000, 1);
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(dpr);
-    // updateStyle:false — Three.js sets canvas buffer size, CSS positions it in wrap
-    renderer.setSize(w, h, false);
-    // Manually set CSS size to fill the wrapper
-    canvas.style.width  = w + 'px';
-    canvas.style.height = h + 'px';
-    renderer.setClearColor(0x000000, 0);
+// Each entry: { scene, camera, tick } — tick(t) mutates objects for animation
+const scenes = [];
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+function addScene(camZ, buildFn) {
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, CARD_W / CARD_H, 0.1, 100);
     camera.position.z = camZ;
-
-    const s = { renderer, scene, camera, wrap, canvas };
-
-    // ResizeObserver keeps it correct on rotation/resize
-    const ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-            const nw = entry.contentRect.width;
-            const nh = entry.contentRect.height;
-            if (nw > 2 && nh > 2) {
-                renderer.setSize(nw, nh, false);
-                canvas.style.width  = nw + 'px';
-                canvas.style.height = nh + 'px';
-                camera.aspect = nw / nh;
-                camera.updateProjectionMatrix();
-            }
-        }
-    });
-    ro.observe(wrap);
-
-    if (needsResize) pendingScenes.push(s);
-    return s;
+    const tick = buildFn(scene);
+    scenes.push({ scene, camera, tick });
 }
 
-// After everything is initialised, use IntersectionObserver to
-// force a resize correction the moment a card scrolls into view
-function watchPendingScenes() {
-    if (!pendingScenes.length) return;
-    const io2 = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const ps = pendingScenes.find(s => s.wrap === entry.target);
-            if (!ps) return;
-            const nw = ps.wrap.getBoundingClientRect().width;
-            const nh = ps.wrap.getBoundingClientRect().height;
-            if (nw > 2 && nh > 2) {
-                ps.renderer.setSize(nw, nh, false);
-                ps.canvas.style.width  = nw + 'px';
-                ps.canvas.style.height = nh + 'px';
-                ps.camera.aspect = nw / nh;
-                ps.camera.updateProjectionMatrix();
-                // Remove from pending
-                const idx = pendingScenes.indexOf(ps);
-                if (idx > -1) pendingScenes.splice(idx, 1);
-                io2.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    pendingScenes.forEach(s => io2.observe(s.wrap));
-}
+// ── Scene definitions ────────────────────────────────────────────────────────
 
-function initScenes() {
-    // 1. Fundamentals — nested wireframe cubes
-    (function() {
-        const s = makeScene('fundamentals', 6);
-        if (!s) return;
-        const mat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xc0001a });
-        const outer = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), mat);
-        const inner = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2),
-            new THREE.MeshBasicMaterial({ wireframe: true, color: 0x660010 }));
-        s.scene.add(outer, inner);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.008;
-            outer.rotation.x = t; outer.rotation.y = t * 1.3;
-            inner.rotation.x = -t * 0.7; inner.rotation.y = t;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 2. Ethics — oscillating balance beam with weighted spheres
-    (function() {
-        const s = makeScene('ethics', 5);
-        if (!s) return;
-        const pivot = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.05, 0.12, 0.4, 8),
-            new THREE.MeshBasicMaterial({ color: 0x888888 })
-        );
-        pivot.position.y = -0.5;
-        const beam = new THREE.Mesh(
-            new THREE.BoxGeometry(3, 0.08, 0.08),
-            new THREE.MeshBasicMaterial({ color: 0xaaaaaa })
-        );
-        beam.position.y = 0.3;
-        const leftSphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.35, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
-        );
-        const rightSphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.28, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
-        );
-        s.scene.add(pivot, beam, leftSphere, rightSphere);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.025;
-            beam.rotation.z = Math.sin(t) * 0.25;
-            const angle = beam.rotation.z;
-            leftSphere.position.set(-1.4 * Math.cos(angle), 0.3 - 1.4 * Math.sin(angle) - 0.4, 0);
-            rightSphere.position.set(1.4 * Math.cos(angle), 0.3 + 1.4 * Math.sin(angle) - 0.4, 0);
-            leftSphere.rotation.y += 0.02;
-            rightSphere.rotation.y -= 0.02;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 3. Catastrophic — cracking icosphere
-    (function() {
-        const s = makeScene('catastrophic', 5);
-        if (!s) return;
-        const geo = new THREE.IcosahedronGeometry(1.5, 1);
-        const outer = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true }));
-        const inner = new THREE.Mesh(
-            new THREE.IcosahedronGeometry(0.8, 0),
-            new THREE.MeshBasicMaterial({ color: 0x330008, wireframe: true })
-        );
-        s.scene.add(outer, inner);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.01;
-            outer.rotation.y += 0.012;
-            outer.rotation.x = Math.sin(t * 0.7) * 0.3;
-            inner.rotation.y -= 0.008;
-            inner.rotation.x += 0.006;
-            const pulse = 1 + Math.sin(t * 2) * 0.04;
-            outer.scale.setScalar(pulse);
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 4. Agents — orbiting particle swarm
-    (function() {
-        const s = makeScene('agents', 7);
-        if (!s) return;
-        const count = 30;
-        const agents = [];
-        for (let i = 0; i < count; i++) {
-            const m = new THREE.Mesh(
-                new THREE.SphereGeometry(0.06, 6, 6),
-                new THREE.MeshBasicMaterial({ color: 0xc0001a })
-            );
-            const angle = (i / count) * Math.PI * 2;
-            const radius = 1.2 + (i % 3) * 0.5;
-            const yOff = (Math.random() - 0.5) * 1.5;
-            agents.push({ mesh: m, angle, radius, speed: 0.008 + Math.random() * 0.015, yOff });
-            s.scene.add(m);
-        }
-        const core = new THREE.Mesh(
-            new THREE.SphereGeometry(0.3, 12, 12),
-            new THREE.MeshBasicMaterial({ color: 0x440010, wireframe: true })
-        );
-        s.scene.add(core);
-        (function a() {
-            requestAnimationFrame(a);
-            agents.forEach(ag => {
-                ag.angle += ag.speed;
-                ag.mesh.position.set(
-                    Math.cos(ag.angle) * ag.radius,
-                    ag.yOff + Math.sin(ag.angle * 0.5) * 0.3,
-                    Math.sin(ag.angle) * ag.radius
-                );
-            });
-            core.rotation.y += 0.02;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 5. Persuasion — concentric rings (echo chamber)
-    (function() {
-        const s = makeScene('persuasion', 6);
-        if (!s) return;
-        const rings = [];
-        for (let i = 0; i < 5; i++) {
-            const r = new THREE.Mesh(
-                new THREE.TorusGeometry(0.4 + i * 0.35, 0.03, 8, 40),
-                new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xc0001a : 0x440010 })
-            );
-            r.rotation.x = Math.PI / 2 + (i * 0.15);
-            rings.push(r);
-            s.scene.add(r);
-        }
-        const center = new THREE.Mesh(
-            new THREE.SphereGeometry(0.18, 12, 12),
-            new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
-        s.scene.add(center);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.012;
-            rings.forEach((r, i) => {
-                r.rotation.z = t * (0.3 + i * 0.1) * (i % 2 === 0 ? 1 : -1);
-                r.rotation.x = Math.PI / 2 + Math.sin(t * 0.5 + i) * 0.2;
-                const sc = 1 + Math.sin(t * 1.5 + i) * 0.04;
-                r.scale.setScalar(sc);
-            });
-            center.scale.setScalar(1 + Math.sin(t * 3) * 0.1);
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 6. Arms Race — two opposing pyramids converging
-    (function() {
-        const s = makeScene('arms-race', 7);
-        if (!s) return;
-        const matRed = new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true });
-        const matWhite = new THREE.MeshBasicMaterial({ color: 0x888888, wireframe: true });
-        const pA = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matRed);
-        const pB = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 5), matWhite);
-        pA.position.x = -1.5; pB.position.x = 1.5;
-        pA.rotation.z = Math.PI / 2; pB.rotation.z = -Math.PI / 2;
-        s.scene.add(pA, pB);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.015;
-            const dist = 1.5 + Math.abs(Math.sin(t)) * 0.8;
-            pA.position.x = -dist; pB.position.x = dist;
-            pA.rotation.y += 0.02; pB.rotation.y -= 0.02;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 7. Governance — three rising pillars
-    (function() {
-        const s = makeScene('governance', 7);
-        if (!s) return;
-        const pillars = [];
-        const positions = [-1.2, 0, 1.2];
-        const heights = [1.8, 2.5, 1.5];
-        positions.forEach((x, i) => {
-            const p = new THREE.Mesh(
-                new THREE.BoxGeometry(0.4, heights[i], 0.4),
-                new THREE.MeshBasicMaterial({ color: i === 1 ? 0xc0001a : 0x444444, wireframe: true })
-            );
-            p.position.set(x, heights[i] / 2 - 1.2, 0);
-            pillars.push({ mesh: p, targetY: heights[i] / 2 - 1.2 });
-            s.scene.add(p);
-        });
-        const cap = new THREE.Mesh(
-            new THREE.BoxGeometry(3, 0.12, 0.5),
-            new THREE.MeshBasicMaterial({ color: 0xc0001a })
-        );
-        cap.position.y = 1.1;
-        s.scene.add(cap);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.01;
-            pillars.forEach((p, i) => {
-                p.mesh.rotation.y += 0.005 * (i % 2 === 0 ? 1 : -1);
-                p.mesh.position.y = p.targetY + Math.sin(t + i * 1.2) * 0.05;
-            });
-            cap.position.y = 1.1 + Math.sin(t * 0.8) * 0.05;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 8. Corporate — stacked tower of boxes
-    (function() {
-        const s = makeScene('corporate', 7);
-        if (!s) return;
-        const floors = [];
-        for (let i = 0; i < 6; i++) {
-            const w = 1.8 - i * 0.2;
-            const f = new THREE.Mesh(
-                new THREE.BoxGeometry(w, 0.3, w),
-                new THREE.MeshBasicMaterial({
-                    color: i === 0 ? 0xc0001a : (i % 2 === 0 ? 0x444444 : 0x222222),
-                    wireframe: true
-                })
-            );
-            f.position.y = i * 0.38 - 1;
-            floors.push(f);
-            s.scene.add(f);
-        }
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.008;
-            floors.forEach((f, i) => {
-                f.rotation.y = t * 0.3 * (i % 2 === 0 ? 1 : -1) + i * 0.1;
-                f.position.y = (i * 0.38 - 1) + Math.sin(t + i * 0.5) * 0.02;
-            });
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 9. Economics — exponential spiral curve
-    (function() {
-        const s = makeScene('economics', 7);
-        if (!s) return;
-        const points = [];
-        for (let i = 0; i < 80; i++) {
-            const t = i / 79;
-            points.push(new THREE.Vector3(
-                (t - 0.5) * 4,
-                Math.pow(t * 2.5, 2) - 1.2,
-                0
-            ));
-        }
-        const curve = new THREE.CatmullRomCurve3(points);
-        const geo = new THREE.TubeGeometry(curve, 60, 0.04, 6, false);
-        const line = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xc0001a }));
-        s.scene.add(line);
-        const dots = [];
-        for (let i = 0; i < 8; i++) {
-            const d = new THREE.Mesh(
-                new THREE.SphereGeometry(0.07, 6, 6),
-                new THREE.MeshBasicMaterial({ color: 0xffffff })
-            );
-            dots.push({ mesh: d, progress: i / 8 });
-            s.scene.add(d);
-        }
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.005;
-            dots.forEach((d) => {
-                const prog = ((d.progress + t * 0.1) % 1);
-                const pt = curve.getPoint(prog);
-                d.mesh.position.copy(pt);
-            });
-            line.rotation.y = Math.sin(t * 0.5) * 0.15;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 10. Interpretability — wireframe lens
-    (function() {
-        const s = makeScene('interpretability', 6);
-        if (!s) return;
-        const ring = new THREE.Mesh(
-            new THREE.TorusGeometry(1.3, 0.08, 8, 40),
-            new THREE.MeshBasicMaterial({ color: 0xc0001a })
-        );
-        const gridLines = new THREE.Group();
-        for (let i = -3; i <= 3; i++) {
-            const hGeo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(-1.2, i * 0.35, 0),
-                new THREE.Vector3(1.2, i * 0.35, 0)
-            ]);
-            const vGeo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(i * 0.35, -1.2, 0),
-                new THREE.Vector3(i * 0.35, 1.2, 0)
-            ]);
-            const mat = new THREE.LineBasicMaterial({ color: 0x330008 });
-            gridLines.add(new THREE.Line(hGeo, mat));
-            gridLines.add(new THREE.Line(vGeo, mat));
-        }
-        const center = new THREE.Mesh(
-            new THREE.SphereGeometry(0.2, 12, 12),
-            new THREE.MeshBasicMaterial({ color: 0xc0001a, wireframe: true })
-        );
-        s.scene.add(ring, gridLines, center);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.01;
-            ring.rotation.z = t * 0.3;
-            gridLines.rotation.z = Math.sin(t * 0.4) * 0.05;
-            center.scale.setScalar(1 + Math.sin(t * 2) * 0.15);
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 11. Red Teaming — probing spikes
-    (function() {
-        const s = makeScene('red-teaming', 6);
-        if (!s) return;
-        const target = new THREE.Mesh(
-            new THREE.SphereGeometry(0.9, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true })
-        );
-        s.scene.add(target);
-        const spikes = [];
-        for (let i = 0; i < 8; i++) {
-            const angle = (i / 8) * Math.PI * 2;
-            const spike = new THREE.Mesh(
-                new THREE.ConeGeometry(0.06, 0.5, 4),
-                new THREE.MeshBasicMaterial({ color: 0xc0001a })
-            );
-            spike.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, 0);
-            spike.lookAt(0, 0, 0);
-            spike.rotateX(Math.PI / 2);
-            spikes.push({ mesh: spike, angle, baseRadius: 1.8 });
-            s.scene.add(spike);
-        }
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.02;
-            spikes.forEach((sp, i) => {
-                const radius = sp.baseRadius - Math.abs(Math.sin(t * 1.5 + i * 0.8)) * 0.6;
-                sp.mesh.position.set(Math.cos(sp.angle) * radius, Math.sin(sp.angle) * radius, 0);
-            });
-            target.rotation.y += 0.01;
-            target.rotation.x += 0.005;
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 12. Swarm — many small nodes with connecting lines
-    (function() {
-        const s = makeScene('swarm', 8);
-        if (!s) return;
-        const nodeCount = 20;
-        const nodes = [];
-        for (let i = 0; i < nodeCount; i++) {
-            const mesh = new THREE.Mesh(
-                new THREE.SphereGeometry(0.08, 5, 5),
-                new THREE.MeshBasicMaterial({ color: i % 3 === 0 ? 0xc0001a : 0x555555 })
-            );
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.random() * Math.PI;
-            const r = 1 + Math.random() * 1.5;
-            nodes.push({
-                mesh,
-                vx: (Math.random() - 0.5) * 0.015,
-                vy: (Math.random() - 0.5) * 0.015,
-                vz: (Math.random() - 0.5) * 0.015,
-            });
-            mesh.position.set(
-                r * Math.sin(phi) * Math.cos(theta),
-                r * Math.sin(phi) * Math.sin(theta),
-                r * Math.cos(phi)
-            );
-            s.scene.add(mesh);
-        }
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x440010, transparent: true, opacity: 0.4 });
-        const lineGroup = new THREE.Group();
-        s.scene.add(lineGroup);
-        (function a() {
-            requestAnimationFrame(a);
-            nodes.forEach(n => {
-                n.mesh.position.x += n.vx;
-                n.mesh.position.y += n.vy;
-                n.mesh.position.z += n.vz;
-                if (Math.abs(n.mesh.position.x) > 2.5) n.vx *= -1;
-                if (Math.abs(n.mesh.position.y) > 2.5) n.vy *= -1;
-                if (Math.abs(n.mesh.position.z) > 2.5) n.vz *= -1;
-            });
-            while (lineGroup.children.length) lineGroup.remove(lineGroup.children[0]);
-            for (let i = 0; i < nodeCount; i++) {
-                for (let j = i + 1; j < nodeCount; j++) {
-                    const dist = nodes[i].mesh.position.distanceTo(nodes[j].mesh.position);
-                    if (dist < 1.5) {
-                        const geo = new THREE.BufferGeometry().setFromPoints([
-                            nodes[i].mesh.position.clone(),
-                            nodes[j].mesh.position.clone()
-                        ]);
-                        lineGroup.add(new THREE.Line(geo, lineMat));
-                    }
-                }
-            }
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-
-    // 13. Safety Engineering — interlocking gear mechanism
-    (function() {
-        const s = makeScene('safety-engineering', 6);
-        if (!s) return;
-        function makeGear(teeth, radius, color) {
-            const shape = new THREE.Shape();
-            for (let i = 0; i < teeth; i++) {
-                const a1 = (i / teeth) * Math.PI * 2;
-                const a2 = ((i + 0.4) / teeth) * Math.PI * 2;
-                const a3 = ((i + 0.6) / teeth) * Math.PI * 2;
-                const a4 = ((i + 1) / teeth) * Math.PI * 2;
-                if (i === 0) shape.moveTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
-                else shape.lineTo(Math.cos(a1) * radius, Math.sin(a1) * radius);
-                shape.lineTo(Math.cos(a2) * (radius + 0.2), Math.sin(a2) * (radius + 0.2));
-                shape.lineTo(Math.cos(a3) * (radius + 0.2), Math.sin(a3) * (radius + 0.2));
-                shape.lineTo(Math.cos(a4) * radius, Math.sin(a4) * radius);
-            }
-            shape.closePath();
-            const geo = new THREE.ShapeGeometry(shape);
-            return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, wireframe: true }));
-        }
-        const g1 = makeGear(10, 1.0, 0xc0001a);
-        const g2 = makeGear(7, 0.7, 0x888888);
-        const g3 = makeGear(6, 0.6, 0x555555);
-        g1.position.set(0, 0, 0);
-        g2.position.set(1.65, 0.5, 0);
-        g3.position.set(-1.55, -0.4, 0);
-        s.scene.add(g1, g2, g3);
-        let t = 0;
-        (function a() {
-            requestAnimationFrame(a);
-            t += 0.01;
-            g1.rotation.z = t;
-            g2.rotation.z = -t * (10 / 7);
-            g3.rotation.z = -t * (10 / 6);
-            s.renderer.render(s.scene, s.camera);
-        })();
-    })();
-}
-
-// Delay scene init until after layout is painted.
-// Double rAF + timeout ensures DOM is fully laid out even on slow mobile.
-requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            initScenes();
-            // Set up IntersectionObserver rescue for any canvases still zero-sized
-            watchPendingScenes();
-        }, 100);
-    });
+// 0 — Fundamentals: nested wireframe cubes
+addScene(6, scene => {
+    const outer = new THREE.Mesh(new THREE.BoxGeometry(2,2,2),
+        new THREE.MeshBasicMaterial({ wireframe:true, color:0xc0001a }));
+    const inner = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2),
+        new THREE.MeshBasicMaterial({ wireframe:true, color:0x660010 }));
+    scene.add(outer, inner);
+    return t => {
+        outer.rotation.x = t; outer.rotation.y = t * 1.3;
+        inner.rotation.x = -t * 0.7; inner.rotation.y = t;
+    };
 });
 
+// 1 — Ethics: oscillating balance beam
+addScene(5, scene => {
+    const pivot = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.12,0.4,8),
+        new THREE.MeshBasicMaterial({ color:0x888888 }));
+    pivot.position.y = -0.5;
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(3,0.08,0.08),
+        new THREE.MeshBasicMaterial({ color:0xaaaaaa }));
+    beam.position.y = 0.3;
+    const lS = new THREE.Mesh(new THREE.SphereGeometry(0.35,16,16),
+        new THREE.MeshBasicMaterial({ color:0xc0001a, wireframe:true }));
+    const rS = new THREE.Mesh(new THREE.SphereGeometry(0.28,16,16),
+        new THREE.MeshBasicMaterial({ color:0xffffff, wireframe:true }));
+    scene.add(pivot, beam, lS, rS);
+    return t => {
+        beam.rotation.z = Math.sin(t) * 0.25;
+        const a = beam.rotation.z;
+        lS.position.set(-1.4*Math.cos(a), 0.3 - 1.4*Math.sin(a) - 0.4, 0);
+        rS.position.set( 1.4*Math.cos(a), 0.3 + 1.4*Math.sin(a) - 0.4, 0);
+        lS.rotation.y += 0.02; rS.rotation.y -= 0.02;
+    };
+});
+
+// 2 — Catastrophic: cracking icosphere
+addScene(5, scene => {
+    const outer = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5,1),
+        new THREE.MeshBasicMaterial({ color:0xc0001a, wireframe:true }));
+    const inner = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8,0),
+        new THREE.MeshBasicMaterial({ color:0x330008, wireframe:true }));
+    scene.add(outer, inner);
+    return t => {
+        outer.rotation.y += 0.012; outer.rotation.x = Math.sin(t*0.7)*0.3;
+        inner.rotation.y -= 0.008; inner.rotation.x += 0.006;
+        outer.scale.setScalar(1 + Math.sin(t*2)*0.04);
+    };
+});
+
+// 3 — Agents: orbiting swarm
+addScene(7, scene => {
+    const agents = [];
+    for (let i = 0; i < 30; i++) {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.06,6,6),
+            new THREE.MeshBasicMaterial({ color:0xc0001a }));
+        const angle  = (i/30) * Math.PI * 2;
+        const radius = 1.2 + (i%3) * 0.5;
+        const yOff   = (Math.random()-0.5) * 1.5;
+        agents.push({ mesh:m, angle, radius, speed:0.008+Math.random()*0.015, yOff });
+        scene.add(m);
+    }
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.3,12,12),
+        new THREE.MeshBasicMaterial({ color:0x440010, wireframe:true }));
+    scene.add(core);
+    return () => {
+        agents.forEach(ag => {
+            ag.angle += ag.speed;
+            ag.mesh.position.set(
+                Math.cos(ag.angle)*ag.radius,
+                ag.yOff + Math.sin(ag.angle*0.5)*0.3,
+                Math.sin(ag.angle)*ag.radius);
+        });
+        core.rotation.y += 0.02;
+    };
+});
+
+// 4 — Persuasion: concentric rings
+addScene(6, scene => {
+    const rings = [];
+    for (let i = 0; i < 5; i++) {
+        const r = new THREE.Mesh(
+            new THREE.TorusGeometry(0.4+i*0.35, 0.03, 8, 40),
+            new THREE.MeshBasicMaterial({ color: i%2===0 ? 0xc0001a : 0x440010 }));
+        r.rotation.x = Math.PI/2 + i*0.15;
+        rings.push(r); scene.add(r);
+    }
+    const center = new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),
+        new THREE.MeshBasicMaterial({ color:0xffffff }));
+    scene.add(center);
+    return t => {
+        rings.forEach((r,i) => {
+            r.rotation.z = t*(0.3+i*0.1)*(i%2===0?1:-1);
+            r.rotation.x = Math.PI/2 + Math.sin(t*0.5+i)*0.2;
+            r.scale.setScalar(1 + Math.sin(t*1.5+i)*0.04);
+        });
+        center.scale.setScalar(1 + Math.sin(t*3)*0.1);
+    };
+});
+
+// 5 — Arms Race: two opposing pyramids
+addScene(7, scene => {
+    const pA = new THREE.Mesh(new THREE.ConeGeometry(0.8,1.8,5),
+        new THREE.MeshBasicMaterial({ color:0xc0001a, wireframe:true }));
+    const pB = new THREE.Mesh(new THREE.ConeGeometry(0.8,1.8,5),
+        new THREE.MeshBasicMaterial({ color:0x888888, wireframe:true }));
+    pA.rotation.z =  Math.PI/2;
+    pB.rotation.z = -Math.PI/2;
+    scene.add(pA, pB);
+    return t => {
+        const dist = 1.5 + Math.abs(Math.sin(t))*0.8;
+        pA.position.x = -dist; pB.position.x = dist;
+        pA.rotation.y += 0.02; pB.rotation.y -= 0.02;
+    };
+});
+
+// 6 — Governance: three pillars
+addScene(7, scene => {
+    const data = [[-1.2,1.8], [0,2.5], [1.2,1.5]];
+    const pillars = data.map(([x,h],i) => {
+        const p = new THREE.Mesh(new THREE.BoxGeometry(0.4,h,0.4),
+            new THREE.MeshBasicMaterial({ color: i===1?0xc0001a:0x444444, wireframe:true }));
+        p.position.set(x, h/2-1.2, 0); scene.add(p);
+        return { mesh:p, base:h/2-1.2 };
+    });
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(3,0.12,0.5),
+        new THREE.MeshBasicMaterial({ color:0xc0001a }));
+    cap.position.y = 1.1; scene.add(cap);
+    return t => {
+        pillars.forEach((p,i) => {
+            p.mesh.rotation.y += 0.005*(i%2===0?1:-1);
+            p.mesh.position.y = p.base + Math.sin(t+i*1.2)*0.05;
+        });
+        cap.position.y = 1.1 + Math.sin(t*0.8)*0.05;
+    };
+});
+
+// 7 — Corporate: stacked tower
+addScene(7, scene => {
+    const floors = [];
+    for (let i = 0; i < 6; i++) {
+        const w = 1.8 - i*0.2;
+        const f = new THREE.Mesh(new THREE.BoxGeometry(w,0.3,w),
+            new THREE.MeshBasicMaterial({
+                color: i===0 ? 0xc0001a : (i%2===0 ? 0x444444 : 0x222222),
+                wireframe:true }));
+        f.position.y = i*0.38 - 1;
+        floors.push(f); scene.add(f);
+    }
+    return t => {
+        floors.forEach((f,i) => {
+            f.rotation.y = t*0.3*(i%2===0?1:-1) + i*0.1;
+            f.position.y = (i*0.38-1) + Math.sin(t+i*0.5)*0.02;
+        });
+    };
+});
+
+// 8 — Economics: exponential curve
+addScene(7, scene => {
+    const pts = [];
+    for (let i=0; i<80; i++) {
+        const t=i/79;
+        pts.push(new THREE.Vector3((t-0.5)*4, Math.pow(t*2.5,2)-1.2, 0));
+    }
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const tube  = new THREE.Mesh(
+        new THREE.TubeGeometry(curve,60,0.04,6,false),
+        new THREE.MeshBasicMaterial({ color:0xc0001a }));
+    scene.add(tube);
+    const dots = Array.from({length:8},(_,i)=>({
+        mesh: new THREE.Mesh(new THREE.SphereGeometry(0.07,6,6),
+            new THREE.MeshBasicMaterial({ color:0xffffff })),
+        progress: i/8
+    }));
+    dots.forEach(d=>scene.add(d.mesh));
+    return t => {
+        dots.forEach(d => {
+            const p = curve.getPoint(((d.progress + t*0.1) % 1));
+            d.mesh.position.copy(p);
+        });
+        tube.rotation.y = Math.sin(t*0.5)*0.15;
+    };
+});
+
+// 9 — Interpretability: lens + grid
+addScene(6, scene => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.3,0.08,8,40),
+        new THREE.MeshBasicMaterial({ color:0xc0001a }));
+    const grid = new THREE.Group();
+    for (let i=-3; i<=3; i++) {
+        const m = new THREE.LineBasicMaterial({ color:0x330008 });
+        grid.add(new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.2,i*0.35,0),new THREE.Vector3(1.2,i*0.35,0)]), m));
+        grid.add(new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i*0.35,-1.2,0),new THREE.Vector3(i*0.35,1.2,0)]), m));
+    }
+    const center = new THREE.Mesh(new THREE.SphereGeometry(0.2,12,12),
+        new THREE.MeshBasicMaterial({ color:0xc0001a, wireframe:true }));
+    scene.add(ring, grid, center);
+    return t => {
+        ring.rotation.z = t*0.3;
+        grid.rotation.z = Math.sin(t*0.4)*0.05;
+        center.scale.setScalar(1+Math.sin(t*2)*0.15);
+    };
+});
+
+// 10 — Red Teaming: probing spikes
+addScene(6, scene => {
+    const target = new THREE.Mesh(new THREE.SphereGeometry(0.9,16,16),
+        new THREE.MeshBasicMaterial({ color:0x222222, wireframe:true }));
+    scene.add(target);
+    const spikes = Array.from({length:8},(_,i) => {
+        const angle = (i/8)*Math.PI*2;
+        const sp = new THREE.Mesh(new THREE.ConeGeometry(0.06,0.5,4),
+            new THREE.MeshBasicMaterial({ color:0xc0001a }));
+        sp.position.set(Math.cos(angle)*1.8, Math.sin(angle)*1.8, 0);
+        sp.lookAt(0,0,0); sp.rotateX(Math.PI/2);
+        scene.add(sp);
+        return { mesh:sp, angle, base:1.8 };
+    });
+    return t => {
+        spikes.forEach((sp,i) => {
+            const r = sp.base - Math.abs(Math.sin(t*1.5+i*0.8))*0.6;
+            sp.mesh.position.set(Math.cos(sp.angle)*r, Math.sin(sp.angle)*r, 0);
+        });
+        target.rotation.y += 0.01; target.rotation.x += 0.005;
+    };
+});
+
+// 11 — Swarm: nodes + connecting lines
+addScene(8, scene => {
+    const nodes = Array.from({length:20},(_,i) => {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(0.08,5,5),
+            new THREE.MeshBasicMaterial({ color: i%3===0?0xc0001a:0x555555 }));
+        const th=Math.random()*Math.PI*2, ph=Math.random()*Math.PI, r=1+Math.random()*1.5;
+        m.position.set(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
+        scene.add(m);
+        return { mesh:m, vx:(Math.random()-0.5)*0.015, vy:(Math.random()-0.5)*0.015, vz:(Math.random()-0.5)*0.015 };
+    });
+    const lineMat  = new THREE.LineBasicMaterial({ color:0x440010, transparent:true, opacity:0.4 });
+    const lineGroup= new THREE.Group(); scene.add(lineGroup);
+    return () => {
+        nodes.forEach(n => {
+            n.mesh.position.x += n.vx; n.mesh.position.y += n.vy; n.mesh.position.z += n.vz;
+            if(Math.abs(n.mesh.position.x)>2.5) n.vx*=-1;
+            if(Math.abs(n.mesh.position.y)>2.5) n.vy*=-1;
+            if(Math.abs(n.mesh.position.z)>2.5) n.vz*=-1;
+        });
+        while(lineGroup.children.length) lineGroup.remove(lineGroup.children[0]);
+        for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) {
+            if(nodes[i].mesh.position.distanceTo(nodes[j].mesh.position)<1.5) {
+                lineGroup.add(new THREE.Line(
+                    new THREE.BufferGeometry().setFromPoints([
+                        nodes[i].mesh.position.clone(), nodes[j].mesh.position.clone()]), lineMat));
+            }
+        }
+    };
+});
+
+// 12 — Safety Engineering: gears
+addScene(6, scene => {
+    function makeGear(teeth, radius, color) {
+        const shape = new THREE.Shape();
+        for(let i=0;i<teeth;i++) {
+            const a1=(i/teeth)*Math.PI*2, a2=((i+0.4)/teeth)*Math.PI*2,
+                  a3=((i+0.6)/teeth)*Math.PI*2, a4=((i+1)/teeth)*Math.PI*2;
+            if(i===0) shape.moveTo(Math.cos(a1)*radius, Math.sin(a1)*radius);
+            else shape.lineTo(Math.cos(a1)*radius, Math.sin(a1)*radius);
+            shape.lineTo(Math.cos(a2)*(radius+0.2), Math.sin(a2)*(radius+0.2));
+            shape.lineTo(Math.cos(a3)*(radius+0.2), Math.sin(a3)*(radius+0.2));
+            shape.lineTo(Math.cos(a4)*radius, Math.sin(a4)*radius);
+        }
+        shape.closePath();
+        return new THREE.Mesh(new THREE.ShapeGeometry(shape),
+            new THREE.MeshBasicMaterial({ color, wireframe:true }));
+    }
+    const g1=makeGear(10,1.0,0xc0001a), g2=makeGear(7,0.7,0x888888), g3=makeGear(6,0.6,0x555555);
+    g1.position.set(0,0,0); g2.position.set(1.65,0.5,0); g3.position.set(-1.55,-0.4,0);
+    scene.add(g1,g2,g3);
+    return t => {
+        g1.rotation.z=t; g2.rotation.z=-t*(10/7); g3.rotation.z=-t*(10/6);
+    };
+});
+
+// ── Single animation loop — render all scenes, copy to 2D canvases ──────────
+// Each card's <canvas> is a plain 2D canvas. We render the WebGL scene
+// offscreen then drawImage it across — one WebGL context, zero limit issues.
+
+const card2dCanvases = cardDefs.map(c => {
+    const el = document.getElementById(c.id + '-canvas');
+    if (!el) return null;
+    const wrap = document.getElementById(c.id + '-wrap');
+    const w = wrap ? Math.round(wrap.getBoundingClientRect().width  || CARD_W) : CARD_W;
+    const h = wrap ? Math.round(wrap.getBoundingClientRect().height || CARD_H) : CARD_H;
+    el.width  = Math.round(w * dpr);
+    el.height = Math.round(h * dpr);
+    el.style.width  = w + 'px';
+    el.style.height = h + 'px';
+    return el.getContext('2d');
+});
+
+let globalT = 0;
+function animate() {
+    requestAnimationFrame(animate);
+    globalT += 0.01;
+
+    scenes.forEach((s, i) => {
+        const ctx2d = card2dCanvases[i];
+        if (!ctx2d) return;
+
+        // Update scene objects
+        s.tick(globalT);
+
+        // Render into the single offscreen WebGL canvas
+        renderer.render(s.scene, s.camera);
+
+        // Copy pixels to the card's 2D canvas
+        ctx2d.clearRect(0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
+        ctx2d.drawImage(offscreen, 0, 0, ctx2d.canvas.width, ctx2d.canvas.height);
+    });
+}
+
+// Start after layout is painted
+requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(animate, 80)));
 // ──────────────────────────────────────────────────────
 // MODAL SYSTEM
 // ──────────────────────────────────────────────────────
