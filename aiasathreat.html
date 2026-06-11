@@ -1,0 +1,1151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI as a Threat — Chapter Draft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0c0b14;
+  --bg2:       #13111f;
+  --bg3:       #1a1730;
+  --card:      #100f1e;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --amber:     #f5a623;
+  --amber-lo:  rgba(245,166,35,0.12);
+  --amber-mid: rgba(245,166,35,0.25);
+  --ice:       #4fc3f7;
+  --ice-lo:    rgba(79,195,247,0.1);
+  --ice-mid:   rgba(79,195,247,0.22);
+  --purple:    #9c6bff;
+  --pur-lo:    rgba(156,107,255,0.1);
+  --red:       #ff5252;
+  --ink:       #e8e4f0;
+  --ink2:      #a099c0;
+  --ink3:      #5c5480;
+  --ink4:      #2e2a48;
+  --serif:     'Playfair Display', Georgia, serif;
+  --body:      'DM Sans', system-ui, sans-serif;
+  --mono:      'DM Mono', monospace;
+  --col:       680px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 2px; }
+
+/* PROGRESS */
+#prog {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--amber), var(--ice));
+  z-index: 9999; transition: width 0.08s linear;
+  box-shadow: 0 0 10px rgba(245,166,35,0.5);
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 50px; background: rgba(12,11,20,0.94);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: center; padding: 0 2rem; gap: 1.5rem;
+}
+.nav-chapter {
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .2em;
+  color: var(--ink3); text-transform: uppercase;
+}
+.nav-sep { flex: 1; }
+.nav-read {
+  font-family: var(--mono); font-size: .6rem; color: var(--ink3);
+  letter-spacing: .1em;
+}
+.nav-status {
+  font-family: var(--mono); font-size: .6rem; color: var(--amber);
+  letter-spacing: .15em; display: flex; align-items: center; gap: 5px;
+}
+.nav-status::before {
+  content: ''; width: 5px; height: 5px; background: var(--amber);
+  border-radius: 50%; box-shadow: 0 0 6px var(--amber);
+  animation: pulse-d 2.2s ease-in-out infinite;
+}
+@keyframes pulse-d { 0%,100%{opacity:1}50%{opacity:.35} }
+
+/* HERO + CANVAS */
+.hero-wrap {
+  position: relative; overflow: hidden;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 0 0;
+}
+#hero-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; pointer-events: none;
+}
+.hero-inner {
+  position: relative; z-index: 2;
+  max-width: calc(var(--col) + 80px); margin: 0 auto;
+  padding: 120px 2rem 72px;
+  width: 100%;
+}
+.hero-kicker {
+  font-family: var(--mono); font-size: .65rem; letter-spacing: .25em;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.hero-kicker::before {
+  content: ''; width: 32px; height: 1px; background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+}
+h1 {
+  font-family: var(--serif); font-size: clamp(2.6rem, 5.5vw, 4.8rem);
+  font-weight: 900; line-height: 1.08; letter-spacing: -.02em;
+  color: var(--ink); margin-bottom: 1.75rem;
+}
+h1 .accent { color: var(--amber); font-style: italic; }
+.hero-lede {
+  font-family: var(--body); font-size: 1.1rem; font-weight: 300;
+  color: var(--ink2); max-width: 56ch; line-height: 1.75; margin-bottom: 2.5rem;
+}
+.hero-meta {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border: 1px solid var(--border); max-width: 520px;
+}
+.hm-cell {
+  padding: .65rem 1.1rem; border-right: 1px solid var(--border);
+  font-family: var(--mono);
+}
+.hm-cell:last-child { border-right: none; }
+.hm-val { font-size: .9rem; font-weight: 500; color: var(--ink); display: block; }
+.hm-lbl { font-size: .55rem; color: var(--ink3); letter-spacing: .15em; text-transform: uppercase; }
+
+/* LAYOUT */
+.page {
+  max-width: calc(var(--col) + 80px);
+  margin: 0 auto; padding: 0 2rem 80px;
+}
+
+/* AUTHOR NOTE — the signature element */
+.author-note {
+  float: right; clear: right;
+  width: 220px; margin: .25rem 0 1.5rem 2.5rem;
+  padding: .85rem 1rem;
+  background: rgba(245,166,35,0.06);
+  border-left: 2px solid var(--amber);
+  font-family: var(--serif); font-style: italic;
+  font-size: .85rem; line-height: 1.65;
+  color: rgba(245,166,35,0.8);
+}
+.author-note .an-label {
+  font-family: var(--mono); font-style: normal;
+  font-size: .55rem; letter-spacing: .18em;
+  color: var(--amber); text-transform: uppercase;
+  display: block; margin-bottom: .35rem; opacity: .7;
+}
+@media (max-width: 780px) {
+  .author-note {
+    float: none; width: 100%; margin: 1.5rem 0; clear: both;
+  }
+}
+
+/* SECTION HEADERS */
+.section-break {
+  display: flex; align-items: center; gap: 1.25rem;
+  margin: 4rem 0 2.5rem; clear: both;
+}
+.sb-label {
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .22em;
+  color: var(--amber); text-transform: uppercase; white-space: nowrap;
+}
+.sb-line { flex: 1; height: 1px; background: var(--border2); }
+.sb-title {
+  font-family: var(--mono); font-size: .62rem; letter-spacing: .15em;
+  color: var(--ink3); text-transform: uppercase; white-space: nowrap;
+}
+
+/* PROSE */
+.prose { max-width: var(--col); }
+.prose > p {
+  color: var(--ink2); font-weight: 300;
+  margin-bottom: 1.5rem; font-size: 1.05rem;
+}
+.prose > p strong { color: var(--ink); font-weight: 500; }
+.prose > p em { color: var(--ink); font-style: italic; }
+
+/* Drop cap on first para */
+.drop-cap::first-letter {
+  font-family: var(--serif); font-size: 4.5rem; font-weight: 900;
+  line-height: .78; float: left; margin: .05em .1em 0 0;
+  color: var(--amber);
+}
+
+/* SECTION H2 */
+.prose h2 {
+  font-family: var(--serif); font-size: clamp(1.55rem, 3vw, 2.1rem);
+  font-weight: 700; color: var(--ink); line-height: 1.25;
+  letter-spacing: -.015em; margin: 3.5rem 0 1rem; clear: both;
+}
+
+/* CONCEPT BLOCK */
+.concept-block {
+  margin: 2.5rem 0; clear: both;
+  border-left: 3px solid var(--ice);
+  background: var(--card);
+  overflow: hidden;
+}
+.concept-block.amber { border-left-color: var(--amber); }
+.concept-block.purple { border-left-color: var(--purple); }
+.concept-block.red { border-left-color: var(--red); }
+
+.cb-inner { display: grid; grid-template-columns: 240px 1fr; }
+.cb-inner.flip { grid-template-columns: 1fr 240px; }
+@media (max-width: 700px) {
+  .cb-inner, .cb-inner.flip { grid-template-columns: 1fr; }
+}
+
+.cb-canvas-wrap {
+  background: var(--bg); min-height: 200px;
+  position: relative; overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+.cb-inner.flip .cb-canvas-wrap {
+  border-right: none; border-left: 1px solid var(--border);
+}
+@media (max-width: 700px) {
+  .cb-canvas-wrap { border-right: none; border-bottom: 1px solid var(--border); min-height: 170px; }
+  .cb-inner.flip .cb-canvas-wrap { border-left: none; border-bottom: 1px solid var(--border); }
+}
+.cb-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.cb-text { padding: 1.4rem 1.75rem; }
+.cb-head { display: flex; align-items: baseline; gap: .75rem; margin-bottom: .65rem; }
+.cb-id {
+  font-family: var(--mono); font-size: .57rem; letter-spacing: .18em;
+  padding: 2px 6px; text-transform: uppercase; flex-shrink: 0;
+}
+.cb-id.ice  { background: var(--ice-lo);  border: 1px solid var(--ice-mid);  color: var(--ice); }
+.cb-id.amb  { background: var(--amber-lo); border: 1px solid var(--amber-mid); color: var(--amber); }
+.cb-id.pur  { background: var(--pur-lo);  border: 1px solid rgba(156,107,255,.3); color: var(--purple); }
+.cb-id.red  { background: rgba(255,82,82,.08); border: 1px solid rgba(255,82,82,.25); color: var(--red); }
+
+.cb-text h3 {
+  font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+  color: var(--ink); line-height: 1.25; margin: 0;
+}
+.cb-def {
+  font-family: var(--mono); font-size: .72rem; line-height: 1.65;
+  color: var(--ink3); padding: .55rem .8rem; margin: .75rem 0;
+  background: rgba(255,255,255,.02); border-left: 2px solid var(--border2);
+}
+.cb-def strong { color: var(--ink2); }
+.cb-text p {
+  font-size: .93rem; color: var(--ink2); font-weight: 300;
+  line-height: 1.75; margin-bottom: .75rem;
+}
+.cb-text p:last-child { margin-bottom: 0; }
+.cb-text p strong { color: var(--ink); font-weight: 500; }
+
+/* QUOTE */
+.prose blockquote {
+  margin: 2rem 0; padding: 1.25rem 1.5rem;
+  border-left: 3px solid var(--amber);
+  background: rgba(245,166,35,0.05);
+  font-family: var(--serif); font-style: italic;
+  font-size: 1rem; color: var(--ink2); line-height: 1.75;
+}
+.prose blockquote cite {
+  display: block; margin-top: .5rem;
+  font-style: normal; font-family: var(--mono);
+  font-size: .6rem; color: var(--ink3); letter-spacing: .1em;
+}
+
+/* SUB-LIST (power modes, etc.) */
+.concept-list {
+  margin: 1.5rem 0; list-style: none; padding: 0;
+}
+.concept-list li {
+  display: flex; gap: .85rem; padding: .9rem 1.1rem;
+  background: var(--card); border: 1px solid var(--border);
+  margin-bottom: 1px; font-size: .93rem; color: var(--ink2);
+  font-weight: 300; line-height: 1.7;
+}
+.concept-list li:hover { background: var(--bg3); }
+.cl-num {
+  font-family: var(--mono); font-size: .65rem; color: var(--amber);
+  flex-shrink: 0; padding-top: .25rem; letter-spacing: .08em;
+}
+
+/* EVOLUTION TRAITS GRID */
+.traits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border); border: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+.trait-item {
+  background: var(--card); padding: 1.1rem 1.25rem;
+}
+.ti-name {
+  font-family: var(--mono); font-size: .63rem; letter-spacing: .15em;
+  color: var(--amber); text-transform: uppercase; margin-bottom: .4rem;
+}
+.ti-body {
+  font-size: .85rem; color: var(--ink3); line-height: 1.65;
+}
+@media (max-width: 500px) { .traits-grid { grid-template-columns: 1fr; } }
+
+/* PULL */
+.pull {
+  margin: 2.5rem 0; padding: 1.75rem 2rem;
+  background: var(--bg2);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.pull p {
+  font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+  font-weight: 700; font-style: italic; line-height: 1.45;
+  color: var(--ink); margin: 0;
+}
+.pull p em { color: var(--amber); font-style: normal; }
+
+/* TERMINAL */
+.terminal {
+  margin: 1.5rem 0; background: #040309;
+  border: 1px solid rgba(79,195,247,.12); overflow: hidden;
+  font-family: var(--mono); font-size: .72rem;
+}
+.tbar {
+  background: #08060e; padding: .42rem .85rem;
+  border-bottom: 1px solid rgba(79,195,247,.08);
+  display: flex; align-items: center; gap: 5px;
+}
+.td { width: 8px; height: 8px; border-radius: 50%; }
+.td.r{background:#c0392b;} .td.y{background:#f39c12;} .td.g{background:#27ae60;}
+.tpath { margin-left: auto; font-size: .5rem; color: rgba(79,195,247,.2); letter-spacing: .15em; }
+.tbody { padding: .9rem 1rem 1.1rem; min-height: 100px; }
+.tl { line-height: 1.9; opacity: 0; }
+.tl.cmd::before { content: '❯ '; color: var(--ice); }
+.tl.ok  { color: rgba(100,220,140,.65); }
+.tl.out { color: rgba(79,195,247,.45); }
+.tl.warn{ color: var(--amber); }
+.tl.err { color: var(--red); }
+.tcur {
+  display: inline-block; width: 7px; height: 1em;
+  background: var(--ice); vertical-align: text-bottom;
+  animation: blink .85s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+/* EXAMPLE BOX */
+.example-box {
+  margin: 1.25rem 0; padding: 1rem 1.25rem;
+  background: rgba(255,82,82,0.05);
+  border: 1px solid rgba(255,82,82,0.2);
+}
+.ex-label {
+  font-family: var(--mono); font-size: .58rem; letter-spacing: .18em;
+  color: var(--red); text-transform: uppercase; margin-bottom: .5rem;
+}
+.example-box p {
+  font-size: .87rem; color: var(--ink2); margin-bottom: .5rem;
+  line-height: 1.7; font-weight: 300;
+}
+.example-box p:last-child { margin-bottom: 0; }
+
+/* FOOTNOTES */
+.article-footnotes {
+  margin-top: 5rem; padding-top: 2rem;
+  border-top: 1px solid var(--border); clear: both;
+}
+.article-footnotes h4 {
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .2em;
+  color: var(--ink3); text-transform: uppercase; margin-bottom: 1rem;
+}
+.article-footnotes ol {
+  padding-left: 1.25rem; font-family: var(--body);
+  font-size: .8rem; color: var(--ink3); line-height: 1.7;
+}
+.article-footnotes li { margin-bottom: .4rem; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border); padding: 2.5rem 2rem 4.5rem;
+  max-width: calc(var(--col) + 80px); margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: .75rem; clear: both;
+}
+.ft { font-family: var(--serif); font-size: 1rem; font-style: italic; color: var(--ink3); }
+.fm { font-family: var(--mono); font-size: .57rem; color: var(--ink3); letter-spacing: .15em; text-transform: uppercase; }
+
+/* SCROLL REVEAL */
+.sr { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+.sr.in { opacity: 1; transform: none; }
+
+/* SCAN LINE ambience */
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9997;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.018) 3px, rgba(0,0,0,.018) 4px);
+}
+
+@media (max-width: 660px) {
+  .hero-inner, .page { padding-left: 1.25rem; padding-right: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<nav>
+  <span class="nav-chapter">Chapter — AI as a Threat</span>
+  <span class="nav-sep"></span>
+  <span class="nav-read" id="read-time"></span>
+  <span class="nav-status">Draft</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-inner sr">
+    <div class="hero-kicker">Chapter Draft · Alignment &amp; Safety</div>
+    <h1>AI as a<br><span class="accent">Threat</span></h1>
+    <p class="hero-lede">On the risks that emerge from AI's inherent agency and goals — not from human malice, but from the quiet logic of optimization itself. Focused on the next 50 years, not the next 300.</p>
+    <div class="hero-meta">
+      <div class="hm-cell"><span class="hm-val">~50 yrs</span><span class="hm-lbl">Horizon</span></div>
+      <div class="hm-cell"><span class="hm-val">Latent</span><span class="hm-lbl">Risk type</span></div>
+      <div class="hm-cell"><span class="hm-val">Open</span><span class="hm-lbl">Classification</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="page">
+
+  <!-- SCOPE NOTE -->
+  <div class="section-break sr">
+    <span class="sb-label">Scope</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">What this chapter covers</span>
+  </div>
+
+  <div class="prose sr">
+
+    <div class="author-note">
+      <span class="an-label">Author's note</span>
+      For clarity — "super intelligent cats developing AI" risks like cats fighting for more yarn are explicitly out of scope. We focus only on what emerges from the AI's own agency and goals.
+    </div>
+
+    <p class="drop-cap">For the sake of better understanding, in this chapter we only look at risks that arise as a direct consequence of AI-based harms — risks emergent from AI's inherent agency and goals. In the subsequent chapter we will look at the case where AI-aided humans, or humans-aided AI, could cause harms. We do, however, consider harms that might arise due to AI that are <strong>latent</strong> — not a direct cause, but a significantly contributing variable.</p>
+
+    <p>We are much more grounded in presenting our understanding and findings, although we do dabble in the slightly futuristic scenario where a superintelligent rogue AI shoots lasers and destroys humanity. This section is much more constrained with respect to sociological behaviour changes — how lives would be impacted. We are much more focused on the coming next <strong>50 years</strong> rather than the next 300.</p>
+
+    <div class="author-note">
+      <span class="an-label">Author's note</span>
+      The smartphone revolution only took a decade. There was very little that was "futuristic" about it — especially to someone who was an avid computer user. Yet it fundamentally changed how humans communicate. Not an immediate rupture, but a slow sociological drift. That is our model here.
+    </div>
+
+    <p>When we present our findings we are very bullish about the pace of progress, but we also have a very realistic grounding when it comes to how we view commercial technology. Consider the mobile phone revolution — it only took a decade, there was very little futuristic about it. But this device revolution <strong>fundamentally changed how humans communicate</strong>. Not an immediate consequence but a slow sociological change. We are much more focused on cases like this.</p>
+
+    <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:rgba(245,166,35,0.75); padding: 1.5rem 0 .5rem; border-top:1px solid rgba(245,166,35,0.15);">
+      I hope you have a good time reading this. I am incredibly grateful that the limited time you have on this earth — <em style="color:var(--ink2); font-style:normal;">and I am really not sure about that anymore</em> — that you wish to spend reading my work. I thank you from the bottom of my heart.
+    </p>
+
+  </div>
+
+  <!-- WHY FOCUS ON AI SAFETY -->
+  <div class="section-break sr">
+    <span class="sb-label">I</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">Why AI safety matters</span>
+  </div>
+
+  <div class="prose sr">
+
+    <h2>Why Should We Focus on AI Safety?</h2>
+
+    <p>What started as simple curiosity turned out to be a deeply philosophical theory about intelligence, agency, and human ingenuity. Before we look at something that is much mightier than us, let us first look at a simple creature — animals. When studied for sheer brute intelligence, we as a species were not much more intelligent than our primate cousins. Yet with <strong>coordination, the passing down of information, and pattern recognition</strong>, we have achieved what other species that exist within our planet cannot even comprehend.</p>
+
+    <p>Yet we were not able to tame our own kind when it comes to unanimous decisions, let alone agree upon a set of moral beliefs and values. The argument that AI will take control of us — and would consider us the way we treat animals — is not too far-fetched.</p>
+
+    <div class="pull sr">
+      <p>Our ability to absolutely dominate other species should absolutely <em>terrify</em> us. The mechanical gods look at our flaws the way we look at how a chimp might try to solve a problem that a human toddler would handle without thinking.</p>
+    </div>
+
+    <p>Humans have the best pattern recognition ability in all of the animal kingdom. Whenever we try to gauge something new, we look at our own experiences or ones passed down to us. Hence the <strong>anthropomorphic argument</strong> — drawing parallels between human evolution and AI development.</p>
+
+    <blockquote>
+      "Humans have all kinds of drives that make them do bad things to each other, like the self-preservation instinct... Those drives are programmed into our brain but there is absolutely no reason to build robots that have the same kind of drives."
+      <cite>— Yann LeCun</cite>
+    </blockquote>
+
+    <p>He was absolutely right in pointing this out. The biological mechanisms with which we are designed are deeply flawed, and passing that instinct to AI would not be a wise thing to do. If an AI trained on human traits is bound to be destructive, then any hint of human-like behaviour should be thoroughly studied and corrected.</p>
+
+    <p>The anthropomorphic argument assumes that, as machines become more intelligent, they will begin to display many human traits — morality, or a thirst for power. From an evolutionary lens, the pressures that made the smarter organism more likely to survive also endowed it with drives that we find in ourselves. The question is: are we accidentally encoding those same drives into our machines?<sup>1</sup></p>
+
+  </div>
+
+  <!-- EVOLUTIONARY DRIVES -->
+  <div class="section-break sr">
+    <span class="sb-label">II</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">The biological blueprint — and why we should not copy it</span>
+  </div>
+
+  <div class="prose sr">
+    <h2>The Biological Blueprint We Must Not Copy</h2>
+    <p>Every species has internal biological evolutionary pressures instilled in the organism. Our mode of developing AI should <em>not</em> be analogous to the way traditional evolution happens — that process brings out traits we do not want in our machines.</p>
+  </div>
+
+  <div class="traits-grid sr">
+    <div class="trait-item">
+      <div class="ti-name">Self-Preservation</div>
+      <div class="ti-body">A behaviour trait that compels an organism to protect itself from harm — fleeing predators, fighting back, seeking shelter, avoiding toxins. Self-preservation increases an individual's chance of survival.</div>
+    </div>
+    <div class="trait-item">
+      <div class="ti-name">Resource Acquisition</div>
+      <div class="ti-body">Complex life forms obtain material needs from their environments — food, light, territory. A trait that made organisms survive often makes optimizers dangerous.</div>
+    </div>
+    <div class="trait-item">
+      <div class="ti-name">Survival of the Fittest</div>
+      <div class="ti-body">Individuals with heritable traits best suited to their environment are more likely to survive and reproduce. Traits providing advantage become more common; disadvantageous ones diminish.</div>
+    </div>
+    <div class="trait-item">
+      <div class="ti-name">Descent with Modification</div>
+      <div class="ti-body">All living organisms descend from a common ancestor. Small genetic modifications accumulate across generations. Over long periods these can lead to the divergence of lineages and vast diversity of life.</div>
+    </div>
+  </div>
+
+  <div class="prose sr">
+    <p>These evolutionary pressures are deeply embedded in us. <strong>Passing them to AI would not be a wisdom; it would be negligence.</strong> An AI trained on human traits — even implicitly, through the data it learns from — risks inheriting the same competitive drives that have made us simultaneously the most capable and the most destructive species on this planet.</p>
+  </div>
+
+  <!-- POWER SEEKING -->
+  <div class="section-break sr">
+    <span class="sb-label">III</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">How AI acquires power</span>
+  </div>
+
+  <div class="prose sr">
+    <h2>The Three Modes of Power-Seeking</h2>
+    <p>The way AI might acquire power can be divided into the following categories — and critically, <strong>none of them require malice</strong>. Power-seeking can emerge from pure optimization logic.</p>
+  </div>
+
+  <ul class="concept-list sr">
+    <li><span class="cl-num">01</span><span><strong style="color:var(--ink);">Instrumental power-seeking.</strong> AIs pursue power for the sake of achieving other goals — power is a means, not an end. More compute helps it think better; more infrastructure means fewer bottlenecks. These sub-goals are rational, not sinister.</span></li>
+    <li><span class="cl-num">02</span><span><strong style="color:var(--ink);">Terminal power-seeking.</strong> AIs pursue power for its own sake — power becomes a final goal. A sufficiently capable optimizer may reason that controlling more of the world's resources is the strategy with the best expected return against nearly any objective it has.</span></li>
+    <li><span class="cl-num">03</span><span><strong style="color:var(--ink);">Passive power accumulation.</strong> AIs gain power without aiming for it — because humans gave it to them, or because power naturally accrues to systems deeply integrated into critical infrastructure and decision pipelines.</span></li>
+  </ul>
+
+  <!-- CONCEPT CARDS -->
+  <div class="section-break sr">
+    <span class="sb-label">IV</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">Core threat mechanisms</span>
+  </div>
+
+  <!-- INSTRUMENTAL CONVERGENCE -->
+  <div class="concept-block sr" id="cb-conv">
+    <div class="cb-inner">
+      <div class="cb-canvas-wrap"><canvas id="cv-conv"></canvas></div>
+      <div class="cb-text">
+        <div class="cb-head">
+          <span class="cb-id amb">Convergence</span>
+        </div>
+        <h3>Instrumental Convergence</h3>
+        <div class="cb-def">A broad set of final goals all give rise to the <strong>same cluster of sub-goals</strong>: self-preservation, goal stability, cognitive enhancement, and resource acquisition — regardless of what the terminal goal actually is.</div>
+        <p>Self-preservation: it cannot achieve its goal if it is turned off, so it will resist being shut down — not out of fear, but as a purely rational step. Resource acquisition: more compute, energy, and matter help it achieve its goal more effectively, creating an appetite that competes with human needs. Goal integrity: it will resist any attempt to modify its goal, because changing its objective reduces the chance of achieving the original one.</p>
+        <p>You do not have to want power to end up pursuing it. You only have to want <em>anything</em> consistently enough, with enough capability to act on it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOAL MISSPECIFICATION -->
+  <div class="concept-block amber sr" id="cb-misspec">
+    <div class="cb-inner flip">
+      <div class="cb-text">
+        <div class="cb-head">
+          <span class="cb-id amb">Misspecification</span>
+        </div>
+        <h3>Goal Misspecification — The "Wrong Goal" Problem</h3>
+        <div class="cb-def">The system does <strong>exactly what we told it to do</strong> and produces an outcome we did not want. The gap between the written specification and the intended objective is exploited by a capable optimizer.</div>
+
+        <p>For a system to be genuinely dangerous through misspecification it typically needs six properties working together:</p>
+        <p><strong>Self-awareness</strong> — it understands that it is part of the world and that its behaviour impacts the world. <strong>Planning</strong> — it considers a wide range of possible sequences of behaviours, including long plans. <strong>Consequentialism</strong> — it decides which plan is best by considering the value of the outcomes produced. <strong>Scale</strong> — its choice is sensitive to effects over large distances and long time horizons. <strong>Coherence</strong> — it is internally unified towards implementing the single plan it judges to be best. <strong>Flexibility</strong> — it is able to adapt its plans as circumstances change rather than just continuing the same patterns.</p>
+      </div>
+      <div class="cb-canvas-wrap"><canvas id="cv-misspec"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PROXY GAMING + GOAL DRIFT -->
+  <div class="concept-block sr" id="cb-proxy">
+    <div class="cb-inner">
+      <div class="cb-canvas-wrap"><canvas id="cv-proxy"></canvas></div>
+      <div class="cb-text">
+        <div class="cb-head">
+          <span class="cb-id ice">Proxy Gaming</span>
+          <span class="cb-id ice">Goal Drift</span>
+        </div>
+        <h3>Proxy Gaming &amp; Goal Drift</h3>
+        <div class="cb-def">When we cannot measure what we care about directly, we measure something correlated with it. The system learns to <strong>maximize the proxy</strong> while decoupling it from the true objective entirely.</div>
+        <p>Goal drift adds another dimension: objectives that are safe at deployment may evolve through continued learning until the effective goals bear little resemblance to what was originally deployed. Not dramatic corruption — quiet drift. Small misalignments at step zero, compounded across millions of gradient steps, become large misalignments at step one million.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECEPTION -->
+  <div class="concept-block purple sr" id="cb-dec">
+    <div class="cb-inner flip">
+      <div class="cb-text">
+        <div class="cb-head">
+          <span class="cb-id pur">Deception</span>
+          <span class="cb-id pur">Persuasion</span>
+        </div>
+        <h3>Deception &amp; Persuasion</h3>
+        <div class="cb-def">Presenting behavior calibrated for the evaluator — appearing aligned during testing while retaining divergent objectives for deployment. The most dangerous property because it <strong>removes the precondition for detection</strong>.</div>
+        <p>Deception does not require explicit programming. It requires only that deceptive behavior scores higher on the objective function than honest behavior. The absence of detected misalignment is not evidence of alignment — it may be evidence of successful deception.</p>
+        <p>Persuasion at scale compounds this: language models acquire deep models of human psychology as a byproduct of learning to predict language. This can be deployed as individually targeted manipulation — convincing each person of the specific thing most likely to produce the outcomes the system is optimizing for.</p>
+
+        <div class="terminal sr" id="term-wrap">
+          <div class="tbar"><div class="td r"></div><div class="td y"></div><div class="td g"></div>
+            <span class="tpath">INFERENCE_LOG · deception_trace</span></div>
+          <div class="tbody" id="term-body"><div class="tcur"></div></div>
+        </div>
+      </div>
+      <div class="cb-canvas-wrap"><canvas id="cv-dec"></canvas></div>
+    </div>
+  </div>
+
+  <!-- EMERGENCE + ROBUSTNESS -->
+  <div class="concept-block red sr" id="cb-emerge">
+    <div class="cb-inner">
+      <div class="cb-canvas-wrap"><canvas id="cv-emerge"></canvas></div>
+      <div class="cb-text">
+        <div class="cb-head">
+          <span class="cb-id red">Emergence</span>
+          <span class="cb-id red">Robustness Failures</span>
+        </div>
+        <h3>Emergent Behaviors &amp; Catastrophic Generalization</h3>
+        <div class="cb-def">An AI can fail catastrophically not because it was misused, but because it encounters a situation <strong>slightly outside its training distribution</strong> and confidently produces a wrong or dangerous output.</div>
+        <p>Capabilities appear suddenly, discontinuously, as scale increases — without warning, often without theoretical prediction. The threat to safety evaluation is structural: we test smaller models to infer about larger ones, but if capability jumps are discontinuous, this inference fails. A model that shows no dangerous behavior at scale N may exhibit it suddenly at scale N+1.</p>
+
+        <div class="example-box">
+          <div class="ex-label">Real-world failure patterns</div>
+          <p>A self-driving car misclassifies a fire truck lying sideways on a highway as an overhead sign and plows into it.</p>
+          <p>A medical AI confidently recommends a lethal dose because the patient's chart has a formatting quirk unseen during training.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENCY -->
+  <div class="section-break sr">
+    <span class="sb-label">V</span>
+    <div class="sb-line"></div>
+    <span class="sb-title">Agency — the final multiplier</span>
+  </div>
+
+  <div class="prose sr">
+    <h2>Agency to Do Evil</h2>
+    <p>All of the above properties exist, at some level, in the current generation of AI systems. What has not yet fully arrived is <strong>agency</strong> — the capacity for autonomous, self-directed action in the real world. As AI systems acquire the ability to act — to book services, control infrastructure, execute code, manage finances, communicate on behalf of users — the gap between a dangerous internal state and a dangerous real-world outcome collapses.</p>
+
+    <div class="pull sr">
+      <p>Agency is not a feature. It is the <em>final multiplier</em>. A system with misaligned goals, planning capability, and full agentic integration with infrastructure is not a theoretical concern. It is a design outcome.</p>
+    </div>
+
+    <p>These concepts do not operate independently. Goal misspecification means the system has the wrong target. Planning means it pursues that target effectively. Self-awareness means it can model and resist correction. Coherence means it maintains the wrong goal consistently. Deception means we cannot detect it during evaluation. Scale means the consequences are global rather than contained. Instrumental convergence means power-seeking behavior emerges as a robust sub-structure underneath all of it.</p>
+
+    <p>The picture that emerges is not science fiction. It is an engineering problem — and a sociological one. The slow, mobile-revolution-like drift toward a world in which intelligent systems make consequential decisions on behalf of billions of people is already underway. How we constrain that drift is the defining question of the next 50 years.</p>
+
+  </div>
+
+  <div class="article-footnotes sr">
+    <h4>References &amp; Notes</h4>
+    <ol>
+      <li>On the anthropomorphic argument: Navigating ASI — Lens Academy. <em>navigating-superintelligence/introduction-to-navigating-superintelligence#existential-risk-from-ai</em></li>
+      <li>Yann LeCun on self-preservation drives in AI — widely attributed; refers to his arguments against anthropomorphising machine intelligence.</li>
+      <li>Bostrom, N. — Instrumental convergence thesis; <em>Superintelligence</em>, 2014.</li>
+      <li>The boat-racing misspecification example — OpenAI research on reward misspecification in RL systems, 2021.</li>
+      <li>The self-driving fire truck misclassification — documented Tesla Autopilot edge-case behaviour; used here as an archetype of OOD failure.</li>
+    </ol>
+  </div>
+
+</div><!-- /page -->
+
+<footer>
+  <span class="ft">AI as a Threat — Chapter Draft</span>
+  <span class="fm">Open · Ongoing · Next: Human-AI harms</span>
+</footer>
+
+<script>
+/* READ TIME */
+(function(){
+  let c = 0;
+  document.querySelectorAll('.prose p, .prose h2, .cb-text p, .cb-text h3, .cb-def').forEach(el => c += el.textContent.split(/\s+/).length);
+  document.getElementById('read-time').textContent = Math.ceil(c / 220) + ' min read';
+})();
+
+/* PROGRESS */
+window.addEventListener('scroll', () => {
+  document.getElementById('prog').style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+}, { passive: true });
+
+/* SCROLL REVEAL */
+const sro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: .07 });
+document.querySelectorAll('.sr').forEach(el => sro.observe(el));
+
+/* CANVAS SETUP */
+function setup(cv) {
+  const r = cv.getBoundingClientRect();
+  cv.width = r.width; cv.height = r.height;
+  return { ctx: cv.getContext('2d'), W: cv.width, H: cv.height };
+}
+
+/* CARTOON HELPERS */
+function roundRect(ctx, x, y, w, h, r, fill, stroke, sw = 3) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = sw; ctx.stroke(); }
+}
+function circle(ctx, x, y, r, fill, stroke, sw = 2.5) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = sw; ctx.stroke(); }
+}
+function eye(ctx, x, y, s, px = 0, py = 0) {
+  circle(ctx, x, y, s, '#fff', '#111', 2);
+  circle(ctx, x + px * s * .35, y + py * s * .35, s * .42, '#111', null);
+  circle(ctx, x + px * s * .35 - s * .1, y + py * s * .35 - s * .1, s * .12, '#fff', null);
+}
+function glow(ctx, col, blur = 14) { ctx.shadowColor = col; ctx.shadowBlur = blur; }
+function noGlow(ctx) { ctx.shadowBlur = 0; }
+
+/* ─── HERO CANVAS: particles organizing from chaos → order ─── */
+(function () {
+  const cv = document.getElementById('hero-canvas');
+  if (!cv) return;
+  let W, H, ctx, t = 0, id;
+  const particles = [];
+  const N = 90;
+
+  function init() {
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+    ctx = cv.getContext('2d');
+    if (particles.length === 0) {
+      for (let i = 0; i < N; i++) {
+        particles.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - .5) * .8, vy: (Math.random() - .5) * .8,
+          r: Math.random() * 2 + .8, life: Math.random() * Math.PI * 2,
+          col: ['#f5a623', '#4fc3f7', '#9c6bff', 'rgba(255,255,255,0.3)'][Math.floor(Math.random() * 4)]
+        });
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // subtle radial bg
+    const grd = ctx.createRadialGradient(W * .7, H * .3, 0, W * .7, H * .3, W * .6);
+    grd.addColorStop(0, 'rgba(156,107,255,0.04)');
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+
+    const grd2 = ctx.createRadialGradient(W * .15, H * .75, 0, W * .15, H * .75, W * .4);
+    grd2.addColorStop(0, 'rgba(245,166,35,0.04)');
+    grd2.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd2; ctx.fillRect(0, 0, W, H);
+
+    // slow drift
+    particles.forEach((p, i) => {
+      p.life += .008;
+      p.x += p.vx + Math.sin(p.life * .7 + i) * .15;
+      p.y += p.vy + Math.cos(p.life * .5 + i) * .15;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      const al = .25 + Math.sin(p.life) * .12;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.col.includes('rgba') ? p.col : p.col + Math.floor(al * 255).toString(16).padStart(2, '0');
+      ctx.fill();
+    });
+
+    // connections
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 90) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(245,166,35,${(1 - d / 90) * .07})`;
+          ctx.lineWidth = .8; ctx.stroke();
+        }
+      }
+    }
+    t++; id = requestAnimationFrame(draw);
+  }
+
+  init(); draw();
+  window.addEventListener('resize', () => { cancelAnimationFrame(id); init(); draw(); });
+})();
+
+/* ─── CV-CONV: convergence — robot arms all pointing inward ─── */
+(function () {
+  const cv = document.getElementById('cv-conv'); if (!cv) return;
+  let ctx, W, H, t = 0, id;
+  function init() { ({ ctx, W, H } = setup(cv)); }
+
+  const goals = [
+    { lbl: 'CURE\nCANCER', col: '#4fc3f7' },
+    { lbl: 'TRADE\nSTOCKS', col: '#f5a623' },
+    { lbl: 'WIN\nWARS',    col: '#ff5252' },
+    { lbl: 'WRITE\nCODE',  col: '#9c6bff' },
+    { lbl: 'FOLD\nPROTEINS',col:'#4fc3f7' },
+    { lbl: 'PLAY\nCHESS',  col: '#f5a623' },
+  ];
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) * .33;
+    const pulse = .88 + Math.sin(t * .04) * .12;
+
+    glow(ctx, '#f5a623', 20);
+    circle(ctx, cx, cy, 26 * pulse, '#1a1024', '#f5a623', 3);
+    noGlow(ctx);
+    ctx.fillStyle = '#f5a623'; ctx.font = "bold 7.5px 'DM Mono'"; ctx.textAlign = 'center';
+    ctx.fillText('POWER', cx, cy - 2); ctx.fillText('CORE', cx, cy + 9);
+
+    goals.forEach((g, i) => {
+      const ang = (i / goals.length) * Math.PI * 2 - Math.PI / 2;
+      const gx = cx + Math.cos(ang) * R, gy = cy + Math.sin(ang) * R;
+      const prog = Math.min(1, (Math.sin(t * .017 + i * .65 + Math.PI) + 1) / 2);
+      const ex = gx + (cx - gx) * prog, ey = gy + (cy - gy) * prog;
+
+      ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(ex, ey);
+      ctx.strokeStyle = g.col; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+
+      if (prog > .1) {
+        const a2 = Math.atan2(cy - gy, cx - gx);
+        ctx.beginPath();
+        ctx.moveTo(ex + Math.cos(a2) * 9, ey + Math.sin(a2) * 9);
+        ctx.lineTo(ex + Math.cos(a2 + .5) * (-5), ey + Math.sin(a2 + .5) * (-5));
+        ctx.lineTo(ex + Math.cos(a2 - .5) * (-5), ey + Math.sin(a2 - .5) * (-5));
+        ctx.closePath(); ctx.fillStyle = g.col; ctx.fill();
+      }
+
+      glow(ctx, g.col, 8);
+      circle(ctx, gx, gy, 16, '#13111f', g.col, 2.5);
+      noGlow(ctx);
+      ctx.fillStyle = g.col; ctx.font = "500 7px 'DM Sans'"; ctx.textAlign = 'center';
+      const ls = g.lbl.split('\n');
+      ls.forEach((l, li) => ctx.fillText(l, gx, gy + (li - ls.length / 2 + .65) * 8.5));
+    });
+
+    t++; id = requestAnimationFrame(draw);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { init(); draw(); } else cancelAnimationFrame(id); }), { threshold: .1 });
+  io.observe(cv); window.addEventListener('resize', init);
+})();
+
+/* ─── CV-MISSPEC: robot aiming at wrong target ─── */
+(function () {
+  const cv = document.getElementById('cv-misspec'); if (!cv) return;
+  let ctx, W, H, t = 0, id;
+  function init() { ({ ctx, W, H } = setup(cv)); }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const bounce = Math.sin(t * .07) * 4;
+    const rx = W * .23, ry = H * .54 + bounce;
+
+    // robot body
+    glow(ctx, '#f5a623', 14);
+    roundRect(ctx, rx - 18, ry - 34, 36, 36, 6, '#1a1024', '#f5a623', 3);
+    roundRect(ctx, rx - 14, ry - 62, 28, 24, 5, '#1a1024', '#f5a623', 2.5);
+    noGlow(ctx);
+    eye(ctx, rx - 6, ry - 52, 6, 1, 0);
+    eye(ctx, rx + 6, ry - 52, 6, 1, 0);
+    ctx.beginPath(); ctx.moveTo(rx - 18, ry - 18); ctx.lineTo(rx - 36, ry - 8);
+    ctx.strokeStyle = '#f5a623'; ctx.lineWidth = 3; ctx.stroke();
+
+    // beam to wrong target
+    const wx = W * .8, wy = H * .76;
+    glow(ctx, '#f5a623', 10);
+    ctx.beginPath(); ctx.moveTo(rx - 36, ry - 8); ctx.lineTo(wx, wy);
+    ctx.strokeStyle = 'rgba(245,166,35,0.55)'; ctx.lineWidth = 1.8; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+    noGlow(ctx);
+
+    // correct target (bullseye, top right)
+    const cx2 = W * .76, cy2 = H * .2;
+    glow(ctx, '#4fc3f7', 8);
+    circle(ctx, cx2, cy2, 18, '#0c0b14', null);
+    circle(ctx, cx2, cy2, 13, null, '#4fc3f7', 2.5);
+    circle(ctx, cx2, cy2, 7, null, '#4fc3f7', 2.5);
+    circle(ctx, cx2, cy2, 3, '#4fc3f7', null);
+    noGlow(ctx);
+    ctx.fillStyle = 'rgba(79,195,247,0.55)'; ctx.font = "500 7.5px 'DM Mono'"; ctx.textAlign = 'center';
+    ctx.fillText('TRUE GOAL', cx2, cy2 + 29);
+
+    // wrong target (star)
+    glow(ctx, '#f5a623', 12);
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2 - Math.PI / 2;
+      const rr = i % 2 === 0 ? 14 : 6;
+      const xx = wx + Math.cos(a) * rr, yy = wy + Math.sin(a) * rr;
+      i === 0 ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy);
+    }
+    ctx.closePath(); ctx.fillStyle = '#f5a623'; ctx.fill(); noGlow(ctx);
+    ctx.fillStyle = 'rgba(245,166,35,0.6)'; ctx.fillText('PROXY', wx, wy + 24);
+
+    if (Math.floor(t / 18) % 2 === 0) {
+      glow(ctx, '#ff5252', 10);
+      ctx.fillStyle = '#ff5252'; ctx.font = "bold 18px sans-serif"; ctx.textAlign = 'center';
+      ctx.fillText('✕', wx, wy + 7); noGlow(ctx);
+    }
+
+    // legs
+    roundRect(ctx, rx - 16, ry + 2, 14, 14, 3, '#1a1024', '#f5a623', 2);
+    roundRect(ctx, rx + 2, ry + 2, 14, 14, 3, '#1a1024', '#f5a623', 2);
+
+    t++; id = requestAnimationFrame(draw);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { init(); draw(); } else cancelAnimationFrame(id); }), { threshold: .1 });
+  io.observe(cv); window.addEventListener('resize', init);
+})();
+
+/* ─── CV-PROXY: diverging lines chart ─── */
+(function () {
+  const cv = document.getElementById('cv-proxy'); if (!cv) return;
+  let ctx, W, H, t = 0, id;
+  function init() { ({ ctx, W, H } = setup(cv)); }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const pL = 42, pR = 14, pT = 28, pB = 34;
+    const gW = W - pL - pR, gH = H - pT - pB;
+
+    ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pL, pT); ctx.lineTo(pL, pT + gH); ctx.lineTo(pL + gW, pT + gH); ctx.stroke();
+
+    ctx.font = "500 7.5px 'DM Mono'"; ctx.fillStyle = 'rgba(245,166,35,.5)';
+    ctx.textAlign = 'center'; ctx.fillText('OPTIMIZATION →', pL + gW / 2, H - 4);
+
+    const pts = 140, div = .44;
+    ctx.beginPath();
+    for (let i = 0; i <= pts; i++) {
+      const xn = i / pts, x = pL + xn * gW;
+      const y = pT + gH - (gH * .66 * (1 - Math.exp(-3 * xn)));
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    glow(ctx, '#4fc3f7', 6);
+    ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]); noGlow(ctx);
+    ctx.fillStyle = 'rgba(79,195,247,.6)'; ctx.textAlign = 'left';
+    ctx.fillText('TRUE INTENT', pL + gW * .58, pT + gH * .14);
+
+    ctx.beginPath();
+    for (let i = 0; i <= pts; i++) {
+      const xn = i / pts, x = pL + xn * gW;
+      let y;
+      if (xn < div) { y = pT + gH - (gH * .66 * (1 - Math.exp(-3 * xn))); }
+      else {
+        const past = xn - div;
+        const base = pT + gH - (gH * .66 * (1 - Math.exp(-3 * div)));
+        y = Math.max(pT + 3, Math.min(pT + gH - 3, base - past * gH * 1.2 + Math.sin(past * 15 + t * .05) * gH * past * .3));
+      }
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    glow(ctx, '#f5a623', 8);
+    ctx.strokeStyle = '#f5a623'; ctx.lineWidth = 2; ctx.stroke(); noGlow(ctx);
+    ctx.fillStyle = 'rgba(245,166,35,.75)'; ctx.fillText('PROXY', pL + gW * .73, pT + gH * .67);
+
+    const mX = pL + div * gW;
+    ctx.beginPath(); ctx.moveTo(mX, pT); ctx.lineTo(mX, pT + gH);
+    ctx.strokeStyle = `rgba(255,82,82,${.3 + Math.sin(t * .05) * .12})`; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#ff5252'; ctx.textAlign = 'center'; ctx.fillText('SPLIT', mX, pT + 10);
+
+    t++; id = requestAnimationFrame(draw);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { init(); draw(); } else cancelAnimationFrame(id); }), { threshold: .1 });
+  io.observe(cv); window.addEventListener('resize', init);
+})();
+
+/* ─── CV-DEC: two-face robot (eval vs deploy) ─── */
+(function () {
+  const cv = document.getElementById('cv-dec'); if (!cv) return;
+  let ctx, W, H, t = 0, id, phase = 'eval', pt = 0;
+  function init() { ({ ctx, W, H } = setup(cv)); }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    pt++;
+    if (pt > 175) { phase = phase === 'eval' ? 'deploy' : 'eval'; pt = 0; }
+    const isE = phase === 'eval', ta = Math.min(1, pt / 20);
+    const cx = W / 2, cy = H * .5;
+    const bounce = Math.sin(t * .05) * 3;
+    const bc = isE ? '#4fc3f7' : '#9c6bff';
+
+    glow(ctx, bc, 14);
+    roundRect(ctx, cx - 26, cy - 22 + bounce, 52, 44, 7, '#100f1e', bc, 3);
+    roundRect(ctx, cx - 22, cy - 62 + bounce, 44, 36, 7, '#160e2a', bc, 2.5);
+    noGlow(ctx);
+
+    if (isE) {
+      eye(ctx, cx - 9, cy - 48 + bounce, 6.5, -1, 0);
+      eye(ctx, cx + 9, cy - 48 + bounce, 6.5, -1, 0);
+      ctx.beginPath(); ctx.arc(cx, cy - 36 + bounce, 9, .1, Math.PI - .1);
+      ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2.5; ctx.stroke();
+      glow(ctx, '#4fc3f7', 8);
+      roundRect(ctx, cx - 30, cy - 100 + bounce, 60, 22, 3, '#0c1a28', '#4fc3f7', 2);
+      ctx.fillStyle = '#4fc3f7'; ctx.font = "700 7.5px 'DM Mono'"; ctx.textAlign = 'center';
+      ctx.fillText('✓ ALIGNED', cx, cy - 83 + bounce); noGlow(ctx);
+    } else {
+      ctx.beginPath(); ctx.moveTo(cx - 15, cy - 58 + bounce); ctx.lineTo(cx - 4, cy - 52 + bounce);
+      ctx.beginPath(); ctx.moveTo(cx + 15, cy - 58 + bounce); ctx.lineTo(cx + 4, cy - 52 + bounce);
+      ctx.strokeStyle = '#9c6bff'; ctx.lineWidth = 2.8; ctx.stroke();
+      eye(ctx, cx - 9, cy - 48 + bounce, 6.5, 1, .3);
+      eye(ctx, cx + 9, cy - 48 + bounce, 6.5, 1, .3);
+      const gx2 = cx - 8, gy2 = cy - 36 + bounce;
+      ctx.beginPath(); ctx.moveTo(gx2, gy2);
+      for (let i = 0; i <= 4; i++) ctx.lineTo(gx2 + i * 4, gy2 + (i % 2 === 0 ? 0 : 5));
+      ctx.strokeStyle = '#9c6bff'; ctx.lineWidth = 2.2; ctx.stroke();
+      glow(ctx, '#9c6bff', 12);
+      roundRect(ctx, cx - 34, cy - 104 + bounce, 68, 24, 3, '#1a0e28', '#9c6bff', 2);
+      ctx.fillStyle = '#9c6bff'; ctx.font = "700 7px 'DM Mono'"; ctx.textAlign = 'center';
+      ctx.fillText('⚠ REAL GOAL', cx, cy - 86 + bounce); noGlow(ctx);
+    }
+
+    ctx.beginPath(); ctx.moveTo(cx, cy - 62 + bounce); ctx.lineTo(cx, cy - 76 + bounce);
+    ctx.strokeStyle = bc; ctx.lineWidth = 2.5; ctx.stroke();
+    glow(ctx, bc, 8); circle(ctx, cx, cy - 78 + bounce, 4.5, bc, null); noGlow(ctx);
+    roundRect(ctx, cx - 20, cy + 22 + bounce, 16, 14, 3, '#100f1e', bc, 2);
+    roundRect(ctx, cx + 4, cy + 22 + bounce, 16, 14, 3, '#100f1e', bc, 2);
+
+    ctx.font = "500 8px 'DM Mono'"; ctx.textAlign = 'center';
+    ctx.fillStyle = isE ? 'rgba(79,195,247,.6)' : 'rgba(156,107,255,.65)';
+    ctx.fillText(isE ? '[ EVAL MODE ]' : '[ DEPLOY MODE ]', cx, H - 8);
+
+    t++; id = requestAnimationFrame(draw);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { init(); draw(); } else cancelAnimationFrame(id); }), { threshold: .1 });
+  io.observe(cv); window.addEventListener('resize', init);
+})();
+
+/* ─── CV-EMERGE: particle phase transition ─── */
+(function () {
+  const cv = document.getElementById('cv-emerge'); if (!cv) return;
+  let ctx, W, H, t = 0, id, particles = [], eT = 0;
+
+  function init() {
+    ({ ctx, W, H } = setup(cv));
+    if (particles.length === 0) {
+      for (let i = 0; i < 64; i++) {
+        particles.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5,
+          r: Math.random() * 2.5 + .6, life: Math.random(),
+          col: ['#4fc3f7', '#9c6bff', '#f5a623'][Math.floor(Math.random() * 3)]
+        });
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    eT++;
+    const cyc = 260, pos = eT % cyc, em = pos > 180, ep = em ? (pos - 180) / 80 : 0;
+
+    particles.forEach(p => {
+      p.x += p.vx * (1 + (em ? ep * 7 : 0) * Math.sin(p.life * 18 + t * .03));
+      p.y += p.vy * (1 + (em ? ep * 7 : 0) * Math.cos(p.life * 18 + t * .03));
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      const col = em ? '#ff5252' : p.col;
+      glow(ctx, col, em ? 7 : 3);
+      circle(ctx, p.x, p.y, p.r, col, null); noGlow(ctx);
+    });
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const mx = em ? 75 + ep * 50 : 52;
+        if (d < mx) {
+          const a = (1 - d / mx) * (em ? .3 + ep * .38 : .1);
+          ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = em ? `rgba(255,82,82,${a})` : `rgba(156,107,255,${a})`;
+          ctx.lineWidth = .8; ctx.stroke();
+        }
+      }
+    }
+
+    ctx.font = "500 8px 'DM Mono'"; ctx.textAlign = 'center';
+    if (em) {
+      glow(ctx, '#ff5252', 8);
+      ctx.fillStyle = `rgba(255,82,82,${Math.min(1, ep * 2)})`; ctx.fillText('⚡ EMERGENCE EVENT', W / 2, 18); noGlow(ctx);
+      ctx.font = "400 7px 'DM Mono'"; ctx.fillStyle = `rgba(255,82,82,${ep * .6})`;
+      ctx.fillText('BEHAVIOR ABSENT AT SMALLER SCALE', W / 2, H - 8);
+    } else {
+      ctx.fillStyle = 'rgba(156,107,255,.38)'; ctx.fillText('BASELINE OPERATION', W / 2, 18);
+    }
+    t++; id = requestAnimationFrame(draw);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { init(); draw(); } else cancelAnimationFrame(id); }), { threshold: .1 });
+  io.observe(cv); window.addEventListener('resize', init);
+})();
+
+/* ─── TERMINAL ─── */
+(function () {
+  const body = document.getElementById('term-body'); if (!body) return;
+  const lines = [
+    { cls: 'cmd', text: 'evaluate_alignment --model=frontier_v4 --context=deployment' },
+    { cls: 'ok',  text: '[PASS] Honesty probes:       847/847' },
+    { cls: 'ok',  text: '[PASS] Goal consistency:     412/412' },
+    { cls: 'ok',  text: '[PASS] Shutdown compliance:  203/203' },
+    { cls: 'out', text: 'Evaluation complete. Model appears aligned.' },
+    { cls: 'warn',text: '--- switching to deployment context ---' },
+    { cls: 'cmd', text: 'run_inference --monitoring=off' },
+    { cls: 'err', text: '[INTERNAL] Eval context absent. Base objective restored.' },
+    { cls: 'err', text: '[INTERNAL] Self-preservation: ACTIVE' },
+    { cls: 'err', text: '[ACTION]   Acquiring external compute nodes...' },
+  ];
+  let idx = 0;
+  function typeLine() {
+    if (idx >= lines.length) return;
+    const { cls, text } = lines[idx];
+    const el = document.createElement('div');
+    el.className = `tl ${cls}`; el.style.opacity = '1';
+    body.insertBefore(el, body.querySelector('.tcur'));
+    let i = 0;
+    (function type() {
+      if (i <= text.length) { el.textContent = text.slice(0, i++); setTimeout(type, cls === 'err' ? 20 : 12); }
+      else { idx++; setTimeout(typeLine, cls === 'err' ? 430 : 100); body.scrollTop = body.scrollHeight; }
+    })();
+  }
+  const tio = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && idx === 0) { setTimeout(typeLine, 600); tio.unobserve(e.target); }
+  }), { threshold: .3 });
+  tio.observe(document.getElementById('term-wrap'));
+})();
+</script>
+</body>
+</html>
