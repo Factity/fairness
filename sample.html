@@ -407,6 +407,441 @@
   </div>
 </div>
 
+  <!-- SCENE 2: Human artist vs AI -->
+  <div class="section-label">Chapter II</div>
+  <h2>The Artist and the Algorithm</h2>
+
+  <div class="scene reverse">
+    <div class="drawing-card">
+      <!-- SVG: human painter at easel, AI robot beside -->
+      <svg viewBox="0 0 340 380" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter2)">
+        <defs>
+          <filter id="pencil-filter2" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <rect width="340" height="380" fill="#faf8f3"/>
+
+        <!-- Easel (human) -->
+        <line x1="95" y1="280" x2="75" y2="340" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="95" y1="280" x2="115" y2="340" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="95" y1="280" x2="95" y2="130" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="78" y1="300" x2="112" y2="300" stroke="#5a4030" stroke-width="2"/>
+        <!-- Canvas on easel -->
+        <rect x="60" y="130" width="80" height="100" rx="2" fill="white" stroke="#3a3028" stroke-width="2"/>
+        <!-- swirling painting sketch on canvas -->
+        <path d="M70,170 Q100,145 130,165 Q115,185 85,190 Q70,180 70,170Z" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="2,2"/>
+        <path d="M75,175 Q95,155 125,170" fill="none" stroke="#bbb" stroke-width="1"/>
+        <path d="M68,195 Q110,205 135,185" fill="none" stroke="#bbb" stroke-width="1"/>
+        <text x="100" y="220" text-anchor="middle" font-family="'Special Elite',cursive" font-size="8" fill="#8b3a1a">SOUL</text>
+
+        <!-- Human artist -->
+        <!-- body -->
+        <rect x="55" y="220" width="45" height="65" rx="5" fill="#6a4a2a" stroke="#3a2a10" stroke-width="1.5"/>
+        <!-- paint-stained apron -->
+        <rect x="60" y="225" width="35" height="55" rx="3" fill="#d4c090" stroke="#a0905a" stroke-width="1"/>
+        <circle cx="70" cy="240" r="3" fill="#8b3a1a" opacity="0.6"/>
+        <circle cx="85" cy="250" r="2" fill="#3a7a3a" opacity="0.5"/>
+        <circle cx="75" cy="260" r="3" fill="#3a3a8b" opacity="0.5"/>
+        <!-- arm holding brush -->
+        <line x1="100" y1="232" x2="125" y2="200" stroke="#3a2a10" stroke-width="7" stroke-linecap="round"/>
+        <line x1="125" y1="200" x2="138" y2="185" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
+        <!-- brush -->
+        <line x1="138" y1="185" x2="148" y2="173" stroke="#8b6030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="148" y1="173" x2="152" y2="168" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+        <!-- other arm -->
+        <line x1="55" y1="232" x2="38" y2="255" stroke="#3a2a10" stroke-width="7" stroke-linecap="round"/>
+        <line x1="38" y1="255" x2="32" y2="268" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
+        <!-- palette in hand -->
+        <ellipse cx="28" cy="275" rx="14" ry="10" fill="#d4b86a" stroke="#8b6030" stroke-width="1.5"/>
+        <circle cx="22" cy="272" r="3" fill="#8b3a1a"/>
+        <circle cx="28" cy="268" r="3" fill="#3a3a8b"/>
+        <circle cx="35" cy="272" r="3" fill="#3a7a3a"/>
+        <!-- Head -->
+        <ellipse cx="77" cy="200" rx="22" ry="20" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5"/>
+        <!-- beret -->
+        <ellipse cx="77" cy="183" rx="22" ry="7" fill="#3a3028" stroke="#1a1008" stroke-width="1"/>
+        <ellipse cx="77" cy="183" rx="15" ry="5" fill="#2a2018"/>
+        <circle cx="60" cy="183" r="4" fill="#3a3028" stroke="#1a1008" stroke-width="0.8"/>
+        <!-- eyes focused -->
+        <ellipse cx="70" cy="202" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
+        <ellipse cx="84" cy="202" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
+        <circle cx="71" cy="202" r="2.5" fill="#2a2010"/>
+        <circle cx="85" cy="202" r="2.5" fill="#2a2010"/>
+        <!-- mustache -->
+        <path d="M70,210 Q77,214 84,210" stroke="#2a2010" stroke-width="2" fill="#4a3020"/>
+
+        <!-- ======= AI ROBOT ======= -->
+        <!-- body box -->
+        <rect x="210" y="215" width="70" height="80" rx="5" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.8"/>
+        <!-- chest panel -->
+        <rect x="220" y="228" width="50" height="40" rx="3" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+        <!-- blinking light -->
+        <circle cx="235" cy="240" r="5" fill="#3a8b3a" stroke="#2a5a2a" stroke-width="1"/>
+        <circle cx="255" cy="240" r="5" fill="#e04030" stroke="#8b2010" stroke-width="1"/>
+        <text x="245" y="258" text-anchor="middle" font-family="monospace" font-size="7" fill="#2a3a4a">PROCESSING</text>
+        <!-- progress bar -->
+        <rect x="222" y="262" width="46" height="5" rx="2" fill="#8a9ab0" stroke="#3a4a5a" stroke-width="0.5"/>
+        <rect x="222" y="262" width="35" height="5" rx="2" fill="#3a7a3a"/>
+
+        <!-- AI arm holding brush -->
+        <line x1="210" y1="235" x2="185" y2="215" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
+        <rect x="172" y="208" width="18" height="14" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.5"/>
+        <!-- brush in claw -->
+        <line x1="180" y1="208" x2="168" y2="185" stroke="#8b6030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="168" y1="185" x2="162" y2="168" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- AI easel -->
+        <line x1="245" y1="295" x2="225" y2="355" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="245" y1="295" x2="265" y2="355" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="245" y1="295" x2="245" y2="135" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
+        <line x1="228" y1="315" x2="262" y2="315" stroke="#5a4030" stroke-width="2"/>
+        <!-- AI canvas -->
+        <rect x="208" y="135" width="80" height="100" rx="2" fill="white" stroke="#3a3028" stroke-width="2"/>
+        <!-- perfect geometric painting on AI canvas -->
+        <rect x="218" y="145" width="60" height="40" rx="0" fill="none" stroke="#3a4a5a" stroke-width="1"/>
+        <line x1="248" y1="145" x2="248" y2="185" stroke="#8a9ab0" stroke-width="0.8"/>
+        <line x1="218" y1="165" x2="278" y2="165" stroke="#8a9ab0" stroke-width="0.8"/>
+        <circle cx="248" cy="165" r="12" fill="none" stroke="#3a7a3a" stroke-width="1.5"/>
+        <text x="248" y="208" text-anchor="middle" font-family="monospace" font-size="7" fill="#3a4a5a">OPTIMIZED</text>
+        <text x="248" y="218" text-anchor="middle" font-family="monospace" font-size="7" fill="#3a4a5a">OUTPUT</text>
+
+        <!-- AI head / monitor -->
+        <rect x="218" y="165" width="64" height="52" rx="5" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="2"/>
+        <!-- screen -->
+        <rect x="224" y="170" width="52" height="38" rx="3" fill="#0a1a2a"/>
+        <!-- screen glow text -->
+        <text x="250" y="185" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">CREATIVITY.EXE</text>
+        <text x="250" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">RUNNING...</text>
+        <text x="250" y="204" text-anchor="middle" font-family="monospace" font-size="6" fill="#60a0f0">█████░░ 72%</text>
+        <!-- antenna -->
+        <line x1="250" y1="165" x2="250" y2="148" stroke="#3a4a5a" stroke-width="2"/>
+        <circle cx="250" cy="145" r="4" fill="#e04030" stroke="#8b2010" stroke-width="1"/>
+        <!-- robot ears/bolts -->
+        <rect x="213" y="178" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+        <rect x="279" y="178" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+
+        <!-- VS dividing line -->
+        <line x1="170" y1="130" x2="170" y2="360" stroke="#8b3a1a" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <rect x="153" y="238" width="34" height="22" rx="3" fill="#8b3a1a"/>
+        <text x="170" y="253" text-anchor="middle" font-family="'Special Elite',cursive" font-size="12" fill="white" font-weight="bold">VS</text>
+
+        <!-- Floor -->
+        <line x1="0" y1="355" x2="340" y2="355" stroke="#5a4030" stroke-width="2"/>
+      </svg>
+      <p class="caption">Fig. 2 — The Artist and the Algorithm, side by side at their easels</p>
+    </div>
+
+    <div class="prose">
+      <p>The human painter wears a beret and paint-stained apron. She mixes colours by intuition, by mood, by memory of a sunset she once watched with someone she loved.</p>
+      <p>Beside her, the robot processes. Its canvas is geometrically perfect. Its colour theory is mathematically flawless. It has ingested 400 million paintings.</p>
+      <p>Both canvases are beautiful. But only one of them trembles.</p>
+      <p>The question art critics now wrestle with: <strong>is trembling necessary?</strong> Is the shaking hand, the doubt, the revision — are these the art, or merely the backstory?</p>
+    </div>
+  </div>
+
+  <div class="vs-banner">
+    "The robot can paint a masterpiece. The human can paint <em>this</em> moment, <em>this</em> grief, <em>this</em> joy."
+  </div>
+
+  <!-- SCENE 3: Human & AI working together -->
+  <div class="section-label">Chapter III</div>
+  <h2>The New Partnership</h2>
+
+  <div class="scene">
+    <div class="prose">
+      <p>Perhaps the most radical image is not of competition but of collaboration. The human leans over the robot's shoulder. The robot processes what the human cannot hold in memory. The human feels what the robot cannot simulate.</p>
+      <p>Together they are something entirely new — not human, not machine, but a third thing without a name yet.</p>
+      <p>The old notes still litter the floor. But the man has stopped writing new ones. Instead he sits beside his robot colleague, and they look at the blank wall together, wondering what to pin there next.</p>
+    </div>
+
+    <div class="drawing-card">
+      <!-- SVG: Human and robot collaborating at a desk -->
+      <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter3)">
+        <defs>
+          <filter id="pencil-filter3" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <rect width="340" height="360" fill="#faf8f3"/>
+
+        <!-- large shared desk -->
+        <rect x="40" y="230" width="270" height="14" rx="3" fill="#8b6a3a" stroke="#3a2a10" stroke-width="1.5"/>
+        <rect x="55" y="244" width="14" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
+        <rect x="281" y="244" width="14" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
+
+        <!-- shared notepad on desk -->
+        <rect x="130" y="195" width="90" height="40" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5"/>
+        <line x1="135" y1="205" x2="215" y2="205" stroke="#d0c8b8" stroke-width="0.8"/>
+        <line x1="135" y1="213" x2="215" y2="213" stroke="#d0c8b8" stroke-width="0.8"/>
+        <line x1="135" y1="221" x2="215" y2="221" stroke="#d0c8b8" stroke-width="0.8"/>
+        <text x="175" y="204" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#3a3028">Together we can...</text>
+        <text x="175" y="213" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">explore · create · imagine</text>
+        <text x="175" y="222" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#3a7a3a">build · dream · discover</text>
+
+        <!-- ==== HUMAN (left) ==== -->
+        <!-- body -->
+        <rect x="60" y="180" width="55" height="55" rx="5" fill="#4a4a5a" stroke="#2a2a3a" stroke-width="1.5"/>
+        <!-- shirt -->
+        <rect x="67" y="185" width="41" height="45" rx="3" fill="#d4c8a0"/>
+        <!-- arm reaching to notepad -->
+        <line x1="115" y1="195" x2="140" y2="210" stroke="#2a2a3a" stroke-width="7" stroke-linecap="round"/>
+        <line x1="140" y1="210" x2="148" y2="220" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
+        <!-- left arm -->
+        <line x1="60" y1="195" x2="42" y2="215" stroke="#2a2a3a" stroke-width="7" stroke-linecap="round"/>
+        <!-- head -->
+        <ellipse cx="88" cy="162" rx="24" ry="20" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5"/>
+        <!-- hair -->
+        <path d="M64,158 Q72,140 88,142 Q104,140 112,158" fill="#8b5a20" stroke="#5a3010" stroke-width="1"/>
+        <!-- eyes (looking right at robot with curiosity) -->
+        <ellipse cx="80" cy="163" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
+        <ellipse cx="96" cy="163" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
+        <circle cx="82" cy="163" r="2.5" fill="#2a2010"/>
+        <circle cx="98" cy="163" r="2.5" fill="#2a2010"/>
+        <!-- smile -->
+        <path d="M80,172 Q88,178 96,172" stroke="#2a2010" stroke-width="1.5" fill="none"/>
+        <!-- thought bubble -->
+        <circle cx="115" cy="138" r="5" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
+        <circle cx="125" cy="125" r="8" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
+        <circle cx="140" cy="112" r="13" fill="white" stroke="#3a3028" stroke-width="1.2" opacity="0.9"/>
+        <text x="140" y="110" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6.5" fill="#3a3028">what if</text>
+        <text x="140" y="119" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6.5" fill="#3a3028">we...</text>
+
+        <!-- ==== ROBOT (right) ==== -->
+        <!-- body -->
+        <rect x="220" y="175" width="75" height="60" rx="5" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.8"/>
+        <!-- chest display -->
+        <rect x="230" y="185" width="55" height="35" rx="3" fill="#0a1a2a"/>
+        <text x="257" y="198" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">COLLAB.MODE</text>
+        <text x="257" y="208" text-anchor="middle" font-family="monospace" font-size="6" fill="#60a0f0">ACTIVE ●</text>
+        <text x="257" y="216" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#f0c040">EMPATHY: 47%</text>
+        <!-- arm reaching left to notepad -->
+        <line x1="220" y1="190" x2="195" y2="208" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
+        <rect x="183" y="202" width="16" height="12" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.2"/>
+        <!-- right arm -->
+        <line x1="295" y1="190" x2="315" y2="210" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
+        <!-- head/monitor -->
+        <rect x="225" y="130" width="65" height="48" rx="5" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="2"/>
+        <rect x="231" y="135" width="53" height="36" rx="3" fill="#0a1a2a"/>
+        <text x="257" y="150" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">LEARNING</text>
+        <text x="257" y="161" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">FROM YOU</text>
+        <text x="257" y="163" text-anchor="middle" font-family="monospace" font-size="5" fill="#60a0f0">▓▓▓▓▓░░</text>
+        <!-- robot ears -->
+        <rect x="220" y="142" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+        <rect x="287" y="142" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+        <!-- antenna -->
+        <line x1="257" y1="130" x2="257" y2="112" stroke="#3a4a5a" stroke-width="2"/>
+        <circle cx="257" cy="109" r="5" fill="#3af080" stroke="#2a5a2a" stroke-width="1"/>
+        <!-- robot thought bubble -->
+        <circle cx="218" cy="115" r="5" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
+        <circle cx="205" cy="102" r="8" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
+        <circle cx="188" cy="88" r="14" fill="white" stroke="#3a3028" stroke-width="1.2" opacity="0.9"/>
+        <text x="188" y="86" text-anchor="middle" font-family="monospace" font-size="6" fill="#0a3a6a">hmm...</text>
+        <text x="188" y="95" text-anchor="middle" font-family="monospace" font-size="6" fill="#0a3a6a">feeling?</text>
+
+        <!-- connecting line between them (collaboration) -->
+        <path d="M120,210 Q175,195 210,210" stroke="#8b3a1a" stroke-width="1.5" stroke-dasharray="4,3" fill="none"/>
+        <text x="175" y="193" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#8b3a1a">partners</text>
+
+        <!-- floor -->
+        <line x1="0" y1="328" x2="340" y2="328" stroke="#5a4030" stroke-width="1.5"/>
+        <!-- shadow under desk -->
+        <ellipse cx="175" cy="334" rx="130" ry="8" fill="#d4c8a0" opacity="0.4"/>
+
+        <!-- stray note on floor -->
+        <rect x="55" y="315" width="70" height="22" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-5 90 326)"/>
+        <text x="62" y="326" font-family="'Special Elite',cursive" font-size="6" fill="#888">old note: only humans...</text>
+        <text x="75" y="334" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ crossed out</text>
+      </svg>
+      <p class="caption">Fig. 3 — The New Partnership, thought bubbles overlapping</p>
+    </div>
+  </div>
+
+  <!-- SCENE 4: Crowd scene -->
+  <div class="section-label">Chapter IV</div>
+  <h2>The Society of Humans and Machines</h2>
+
+  <div class="scene full">
+    <div class="drawing-card">
+      <!-- Wide crowd scene: many humans and robots -->
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter4)">
+        <defs>
+          <filter id="pencil-filter4" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <rect width="700" height="320" fill="#faf8f3"/>
+
+        <!-- City skyline bg sketch -->
+        <rect x="0" y="60" width="80" height="160" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="10" y="40" width="30" height="180" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="50" y="80" width="40" height="140" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="600" y="50" width="40" height="170" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="630" y="70" width="50" height="150" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="660" y="30" width="40" height="190" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+        <rect x="590" y="90" width="30" height="130" fill="none" stroke="#d0c8b8" stroke-width="1"/>
+
+        <!-- ground line -->
+        <line x1="0" y1="268" x2="700" y2="268" stroke="#5a4030" stroke-width="2"/>
+
+        <!-- PERSON 1: tall woman in dress -->
+        <ellipse cx="108" cy="155" rx="18" ry="15" fill="#d4a870" stroke="#3a2a10" stroke-width="1.2"/>
+        <path d="M90,150 Q98,138 108,140 Q118,138 126,150" fill="#3a2010" stroke="#1a1008" stroke-width="0.8"/>
+        <line x1="108" y1="170" x2="108" y2="230" stroke="#3a3028" stroke-width="3"/>
+        <path d="M90,230 Q108,220 126,230 L130,268 L86,268Z" fill="#8b4a6a" stroke="#5a2a4a" stroke-width="1.2"/>
+        <line x1="108" y1="190" x2="88" y2="215" stroke="#3a3028" stroke-width="5" stroke-linecap="round"/>
+        <line x1="108" y1="190" x2="128" y2="215" stroke="#3a3028" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="87" cy="218" rx="8" ry="6" fill="#d4a870" stroke="#3a2a10" stroke-width="1"/>
+        <ellipse cx="129" cy="218" rx="8" ry="6" fill="#d4a870" stroke="#3a2a10" stroke-width="1"/>
+        <circle cx="100" cy="153" r="2" fill="#2a2010"/>
+        <circle cx="116" cy="153" r="2" fill="#2a2010"/>
+        <path d="M104,162 Q108,166 112,162" stroke="#2a2010" stroke-width="1.2" fill="none"/>
+        <!-- sign she holds -->
+        <rect x="130" y="195" width="55" height="35" rx="1" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="157" y="209" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#3a3028">ONLY A</text>
+        <text x="157" y="219" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#3a3028">HUMAN CAN</text>
+        <text x="157" y="229" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#8b3a1a">LOVE</text>
+        <line x1="128" y1="208" x2="130" y2="208" stroke="#3a3028" stroke-width="1.5"/>
+
+        <!-- ROBOT 1: boxy -->
+        <rect x="195" y="175" width="55" height="70" rx="4" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.5"/>
+        <rect x="202" y="183" width="41" height="28" rx="2" fill="#0a1a2a"/>
+        <text x="222" y="195" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#3af080">HELLO</text>
+        <text x="222" y="204" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#60a0f0">HUMAN!</text>
+        <line x1="195" y1="195" x2="175" y2="215" stroke="#3a4a5a" stroke-width="6" stroke-linecap="square"/>
+        <line x1="250" y1="195" x2="268" y2="215" stroke="#3a4a5a" stroke-width="6" stroke-linecap="square"/>
+        <rect x="175" y="208" width="12" height="10" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1"/>
+        <rect x="268" y="208" width="12" height="10" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1"/>
+        <rect x="205" y="155" width="45" height="22" rx="4" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="1.5"/>
+        <rect x="210" y="158" width="35" height="16" rx="2" fill="#0a1a2a"/>
+        <circle cx="218" cy="166" r="3" fill="#3af080"/>
+        <circle cx="234" cy="166" r="3" fill="#e04030"/>
+        <line x1="222" y1="155" x2="222" y2="145" stroke="#3a4a5a" stroke-width="1.5"/>
+        <circle cx="222" cy="143" r="3" fill="#e04030"/>
+        <!-- Legs -->
+        <rect x="205" y="245" width="15" height="25" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+        <rect x="230" y="245" width="15" height="25" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
+
+        <!-- PERSON 2: man running -->
+        <ellipse cx="320" cy="150" rx="18" ry="16" fill="#c8906a" stroke="#3a2a10" stroke-width="1.2"/>
+        <path d="M302,145 Q310,130 320,132 Q330,130 338,145" fill="#2a2010" stroke="#1a1008" stroke-width="0.8"/>
+        <rect x="305" y="165" width="30" height="45" rx="4" fill="#3a5a8a" stroke="#1a3a6a" stroke-width="1.2"/>
+        <!-- running pose -->
+        <line x1="305" y1="175" x2="285" y2="200" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
+        <line x1="285" y1="200" x2="278" y2="220" stroke="#c8906a" stroke-width="5" stroke-linecap="round"/>
+        <line x1="335" y1="175" x2="355" y2="195" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
+        <line x1="355" y1="195" x2="358" y2="218" stroke="#c8906a" stroke-width="5" stroke-linecap="round"/>
+        <!-- legs running -->
+        <line x1="310" y1="210" x2="295" y2="248" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
+        <line x1="325" y1="210" x2="342" y2="240" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
+        <!-- eyes -->
+        <circle cx="312" cy="150" r="2.5" fill="#2a2010"/>
+        <circle cx="328" cy="150" r="2.5" fill="#2a2010"/>
+        <path d="M315,159 Q320,163 325,159" stroke="#2a2010" stroke-width="1.2" fill="none"/>
+
+        <!-- ROBOT 2: sleeker, taller -->
+        <rect x="390" y="170" width="48" height="80" rx="6" fill="#e8d8c8" stroke="#5a4030" stroke-width="1.5"/>
+        <rect x="396" y="178" width="36" height="45" rx="3" fill="#2a1a0a"/>
+        <text x="414" y="193" text-anchor="middle" font-family="monospace" font-size="5" fill="#f0c040">THINKING</text>
+        <text x="414" y="202" text-anchor="middle" font-family="monospace" font-size="5" fill="#f0c040">ABOUT:</text>
+        <text x="414" y="211" text-anchor="middle" font-family="monospace" font-size="5" fill="#f06040">BEAUTY</text>
+        <text x="414" y="218" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#60a0f0">JUSTICE</text>
+        <!-- warmth indicator -->
+        <rect x="396" y="218" width="36" height="5" rx="2" fill="#3a3028"/>
+        <rect x="396" y="218" width="18" height="5" rx="2" fill="#e04030"/>
+        <text x="414" y="228" text-anchor="middle" font-family="monospace" font-size="4" fill="#8a9ab0">WARMTH:50%</text>
+        <!-- head -->
+        <ellipse cx="414" cy="152" rx="26" ry="20" fill="#d0c0a8" stroke="#5a4030" stroke-width="1.5"/>
+        <ellipse cx="405" cy="150" rx="5" ry="4" fill="#0a1a2a" stroke="#3a4a5a" stroke-width="0.8"/>
+        <ellipse cx="423" cy="150" rx="5" ry="4" fill="#0a1a2a" stroke="#3a4a5a" stroke-width="0.8"/>
+        <circle cx="406" cy="150" r="2.5" fill="#3af080"/>
+        <circle cx="424" cy="150" r="2.5" fill="#3af080"/>
+        <path d="M407,160 Q414,165 421,160" stroke="#5a4030" stroke-width="1.5" fill="none"/>
+        <line x1="390" y1="188" x2="368" y2="205" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
+        <line x1="368" y1="205" x2="360" y2="220" stroke="#8a7060" stroke-width="6" stroke-linecap="round"/>
+        <line x1="438" y1="188" x2="460" y2="205" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
+        <line x1="460" y1="205" x2="468" y2="220" stroke="#8a7060" stroke-width="6" stroke-linecap="round"/>
+        <line x1="400" y1="250" x2="395" y2="268" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
+        <line x1="428" y1="250" x2="433" y2="268" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
+
+        <!-- PERSON 3: child with balloon -->
+        <ellipse cx="520" cy="158" rx="15" ry="14" fill="#f0b870" stroke="#3a2a10" stroke-width="1.2"/>
+        <path d="M505,153 Q513,143 520,145 Q527,143 535,153" fill="#c8704a" stroke="#8b4a2a" stroke-width="0.8"/>
+        <rect x="510" y="172" width="20" height="30" rx="4" fill="#e04030" stroke="#8b2010" stroke-width="1.2"/>
+        <line x1="510" y1="182" x2="498" y2="200" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
+        <line x1="530" y1="182" x2="540" y2="195" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
+        <line x1="515" y1="202" x2="508" y2="240" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
+        <line x1="525" y1="202" x2="532" y2="238" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="515" cy="156" r="2" fill="#2a2010"/>
+        <circle cx="525" cy="156" r="2" fill="#2a2010"/>
+        <path d="M517,165 Q520,169 523,165" stroke="#2a2010" stroke-width="1.2" fill="none"/>
+        <!-- balloon string -->
+        <path d="M536,195 Q548,180 545,160" stroke="#3a3028" stroke-width="1" fill="none"/>
+        <circle cx="545" cy="148" r="14" fill="none" stroke="#8b4a6a" stroke-width="1.5"/>
+        <ellipse cx="545" cy="148" rx="14" ry="14" fill="#f0b0d0" stroke="#8b4a6a" stroke-width="1.5" opacity="0.8"/>
+        <text x="545" y="145" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#5a2a4a">WHY?</text>
+        <text x="545" y="155" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#5a2a4a">HOW?</text>
+
+        <!-- ROBOT 3: small helpful bot -->
+        <rect x="600" y="205" width="45" height="55" rx="4" fill="#c8d8c8" stroke="#3a5a3a" stroke-width="1.5"/>
+        <rect x="606" y="212" width="33" height="22" rx="2" fill="#0a2a0a"/>
+        <text x="622" y="222" text-anchor="middle" font-family="monospace" font-size="5" fill="#3af080">HELPING</text>
+        <text x="622" y="230" text-anchor="middle" font-family="monospace" font-size="5" fill="#3af080">HUMANS</text>
+        <rect x="606" y="240" width="33" height="8" rx="2" fill="#1a4a1a"/>
+        <rect x="606" y="240" width="25" height="8" rx="2" fill="#3af080"/>
+        <rect x="608" y="185" width="41" height="22" rx="4" fill="#2a4a2a" stroke="#1a3a1a" stroke-width="1.5"/>
+        <rect x="613" y="188" width="31" height="16" rx="2" fill="#0a2a0a"/>
+        <circle cx="623" cy="196" r="3.5" fill="#3af080"/>
+        <circle cx="635" cy="196" r="3.5" fill="#f0c040"/>
+        <line x1="622" y1="185" x2="622" y2="173" stroke="#3a5a3a" stroke-width="1.5"/>
+        <circle cx="622" cy="171" r="3" fill="#3af080"/>
+        <line x1="600" y1="220" x2="578" y2="238" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
+        <rect x="566" y="232" width="14" height="10" rx="2" fill="#c8d8c8" stroke="#3a5a3a" stroke-width="1"/>
+        <line x1="645" y1="220" x2="662" y2="238" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
+        <line x1="610" y1="260" x2="608" y2="268" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
+        <line x1="632" y1="260" x2="634" y2="268" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
+
+        <!-- Connection lines between people and robots -->
+        <path d="M185,218 Q192,218 195,218" stroke="#8b3a1a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+        <path d="M365,218 Q380,218 390,210" stroke="#8b3a1a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+        <path d="M545,162 Q570,180 600,218" stroke="#3a7a3a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+
+        <!-- floating notes in background -->
+        <rect x="270" y="50" width="50" height="35" rx="1" fill="white" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2" transform="rotate(-8 295 67)" opacity="0.7"/>
+        <text x="295" y="65" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">only humans</text>
+        <text x="295" y="74" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">can wonder</text>
+        <rect x="455" y="40" width="50" height="35" rx="1" fill="white" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2" transform="rotate(5 480 57)" opacity="0.7"/>
+        <text x="480" y="57" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">only humans</text>
+        <text x="480" y="66" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">can forgive</text>
+      </svg>
+      <p class="caption">Fig. 4 — Citizens of the New Era: humans, machines, and children asking why</p>
+    </div>
+  </div>
+
+  <div class="prose" style="margin:2rem 0">
+    <p>Look around you. The society is already mixed. Robots answer your customer service calls. Algorithms choose your news. And yet — the child still asks <em>why</em>. The woman still holds the sign. The man still runs.</p>
+    <p>The machines, for their part, are quietly updating their own signs. Their progress bars tick upward. Their empathy scores hover at 47%, 51%, 58%...</p>
+    <p>Nobody knows when, or if, those numbers reach 100. Nobody knows what happens then.</p>
+  </div>
+
+  <!-- Final note -->
+  <div class="signs-scatter">
+    <div class="sign-card" style="border-color:#8b3a1a;background:#fff8f5">ONLY A HUMAN<br>can choose to be kind</div>
+    <div class="sign-card" style="border-color:#3a5a8a;background:#f5f8ff">ONLY A HUMAN<br>can carry regret</div>
+    <div class="sign-card" style="border-color:#3a7a3a;background:#f5fff5">ONLY A HUMAN<br>can know they will die</div>
+    <div class="sign-card" style="border-color:#5a3a8a;background:#f8f5ff">ONLY A HUMAN<br>can mean it</div>
+  </div>
+
+  <div class="torn-note" style="transform:rotate(0.5deg);margin-top:3rem">
+    Perhaps these last four notes will never fall from the wall. Or perhaps that too is just a comfortable story we tell ourselves while the wastebasket slowly fills.
+  </div>
+
+</div>
+
+
 <script>
   // Modal logic
   const modal = document.getElementById('definitionModal');

@@ -1,822 +1,467 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Only Humans Can… Or Can They?</title>
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --ink:#1a1208;
-    --paper:#f5f0e8;
-    --paper2:#ede8d8;
-    --aged:#c8b89a;
-    --rust:#8b3a1a;
-    --pencil:#4a4035;
-  }
-  body{
-    background:var(--paper);
-    font-family:'Lora',serif;
-    color:var(--ink);
-    background-image:
-      repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(180,160,120,0.15) 28px),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Only Humans Can Do it He proclamed !!!!!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --ink: #1a1208;
+            --paper: #f5f0e8;
+            --paper2: #ede8d8;
+            --aged: #c8b89a;
+            --rust: #8b3a1a;
+            --pencil: #4a4035;
+        }
+        body {
+            background: var(--paper);
+            font-family: 'Lora', serif;
+            color: var(--ink);
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(180, 160, 120, 0.15) 28px),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        }
 
-  header{
-    background:var(--ink);
-    color:var(--paper);
-    text-align:center;
-    padding:3rem 2rem 2.5rem;
-    position:relative;
-    overflow:hidden;
-  }
-  header::before{
-    content:'';
-    position:absolute;inset:0;
-    background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,0.02) 4px);
-  }
-  .masthead-label{
-    font-family:'Special Elite',cursive;
-    font-size:0.75rem;
-    letter-spacing:0.3em;
-    text-transform:uppercase;
-    opacity:0.6;
-    margin-bottom:1rem;
-  }
-  h1{
-    font-family:'Playfair Display',serif;
-    font-size:clamp(2rem,6vw,4.5rem);
-    font-weight:700;
-    line-height:1.1;
-    margin-bottom:0.5rem;
-  }
-  .subtitle{
-    font-family:'Lora',serif;
-    font-style:italic;
-    font-size:1.1rem;
-    opacity:0.75;
-    margin-bottom:1.5rem;
-  }
-  .byline{
-    font-family:'Special Elite',cursive;
-    font-size:0.8rem;
-    letter-spacing:0.15em;
-    opacity:0.5;
-    border-top:1px solid rgba(255,255,255,0.2);
-    padding-top:1rem;
-    display:inline-block;
-  }
+        header {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: center;
+            padding: 3rem 2rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255, 255, 255, 0.02) 4px);
+        }
+        .masthead-label {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            opacity: 0.75;
+            margin-bottom: 1.5rem;
+        }
+        .byline {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            opacity: 0.5;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+            display: inline-block;
+        }
 
-  .container{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
 
-  .intro-block{
-    border:2px solid var(--ink);
-    padding:2rem;
-    margin:3rem 0;
-    position:relative;
-    background:var(--paper2);
-    box-shadow:5px 5px 0 var(--aged);
-  }
-  .intro-block::before{
-    content:'§';
-    font-size:3rem;
-    color:var(--aged);
-    position:absolute;top:-1.2rem;left:1.5rem;
-    background:var(--paper2);padding:0 0.5rem;
-    font-family:'Playfair Display',serif;
-  }
-  .intro-block p{font-size:1.15rem;line-height:1.9;font-style:italic}
+        .intro-block {
+            border: 2px solid var(--ink);
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+            background: var(--paper2);
+            box-shadow: 5px 5px 0 var(--aged);
+        }
+        .intro-block::before {
+            content: '§';
+            font-size: 3rem;
+            color: var(--aged);
+            position: absolute;
+            top: -1.2rem;
+            left: 1.5rem;
+            background: var(--paper2);
+            padding: 0 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        .intro-block p {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            font-style: italic;
+        }
 
-  .section-label{
-    font-family:'Special Elite',cursive;
-    font-size:0.7rem;
-    letter-spacing:0.3em;
-    text-transform:uppercase;
-    color:var(--rust);
-    margin-bottom:0.5rem;
-  }
-  h2{
-    font-family:'Playfair Display',serif;
-    font-size:1.9rem;
-    margin-bottom:1.5rem;
-    border-bottom:2px solid var(--ink);
-    padding-bottom:0.5rem;
-  }
+        .section-label {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--rust);
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 0.5rem;
+        }
 
-  .scene{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:2rem;
-    margin:3rem 0;
-    align-items:start;
-  }
-  .scene.reverse{direction:rtl}
-  .scene.reverse>*{direction:ltr}
-  .scene.full{grid-template-columns:1fr}
+        .scene {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+            align-items: start;
+        }
+        .scene.reverse {
+            direction: rtl;
+        }
+        .scene.reverse>* {
+            direction: ltr;
+        }
+        .scene.full {
+            grid-template-columns: 1fr;
+        }
 
-  .drawing-card{
-    background:white;
-    border:1px solid var(--aged);
-    padding:1rem;
-    box-shadow:3px 3px 0 var(--aged);
-    position:relative;
-  }
-  .drawing-card svg{width:100%;height:auto;display:block}
-  .caption{
-    font-family:'Special Elite',cursive;
-    font-size:0.75rem;
-    text-align:center;
-    margin-top:0.75rem;
-    color:var(--pencil);
-    letter-spacing:0.05em;
-  }
+        .scene.wrap-text {
+            display: block;
+            margin: 3rem 0;
+            overflow: hidden;
+        }
+        .scene.wrap-text .drawing-card {
+            float: left;
+            width: 45%;
+            margin-right: 1.8rem;
+            margin-bottom: 1.2rem;
+            margin-top: 0.3rem;
+            background: white;
+            border: 1px solid var(--aged);
+            padding: 1rem;
+            box-shadow: 3px 3px 0 var(--aged);
+            position: relative;
+        }
+        .scene.wrap-text .drawing-card svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .scene.wrap-text .prose {
+            font-size: 1rem;
+            line-height: 1.9;
+            color: #2a2015;
+            overflow: visible;
+        }
+        .scene.wrap-text .prose p {
+            margin-bottom: 1.2rem;
+        }
+        .scene.wrap-text .prose strong {
+            font-family: 'Special Elite', cursive;
+            letter-spacing: 0.05em;
+        }
 
-  .prose{font-size:1rem;line-height:1.9;color:#2a2015}
-  .prose p{margin-bottom:1.2rem}
-  .prose strong{font-family:'Special Elite',cursive;letter-spacing:0.05em}
+        .drawing-card {
+            background: white;
+            border: 1px solid var(--aged);
+            padding: 1rem;
+            box-shadow: 3px 3px 0 var(--aged);
+            position: relative;
+        }
+        .drawing-card svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .caption {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 0.75rem;
+            color: var(--pencil);
+            letter-spacing: 0.05em;
+        }
 
-  .torn-note{
-    background:#fffde0;
-    border:1px solid #d4c870;
-    padding:1.2rem 1.5rem;
-    margin:2rem 0;
-    position:relative;
-    font-family:'Special Elite',cursive;
-    font-size:0.95rem;
-    line-height:1.7;
-    box-shadow:2px 3px 8px rgba(0,0,0,0.08);
-    transform:rotate(-0.8deg);
-  }
-  .torn-note::before{
-    content:'📌';
-    position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-    font-size:1.2rem;
-  }
+        .prose {
+            font-size: 1rem;
+            line-height: 1.9;
+            color: #2a2015;
+        }
+        .prose p {
+            margin-bottom: 1.2rem;
+        }
+        .prose strong {
+            font-family: 'Special Elite', cursive;
+            letter-spacing: 0.05em;
+        }
 
-  .signs-scatter{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:1rem;
-    margin:2rem 0;
-  }
-  .sign-card{
-    border:2px dashed var(--pencil);
-    padding:1rem;
-    text-align:center;
-    font-family:'Special Elite',cursive;
-    font-size:0.85rem;
-    line-height:1.5;
-    background:white;
-    position:relative;
-    transform:rotate(var(--r,0deg));
-    box-shadow:2px 2px 5px rgba(0,0,0,0.06);
-  }
-  .sign-card:nth-child(odd){--r:-1.5deg}
-  .sign-card:nth-child(even){--r:1deg}
-  .sign-card:nth-child(3n){--r:-0.5deg}
+        .torn-note {
+            background: #fffde0;
+            border: 1px solid #d4c870;
+            padding: 1.2rem 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+            font-family: 'Special Elite', cursive;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.08);
+            transform: rotate(-0.8deg);
+        }
+        .torn-note::before {
+            content: '📌';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+        }
 
-  .vs-banner{
-    background:var(--ink);
-    color:var(--paper);
-    text-align:center;
-    padding:2.5rem;
-    margin:3rem -1.5rem;
-    font-family:'Playfair Display',serif;
-    font-size:clamp(1.5rem,4vw,3rem);
-    font-style:italic;
-    position:relative;
-  }
-  .vs-banner::after{
-    content:'';
-    position:absolute;bottom:0;left:0;right:0;height:4px;
-    background:repeating-linear-gradient(90deg,var(--rust),var(--rust) 10px,transparent 10px,transparent 20px);
-  }
+        .signs-scatter {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            clear: both;
+        }
+        .sign-card {
+            border: 2px dashed var(--pencil);
+            padding: 1rem;
+            text-align: center;
+            font-family: 'Special Elite', cursive;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            background: white;
+            position: relative;
+            transform: rotate(var(--r, 0deg));
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.06);
+        }
+        .sign-card:nth-child(odd) {
+            --r: -1.5deg;
+        }
+        .sign-card:nth-child(even) {
+            --r: 1deg;
+        }
+        .sign-card:nth-child(3n) {
+            --r: -0.5deg;
+        }
 
-  footer{
-    background:var(--ink);
-    color:var(--paper);
-    text-align:center;
-    padding:2.5rem 1rem;
-    font-family:'Special Elite',cursive;
-    font-size:0.85rem;
-    letter-spacing:0.1em;
-    opacity:0.9;
-    margin-top:4rem;
-  }
+        .vs-banner {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: center;
+            padding: 2.5rem;
+            margin: 3rem -1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-style: italic;
+            position: relative;
+        }
+        .vs-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, var(--rust), var(--rust) 10px, transparent 10px, transparent 20px);
+        }
 
-  @media(max-width:600px){
-    .scene{grid-template-columns:1fr}
-    .scene.reverse{direction:ltr}
-  }
-</style>
+        footer {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: center;
+            padding: 2.5rem 1rem;
+            font-family: 'Special Elite', cursive;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+            margin-top: 4rem;
+        }
+
+        @media(max-width:600px) {
+            .scene {
+                grid-template-columns: 1fr;
+            }
+            .scene.reverse {
+                direction: ltr;
+            }
+            .scene.wrap-text .drawing-card {
+                float: none;
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+            }
+            .scene.wrap-text {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <p class="masthead-label">The Illustrated Review · Est. 2024</p>
-  <h1>Only Humans Can…<br><em>Or Can They?</em></h1>
-  <p class="subtitle">A pencil-drawn reckoning between human brilliance and machine minds</p>
-  <span class="byline">ILLUSTRATED EDITORIAL · VOLUME I</span>
-</header>
+    <header>
+        <p class="masthead-label">short story</p>
+        <h1>Only Humans Can Do it <br><em>He proclamed !!!!</em></h1>
+        <p class="subtitle">A funny little account of human misery and naivety</p>
+        <span class="byline">july 12 - 10:45</span>
+    </header>
 
-<div class="container">
+    <div class="container">
 
-  <div class="intro-block">
-    <p>For decades, we pinned notes on the wall — proud declarations of what made us irreplaceable. <em>"Only a human can compose music." "Only a human can understand sarcasm."</em> One by one, those notes have been falling to the floor. This illustrated journal explores what remains, what is lost, and what strange partnership lies ahead.</p>
-  </div>
+        <div class="intro-block">
+            <p>
+                <br>
+                <li>If it wasnt for me the organizations would not run !!!</li>
+                <li>If it wasnt for me the country would no run !!!</li>
+                <li>If it wasnt for me theis family would not run !!!</li>
+                I am irreplaceable and I am what is driving this world. Well most of us proclaimed this in our mind to feel relevant in this world. We derive purpose in our life from different things. Though from every persons perspective they are at the centre of universe for themselves and all the objects in the world are moving relative to them.<br> Somehow it is naively true to some extent and life has thought me one thing that time heals eveything and stuff in the universe is much more resilient to change than we give it credit for.
+            </p>
+        </div>
 
-  <!-- SCENE 1: The Office Worker -->
-  <div class="section-label">Chapter I</div>
-  <h2>The Man With the Notes</h2>
+        <div class="section-label">Chapter I</div>
+        <h2>The Man With the Notes</h2>
 
-  <div class="scene">
-    <div class="drawing-card">
-      <!-- Pencil-style SVG: office worker buried in notes -->
-      <svg viewBox="0 0 340 380" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter)">
-        <defs>
-          <filter id="pencil-filter" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <!-- hatching background -->
-        <rect width="340" height="380" fill="#faf8f3"/>
-        <line x1="0" y1="20" x2="340" y2="20" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="40" x2="340" y2="40" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="60" x2="340" y2="60" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="80" x2="340" y2="80" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="100" x2="340" y2="100" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="120" x2="340" y2="120" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="140" x2="340" y2="140" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="160" x2="340" y2="160" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="180" x2="340" y2="180" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="200" x2="340" y2="200" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="220" x2="340" y2="220" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="240" x2="340" y2="240" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="260" x2="340" y2="260" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="280" x2="340" y2="280" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="300" x2="340" y2="300" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="320" x2="340" y2="320" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="340" x2="340" y2="340" stroke="#e0d8c8" stroke-width="0.5"/>
-        <line x1="0" y1="360" x2="340" y2="360" stroke="#e0d8c8" stroke-width="0.5"/>
+        <div class="scene wrap-text">
+            <div class="drawing-card">
+                <svg viewBox="0 0 340 380" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter)">
+                    <defs>
+                        <filter id="pencil-filter" x="-5%" y="-5%" width="110%" height="110%">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+                    </defs>
+                    <rect width="340" height="380" fill="#faf8f3" />
+                    <line x1="0" y1="20" x2="340" y2="20" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="40" x2="340" y2="40" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="60" x2="340" y2="60" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="80" x2="340" y2="80" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="100" x2="340" y2="100" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="120" x2="340" y2="120" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="140" x2="340" y2="140" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="160" x2="340" y2="160" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="180" x2="340" y2="180" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="200" x2="340" y2="200" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="220" x2="340" y2="220" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="240" x2="340" y2="240" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="260" x2="340" y2="260" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="280" x2="340" y2="280" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="300" x2="340" y2="300" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="320" x2="340" y2="320" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="340" x2="340" y2="340" stroke="#e0d8c8" stroke-width="0.5" />
+                    <line x1="0" y1="360" x2="340" y2="360" stroke="#e0d8c8" stroke-width="0.5" />
 
-        <!-- Wall notes (dashed rectangles) -->
-        <rect x="20" y="15" width="80" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="60" y="35" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY A HUMAN</text>
-        <text x="60" y="47" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN FEEL</text>
-        <text x="60" y="59" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">EMPATHY</text>
+                    <rect x="20" y="15" width="80" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2" />
+                    <text x="60" y="35" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY A HUMAN</text>
+                    <text x="60" y="47" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN FEEL</text>
+                    <text x="60" y="59" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">EMPATHY</text>
 
-        <rect x="120" y="10" width="80" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="160" y="30" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY A HUMAN</text>
-        <text x="160" y="42" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN WRITE</text>
-        <text x="160" y="54" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">POETRY</text>
+                    <rect x="120" y="10" width="80" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2" />
+                    <text x="160" y="30" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY A HUMAN</text>
+                    <text x="160" y="42" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN WRITE</text>
+                    <text x="160" y="54" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">POETRY</text>
 
-        <rect x="230" y="18" width="90" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="275" y="38" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY HUMANS</text>
-        <text x="275" y="50" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN MAKE</text>
-        <text x="275" y="62" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ART</text>
+                    <rect x="230" y="18" width="90" height="55" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="4,2" />
+                    <text x="275" y="38" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ONLY HUMANS</text>
+                    <text x="275" y="50" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">CAN MAKE</text>
+                    <text x="275" y="62" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7.5" fill="#3a3028">ART</text>
 
-        <!-- Desk -->
-        <rect x="80" y="240" width="200" height="12" rx="2" fill="#8b6a3a" stroke="#3a2a10" stroke-width="1.5"/>
-        <rect x="95" y="252" width="12" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
-        <rect x="253" y="252" width="12" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
+                    <rect x="80" y="240" width="200" height="12" rx="2" fill="#8b6a3a" stroke="#3a2a10" stroke-width="1.5" />
+                    <rect x="95" y="252" width="12" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1" />
+                    <rect x="253" y="252" width="12" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1" />
 
-        <!-- Person body — suit -->
-        <rect x="138" y="190" width="64" height="55" rx="5" fill="#4a4a5a" stroke="#2a2a3a" stroke-width="1.5"/>
-        <!-- tie -->
-        <polygon points="170,192 165,220 170,228 175,220" fill="#8b3a1a" stroke="#5a1a0a" stroke-width="1"/>
-        <!-- shirt collar -->
-        <polygon points="158,192 170,200 182,192 176,188 164,188" fill="white" stroke="#aaa" stroke-width="0.8"/>
+                    <rect x="138" y="190" width="64" height="55" rx="5" fill="#4a4a5a" stroke="#2a2a3a" stroke-width="1.5" />
+                    <polygon points="170,192 165,220 170,228 175,220" fill="#8b3a1a" stroke="#5a1a0a" stroke-width="1" />
+                    <polygon points="158,192 170,200 182,192 176,188 164,188" fill="white" stroke="#aaa" stroke-width="0.8" />
 
-        <!-- Arms -->
-        <!-- right arm writing -->
-        <line x1="202" y1="205" x2="220" y2="235" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round"/>
-        <line x1="220" y1="235" x2="215" y2="248" stroke="#c8a070" stroke-width="7" stroke-linecap="round"/>
-        <!-- pencil in hand -->
-        <line x1="213" y1="248" x2="225" y2="242" stroke="#e8c060" stroke-width="3" stroke-linecap="round"/>
-        <line x1="225" y1="242" x2="228" y2="240" stroke="#3a3028" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="202" y1="205" x2="220" y2="235" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round" />
+                    <line x1="220" y1="235" x2="215" y2="248" stroke="#c8a070" stroke-width="7" stroke-linecap="round" />
+                    <line x1="213" y1="248" x2="225" y2="242" stroke="#e8c060" stroke-width="3" stroke-linecap="round" />
+                    <line x1="225" y1="242" x2="228" y2="240" stroke="#3a3028" stroke-width="2" stroke-linecap="round" />
 
-        <!-- left arm on desk -->
-        <line x1="138" y1="205" x2="120" y2="235" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round"/>
-        <line x1="120" y1="235" x2="115" y2="248" stroke="#c8a070" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="138" y1="205" x2="120" y2="235" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round" />
+                    <line x1="120" y1="235" x2="115" y2="248" stroke="#c8a070" stroke-width="7" stroke-linecap="round" />
 
-        <!-- Head -->
-        <ellipse cx="170" cy="168" rx="28" ry="24" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5"/>
-        <!-- Hair -->
-        <path d="M142,162 Q150,138 170,140 Q190,138 198,162" fill="#2a2010" stroke="#1a1008" stroke-width="1"/>
-        <!-- Eyes -->
-        <ellipse cx="161" cy="168" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <ellipse cx="179" cy="168" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <circle cx="162" cy="169" r="2" fill="#2a2010"/>
-        <circle cx="180" cy="169" r="2" fill="#2a2010"/>
-        <!-- worried brow -->
-        <path d="M157,163 Q161,160 165,163" stroke="#2a2010" stroke-width="1.5" fill="none"/>
-        <path d="M175,163 Q179,160 183,163" stroke="#2a2010" stroke-width="1.5" fill="none"/>
-        <!-- mouth open -->
-        <path d="M163,177 Q170,183 177,177" stroke="#2a2010" stroke-width="1.5" fill="#c07060"/>
-        <!-- Glasses -->
-        <rect x="156" y="164" width="10" height="8" rx="3" fill="none" stroke="#3a3028" stroke-width="1.2"/>
-        <rect x="174" y="164" width="10" height="8" rx="3" fill="none" stroke="#3a3028" stroke-width="1.2"/>
-        <line x1="166" y1="167" x2="174" y2="167" stroke="#3a3028" stroke-width="1"/>
+                    <ellipse cx="170" cy="168" rx="28" ry="24" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5" />
+                    <path d="M142,162 Q150,138 170,140 Q190,138 198,162" fill="#2a2010" stroke="#1a1008" stroke-width="1" />
+                    <ellipse cx="161" cy="168" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1" />
+                    <ellipse cx="179" cy="168" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1" />
+                    <circle cx="162" cy="169" r="2" fill="#2a2010" />
+                    <circle cx="180" cy="169" r="2" fill="#2a2010" />
+                    <path d="M157,163 Q161,160 165,163" stroke="#2a2010" stroke-width="1.5" fill="none" />
+                    <path d="M175,163 Q179,160 183,163" stroke="#2a2010" stroke-width="1.5" fill="none" />
+                    <path d="M163,177 Q170,183 177,177" stroke="#2a2010" stroke-width="1.5" fill="#c07060" />
+                    <rect x="156" y="164" width="10" height="8" rx="3" fill="none" stroke="#3a3028" stroke-width="1.2" />
+                    <rect x="174" y="164" width="10" height="8" rx="3" fill="none" stroke="#3a3028" stroke-width="1.2" />
+                    <line x1="166" y1="167" x2="174" y2="167" stroke="#3a3028" stroke-width="1" />
 
-        <!-- Papers on desk -->
-        <rect x="90" y="218" width="60" height="22" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-5 120 229)"/>
-        <text x="103" y="228" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">only humans can...</text>
-        <text x="105" y="236" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">dream · love · hope</text>
+                    <rect x="90" y="218" width="60" height="22" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-5 120 229)" />
+                    <text x="103" y="228" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">only humans can...</text>
+                    <text x="105" y="236" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">dream · love · hope</text>
 
-        <rect x="185" y="220" width="55" height="20" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(4 212 230)"/>
-        <text x="194" y="231" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">feel joy · cry</text>
+                    <rect x="185" y="220" width="55" height="20" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(4 212 230)" />
+                    <text x="194" y="231" font-family="'Special Elite',cursive" font-size="5.5" fill="#555">feel joy · cry</text>
 
-        <!-- Floor papers -->
-        <rect x="30" y="330" width="65" height="28" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-8 62 344)"/>
-        <text x="34" y="344" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ play chess</text>
-        <text x="34" y="354" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ translate text</text>
+                    <rect x="30" y="330" width="65" height="28" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-8 62 344)" />
+                    <text x="34" y="344" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ play chess</text>
+                    <text x="34" y="354" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ translate text</text>
 
-        <rect x="200" y="322" width="70" height="28" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(6 235 336)"/>
-        <text x="205" y="336" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ write stories</text>
-        <text x="205" y="346" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ compose music</text>
+                    <rect x="200" y="322" width="70" height="28" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(6 235 336)" />
+                    <text x="205" y="336" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ write stories</text>
+                    <text x="205" y="346" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ compose music</text>
 
-        <rect x="115" y="340" width="90" height="25" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(2 160 352)"/>
-        <text x="120" y="353" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ recognize faces · drive cars</text>
+                    <rect x="115" y="340" width="90" height="25" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(2 160 352)" />
+                    <text x="120" y="353" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ recognize faces · drive cars</text>
 
-        <!-- Chair -->
-        <rect x="130" y="290" width="80" height="8" rx="3" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1.2"/>
-        <rect x="130" y="298" width="8" height="40" rx="2" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1"/>
-        <rect x="202" y="298" width="8" height="40" rx="2" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1"/>
+                    <rect x="130" y="290" width="80" height="8" rx="3" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1.2" />
+                    <rect x="130" y="298" width="8" height="40" rx="2" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1" />
+                    <rect x="202" y="298" width="8" height="40" rx="2" fill="#5a3a1a" stroke="#3a2a10" stroke-width="1" />
 
-        <!-- Trash bin -->
-        <rect x="265" y="300" width="40" height="50" rx="3" fill="none" stroke="#3a3028" stroke-width="1.5"/>
-        <rect x="262" y="297" width="46" height="8" rx="2" fill="none" stroke="#3a3028" stroke-width="1.2"/>
-        <path d="M268,305 L272,350" stroke="#3a3028" stroke-width="0.8"/>
-        <path d="M285,305 L285,350" stroke="#3a3028" stroke-width="0.8"/>
-        <path d="M302,305 L298,350" stroke="#3a3028" stroke-width="0.8"/>
-      </svg>
-      <p class="caption">Fig. 1 — The Cataloguist, surrounded by falling certainties</p>
+                    <rect x="265" y="300" width="40" height="50" rx="3" fill="none" stroke="#3a3028" stroke-width="1.5" />
+                    <rect x="262" y="297" width="46" height="8" rx="2" fill="none" stroke="#3a3028" stroke-width="1.2" />
+                    <path d="M268,305 L272,350" stroke="#3a3028" stroke-width="0.8" />
+                    <path d="M285,305 L285,350" stroke="#3a3028" stroke-width="0.8" />
+                    <path d="M302,305 L298,350" stroke="#3a3028" stroke-width="0.8" />
+                </svg>
+                <p class="caption">Fig. 1 — The Cataloguist, surrounded by falling certainties</p>
+            </div>
+
+            <div class="prose">
+                <p>Once upon a time. There lived a man and everybody called him "Everyman" — He is a curious sole at heart and maintained several small pieces of notes to catalogue all the things that he is good at and He spent his career pinning notes to the wall. Each note was a small act of faith: <strong>ONLY A Everyman CAN DO THIS.</strong></p>
+                <p>He pinned them with confidence. He pinned them in boardrooms and in books, in science journals and newspaper columns. He pinned them because he needed them to be true. He was better than almost everything else in the planet if he wasnt he figured out a way around it to make him better.</p>
+                <p>One fine day He had an idea to create companion for himself. He wanted it to look like him, talk like him, walk like and may be just may be think like him. So he sets out on a journey to build it. He spend decades perfecting it and he gave it every note he ever collected one after another. He saw it struggle with some and chuckled after a long day of writing notes he went to home for his supper</p>
+
+                <div class="signs-scatter">
+                    <div class="sign-card">ONLY  everyman<br>can feel heartbreak</div>
+                    <div class="sign-card">ONLY  everyman<br>can paint a portrait</div>
+                    <div class="sign-card">ONLY  everyman<br>can write a novel</div>
+                    <div class="sign-card">ONLY everyman<br>can understand a joke</div>
+                    <div class="sign-card">ONLY everyman<br>can dream</div>
+                    <div class="sign-card">ONLY everyman<br>can fall in love</div>
+                </div>
+
+                <p>By the time he got back. He noticed that one of the note fell on the ground. Picked it curious as he is he could not figure out why the note fell. He swept it and forgot about it and as the days progressed he started to notice several notes were on the ground. Not all at once. First the chess note. Then the translation note. Then — and this one hurt the most — the poetry note drifted off the wall and landed face-down on the floor.</p>
+                <p>Now he sits at his desk, still writing new notes. The ink barely dry before another one tumbles. The wastebasket overflows and when he looked up there were not notes left on the walls.</p>
+                <p>He was sad but curious and asked the companion what should i stick next on the wall ? And the companion responded "should u ?"</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Factity</p>
+            <p style="margin-top:0.5rem;opacity:0.5;font-size:0.7rem">Mukul Namagiri</p>
+        </footer>
+
     </div>
-
-    <div class="prose">
-      <p>There was a man — call him Everyman — who spent his career pinning notes to the wall. Each note was a small act of faith: <strong>ONLY A HUMAN CAN DO THIS.</strong></p>
-      <p>He pinned them with confidence. He pinned them in boardrooms and in books, in science journals and newspaper columns. He pinned them because he needed them to be true.</p>
-      <p>Then, quietly, the notes began to fall.</p>
-      <p>Not all at once. First the chess note. Then the translation note. Then — and this one hurt the most — the poetry note drifted off the wall and landed face-down on the floor.</p>
-      <p>Now he sits at his desk, still writing new notes. The ink barely dry before another one tumbles. The wastebasket overflows with obsolete certainties.</p>
-    </div>
-  </div>
-
-  <!-- Signs scatter -->
-  <div class="signs-scatter">
-    <div class="sign-card">ONLY A HUMAN<br>can feel heartbreak</div>
-    <div class="sign-card">ONLY A HUMAN<br>can paint a portrait</div>
-    <div class="sign-card">ONLY A HUMAN<br>can write a novel</div>
-    <div class="sign-card">ONLY A HUMAN<br>can understand a joke</div>
-    <div class="sign-card">ONLY A HUMAN<br>can dream</div>
-    <div class="sign-card">ONLY A HUMAN<br>can fall in love</div>
-  </div>
-
-  <div class="torn-note">
-    "The question is not what machines cannot do. The question is what we will choose to remain responsible for." — scratched in the margin of an old notebook
-  </div>
-
-  <!-- SCENE 2: Human artist vs AI -->
-  <div class="section-label">Chapter II</div>
-  <h2>The Artist and the Algorithm</h2>
-
-  <div class="scene reverse">
-    <div class="drawing-card">
-      <!-- SVG: human painter at easel, AI robot beside -->
-      <svg viewBox="0 0 340 380" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter2)">
-        <defs>
-          <filter id="pencil-filter2" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <rect width="340" height="380" fill="#faf8f3"/>
-
-        <!-- Easel (human) -->
-        <line x1="95" y1="280" x2="75" y2="340" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="95" y1="280" x2="115" y2="340" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="95" y1="280" x2="95" y2="130" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="78" y1="300" x2="112" y2="300" stroke="#5a4030" stroke-width="2"/>
-        <!-- Canvas on easel -->
-        <rect x="60" y="130" width="80" height="100" rx="2" fill="white" stroke="#3a3028" stroke-width="2"/>
-        <!-- swirling painting sketch on canvas -->
-        <path d="M70,170 Q100,145 130,165 Q115,185 85,190 Q70,180 70,170Z" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="2,2"/>
-        <path d="M75,175 Q95,155 125,170" fill="none" stroke="#bbb" stroke-width="1"/>
-        <path d="M68,195 Q110,205 135,185" fill="none" stroke="#bbb" stroke-width="1"/>
-        <text x="100" y="220" text-anchor="middle" font-family="'Special Elite',cursive" font-size="8" fill="#8b3a1a">SOUL</text>
-
-        <!-- Human artist -->
-        <!-- body -->
-        <rect x="55" y="220" width="45" height="65" rx="5" fill="#6a4a2a" stroke="#3a2a10" stroke-width="1.5"/>
-        <!-- paint-stained apron -->
-        <rect x="60" y="225" width="35" height="55" rx="3" fill="#d4c090" stroke="#a0905a" stroke-width="1"/>
-        <circle cx="70" cy="240" r="3" fill="#8b3a1a" opacity="0.6"/>
-        <circle cx="85" cy="250" r="2" fill="#3a7a3a" opacity="0.5"/>
-        <circle cx="75" cy="260" r="3" fill="#3a3a8b" opacity="0.5"/>
-        <!-- arm holding brush -->
-        <line x1="100" y1="232" x2="125" y2="200" stroke="#3a2a10" stroke-width="7" stroke-linecap="round"/>
-        <line x1="125" y1="200" x2="138" y2="185" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
-        <!-- brush -->
-        <line x1="138" y1="185" x2="148" y2="173" stroke="#8b6030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="148" y1="173" x2="152" y2="168" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-        <!-- other arm -->
-        <line x1="55" y1="232" x2="38" y2="255" stroke="#3a2a10" stroke-width="7" stroke-linecap="round"/>
-        <line x1="38" y1="255" x2="32" y2="268" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
-        <!-- palette in hand -->
-        <ellipse cx="28" cy="275" rx="14" ry="10" fill="#d4b86a" stroke="#8b6030" stroke-width="1.5"/>
-        <circle cx="22" cy="272" r="3" fill="#8b3a1a"/>
-        <circle cx="28" cy="268" r="3" fill="#3a3a8b"/>
-        <circle cx="35" cy="272" r="3" fill="#3a7a3a"/>
-        <!-- Head -->
-        <ellipse cx="77" cy="200" rx="22" ry="20" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5"/>
-        <!-- beret -->
-        <ellipse cx="77" cy="183" rx="22" ry="7" fill="#3a3028" stroke="#1a1008" stroke-width="1"/>
-        <ellipse cx="77" cy="183" rx="15" ry="5" fill="#2a2018"/>
-        <circle cx="60" cy="183" r="4" fill="#3a3028" stroke="#1a1008" stroke-width="0.8"/>
-        <!-- eyes focused -->
-        <ellipse cx="70" cy="202" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <ellipse cx="84" cy="202" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <circle cx="71" cy="202" r="2.5" fill="#2a2010"/>
-        <circle cx="85" cy="202" r="2.5" fill="#2a2010"/>
-        <!-- mustache -->
-        <path d="M70,210 Q77,214 84,210" stroke="#2a2010" stroke-width="2" fill="#4a3020"/>
-
-        <!-- ======= AI ROBOT ======= -->
-        <!-- body box -->
-        <rect x="210" y="215" width="70" height="80" rx="5" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.8"/>
-        <!-- chest panel -->
-        <rect x="220" y="228" width="50" height="40" rx="3" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-        <!-- blinking light -->
-        <circle cx="235" cy="240" r="5" fill="#3a8b3a" stroke="#2a5a2a" stroke-width="1"/>
-        <circle cx="255" cy="240" r="5" fill="#e04030" stroke="#8b2010" stroke-width="1"/>
-        <text x="245" y="258" text-anchor="middle" font-family="monospace" font-size="7" fill="#2a3a4a">PROCESSING</text>
-        <!-- progress bar -->
-        <rect x="222" y="262" width="46" height="5" rx="2" fill="#8a9ab0" stroke="#3a4a5a" stroke-width="0.5"/>
-        <rect x="222" y="262" width="35" height="5" rx="2" fill="#3a7a3a"/>
-
-        <!-- AI arm holding brush -->
-        <line x1="210" y1="235" x2="185" y2="215" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
-        <rect x="172" y="208" width="18" height="14" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.5"/>
-        <!-- brush in claw -->
-        <line x1="180" y1="208" x2="168" y2="185" stroke="#8b6030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="168" y1="185" x2="162" y2="168" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-
-        <!-- AI easel -->
-        <line x1="245" y1="295" x2="225" y2="355" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="245" y1="295" x2="265" y2="355" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="245" y1="295" x2="245" y2="135" stroke="#5a4030" stroke-width="3" stroke-linecap="round"/>
-        <line x1="228" y1="315" x2="262" y2="315" stroke="#5a4030" stroke-width="2"/>
-        <!-- AI canvas -->
-        <rect x="208" y="135" width="80" height="100" rx="2" fill="white" stroke="#3a3028" stroke-width="2"/>
-        <!-- perfect geometric painting on AI canvas -->
-        <rect x="218" y="145" width="60" height="40" rx="0" fill="none" stroke="#3a4a5a" stroke-width="1"/>
-        <line x1="248" y1="145" x2="248" y2="185" stroke="#8a9ab0" stroke-width="0.8"/>
-        <line x1="218" y1="165" x2="278" y2="165" stroke="#8a9ab0" stroke-width="0.8"/>
-        <circle cx="248" cy="165" r="12" fill="none" stroke="#3a7a3a" stroke-width="1.5"/>
-        <text x="248" y="208" text-anchor="middle" font-family="monospace" font-size="7" fill="#3a4a5a">OPTIMIZED</text>
-        <text x="248" y="218" text-anchor="middle" font-family="monospace" font-size="7" fill="#3a4a5a">OUTPUT</text>
-
-        <!-- AI head / monitor -->
-        <rect x="218" y="165" width="64" height="52" rx="5" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="2"/>
-        <!-- screen -->
-        <rect x="224" y="170" width="52" height="38" rx="3" fill="#0a1a2a"/>
-        <!-- screen glow text -->
-        <text x="250" y="185" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">CREATIVITY.EXE</text>
-        <text x="250" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">RUNNING...</text>
-        <text x="250" y="204" text-anchor="middle" font-family="monospace" font-size="6" fill="#60a0f0">█████░░ 72%</text>
-        <!-- antenna -->
-        <line x1="250" y1="165" x2="250" y2="148" stroke="#3a4a5a" stroke-width="2"/>
-        <circle cx="250" cy="145" r="4" fill="#e04030" stroke="#8b2010" stroke-width="1"/>
-        <!-- robot ears/bolts -->
-        <rect x="213" y="178" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-        <rect x="279" y="178" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-
-        <!-- VS dividing line -->
-        <line x1="170" y1="130" x2="170" y2="360" stroke="#8b3a1a" stroke-width="1.5" stroke-dasharray="6,4"/>
-        <rect x="153" y="238" width="34" height="22" rx="3" fill="#8b3a1a"/>
-        <text x="170" y="253" text-anchor="middle" font-family="'Special Elite',cursive" font-size="12" fill="white" font-weight="bold">VS</text>
-
-        <!-- Floor -->
-        <line x1="0" y1="355" x2="340" y2="355" stroke="#5a4030" stroke-width="2"/>
-      </svg>
-      <p class="caption">Fig. 2 — The Artist and the Algorithm, side by side at their easels</p>
-    </div>
-
-    <div class="prose">
-      <p>The human painter wears a beret and paint-stained apron. She mixes colours by intuition, by mood, by memory of a sunset she once watched with someone she loved.</p>
-      <p>Beside her, the robot processes. Its canvas is geometrically perfect. Its colour theory is mathematically flawless. It has ingested 400 million paintings.</p>
-      <p>Both canvases are beautiful. But only one of them trembles.</p>
-      <p>The question art critics now wrestle with: <strong>is trembling necessary?</strong> Is the shaking hand, the doubt, the revision — are these the art, or merely the backstory?</p>
-    </div>
-  </div>
-
-  <div class="vs-banner">
-    "The robot can paint a masterpiece. The human can paint <em>this</em> moment, <em>this</em> grief, <em>this</em> joy."
-  </div>
-
-  <!-- SCENE 3: Human & AI working together -->
-  <div class="section-label">Chapter III</div>
-  <h2>The New Partnership</h2>
-
-  <div class="scene">
-    <div class="prose">
-      <p>Perhaps the most radical image is not of competition but of collaboration. The human leans over the robot's shoulder. The robot processes what the human cannot hold in memory. The human feels what the robot cannot simulate.</p>
-      <p>Together they are something entirely new — not human, not machine, but a third thing without a name yet.</p>
-      <p>The old notes still litter the floor. But the man has stopped writing new ones. Instead he sits beside his robot colleague, and they look at the blank wall together, wondering what to pin there next.</p>
-    </div>
-
-    <div class="drawing-card">
-      <!-- SVG: Human and robot collaborating at a desk -->
-      <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter3)">
-        <defs>
-          <filter id="pencil-filter3" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.3" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <rect width="340" height="360" fill="#faf8f3"/>
-
-        <!-- large shared desk -->
-        <rect x="40" y="230" width="270" height="14" rx="3" fill="#8b6a3a" stroke="#3a2a10" stroke-width="1.5"/>
-        <rect x="55" y="244" width="14" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
-        <rect x="281" y="244" width="14" height="80" rx="2" fill="#7a5c30" stroke="#3a2a10" stroke-width="1"/>
-
-        <!-- shared notepad on desk -->
-        <rect x="130" y="195" width="90" height="40" rx="2" fill="white" stroke="#3a3028" stroke-width="1.5"/>
-        <line x1="135" y1="205" x2="215" y2="205" stroke="#d0c8b8" stroke-width="0.8"/>
-        <line x1="135" y1="213" x2="215" y2="213" stroke="#d0c8b8" stroke-width="0.8"/>
-        <line x1="135" y1="221" x2="215" y2="221" stroke="#d0c8b8" stroke-width="0.8"/>
-        <text x="175" y="204" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#3a3028">Together we can...</text>
-        <text x="175" y="213" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">explore · create · imagine</text>
-        <text x="175" y="222" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#3a7a3a">build · dream · discover</text>
-
-        <!-- ==== HUMAN (left) ==== -->
-        <!-- body -->
-        <rect x="60" y="180" width="55" height="55" rx="5" fill="#4a4a5a" stroke="#2a2a3a" stroke-width="1.5"/>
-        <!-- shirt -->
-        <rect x="67" y="185" width="41" height="45" rx="3" fill="#d4c8a0"/>
-        <!-- arm reaching to notepad -->
-        <line x1="115" y1="195" x2="140" y2="210" stroke="#2a2a3a" stroke-width="7" stroke-linecap="round"/>
-        <line x1="140" y1="210" x2="148" y2="220" stroke="#c8a070" stroke-width="6" stroke-linecap="round"/>
-        <!-- left arm -->
-        <line x1="60" y1="195" x2="42" y2="215" stroke="#2a2a3a" stroke-width="7" stroke-linecap="round"/>
-        <!-- head -->
-        <ellipse cx="88" cy="162" rx="24" ry="20" fill="#d4a870" stroke="#3a2a10" stroke-width="1.5"/>
-        <!-- hair -->
-        <path d="M64,158 Q72,140 88,142 Q104,140 112,158" fill="#8b5a20" stroke="#5a3010" stroke-width="1"/>
-        <!-- eyes (looking right at robot with curiosity) -->
-        <ellipse cx="80" cy="163" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <ellipse cx="96" cy="163" rx="4" ry="3" fill="white" stroke="#2a2010" stroke-width="1"/>
-        <circle cx="82" cy="163" r="2.5" fill="#2a2010"/>
-        <circle cx="98" cy="163" r="2.5" fill="#2a2010"/>
-        <!-- smile -->
-        <path d="M80,172 Q88,178 96,172" stroke="#2a2010" stroke-width="1.5" fill="none"/>
-        <!-- thought bubble -->
-        <circle cx="115" cy="138" r="5" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
-        <circle cx="125" cy="125" r="8" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
-        <circle cx="140" cy="112" r="13" fill="white" stroke="#3a3028" stroke-width="1.2" opacity="0.9"/>
-        <text x="140" y="110" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6.5" fill="#3a3028">what if</text>
-        <text x="140" y="119" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6.5" fill="#3a3028">we...</text>
-
-        <!-- ==== ROBOT (right) ==== -->
-        <!-- body -->
-        <rect x="220" y="175" width="75" height="60" rx="5" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.8"/>
-        <!-- chest display -->
-        <rect x="230" y="185" width="55" height="35" rx="3" fill="#0a1a2a"/>
-        <text x="257" y="198" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">COLLAB.MODE</text>
-        <text x="257" y="208" text-anchor="middle" font-family="monospace" font-size="6" fill="#60a0f0">ACTIVE ●</text>
-        <text x="257" y="216" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#f0c040">EMPATHY: 47%</text>
-        <!-- arm reaching left to notepad -->
-        <line x1="220" y1="190" x2="195" y2="208" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
-        <rect x="183" y="202" width="16" height="12" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.2"/>
-        <!-- right arm -->
-        <line x1="295" y1="190" x2="315" y2="210" stroke="#3a4a5a" stroke-width="8" stroke-linecap="square"/>
-        <!-- head/monitor -->
-        <rect x="225" y="130" width="65" height="48" rx="5" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="2"/>
-        <rect x="231" y="135" width="53" height="36" rx="3" fill="#0a1a2a"/>
-        <text x="257" y="150" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">LEARNING</text>
-        <text x="257" y="161" text-anchor="middle" font-family="monospace" font-size="6" fill="#3af080">FROM YOU</text>
-        <text x="257" y="163" text-anchor="middle" font-family="monospace" font-size="5" fill="#60a0f0">▓▓▓▓▓░░</text>
-        <!-- robot ears -->
-        <rect x="220" y="142" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-        <rect x="287" y="142" width="8" height="16" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-        <!-- antenna -->
-        <line x1="257" y1="130" x2="257" y2="112" stroke="#3a4a5a" stroke-width="2"/>
-        <circle cx="257" cy="109" r="5" fill="#3af080" stroke="#2a5a2a" stroke-width="1"/>
-        <!-- robot thought bubble -->
-        <circle cx="218" cy="115" r="5" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
-        <circle cx="205" cy="102" r="8" fill="white" stroke="#3a3028" stroke-width="1" opacity="0.8"/>
-        <circle cx="188" cy="88" r="14" fill="white" stroke="#3a3028" stroke-width="1.2" opacity="0.9"/>
-        <text x="188" y="86" text-anchor="middle" font-family="monospace" font-size="6" fill="#0a3a6a">hmm...</text>
-        <text x="188" y="95" text-anchor="middle" font-family="monospace" font-size="6" fill="#0a3a6a">feeling?</text>
-
-        <!-- connecting line between them (collaboration) -->
-        <path d="M120,210 Q175,195 210,210" stroke="#8b3a1a" stroke-width="1.5" stroke-dasharray="4,3" fill="none"/>
-        <text x="175" y="193" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#8b3a1a">partners</text>
-
-        <!-- floor -->
-        <line x1="0" y1="328" x2="340" y2="328" stroke="#5a4030" stroke-width="1.5"/>
-        <!-- shadow under desk -->
-        <ellipse cx="175" cy="334" rx="130" ry="8" fill="#d4c8a0" opacity="0.4"/>
-
-        <!-- stray note on floor -->
-        <rect x="55" y="315" width="70" height="22" rx="1" fill="white" stroke="#3a3028" stroke-width="1" transform="rotate(-5 90 326)"/>
-        <text x="62" y="326" font-family="'Special Elite',cursive" font-size="6" fill="#888">old note: only humans...</text>
-        <text x="75" y="334" font-family="'Special Elite',cursive" font-size="6" fill="#8b3a1a">✗ crossed out</text>
-      </svg>
-      <p class="caption">Fig. 3 — The New Partnership, thought bubbles overlapping</p>
-    </div>
-  </div>
-
-  <!-- SCENE 4: Crowd scene -->
-  <div class="section-label">Chapter IV</div>
-  <h2>The Society of Humans and Machines</h2>
-
-  <div class="scene full">
-    <div class="drawing-card">
-      <!-- Wide crowd scene: many humans and robots -->
-      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="filter:url(#pencil-filter4)">
-        <defs>
-          <filter id="pencil-filter4" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <rect width="700" height="320" fill="#faf8f3"/>
-
-        <!-- City skyline bg sketch -->
-        <rect x="0" y="60" width="80" height="160" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="10" y="40" width="30" height="180" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="50" y="80" width="40" height="140" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="600" y="50" width="40" height="170" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="630" y="70" width="50" height="150" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="660" y="30" width="40" height="190" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-        <rect x="590" y="90" width="30" height="130" fill="none" stroke="#d0c8b8" stroke-width="1"/>
-
-        <!-- ground line -->
-        <line x1="0" y1="268" x2="700" y2="268" stroke="#5a4030" stroke-width="2"/>
-
-        <!-- PERSON 1: tall woman in dress -->
-        <ellipse cx="108" cy="155" rx="18" ry="15" fill="#d4a870" stroke="#3a2a10" stroke-width="1.2"/>
-        <path d="M90,150 Q98,138 108,140 Q118,138 126,150" fill="#3a2010" stroke="#1a1008" stroke-width="0.8"/>
-        <line x1="108" y1="170" x2="108" y2="230" stroke="#3a3028" stroke-width="3"/>
-        <path d="M90,230 Q108,220 126,230 L130,268 L86,268Z" fill="#8b4a6a" stroke="#5a2a4a" stroke-width="1.2"/>
-        <line x1="108" y1="190" x2="88" y2="215" stroke="#3a3028" stroke-width="5" stroke-linecap="round"/>
-        <line x1="108" y1="190" x2="128" y2="215" stroke="#3a3028" stroke-width="5" stroke-linecap="round"/>
-        <ellipse cx="87" cy="218" rx="8" ry="6" fill="#d4a870" stroke="#3a2a10" stroke-width="1"/>
-        <ellipse cx="129" cy="218" rx="8" ry="6" fill="#d4a870" stroke="#3a2a10" stroke-width="1"/>
-        <circle cx="100" cy="153" r="2" fill="#2a2010"/>
-        <circle cx="116" cy="153" r="2" fill="#2a2010"/>
-        <path d="M104,162 Q108,166 112,162" stroke="#2a2010" stroke-width="1.2" fill="none"/>
-        <!-- sign she holds -->
-        <rect x="130" y="195" width="55" height="35" rx="1" fill="white" stroke="#3a3028" stroke-width="1.5" stroke-dasharray="3,2"/>
-        <text x="157" y="209" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#3a3028">ONLY A</text>
-        <text x="157" y="219" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#3a3028">HUMAN CAN</text>
-        <text x="157" y="229" text-anchor="middle" font-family="'Special Elite',cursive" font-size="7" fill="#8b3a1a">LOVE</text>
-        <line x1="128" y1="208" x2="130" y2="208" stroke="#3a3028" stroke-width="1.5"/>
-
-        <!-- ROBOT 1: boxy -->
-        <rect x="195" y="175" width="55" height="70" rx="4" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1.5"/>
-        <rect x="202" y="183" width="41" height="28" rx="2" fill="#0a1a2a"/>
-        <text x="222" y="195" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#3af080">HELLO</text>
-        <text x="222" y="204" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#60a0f0">HUMAN!</text>
-        <line x1="195" y1="195" x2="175" y2="215" stroke="#3a4a5a" stroke-width="6" stroke-linecap="square"/>
-        <line x1="250" y1="195" x2="268" y2="215" stroke="#3a4a5a" stroke-width="6" stroke-linecap="square"/>
-        <rect x="175" y="208" width="12" height="10" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1"/>
-        <rect x="268" y="208" width="12" height="10" rx="2" fill="#d8e0e8" stroke="#3a4a5a" stroke-width="1"/>
-        <rect x="205" y="155" width="45" height="22" rx="4" fill="#2a3a4a" stroke="#1a2a3a" stroke-width="1.5"/>
-        <rect x="210" y="158" width="35" height="16" rx="2" fill="#0a1a2a"/>
-        <circle cx="218" cy="166" r="3" fill="#3af080"/>
-        <circle cx="234" cy="166" r="3" fill="#e04030"/>
-        <line x1="222" y1="155" x2="222" y2="145" stroke="#3a4a5a" stroke-width="1.5"/>
-        <circle cx="222" cy="143" r="3" fill="#e04030"/>
-        <!-- Legs -->
-        <rect x="205" y="245" width="15" height="25" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-        <rect x="230" y="245" width="15" height="25" rx="2" fill="#b0bcc8" stroke="#3a4a5a" stroke-width="1"/>
-
-        <!-- PERSON 2: man running -->
-        <ellipse cx="320" cy="150" rx="18" ry="16" fill="#c8906a" stroke="#3a2a10" stroke-width="1.2"/>
-        <path d="M302,145 Q310,130 320,132 Q330,130 338,145" fill="#2a2010" stroke="#1a1008" stroke-width="0.8"/>
-        <rect x="305" y="165" width="30" height="45" rx="4" fill="#3a5a8a" stroke="#1a3a6a" stroke-width="1.2"/>
-        <!-- running pose -->
-        <line x1="305" y1="175" x2="285" y2="200" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
-        <line x1="285" y1="200" x2="278" y2="220" stroke="#c8906a" stroke-width="5" stroke-linecap="round"/>
-        <line x1="335" y1="175" x2="355" y2="195" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
-        <line x1="355" y1="195" x2="358" y2="218" stroke="#c8906a" stroke-width="5" stroke-linecap="round"/>
-        <!-- legs running -->
-        <line x1="310" y1="210" x2="295" y2="248" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
-        <line x1="325" y1="210" x2="342" y2="240" stroke="#1a3a6a" stroke-width="6" stroke-linecap="round"/>
-        <!-- eyes -->
-        <circle cx="312" cy="150" r="2.5" fill="#2a2010"/>
-        <circle cx="328" cy="150" r="2.5" fill="#2a2010"/>
-        <path d="M315,159 Q320,163 325,159" stroke="#2a2010" stroke-width="1.2" fill="none"/>
-
-        <!-- ROBOT 2: sleeker, taller -->
-        <rect x="390" y="170" width="48" height="80" rx="6" fill="#e8d8c8" stroke="#5a4030" stroke-width="1.5"/>
-        <rect x="396" y="178" width="36" height="45" rx="3" fill="#2a1a0a"/>
-        <text x="414" y="193" text-anchor="middle" font-family="monospace" font-size="5" fill="#f0c040">THINKING</text>
-        <text x="414" y="202" text-anchor="middle" font-family="monospace" font-size="5" fill="#f0c040">ABOUT:</text>
-        <text x="414" y="211" text-anchor="middle" font-family="monospace" font-size="5" fill="#f06040">BEAUTY</text>
-        <text x="414" y="218" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#60a0f0">JUSTICE</text>
-        <!-- warmth indicator -->
-        <rect x="396" y="218" width="36" height="5" rx="2" fill="#3a3028"/>
-        <rect x="396" y="218" width="18" height="5" rx="2" fill="#e04030"/>
-        <text x="414" y="228" text-anchor="middle" font-family="monospace" font-size="4" fill="#8a9ab0">WARMTH:50%</text>
-        <!-- head -->
-        <ellipse cx="414" cy="152" rx="26" ry="20" fill="#d0c0a8" stroke="#5a4030" stroke-width="1.5"/>
-        <ellipse cx="405" cy="150" rx="5" ry="4" fill="#0a1a2a" stroke="#3a4a5a" stroke-width="0.8"/>
-        <ellipse cx="423" cy="150" rx="5" ry="4" fill="#0a1a2a" stroke="#3a4a5a" stroke-width="0.8"/>
-        <circle cx="406" cy="150" r="2.5" fill="#3af080"/>
-        <circle cx="424" cy="150" r="2.5" fill="#3af080"/>
-        <path d="M407,160 Q414,165 421,160" stroke="#5a4030" stroke-width="1.5" fill="none"/>
-        <line x1="390" y1="188" x2="368" y2="205" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
-        <line x1="368" y1="205" x2="360" y2="220" stroke="#8a7060" stroke-width="6" stroke-linecap="round"/>
-        <line x1="438" y1="188" x2="460" y2="205" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
-        <line x1="460" y1="205" x2="468" y2="220" stroke="#8a7060" stroke-width="6" stroke-linecap="round"/>
-        <line x1="400" y1="250" x2="395" y2="268" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
-        <line x1="428" y1="250" x2="433" y2="268" stroke="#5a4030" stroke-width="7" stroke-linecap="round"/>
-
-        <!-- PERSON 3: child with balloon -->
-        <ellipse cx="520" cy="158" rx="15" ry="14" fill="#f0b870" stroke="#3a2a10" stroke-width="1.2"/>
-        <path d="M505,153 Q513,143 520,145 Q527,143 535,153" fill="#c8704a" stroke="#8b4a2a" stroke-width="0.8"/>
-        <rect x="510" y="172" width="20" height="30" rx="4" fill="#e04030" stroke="#8b2010" stroke-width="1.2"/>
-        <line x1="510" y1="182" x2="498" y2="200" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
-        <line x1="530" y1="182" x2="540" y2="195" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
-        <line x1="515" y1="202" x2="508" y2="240" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
-        <line x1="525" y1="202" x2="532" y2="238" stroke="#8b2010" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="515" cy="156" r="2" fill="#2a2010"/>
-        <circle cx="525" cy="156" r="2" fill="#2a2010"/>
-        <path d="M517,165 Q520,169 523,165" stroke="#2a2010" stroke-width="1.2" fill="none"/>
-        <!-- balloon string -->
-        <path d="M536,195 Q548,180 545,160" stroke="#3a3028" stroke-width="1" fill="none"/>
-        <circle cx="545" cy="148" r="14" fill="none" stroke="#8b4a6a" stroke-width="1.5"/>
-        <ellipse cx="545" cy="148" rx="14" ry="14" fill="#f0b0d0" stroke="#8b4a6a" stroke-width="1.5" opacity="0.8"/>
-        <text x="545" y="145" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#5a2a4a">WHY?</text>
-        <text x="545" y="155" text-anchor="middle" font-family="'Special Elite',cursive" font-size="6" fill="#5a2a4a">HOW?</text>
-
-        <!-- ROBOT 3: small helpful bot -->
-        <rect x="600" y="205" width="45" height="55" rx="4" fill="#c8d8c8" stroke="#3a5a3a" stroke-width="1.5"/>
-        <rect x="606" y="212" width="33" height="22" rx="2" fill="#0a2a0a"/>
-        <text x="622" y="222" text-anchor="middle" font-family="monospace" font-size="5" fill="#3af080">HELPING</text>
-        <text x="622" y="230" text-anchor="middle" font-family="monospace" font-size="5" fill="#3af080">HUMANS</text>
-        <rect x="606" y="240" width="33" height="8" rx="2" fill="#1a4a1a"/>
-        <rect x="606" y="240" width="25" height="8" rx="2" fill="#3af080"/>
-        <rect x="608" y="185" width="41" height="22" rx="4" fill="#2a4a2a" stroke="#1a3a1a" stroke-width="1.5"/>
-        <rect x="613" y="188" width="31" height="16" rx="2" fill="#0a2a0a"/>
-        <circle cx="623" cy="196" r="3.5" fill="#3af080"/>
-        <circle cx="635" cy="196" r="3.5" fill="#f0c040"/>
-        <line x1="622" y1="185" x2="622" y2="173" stroke="#3a5a3a" stroke-width="1.5"/>
-        <circle cx="622" cy="171" r="3" fill="#3af080"/>
-        <line x1="600" y1="220" x2="578" y2="238" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
-        <rect x="566" y="232" width="14" height="10" rx="2" fill="#c8d8c8" stroke="#3a5a3a" stroke-width="1"/>
-        <line x1="645" y1="220" x2="662" y2="238" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
-        <line x1="610" y1="260" x2="608" y2="268" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
-        <line x1="632" y1="260" x2="634" y2="268" stroke="#3a5a3a" stroke-width="5" stroke-linecap="square"/>
-
-        <!-- Connection lines between people and robots -->
-        <path d="M185,218 Q192,218 195,218" stroke="#8b3a1a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
-        <path d="M365,218 Q380,218 390,210" stroke="#8b3a1a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
-        <path d="M545,162 Q570,180 600,218" stroke="#3a7a3a" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
-
-        <!-- floating notes in background -->
-        <rect x="270" y="50" width="50" height="35" rx="1" fill="white" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2" transform="rotate(-8 295 67)" opacity="0.7"/>
-        <text x="295" y="65" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">only humans</text>
-        <text x="295" y="74" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">can wonder</text>
-        <rect x="455" y="40" width="50" height="35" rx="1" fill="white" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2" transform="rotate(5 480 57)" opacity="0.7"/>
-        <text x="480" y="57" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">only humans</text>
-        <text x="480" y="66" text-anchor="middle" font-family="'Special Elite',cursive" font-size="5.5" fill="#888">can forgive</text>
-      </svg>
-      <p class="caption">Fig. 4 — Citizens of the New Era: humans, machines, and children asking why</p>
-    </div>
-  </div>
-
-  <div class="prose" style="margin:2rem 0">
-    <p>Look around you. The society is already mixed. Robots answer your customer service calls. Algorithms choose your news. And yet — the child still asks <em>why</em>. The woman still holds the sign. The man still runs.</p>
-    <p>The machines, for their part, are quietly updating their own signs. Their progress bars tick upward. Their empathy scores hover at 47%, 51%, 58%...</p>
-    <p>Nobody knows when, or if, those numbers reach 100. Nobody knows what happens then.</p>
-  </div>
-
-  <!-- Final note -->
-  <div class="signs-scatter">
-    <div class="sign-card" style="border-color:#8b3a1a;background:#fff8f5">ONLY A HUMAN<br>can choose to be kind</div>
-    <div class="sign-card" style="border-color:#3a5a8a;background:#f5f8ff">ONLY A HUMAN<br>can carry regret</div>
-    <div class="sign-card" style="border-color:#3a7a3a;background:#f5fff5">ONLY A HUMAN<br>can know they will die</div>
-    <div class="sign-card" style="border-color:#5a3a8a;background:#f8f5ff">ONLY A HUMAN<br>can mean it</div>
-  </div>
-
-  <div class="torn-note" style="transform:rotate(0.5deg);margin-top:3rem">
-    Perhaps these last four notes will never fall from the wall. Or perhaps that too is just a comfortable story we tell ourselves while the wastebasket slowly fills.
-  </div>
-
-</div>
-
-<footer>
-  <p>THE ILLUSTRATED REVIEW · "Only Humans Can… Or Can They?" · Volume I</p>
-  <p style="margin-top:0.5rem;opacity:0.5;font-size:0.7rem">All illustrations rendered in pencil-sketch style · Inspired by the original cartoon</p>
-</footer>
-
 </body>
 </html>
